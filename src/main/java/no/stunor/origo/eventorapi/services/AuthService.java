@@ -30,13 +30,13 @@ public class AuthService {
 
     public Person authenticate(String eventorId, String username, String password, String userId) throws EventorApiException, EntityNotFoundException, InterruptedException, ExecutionException {
         
-        Eventor eventor = eventorRepository.findByEventorId(eventorId);
+        Eventor eventor = eventorRepository.findByEventorId(eventorId).blockFirst();
 
         log.info("Start authenticating user {} on {}.", username, eventor.getName());
 
         Person person = PersonConverter.convertPerson(eventorService.authenticatePerson(eventor, username, password), eventor);
 
-        Person existingPerson = personRepository.findByPersonIdAndEventor(person.getPersonId(), eventor.getEventorId());
+        Person existingPerson = personRepository.findByPersonIdAndEventor(person.getPersonId(), eventor.getEventorId()).blockFirst();
         if(existingPerson == null){
             person.getUsers().add(userId);
             personRepository.save(person);

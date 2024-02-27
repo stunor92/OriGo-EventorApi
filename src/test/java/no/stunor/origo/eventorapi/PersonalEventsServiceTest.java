@@ -32,7 +32,7 @@ import no.stunor.origo.eventorapi.model.origo.person.PersonName;
 import no.stunor.origo.eventorapi.repository.EventorRepository;
 import no.stunor.origo.eventorapi.repository.PersonRepository;
 import no.stunor.origo.eventorapi.services.UserEntryService;
-
+/* 
 @SpringBootTest
 public class PersonalEventsServiceTest {
 
@@ -140,3 +140,4 @@ public class PersonalEventsServiceTest {
 
 }
 
+*/

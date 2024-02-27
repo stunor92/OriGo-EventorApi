@@ -29,6 +29,7 @@ import no.stunor.origo.eventorapi.repository.EventorRepository;
 import no.stunor.origo.eventorapi.repository.OrganisationRepository;
 import no.stunor.origo.eventorapi.repository.RegionRepository;
 import no.stunor.origo.eventorapi.services.EventService;
+import reactor.core.publisher.Flux;
 
 @SpringBootTest
 public class EventServiceTest {
@@ -53,9 +54,9 @@ public class EventServiceTest {
         when(eventorService.getEvent(anyString(), anyString(), anyString())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/Event.xml"));
         when(eventorService.getEventClasses(any(Eventor.class), anyString())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/EventClassList.xml"));
         when(eventorService.getEventDocuments(anyString(), anyString(),anyString())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/DocumentList.xml"));
-        when(organisationRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(generateOrganisation());
-        when(regionRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(generateRegion());
-        when(eventorRepository.findByEventorId(anyString())).thenReturn(generateEventor());
+        when(organisationRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(Flux.fromArray(new Organisation[] {generateOrganisation() }));
+        when(regionRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(Flux.fromArray(new Region[] {generateRegion() }));
+        when(eventorRepository.findByEventorId(anyString())).thenReturn(Flux.fromArray(new Eventor[] {generateEventor() }));
 
         eventService.getEvent("NOR", "17535", null);
     }
@@ -65,9 +66,9 @@ public class EventServiceTest {
         when(eventorService.getEvent(anyString(), anyString(), anyString())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/Event.xml"));
         when(eventorService.getEventClasses(any(Eventor.class), anyString())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/EventClassList.xml"));
         when(eventorService.getEventDocuments(anyString(), anyString(),anyString())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/DocumentList.xml"));
-        when(organisationRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(generateOrganisation());
-        when(regionRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(generateRegion());
-        when(eventorRepository.findByEventorId(anyString())).thenReturn(generateEventor());
+        when(organisationRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(Flux.fromArray(new Organisation[] {generateOrganisation() }));
+        when(regionRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(Flux.fromArray(new Region[] {generateRegion() }));
+        when(eventorRepository.findByEventorId(anyString())).thenReturn(Flux.fromArray(new Eventor[] {generateEventor() }));
 
         eventService.getEvent("NOR", "18527", null);
     }
@@ -78,9 +79,9 @@ public class EventServiceTest {
         when(eventorService.getEvent(anyString(), anyString(), anyString())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/relayEvent/Event.xml"));
         when(eventorService.getEventClasses(any(Eventor.class),anyString())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/relayEvent/EventClassList.xml"));
         when(eventorService.getEventDocuments(anyString(), anyString(),anyString())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/relayEvent/DocumentList.xml"));
-        when(organisationRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(generateOrganisation());
-        when(regionRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(generateRegion());
-        when(eventorRepository.findByEventorId(anyString())).thenReturn(generateEventor());
+        when(organisationRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(Flux.fromArray(new Organisation[] {generateOrganisation() }));
+        when(regionRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(Flux.fromArray(new Region[] {generateRegion() }));
+        when(eventorRepository.findByEventorId(anyString())).thenReturn(Flux.fromArray(new Eventor[] {generateEventor() }));
 
         eventService.getEvent("NOR", "17469", null);
     }
