@@ -2,8 +2,8 @@ name: Build with Maven
 
 on:
   push: 
-    branches:
-      - '!main'
+    branches-ignore:
+    - main
   pull_request:
 
 jobs:
