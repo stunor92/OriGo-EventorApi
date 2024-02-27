@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventClassList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <EventClass sequence="23" sex="F" numberOfEntries="15">
+        <EventClassId>168800</EventClassId>
+        <Name>DN</Name>
+        <ClassShortName>DN</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>23</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="15" noOfStarts="13">
+            <ClassRaceInfoId>183235</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass sequence="24" sex="M" numberOfEntries="16">
+        <EventClassId>168801</EventClassId>
+        <Name>HN</Name>
+        <ClassShortName>HN</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>24</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="16" noOfStarts="15">
+            <ClassRaceInfoId>183236</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="11" highAge="12" sequence="60" sex="F" numberOfEntries="3">
+        <EventClassId>168802</EventClassId>
+        <Name>D11-12</Name>
+        <ClassShortName>D11-12</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>6</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56982</EntryFeeId>
+            <Sequence>30</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="3" noOfStarts="3">
+            <ClassRaceInfoId>183237</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="11" highAge="12" sequence="70" sex="M" numberOfEntries="9">
+        <EventClassId>168803</EventClassId>
+        <Name>H11-12</Name>
+        <ClassShortName>H11-12</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>29</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56982</EntryFeeId>
+            <Sequence>30</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="9" noOfStarts="9">
+            <ClassRaceInfoId>183238</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="13" highAge="15" sequence="80" sex="F" numberOfEntries="13">
+        <EventClassId>168804</EventClassId>
+        <Name>D13-15</Name>
+        <ClassShortName>D13-15</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>8</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56982</EntryFeeId>
+            <Sequence>30</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="13" noOfStarts="12">
+            <ClassRaceInfoId>183239</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="13" highAge="15" sequence="90" sex="M" numberOfEntries="15">
+        <EventClassId>168805</EventClassId>
+        <Name>H13-15</Name>
+        <ClassShortName>H13-15</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>31</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56982</EntryFeeId>
+            <Sequence>30</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="15" noOfStarts="15">
+            <ClassRaceInfoId>183240</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="40" highAge="59" sequence="91" sex="F" numberOfEntries="13">
+        <EventClassId>168806</EventClassId>
+        <Name>D40-</Name>
+        <ClassShortName>D40-</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>100</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="13" noOfStarts="12">
+            <ClassRaceInfoId>183241</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="60" sequence="92" sex="F" numberOfEntries="12">
+        <EventClassId>168807</EventClassId>
+        <Name>D60-</Name>
+        <ClassShortName>D60-</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>110</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="12" noOfStarts="12">
+            <ClassRaceInfoId>183242</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="60" sequence="93" sex="M" numberOfEntries="10">
+        <EventClassId>168808</EventClassId>
+        <Name>H60-</Name>
+        <ClassShortName>H60-</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>130</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="10" noOfStarts="9">
+            <ClassRaceInfoId>183243</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="15" highAge="18" sequence="100" sex="F" numberOfEntries="4">
+        <EventClassId>168809</EventClassId>
+        <Name>D16-18</Name>
+        <ClassShortName>D16-18</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>10</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="4" noOfStarts="3">
+            <ClassRaceInfoId>183244</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="15" highAge="18" sequence="110" sex="M" numberOfEntries="7">
+        <EventClassId>168810</EventClassId>
+        <Name>H16-18</Name>
+        <ClassShortName>H16-18</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>33</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="7" noOfStarts="6">
+            <ClassRaceInfoId>183245</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="19" sequence="120" sex="F" numberOfEntries="14">
+        <EventClassId>168811</EventClassId>
+        <Name>D19-</Name>
+        <ClassShortName>D19-</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>12</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="14" noOfStarts="14">
+            <ClassRaceInfoId>183246</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="19" sequence="350" sex="M" numberOfEntries="14">
+        <EventClassId>168812</EventClassId>
+        <Name>H19-</Name>
+        <ClassShortName>H19-</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>35</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="14" noOfStarts="12">
+            <ClassRaceInfoId>183247</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="40" sequence="351" sex="M" numberOfEntries="28">
+        <EventClassId>168813</EventClassId>
+        <Name>H40-</Name>
+        <ClassShortName>H40-</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>120</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>56981</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="28" noOfStarts="27">
+            <ClassRaceInfoId>183248</ClassRaceInfoId>
+            <EventRaceId>18200</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+</EventClassList>

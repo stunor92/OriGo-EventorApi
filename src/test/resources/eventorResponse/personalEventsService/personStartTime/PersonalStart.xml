@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StartListList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <StartList>
+        <Event>
+            <EventId>17536</EventId>
+            <Name>sprintcupfinale Bergen</Name>
+            <EventClassificationId>4</EventClassificationId>
+            <EventStatusId>5</EventStatusId>
+            <StartDate>
+                <Date>2023-10-03</Date>
+                <Clock>18:00:00</Clock>
+            </StartDate>
+            <FinishDate>
+                <Date>2023-10-03</Date>
+                <Clock>19:00:00</Clock>
+            </FinishDate>
+            <Organiser>
+                <Organisation>
+                    <OrganisationId>142</OrganisationId>
+                    <Name>IL Gular</Name>
+                    <ShortName>IL Gular</ShortName>
+                    <MediaName>IL Gular</MediaName>
+                    <OrganisationTypeId>3</OrganisationTypeId>
+                    <CountryId value="578" />
+                    <OrganisationStatusId>1</OrganisationStatusId>
+                    <ModifyDate>
+                        <Date>2017-08-09</Date>
+                        <Clock>20:37:10</Clock>
+                    </ModifyDate>
+                </Organisation>
+            </Organiser>
+            <EventRace raceDistance="Sprint">
+                <EventRaceId>18201</EventRaceId>
+                <EventId>17536</EventId>
+                <Name></Name>
+                <RaceDate>
+                    <Date>2023-10-03</Date>
+                    <Clock>18:00:00</Clock>
+                </RaceDate>
+                <EventCenterPosition x="5.3470139503479" y="60.3464263860027" unit="WGS-84" />
+            </EventRace>
+            <PunchingUnitType value="Emit" />
+            <ModifyDate>
+                <Date>2023-10-03</Date>
+                <Clock>22:40:54</Clock>
+            </ModifyDate>
+            <ModifiedBy>
+                <PersonId>5342</PersonId>
+            </ModifiedBy>
+        </Event>
+        <ClassStart numberOfEntries="15">
+            <EventClass lowAge="19" sequence="350" sex="M" numberOfEntries="15">
+                <EventClassId>168798</EventClassId>
+                <Name>H19-</Name>
+                <ClassShortName>H19-</ClassShortName>
+                <EventClassStatus value="normal" />
+                <ClassTypeId>2</ClassTypeId>
+                <ExternalId>35</ExternalId>
+                <ClassRaceInfo noOfEntries="15" noOfStarts="0">
+                    <EventRaceId>18201</EventRaceId>
+                    <Name></Name>
+                </ClassRaceInfo>
+            </EventClass>
+            <PersonStart>
+                <Person sex="M">
+                    <PersonName>
+                        <Family>Family</Family>
+                        <Given sequence="1">Given</Given>
+                    </PersonName>
+                    <PersonId>354</PersonId>
+                    <BirthDate>
+                        <Date>1992-01-01</Date>
+                    </BirthDate>
+                    <Nationality>
+                        <Country>
+                            <CountryId value="578" />
+                            <Alpha3 value="NOR" />
+                            <Name languageId="en">Norway</Name>
+                            <Name languageId="sv">Norge</Name>
+                        </Country>
+                    </Nationality>
+                </Person>
+                <Organisation>
+                    <OrganisationId>141</OrganisationId>
+                    <Name>Gneist, IL</Name>
+                    <ShortName>Gneist, IL</ShortName>
+                    <OrganisationTypeId>5</OrganisationTypeId>
+                    <CountryId value="578" />
+                </Organisation>
+                <Start>
+                    <BibNumber></BibNumber>
+                    <CCardId>256968</CCardId>
+                    <StartTime>
+                        <Date>2023-10-03</Date>
+                        <Clock>18:03:47</Clock>
+                    </StartTime>
+                    <StartId>4234062</StartId>
+                    <ModifyDate>
+                        <Date>2023-10-03</Date>
+                        <Clock>07:42:44</Clock>
+                    </ModifyDate>
+                </Start>
+            </PersonStart>
+        </ClassStart>
+    </StartList>
+</StartListList>

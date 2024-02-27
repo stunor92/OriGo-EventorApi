@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventClassList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <EventClass sex="B" numberOfEntries="0">
+        <EventClassId>176584</EventClassId>
+        <Name>Lang</Name>
+        <ClassShortName>L</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>3</ClassTypeId>
+            <ShortName>Å</ShortName>
+            <Name>Åpne klasser</Name>
+        </ClassType>
+        <ExternalId>1</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>59688</EntryFeeId>
+            <Sequence>40</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>59689</EntryFeeId>
+            <Sequence>50</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191423</ClassRaceInfoId>
+            <EventRaceId>19226</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191424</ClassRaceInfoId>
+            <EventRaceId>19227</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191425</ClassRaceInfoId>
+            <EventRaceId>19228</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass sex="B" numberOfEntries="0">
+        <EventClassId>176585</EventClassId>
+        <Name>Mellom</Name>
+        <ClassShortName>M</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>3</ClassTypeId>
+            <ShortName>Å</ShortName>
+            <Name>Åpne klasser</Name>
+        </ClassType>
+        <ExternalId>2</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>59688</EntryFeeId>
+            <Sequence>40</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>59689</EntryFeeId>
+            <Sequence>50</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191428</ClassRaceInfoId>
+            <EventRaceId>19228</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191426</ClassRaceInfoId>
+            <EventRaceId>19226</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191427</ClassRaceInfoId>
+            <EventRaceId>19227</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass sex="B" numberOfEntries="0">
+        <EventClassId>176586</EventClassId>
+        <Name>Kort</Name>
+        <ClassShortName>K</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>3</ClassTypeId>
+            <ShortName>Å</ShortName>
+            <Name>Åpne klasser</Name>
+        </ClassType>
+        <ExternalId>3</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>59688</EntryFeeId>
+            <Sequence>40</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>59689</EntryFeeId>
+            <Sequence>50</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191429</ClassRaceInfoId>
+            <EventRaceId>19226</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191430</ClassRaceInfoId>
+            <EventRaceId>19227</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="0" noOfStarts="0">
+            <ClassRaceInfoId>191431</ClassRaceInfoId>
+            <EventRaceId>19228</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+</EventClassList>

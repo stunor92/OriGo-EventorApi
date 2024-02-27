@@ -1,0 +1,32 @@
+logging:
+  level:
+    root: DEBUG
+spring:
+  webflux:
+    base-path: /rest
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 
+          - loggers
+          - health
+          - metrics
+  endpoint:
+    loggers:
+      enabled: true
+    health:
+      enabled: true
+      show-detals: always
+    metrics:
+      enabled: true
+config:
+  personalEntries:
+    start: -1
+    end: 7
+  personalStarts:
+    start: -1
+    end: 5
+  personalResults:
+    start: -5
+    end: 1

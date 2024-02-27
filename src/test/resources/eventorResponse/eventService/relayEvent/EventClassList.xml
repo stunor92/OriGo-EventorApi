@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventClassList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <EventClass lowAge="5" highAge="90" sex="B" teamEntry="Y" numberOfLegs="5" numberOfEntries="19" minAverageAge="1" maxAverageAge="70">
+        <EventClassId>176445</EventClassId>
+        <Name>Kompisstafetten</Name>
+        <ClassShortName>Kompis</ClassShortName>
+        <EventClassStatus value="normal" />
+        <ClassType>
+            <ClassTypeId>2</ClassTypeId>
+            <ShortName>O</ShortName>
+            <Name>Ordinære klasser</Name>
+        </ClassType>
+        <ExternalId>1</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>59550</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>59549</EntryFeeId>
+            <Sequence>20</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <PunchingUnitType value="Emit" />
+        <ClassRaceInfo relayLeg="1" minRunners="1" maxRunners="1" noOfEntries="19" noOfStarts="19">
+            <ClassRaceInfoId>191263</ClassRaceInfoId>
+            <EventRaceId>18134</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo relayLeg="2" minRunners="1" maxRunners="1" noOfEntries="19" noOfStarts="19">
+            <ClassRaceInfoId>191264</ClassRaceInfoId>
+            <EventRaceId>18134</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo relayLeg="3" minRunners="1" maxRunners="1" noOfEntries="19" noOfStarts="19">
+            <ClassRaceInfoId>191265</ClassRaceInfoId>
+            <EventRaceId>18134</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo relayLeg="4" minRunners="1" maxRunners="1" noOfEntries="19" noOfStarts="19">
+            <ClassRaceInfoId>191266</ClassRaceInfoId>
+            <EventRaceId>18134</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+        <ClassRaceInfo relayLeg="5" minRunners="1" maxRunners="1" noOfEntries="19" noOfStarts="19">
+            <ClassRaceInfoId>191267</ClassRaceInfoId>
+            <EventRaceId>18134</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated" />
+            <PunchingUnitType value="Emit" />
+        </ClassRaceInfo>
+    </EventClass>
+</EventClassList>

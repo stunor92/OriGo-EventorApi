@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DocumentList xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Document id="38162" referenceId="18527" name="Løp 1: Kort" url="https://eventor.orientering.no/Documents/Event/38162/L-p-1--Kort" type="Other" modifyDate="2023-06-28T10:28:03" />
+    <Document id="38163" referenceId="18527" name="Løp 1: Mellom" url="https://eventor.orientering.no/Documents/Event/38163/L-p-1--Mellom" type="Other" modifyDate="2023-06-28T10:28:22" />
+    <Document id="38164" referenceId="18527" name="Løp 1: Lang" url="https://eventor.orientering.no/Documents/Event/38164/L-p-1--Lang" type="Other" modifyDate="2023-06-28T10:28:37" />
+    <Document id="38253" referenceId="18527" name="Løp 2: Kort" url="https://eventor.orientering.no/Documents/Event/38253/L-p-2--Kort" type="Other" modifyDate="2023-07-12T09:51:26" />
+    <Document id="38254" referenceId="18527" name="Løp 2: Mellom " url="https://eventor.orientering.no/Documents/Event/38254/L-p-2--Mellom-" type="Other" modifyDate="2023-07-12T09:51:44" />
+    <Document id="38255" referenceId="18527" name="Løp 2: Lang" url="https://eventor.orientering.no/Documents/Event/38255/L-p-2--Lang" type="Other" modifyDate="2023-07-12T09:52:00" />
+</DocumentList>

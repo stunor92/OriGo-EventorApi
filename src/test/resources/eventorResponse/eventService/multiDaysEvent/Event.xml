@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" eventForm="IndMultiDay">
+    <EventId>18527</EventId>
+    <Name>Skagemarken rundt</Name>
+    <EventClassificationId>5</EventClassificationId>
+    <EventStatusId>5</EventStatusId>
+    <DisciplineId>1</DisciplineId>
+    <StartDate>
+        <Date>2023-06-27</Date>
+        <Clock>18:00:00</Clock>
+    </StartDate>
+    <FinishDate>
+        <Date>2023-07-25</Date>
+        <Clock>20:00:00</Clock>
+    </FinishDate>
+    <EventOfficial>
+        <EventOfficialId>51543</EventOfficialId>
+        <RoleTypeId>103</RoleTypeId>
+        <PersonId>354</PersonId>
+        <EventId>18527</EventId>
+    </EventOfficial>
+    <Organiser>
+        <Organisation>
+            <OrganisationId>141</OrganisationId>
+            <Name>Gneist, IL</Name>
+            <ShortName>Gneist, IL</ShortName>
+            <MediaName>Gneist, IL</MediaName>
+            <OrganisationTypeId>3</OrganisationTypeId>
+            <Country>
+                <CountryId value="578" />
+                <Alpha3 value="NOR" />
+                <Name languageId="en">Norway</Name>
+                <Name languageId="sv">Norge</Name>
+            </Country>
+            <ParentOrganisation>
+                <OrganisationId>8</OrganisationId>
+            </ParentOrganisation>
+            <ModifyDate>
+                <Date>2014-01-22</Date>
+                <Clock>07:43:06</Clock>
+            </ModifyDate>
+        </Organisation>
+    </Organiser>
+    <EntryBreak>
+        <ValidToDate>
+            <Date>2023-06-27</Date>
+            <Clock>16:00:59</Clock>
+        </ValidToDate>
+    </EntryBreak>
+    <EventRace>
+        <EventRaceId>19226</EventRaceId>
+        <EventId>18527</EventId>
+        <Name>Dag 1</Name>
+        <RaceDate>
+            <Date>2023-06-27</Date>
+            <Clock>18:00:00</Clock>
+        </RaceDate>
+        <EventCenterPosition x="5.28642412862974" y="60.2850068786516" unit="WGS-84" />
+    </EventRace>
+    <EventRace>
+        <EventRaceId>19227</EventRaceId>
+        <EventId>18527</EventId>
+        <Name>Dag 2</Name>
+        <RaceDate>
+            <Date>2023-07-11</Date>
+            <Clock>18:00:00</Clock>
+        </RaceDate>
+        <EventCenterPosition x="5.27099007847451" y="60.2871073175555" unit="WGS-84" />
+    </EventRace>
+    <EventRace>
+        <EventRaceId>19228</EventRaceId>
+        <EventId>18527</EventId>
+        <Name>Dag 3</Name>
+        <RaceDate>
+            <Date>2023-07-25</Date>
+            <Clock>18:00:00</Clock>
+        </RaceDate>
+        <EventCenterPosition x="5.27114872577514" y="60.2871357154867" unit="WGS-84" />
+    </EventRace>
+    <WebURL>http://gneist.no</WebURL>
+    <ContactData>
+        <Tele phoneNumber="45296098" mailAddress="orinetering@gneist.no">
+            <TeleType value="official" />
+        </Tele>
+    </ContactData>
+    <PunchingUnitType value="Emit" />
+    <ModifyDate>
+        <Date>2023-06-25</Date>
+        <Clock>21:23:32</Clock>
+    </ModifyDate>
+    <ModifiedBy>
+        <PersonId>354</PersonId>
+    </ModifiedBy>
+    <HashTableEntry>
+        <Key>Eventor_AllowEntryToMultipleClasses</Key>
+        <Value>1</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_ConsultationPerformed</Key>
+        <Value>1</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_EntryChangeDeadlines</Key>
+        <Value>2023-06-27 14.00.59;EventClass,EventRaces,NumberOfCompetitors,Person,Organisation,PunchingCard,ServiceRequests</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_Message</Key>
+        <Value>Løp 2: Postene ligger ute til 21. juli (Det står feil på kartet) dersom noen vil benytte muligheten for et treningsløp. Det er postenheter så ta med MTR dersom du vi bruke dette som et treningsløp.
+Vær obs på en del nye hogstfelt som ikke er markert på kartet!</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_AllowEntryToIndividualRaces</Key>
+        <Value>1</Value>
+    </HashTableEntry>
+</Event>

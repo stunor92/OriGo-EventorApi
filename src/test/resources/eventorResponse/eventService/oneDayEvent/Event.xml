@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <EventId>17535</EventId>
+    <Name>sprintcup 5 Bergen</Name>
+    <EventClassificationId>4</EventClassificationId>
+    <EventStatusId>9</EventStatusId>
+    <DisciplineId>1</DisciplineId>
+    <StartDate>
+        <Date>2023-09-26</Date>
+        <Clock>17:00:00</Clock>
+    </StartDate>
+    <FinishDate>
+        <Date>2023-09-26</Date>
+        <Clock>20:00:00</Clock>
+    </FinishDate>
+    <EventOfficial>
+        <EventOfficialId>52764</EventOfficialId>
+        <RoleTypeId>101</RoleTypeId>
+        <PersonId>669</PersonId>
+        <EventId>17535</EventId>
+    </EventOfficial>
+    <EventOfficial>
+        <EventOfficialId>52765</EventOfficialId>
+        <RoleTypeId>102</RoleTypeId>
+        <PersonId>210</PersonId>
+        <EventId>17535</EventId>
+    </EventOfficial>
+    <EventOfficial>
+        <EventOfficialId>52766</EventOfficialId>
+        <RoleTypeId>104</RoleTypeId>
+        <PersonId>4401</PersonId>
+        <EventId>17535</EventId>
+    </EventOfficial>
+    <Organiser>
+        <Organisation>
+            <OrganisationId>141</OrganisationId>
+            <Name>Gneist, IL</Name>
+            <ShortName>Gneist, IL</ShortName>
+            <MediaName>Gneist, IL</MediaName>
+            <OrganisationTypeId>3</OrganisationTypeId>
+            <Country>
+                <CountryId value="578" />
+                <Alpha3 value="NOR" />
+                <Name languageId="en">Norway</Name>
+                <Name languageId="sv">Norge</Name>
+            </Country>
+            <ParentOrganisation>
+                <OrganisationId>8</OrganisationId>
+            </ParentOrganisation>
+            <ModifyDate>
+                <Date>2014-01-22</Date>
+                <Clock>07:43:06</Clock>
+            </ModifyDate>
+        </Organisation>
+    </Organiser>
+    <ClassTypeId>2</ClassTypeId>
+    <EntryBreak>
+        <ValidToDate>
+            <Date>2023-09-25</Date>
+            <Clock>23:59:59</Clock>
+        </ValidToDate>
+    </EntryBreak>
+    <EventRace raceDistance="Sprint">
+        <EventRaceId>18200</EventRaceId>
+        <EventId>17535</EventId>
+        <Name></Name>
+        <RaceDate>
+            <Date>2023-09-26</Date>
+            <Clock>17:00:00</Clock>
+        </RaceDate>
+        <EventCenterPosition x="5.27274900788226" y="60.297721224283" unit="WGS-84" />
+    </EventRace>
+    <ContactData>
+        <Tele phoneNumber="90612013" mailAddress="orientering@gneist.no">
+            <TeleType value="official" />
+        </Tele>
+    </ContactData>
+    <PunchingUnitType value="Emit" />
+    <ModifyDate>
+        <Date>2023-09-26</Date>
+        <Clock>19:17:38</Clock>
+    </ModifyDate>
+    <ModifiedBy>
+        <PersonId>354</PersonId>
+    </ModifiedBy>
+    <HashTableEntry>
+        <Key>Eventor_Message</Key>
+        <Value>Liveresultater på http://brikkesys.no/result.php?id=5481</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>officialResult_18200</Key>
+        <Value>2023-09-26 17:17:36</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_EntryChangeDeadlines</Key>
+        <Value>2023-09-25 21.59.59;EventClass,EventRaces,NumberOfCompetitors,Person,Organisation,PunchingCard,ServiceRequests</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_LiveloxEventConfigurations</Key>
+        <Value>114533,1</Value>
+    </HashTableEntry>
+</Event>

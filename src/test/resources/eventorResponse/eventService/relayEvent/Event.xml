@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" eventForm="RelaySingleDay">
+    <EventId>17469</EventId>
+    <Name>Kompisstafetten</Name>
+    <EventClassificationId>3</EventClassificationId>
+    <EventStatusId>11</EventStatusId>
+    <DisciplineId>1</DisciplineId>
+    <StartDate>
+        <Date>2023-06-18</Date>
+        <Clock>12:00:00</Clock>
+    </StartDate>
+    <FinishDate>
+        <Date>2023-06-18</Date>
+        <Clock>12:00:00</Clock>
+    </FinishDate>
+    <AlternativeDates>
+        <Sequence>1</Sequence>
+        <StartDate>
+            <Date>2023-06-11</Date>
+            <Clock>00:00:00</Clock>
+        </StartDate>
+        <FinishDate>
+            <Date>2023-06-11</Date>
+            <Clock>00:00:00</Clock>
+        </FinishDate>
+    </AlternativeDates>
+    <AlternativeDates>
+        <Sequence>2</Sequence>
+        <StartDate>
+            <Date>2023-06-18</Date>
+            <Clock>00:00:00</Clock>
+        </StartDate>
+        <FinishDate>
+            <Date>2023-06-18</Date>
+            <Clock>00:00:00</Clock>
+        </FinishDate>
+    </AlternativeDates>
+    <EventOfficial>
+        <EventOfficialId>51512</EventOfficialId>
+        <RoleTypeId>101</RoleTypeId>
+        <PersonId>938</PersonId>
+        <EventId>17469</EventId>
+    </EventOfficial>
+    <EventOfficial>
+        <EventOfficialId>51513</EventOfficialId>
+        <RoleTypeId>102</RoleTypeId>
+        <PersonId>1108</PersonId>
+        <EventId>17469</EventId>
+    </EventOfficial>
+    <EventOfficial>
+        <EventOfficialId>51514</EventOfficialId>
+        <RoleTypeId>103</RoleTypeId>
+        <PersonId>938</PersonId>
+        <EventId>17469</EventId>
+    </EventOfficial>
+    <Organiser>
+        <Organisation>
+            <OrganisationId>299</OrganisationId>
+            <Name>Samnanger IL</Name>
+            <ShortName>Samnanger IL</ShortName>
+            <MediaName>Samnanger IL</MediaName>
+            <OrganisationTypeId>3</OrganisationTypeId>
+            <Country>
+                <CountryId value="578" />
+                <Alpha3 value="NOR" />
+                <Name languageId="en">Norway</Name>
+                <Name languageId="sv">Norge</Name>
+            </Country>
+            <ParentOrganisation>
+                <OrganisationId>8</OrganisationId>
+            </ParentOrganisation>
+            <OrganisationStatusId>1</OrganisationStatusId>
+            <ModifyDate>
+                <Date>2016-06-14</Date>
+                <Clock>20:57:06</Clock>
+            </ModifyDate>
+        </Organisation>
+    </Organiser>
+    <ClassTypeId>2</ClassTypeId>
+    <EntryBreak>
+        <ValidToDate>
+            <Date>2023-06-16</Date>
+            <Clock>19:00:59</Clock>
+        </ValidToDate>
+    </EntryBreak>
+    <EntryBreak>
+        <ValidFromDate>
+            <Date>2023-06-15</Date>
+            <Clock>22:01:00</Clock>
+        </ValidFromDate>
+        <ValidToDate>
+            <Date>2023-06-17</Date>
+            <Clock>22:01:59</Clock>
+        </ValidToDate>
+    </EntryBreak>
+    <EventRace>
+        <EventRaceId>18134</EventRaceId>
+        <EventId>17469</EventId>
+        <Name></Name>
+        <RaceDate>
+            <Date>2023-06-18</Date>
+            <Clock>12:00:00</Clock>
+        </RaceDate>
+        <EventCenterPosition x="5.73713690333278" y="60.3632241424488" unit="WGS-84" />
+    </EventRace>
+    <ContactData>
+        <Tele phoneNumber="+4792848844" mailAddress="perarne.aadland@gmail.com">
+            <TeleType value="official" />
+        </Tele>
+    </ContactData>
+    <PunchingUnitType value="Emit" />
+    <ModifyDate>
+        <Date>2023-07-25</Date>
+        <Clock>20:07:47</Clock>
+    </ModifyDate>
+    <ModifiedBy>
+        <PersonId>1160</PersonId>
+    </ModifiedBy>
+    <HashTableEntry>
+        <Key>Eventor_ConsultationPerformed</Key>
+        <Value>1</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_EntryChangeDeadlines</Key>
+        <Value>2023-06-15 20.00.00;EventClass,EventRaces,NumberOfCompetitors,Person,Organisation,PunchingCard,ServiceRequests</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_LiveloxEventConfigurations</Key>
+        <Value>98588,1</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_Message</Key>
+        <Value>Regelen er at lag som går ut på fellesstart blir rangert bak lag som ikkje har fellesstart.
+På etapperesultat i Eventor blir og resultatet ut frå at fellesstart lag skal gå bak. Same med individuelle plasseringane på etappane på resultatlista</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>Eventor_RelayLineupSubmissionDeadline</Key>
+        <Value>2023-06-17 20.00.59</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>officialResult_18134</Key>
+        <Value>2023-06-18 22:23:50</Value>
+    </HashTableEntry>
+    <HashTableEntry>
+        <Key>startList_18134</Key>
+        <Value>2023-06-17 22:22:29</Value>
+    </HashTableEntry>
+</Event>
