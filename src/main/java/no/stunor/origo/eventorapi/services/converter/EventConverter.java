@@ -130,7 +130,7 @@ public class EventConverter {
      public List<Organisation> convertOrganisers(Eventor eventor, List<Object> organisers) {
         List<Organisation> result = new ArrayList<>();
         for (Object organiser: organisers){
-            result.add(organisationRepository.findByOrganisationIdAndEventor(((OrganisationId) organiser).getContent(), eventor.getEventorId()));   
+            result.add(organisationRepository.findByOrganisationIdAndEventor(((OrganisationId) organiser).getContent(), eventor.getEventorId()).blockFirst());   
         }
         return result;
     }

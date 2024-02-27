@@ -1,9 +1,9 @@
 logging:
   level:
     root: INFO
-spring:
-  webflux:
-    base-path: /rest
+server:
+  servlet:
+    context-path: /rest
 management:
   endpoints:
     web:

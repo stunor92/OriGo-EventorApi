@@ -46,15 +46,15 @@ public class CalendarService {
         List<CalendarRace> result = new ArrayList<>();
 
         for(Eventor eventor : eventorList){
-            List<Person> persons = personRepository.findByUsersAndEventor(userId, eventor.getEventorId());
+            List<Person> persons = personRepository.findByUsersAndEventor(userId, eventor.getEventorId()).collectList().block();
             result.addAll(getEventList(eventor, from, to, "", classifications, persons));
         }
         return result;
     }
 
     public List<CalendarRace> getEventList(String eventorId, String from, String to, String organisations, List<EventClassificationEnum> classifications, String userId) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException {
-        Eventor eventor = eventorRepository.findByEventorId(eventorId);
-        List<Person> persons = personRepository.findByUsersAndEventor(userId, eventor.getEventorId());
+        Eventor eventor = eventorRepository.findByEventorId(eventorId).blockFirst();
+        List<Person> persons = personRepository.findByUsersAndEventor(userId, eventor.getEventorId()).collectList().block();
         
         return getEventList(eventor, from, to, organisations, classifications, persons);
     }
