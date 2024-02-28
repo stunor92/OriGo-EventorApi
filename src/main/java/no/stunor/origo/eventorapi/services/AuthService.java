@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.services;
 
-
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +29,14 @@ public class AuthService {
 
     public Person authenticate(String eventorId, String username, String password, String userId) throws EventorApiException, EntityNotFoundException, InterruptedException, ExecutionException {
         
-        Eventor eventor = eventorRepository.findByEventorId(eventorId).blockFirst();
+        Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
 
         log.info("Start authenticating user {} on {}.", username, eventor.getName());
 
         Person person = PersonConverter.convertPerson(eventorService.authenticatePerson(eventor, username, password), eventor);
 
-        Person existingPerson = personRepository.findByPersonIdAndEventor(person.getPersonId(), eventor.getEventorId()).blockFirst();
+        Person existingPerson = personRepository.findByPersonIdAndEventor(person.getPersonId(), eventor.getEventorId()).block();
+
         if(existingPerson == null){
             person.getUsers().add(userId);
             personRepository.save(person);

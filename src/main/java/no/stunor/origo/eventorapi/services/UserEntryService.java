@@ -54,12 +54,12 @@ public class UserEntryService {
     public  List<UserRace>  userRaces(String userId, Eventor eventor, String eventNumber) throws InterruptedException, ExecutionException, NumberFormatException, ParseException {
         List<UserRace> raceList = new ArrayList<>();
 
-        List<Person> persons = personRepository.findByUsers(userId).collectList().block();
+        List<Person> persons = personRepository.findAllByUsersContains(userId).collectList().block();
 
         for (Person person : persons){
             Eventor personEventor = null;
             if(eventor == null){
-                personEventor = eventorRepository.findByEventorId(person.getEventor()).blockFirst();
+                personEventor = eventorRepository.findByEventorId(person.getEventor()).block();
             } else if (!person.getEventor().equals(eventor.getEventorId())){
                 continue;
             }
