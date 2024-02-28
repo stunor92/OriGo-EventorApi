@@ -50,7 +50,7 @@ public class EventService {
     
 
     public Event getEvent(String eventorId, String eventNumber, String userId) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
-        Eventor eventor = eventorRepository.findByEventorId(eventorId).blockFirst();
+        Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
 
         org.iof.eventor.Event event = eventorService.getEvent(eventor.getBaseUrl(), eventor.getApiKey(), eventNumber);
         EventClassList eventClassList = eventorService.getEventClasses(eventor, eventNumber);
@@ -64,12 +64,12 @@ public class EventService {
             organisers.add(OrganisationConverter.convertOrganisation(org, eventor));
             Region region = null;
             if(org.getParentOrganisation().getOrganisationId() != null){
-                region  = regionRepository.findByOrganisationIdAndEventor(org.getParentOrganisation().getOrganisationId().getContent(), eventorId).blockFirst();
+                region  = regionRepository.findByOrganisationIdAndEventor(org.getParentOrganisation().getOrganisationId().getContent(), eventorId).block();
             } if (region == null) {
                 log.info("{} does not have a region. chec if {} is a regon.", org.getName().getContent(), org.getName().getContent());
 
                 try {
-                    region = regionRepository.findByOrganisationIdAndEventor(org.getOrganisationId().getContent(), eventorId).blockFirst(); 
+                    region = regionRepository.findByOrganisationIdAndEventor(org.getOrganisationId().getContent(), eventorId).block(); 
                 } catch (Exception e1){
                     log.info("Region {} does not exist.", org.getOrganisationId().getContent());
                 }
@@ -94,19 +94,19 @@ public class EventService {
     }
 
     public EventEntryList getEntryList(String eventorId, String eventNumber) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException {
-        Eventor eventor = eventorRepository.findByEventorId(eventorId).blockFirst();
+        Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         EntryList entryList = eventorService.getEventEntryList(eventor.getBaseUrl(), eventor.getApiKey(), eventNumber);
         return EntryListConverter.convertEventEntryList(entryList, eventor);
     }  
 
     public List<RaceStartList> getStartList(String eventorId, String eventNumber) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException {
-        Eventor eventor = eventorRepository.findByEventorId(eventorId).blockFirst();
+        Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         StartList startList = eventorService.getEventStartList(eventor.getBaseUrl(), eventor.getApiKey(), eventNumber);
         return StartListConverter.convertEventStartList(startList, eventor);
     }  
 
     public List<RaceResultList> getResultList(String eventorId, String eventNumber) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
-        Eventor eventor = eventorRepository.findByEventorId(eventorId).blockFirst();
+        Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         ResultList resultList = eventorService.getEventResultList(eventor.getBaseUrl(), eventor.getApiKey(), eventNumber);
         return ResultListConverter.convertEventResultList(resultList, eventor);
     }  
