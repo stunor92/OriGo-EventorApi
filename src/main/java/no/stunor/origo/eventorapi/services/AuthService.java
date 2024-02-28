@@ -36,6 +36,7 @@ public class AuthService {
         Person person = PersonConverter.convertPerson(eventorService.authenticatePerson(eventor, username, password), eventor);
 
         Person existingPerson = personRepository.findByPersonIdAndEventor(person.getPersonId(), eventor.getEventorId()).block();
+
         if(existingPerson == null){
             person.getUsers().add(userId);
             personRepository.save(person);
