@@ -19,12 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.stunor.origo.eventorapi.api.EventorService;
 import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
 import no.stunor.origo.eventorapi.api.exception.EventorApiException;
+import no.stunor.origo.eventorapi.data.EventorRepository;
+import no.stunor.origo.eventorapi.data.PersonRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
 import no.stunor.origo.eventorapi.model.firestore.Person;
 import no.stunor.origo.eventorapi.model.origo.calendar.CalendarRace;
 import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
-import no.stunor.origo.eventorapi.repository.EventorRepository;
-import no.stunor.origo.eventorapi.repository.PersonRepository;
 import no.stunor.origo.eventorapi.services.converter.EventConverter;
 
 

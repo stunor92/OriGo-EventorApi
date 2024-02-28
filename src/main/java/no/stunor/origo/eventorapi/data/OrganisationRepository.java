@@ -1,4 +1,4 @@
-package no.stunor.origo.eventorapi.repository;
+package no.stunor.origo.eventorapi.data;
 
 import org.springframework.stereotype.Repository;
 

@@ -23,12 +23,12 @@ import jakarta.xml.bind.Unmarshaller;
 import no.stunor.origo.eventorapi.api.EventorService;
 import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
 import no.stunor.origo.eventorapi.api.exception.EventorApiException;
+import no.stunor.origo.eventorapi.data.EventorRepository;
+import no.stunor.origo.eventorapi.data.OrganisationRepository;
+import no.stunor.origo.eventorapi.data.RegionRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
 import no.stunor.origo.eventorapi.model.firestore.Organisation;
 import no.stunor.origo.eventorapi.model.firestore.Region;
-import no.stunor.origo.eventorapi.repository.EventorRepository;
-import no.stunor.origo.eventorapi.repository.OrganisationRepository;
-import no.stunor.origo.eventorapi.repository.RegionRepository;
 import no.stunor.origo.eventorapi.services.EventService;
 import reactor.core.publisher.Mono;
 
