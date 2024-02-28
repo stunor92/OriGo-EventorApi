@@ -27,13 +27,15 @@ import jakarta.xml.bind.Unmarshaller;
 import no.stunor.origo.eventorapi.api.EventorService;
 import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
 import no.stunor.origo.eventorapi.api.exception.EventorApiException;
+import no.stunor.origo.eventorapi.data.EventorRepository;
+import no.stunor.origo.eventorapi.data.PersonRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
 import no.stunor.origo.eventorapi.model.firestore.Person;
 import no.stunor.origo.eventorapi.model.origo.person.PersonName;
-import no.stunor.origo.eventorapi.repository.EventorRepository;
-import no.stunor.origo.eventorapi.repository.PersonRepository;
 import no.stunor.origo.eventorapi.services.UserEntryService;
-/* 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 @SpringBootTest
 public class PersonalEventsServiceTest {
 
@@ -76,7 +78,7 @@ public class PersonalEventsServiceTest {
         userEntryService.userRaces("abc", generateEventor(), "123");
     }
 
-
+/* 
    @Test                                                                                          
     public void testPersonSignedUp() throws EntityNotFoundException, EventorApiException, JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
         when(eventorService.getGetOrganisationEntries(any(Eventor.class), anyList(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/signedUp/OrganisationEntries.xml"));
@@ -85,7 +87,7 @@ public class PersonalEventsServiceTest {
 
         userEntryService.userRaces("abc", generateEventor(), "123");
     }
-
+*/
 
     @Test                                                                                          
     public void testPersonStarttime() throws EntityNotFoundException, EventorApiException, JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
@@ -138,4 +140,3 @@ public class PersonalEventsServiceTest {
     }
 
 }
-*/

@@ -19,11 +19,11 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import no.stunor.origo.eventorapi.api.EventorService;
 import no.stunor.origo.eventorapi.api.exception.EventorApiException;
+import no.stunor.origo.eventorapi.data.EventorRepository;
+import no.stunor.origo.eventorapi.data.PersonRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
 import no.stunor.origo.eventorapi.model.firestore.Person;
 import no.stunor.origo.eventorapi.model.origo.user.UserRace;
-import no.stunor.origo.eventorapi.repository.EventorRepository;
-import no.stunor.origo.eventorapi.repository.PersonRepository;
 import no.stunor.origo.eventorapi.services.converter.PersonEntriesConverter;
 
 @Slf4j

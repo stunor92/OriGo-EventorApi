@@ -24,6 +24,7 @@ import org.iof.eventor.ValidToDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import no.stunor.origo.eventorapi.data.OrganisationRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
 import no.stunor.origo.eventorapi.model.firestore.Organisation;
 import no.stunor.origo.eventorapi.model.firestore.Region;
@@ -41,7 +42,6 @@ import no.stunor.origo.eventorapi.model.origo.event.LightConditionEnum;
 import no.stunor.origo.eventorapi.model.origo.event.Race;
 import no.stunor.origo.eventorapi.model.origo.user.UserCompetitor;
 import no.stunor.origo.eventorapi.model.origo.user.UserRace;
-import no.stunor.origo.eventorapi.repository.OrganisationRepository;
 
 @Component
 public class EventConverter {
