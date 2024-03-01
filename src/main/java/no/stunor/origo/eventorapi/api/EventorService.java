@@ -14,9 +14,13 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.iof.eventor.CompetitorCountList;
 import org.iof.eventor.DocumentList;
@@ -88,7 +92,7 @@ public class EventorService {
         }
 
     }
-    public EventList getEventList(Eventor eventor, String fromDate, String toDate, String organisationIds, List<EventClassificationEnum> classifications) throws EventorApiException {
+    public EventList getEventList(Eventor eventor, LocalDate fromDate, LocalDate toDate, List<String> organisationIds, List<EventClassificationEnum> classifications) throws EventorApiException {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", eventor.getApiKey());
 
@@ -121,9 +125,9 @@ public class EventorService {
         try {
             HttpEntity<String> request = new HttpEntity<>(headers);
             ResponseEntity<EventList> response = restTemplate.exchange(
-                    eventor.getBaseUrl() + "api/events?fromDate=" + (fromDate == null ? "" : fromDate) +
-                            "&toDate=" + (toDate == null ? "" : toDate) +
-                            "&organisationIds=" + (organisationIds == null ? "" : organisationIds) +
+                    eventor.getBaseUrl() + "api/events?fromDate=" + (fromDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate)) +
+                            "&toDate=" + (toDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate)) +
+                            "&organisationIds=" + (organisationIds == null ? "" : String.join(",", classificationIds)) +
                             "&classificationIds=" + String.join(",", classificationIds) +
                             "&includeEntryBreaks=true",
                     HttpMethod.GET,

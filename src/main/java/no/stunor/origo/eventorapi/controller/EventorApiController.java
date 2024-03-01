@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -41,9 +42,9 @@ class EventorApiController {
     @Autowired
     EventService eventService;
 
-    @GetMapping("/authenticate")
+    @GetMapping("/authenticate/{eventorId}")
     public ResponseEntity<Person> authenticate(
-        @RequestHeader(value = "eventor") String eventorId,
+        @PathVariable(value = "eventorId") String eventorId,
         @RequestHeader(value = "username") String username,
         @RequestHeader(value = "password") String password,
         @RequestHeader(value = "userId") String userId)
@@ -66,12 +67,12 @@ class EventorApiController {
     }
 
 
-    @GetMapping("/eventList/{eventor}")
+    @GetMapping("/eventList/{eventorId}")
     public ResponseEntity<List<CalendarRace>> getEventList(
-            @PathVariable("eventor") String eventorId,
-            @RequestParam("from") String from,
-            @RequestParam("to") String to,
-            @RequestParam(value = "organisations", required = false) String organisations,
+            @PathVariable("eventorId") String eventorId,
+            @RequestParam("from") LocalDate from,
+            @RequestParam("to") LocalDate to,
+            @RequestParam(value = "organisations", required = false) List<String> organisations,
             @RequestParam(value = "classifications", required = false) List<EventClassificationEnum> classifications,
             @RequestHeader("userId") String userId) throws ExecutionException, InterruptedException {
 
@@ -92,8 +93,8 @@ class EventorApiController {
     }
     @GetMapping("/eventList")
     public ResponseEntity<List<CalendarRace>> getEventList(
-            @RequestParam("from") String from,
-            @RequestParam("to") String to,
+            @RequestParam("from") LocalDate from,
+            @RequestParam("to") LocalDate to,
             @RequestParam(value = "classifications", required = false) List<EventClassificationEnum> classifications,
             @RequestHeader("userId") String userId) throws ExecutionException, InterruptedException {
 
@@ -119,10 +120,10 @@ class EventorApiController {
         }
     }
 
-    @GetMapping("/event/{eventor}/{eventNumber}")
+    @GetMapping("/event/{eventorId}/{eventId}")
     public ResponseEntity<Event> getEvent(
-            @PathVariable("eventor") String eventorId,
-            @PathVariable("eventNumber") String eventId,
+            @PathVariable("eventorId") String eventorId,
+            @PathVariable("eventId") String eventId,
             @RequestHeader("userId") String userId) throws ExecutionException, InterruptedException, NumberFormatException, ParseException {
         try {
             return new ResponseEntity<>(eventService.getEvent(eventorId, eventId, userId), HttpStatus.OK);
@@ -136,12 +137,12 @@ class EventorApiController {
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);        
     }
 
-    @GetMapping("/event/entrylist/{eventor}/{eventNumber}")
+    @GetMapping("/event/entrylist/{eventorId}/{eventId}")
     public ResponseEntity<EventEntryList> getEventEntryList(
-            @PathVariable("eventor") String eventorId,
-            @PathVariable("eventNumber") String eventNumber) throws ExecutionException, InterruptedException {                
+            @PathVariable("eventorId") String eventorId,
+            @PathVariable("eventId") String eventId) throws ExecutionException, InterruptedException {                
         try {
-            return new ResponseEntity<>(eventService.getEntryList(eventorId, eventNumber), HttpStatus.OK);
+            return new ResponseEntity<>(eventService.getEntryList(eventorId, eventId), HttpStatus.OK);
         } catch (EventorApiException e) {
             if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
                 return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -152,13 +153,13 @@ class EventorApiController {
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);      
     }
 
-    @GetMapping("/event/startlist/{eventor}/{eventNumber}")
+    @GetMapping("/event/startlist/{eventorId}/{eventId}")
     public ResponseEntity<List<RaceStartList>> getEventStartList(
-            @PathVariable("eventor") String eventorId,
-            @PathVariable("eventNumber") String eventNumber) throws ExecutionException, InterruptedException {
+            @PathVariable("eventorId") String eventorId,
+            @PathVariable("eventId") String eventId) throws ExecutionException, InterruptedException {
 
         try {
-            return new ResponseEntity<>(eventService.getStartList(eventorId, eventNumber), HttpStatus.OK);
+            return new ResponseEntity<>(eventService.getStartList(eventorId, eventId), HttpStatus.OK);
         } catch (EventorApiException e) {
             if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
                 return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -169,13 +170,13 @@ class EventorApiController {
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);    
     }
 
-    @GetMapping("/event/resultlist/{eventor}/{eventNumber}")
+    @GetMapping("/event/resultlist/{eventorId}/{eventId}")
     public ResponseEntity<List<RaceResultList>> getEventResultList(
-            @PathVariable("eventor") String eventorId,
-            @PathVariable("eventNumber") String eventNumber) throws ExecutionException, InterruptedException, NumberFormatException, ParseException {
+            @PathVariable("eventorId") String eventorId,
+            @PathVariable("eventId") String eventId) throws ExecutionException, InterruptedException, NumberFormatException, ParseException {
 
          try {
-            return new ResponseEntity<>(eventService.getResultList(eventorId, eventNumber), HttpStatus.OK);
+            return new ResponseEntity<>(eventService.getResultList(eventorId, eventId), HttpStatus.OK);
         } catch (EventorApiException e) {
             if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
                 return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);

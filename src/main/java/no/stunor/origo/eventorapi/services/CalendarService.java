@@ -1,5 +1,6 @@
 package no.stunor.origo.eventorapi.services;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,26 +41,26 @@ public class CalendarService {
     @Autowired
     EventConverter eventConverter;
 
-    public List<CalendarRace> getEventList(String from, String to, List<EventClassificationEnum> classifications, String userId) throws EntityNotFoundException, InterruptedException, ExecutionException {
+    public List<CalendarRace> getEventList(LocalDate from, LocalDate to, List<EventClassificationEnum> classifications, String userId) throws EntityNotFoundException, InterruptedException, ExecutionException {
         List<Eventor> eventorList = eventorRepository.findAll().collectList().block();
         
         List<CalendarRace> result = new ArrayList<>();
 
         for(Eventor eventor : eventorList){
             List<Person> persons = personRepository.findAllByUsersContainsAndEventor(userId, eventor.getEventorId()).collectList().block();
-            result.addAll(getEventList(eventor, from, to, "", classifications, persons));
+            result.addAll(getEventList(eventor, from, to, null, classifications, persons));
         }
         return result;
     }
 
-    public List<CalendarRace> getEventList(String eventorId, String from, String to, String organisations, List<EventClassificationEnum> classifications, String userId) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException {
+    public List<CalendarRace> getEventList(String eventorId, LocalDate from, LocalDate to, List<String> organisations, List<EventClassificationEnum> classifications, String userId) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException {
         Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         List<Person> persons = personRepository.findAllByUsersContainsAndEventor(userId, eventor.getEventorId()).collectList().block();
         
         return getEventList(eventor, from, to, organisations, classifications, persons);
     }
 
-    private List<CalendarRace> getEventList(Eventor eventor, String from, String to, String organisations, List<EventClassificationEnum> classifications, List<Person> persons) {
+    private List<CalendarRace> getEventList(Eventor eventor, LocalDate from, LocalDate to, List<String> organisations, List<EventClassificationEnum> classifications, List<Person> persons) {
         try {
             EventList eventList = eventorService.getEventList(eventor, from, to, organisations, classifications);
             List<String> events = new ArrayList<>();

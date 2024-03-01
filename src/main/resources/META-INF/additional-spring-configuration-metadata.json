@@ -48,5 +48,15 @@
     "name": "config.personal-entries.start",
     "type": "java.lang.String",
     "description": "A description for 'config.personal-entries.start'"
+  },
+  {
+    "name": "config.personal-entries.start",
+    "type": "java.lang.String",
+    "description": "A description for 'config.personal-entries.start'"
+  },
+  {
+    "name": "config.personal-entries.end",
+    "type": "java.lang.String",
+    "description": "A description for 'config.personal-entries.end'"
   }
 ]}

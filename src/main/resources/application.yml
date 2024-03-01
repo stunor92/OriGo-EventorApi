@@ -9,6 +9,10 @@ springdoc:
     path: /api-docs
   swagger-ui: 
     path: /documentation.html
+spring:
+  mvc:
+    format:
+      date: yyyy-MM-dd
 
 management:
   endpoints:
@@ -23,7 +27,6 @@ management:
       enabled: true
     health:
       enabled: true
-      show-detals: always
     metrics:
       enabled: true
 config:
