@@ -39,7 +39,7 @@ public class AuthService {
 
         if(existingPerson == null){
             person.getUsers().add(userId);
-            personRepository.save(person);
+            personRepository.save(person).block();
         } else {    
             person.setId(existingPerson.getId());
 
@@ -49,8 +49,7 @@ public class AuthService {
                 person.getUsers().add(userId);
             }
 
-
-            personRepository.save(person);
+            personRepository.save(person).block();
 
         }
         
