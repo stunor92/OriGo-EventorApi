@@ -125,7 +125,7 @@ public class EventorService {
             ResponseEntity<EventList> response = restTemplate.exchange(
                     eventor.getBaseUrl() + "api/events?fromDate=" + (fromDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate)) +
                             "&toDate=" + (toDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate)) +
-                            "&organisationIds=" + (organisationIds == null ? "" : String.join(",", classificationIds)) +
+                            "&organisationIds=" + (organisationIds == null ? "" : String.join(",", organisationIds)) +
                             "&classificationIds=" + String.join(",", classificationIds) +
                             "&includeEntryBreaks=true",
                     HttpMethod.GET,
