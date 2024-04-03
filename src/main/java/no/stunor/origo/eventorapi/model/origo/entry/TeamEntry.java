@@ -8,7 +8,7 @@ public record TeamEntry(
     String entryId,
     List<Organisation> organisations,
     List<TeamMemberEntry> teamMembers,
-    String name,
+    String teamName,
     String bib,
     List<String> entryFeeIds,
     List<String> eventClassIds) {

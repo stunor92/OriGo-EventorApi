@@ -10,7 +10,7 @@ public record TeamResult(
     String resultId,
     List<Organisation> organisations,
     List<TeamMemberResult> teamMembers,
-    String name,
+    String teamName,
     Date startTime,
     Date finishTime,
     Result result,
