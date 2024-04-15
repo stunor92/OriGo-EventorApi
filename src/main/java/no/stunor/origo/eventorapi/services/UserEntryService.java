@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import org.iof.eventor.Entry;
 import org.iof.eventor.EntryList;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EventorApiException;
+import no.stunor.origo.eventorapi.api.exception.EventorParsingException;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.PersonRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
@@ -51,7 +50,7 @@ public class UserEntryService {
 
 
 
-    public  List<UserRace>  userRaces(String userId, Eventor eventor, String eventNumber) throws InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public  List<UserRace>  userRaces(String userId, Eventor eventor, String eventNumber) {
         List<UserRace> raceList = new ArrayList<>();
 
         List<Person> persons = personRepository.findAllByUsersContains(userId).collectList().block();
@@ -98,9 +97,10 @@ public class UserEntryService {
                         raceList.add(race);
                     }
                 }
-            } catch (EventorApiException e) {
-                log.warn("Not able to fetch data for person {} from {}.", person.getPersonId(), eventor != null? eventor.getName() : personEventor!= null ? personEventor.getName() : "");
-            } 
+            } catch (NumberFormatException | ParseException e ) {
+                log.warn(e.getMessage());
+                throw new EventorParsingException();
+            }
         }
 
         return raceList;

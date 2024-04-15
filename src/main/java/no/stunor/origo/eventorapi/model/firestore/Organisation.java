@@ -2,6 +2,7 @@ package no.stunor.origo.eventorapi.model.firestore;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.spring.data.firestore.Document;
 
 import lombok.AllArgsConstructor;
@@ -17,6 +18,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Document(collectionName = "organisations")
 public class Organisation {
+    @JsonIgnore
+    @DocumentId
+    private String id;
     private String organisationId;
     private String eventorId;
     private String name;

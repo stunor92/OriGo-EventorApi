@@ -9,10 +9,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,10 +30,8 @@ import org.iof.eventor.ResultListList;
 import org.iof.eventor.StartList;
 import org.iof.eventor.StartListList;
 
-import no.stunor.origo.eventorapi.api.exception.EventorApiException;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
 import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
-@Slf4j
 @Service
 public class EventorService {
 
@@ -71,27 +66,22 @@ public class EventorService {
         restTemplate.setMessageConverters(converters);
     }
 
-    public Person authenticatePerson(Eventor eventor, String username, String password) throws EventorApiException {
+    public Person authenticatePerson(Eventor eventor, String username, String password) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Username", username);
         headers.set("Password", password);
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<Person> response = restTemplate.exchange(
-                    eventor.getBaseUrl() + "api/authenticatePerson",
-                    HttpMethod.GET,
-                    request,
-                    Person.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
-
+        
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<Person> response = restTemplate.exchange(
+                eventor.getBaseUrl() + "api/authenticatePerson",
+                HttpMethod.GET,
+                request,
+                Person.class,
+                1
+        );
+        return response.getBody();
     }
-    public EventList getEventList(Eventor eventor, LocalDate fromDate, LocalDate toDate, List<String> organisationIds, List<EventClassificationEnum> classifications) throws EventorApiException {
+    public EventList getEventList(Eventor eventor, LocalDate fromDate, LocalDate toDate, List<String> organisationIds, List<EventClassificationEnum> classifications) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", eventor.getApiKey());
 
@@ -121,52 +111,39 @@ public class EventorService {
             }
         }
     
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<EventList> response = restTemplate.exchange(
-                    eventor.getBaseUrl() + "api/events?fromDate=" + (fromDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate)) +
-                            "&toDate=" + (toDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate)) +
-                            "&organisationIds=" + (organisationIds == null ? "" : String.join(",", organisationIds)) +
-                            "&classificationIds=" + String.join(",", classificationIds) +
-                            "&includeEntryBreaks=true",
-                    HttpMethod.GET,
-                    request,
-                    EventList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
-
-
-
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<EventList> response = restTemplate.exchange(
+                eventor.getBaseUrl() + "api/events?fromDate=" + (fromDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate)) +
+                        "&toDate=" + (toDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate)) +
+                        "&organisationIds=" + (organisationIds == null ? "" : String.join(",", organisationIds)) +
+                        "&classificationIds=" + String.join(",", classificationIds) +
+                        "&includeEntryBreaks=true",
+                HttpMethod.GET,
+                request,
+                EventList.class,
+                1
+        );
+        return response.getBody();
     }
 
-       public CompetitorCountList getCompetitorCounts(Eventor eventor, List<String> events, List<String> organisations, List<String> persons) throws EventorApiException {
+    public CompetitorCountList getCompetitorCounts(Eventor eventor, List<String> events, List<String> organisations, List<String> persons) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", eventor.getApiKey());
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<CompetitorCountList> response = restTemplate.exchange(
-                    eventor.getBaseUrl() + "api/competitorcount?eventIds=" + String.join(",", events) +
-                            ",&organisationIds=" + String.join(",", organisations) + 
-                            "&personIds=" + String.join(",", persons),
-                    HttpMethod.GET,
-                    request,
-                    CompetitorCountList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<CompetitorCountList> response = restTemplate.exchange(
+                eventor.getBaseUrl() + "api/competitorcount?eventIds=" + String.join(",", events) +
+                        ",&organisationIds=" + String.join(",", organisations) + 
+                        "&personIds=" + String.join(",", persons),
+                HttpMethod.GET,
+                request,
+                CompetitorCountList.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public StartListList getGetPersonalStarts(Eventor eventor, String personId, String eventId) throws EventorApiException {
+    public StartListList getGetPersonalStarts(Eventor eventor, String personId, String eventId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", eventor.getApiKey());
 
@@ -187,23 +164,18 @@ public class EventorService {
             eventId = "";
         }
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<StartListList> response = restTemplate.exchange(
-                    eventor.getBaseUrl() + "api/starts/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + eventId,
-                    HttpMethod.GET,
-                    request,
-                    StartListList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<StartListList> response = restTemplate.exchange(
+                eventor.getBaseUrl() + "api/starts/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + eventId,
+                HttpMethod.GET,
+                request,
+                StartListList.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public ResultListList getGetPersonalResults(Eventor eventor, String personId, String eventNumber) throws EventorApiException {
+    public ResultListList getGetPersonalResults(Eventor eventor, String personId, String eventNumber) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", eventor.getApiKey());
 
@@ -226,23 +198,19 @@ public class EventorService {
             eventNumber = "";
         }
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<ResultListList> response = restTemplate.exchange(
-                    eventor.getBaseUrl() + "api/results/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + eventNumber ,
-                    HttpMethod.GET,
-                    request,
-                    ResultListList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<ResultListList> response = restTemplate.exchange(
+                eventor.getBaseUrl() + "api/results/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + eventNumber ,
+                HttpMethod.GET,
+                request,
+                ResultListList.class,
+                1
+        );
+        return response.getBody();
+
     }
 
-    public EntryList getGetOrganisationEntries(Eventor eventor, List<String> organisations, String eventNumber) throws EventorApiException {
+    public EntryList getGetOrganisationEntries(Eventor eventor, List<String> organisations, String eventNumber) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", eventor.getApiKey());
 
@@ -264,162 +232,119 @@ public class EventorService {
             eventNumber = "";
         }
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<EntryList> response = restTemplate.exchange(
-                    eventor.getBaseUrl() + "api/entries?organisationIds=" + String.join(",", organisations) + "&fromEventDate=" + fromDate + "&toEventDate=" + toDate + "&includeEventElement=true&eventIds=" + eventNumber,
-                    HttpMethod.GET,
-                    request,
-                    EntryList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<EntryList> response = restTemplate.exchange(
+                eventor.getBaseUrl() + "api/entries?organisationIds=" + String.join(",", organisations) + "&fromEventDate=" + fromDate + "&toEventDate=" + toDate + "&includeEventElement=true&eventIds=" + eventNumber,
+                HttpMethod.GET,
+                request,
+                EntryList.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public Event getEvent(String baseUrl, String apiKey, String eventId) throws EventorApiException {
+    public Event getEvent(String baseUrl, String apiKey, String eventId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", apiKey);
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<Event> response = restTemplate.exchange(
-                    baseUrl + "api/event/" + eventId,
-                    HttpMethod.GET,
-                    request,
-                    Event.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<Event> response = restTemplate.exchange(
+                baseUrl + "api/event/" + eventId,
+                HttpMethod.GET,
+                request,
+                Event.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public EventClassList getEventClasses(Eventor eventor, String eventId) throws EventorApiException {
+    public EventClassList getEventClasses(Eventor eventor, String eventId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", eventor.getApiKey());
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<EventClassList> response = restTemplate.exchange(
-                    eventor.getBaseUrl() + "api/eventclasses?includeEntryFees=true&eventId=" + eventId,
-                    HttpMethod.GET,
-                    request,
-                    EventClassList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<EventClassList> response = restTemplate.exchange(
+                eventor.getBaseUrl() + "api/eventclasses?includeEntryFees=true&eventId=" + eventId,
+                HttpMethod.GET,
+                request,
+                EventClassList.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public DocumentList getEventDocuments(String baseUrl, String apiKey, String eventId) throws EventorApiException {
+    public DocumentList getEventDocuments(String baseUrl, String apiKey, String eventId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", apiKey);
 
-        try{
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<DocumentList> response = restTemplate.exchange(
-                    baseUrl+ "api/events/documents?eventIds=" + eventId,
-                    HttpMethod.GET,
-                    request,
-                    DocumentList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<DocumentList> response = restTemplate.exchange(
+                baseUrl+ "api/events/documents?eventIds=" + eventId,
+                HttpMethod.GET,
+                request,
+                DocumentList.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public EntryList getEventEntryList(String baseUrl, String apiKey, String eventId) throws EventorApiException {
+    public EntryList getEventEntryList(String baseUrl, String apiKey, String eventId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", apiKey);
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<EntryList> response = restTemplate.exchange(
-                    baseUrl + "api/entries?includePersonElement=true&includeEntryFees=true&includeOrganisationElement=true&eventIds=" + eventId,
-                    HttpMethod.GET,
-                    request,
-                    EntryList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<EntryList> response = restTemplate.exchange(
+                baseUrl + "api/entries?includePersonElement=true&includeEntryFees=true&includeOrganisationElement=true&eventIds=" + eventId,
+                HttpMethod.GET,
+                request,
+                EntryList.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public StartList getEventStartList(String baseUrl, String apiKey, String eventId) throws EventorApiException {
+    public StartList getEventStartList(String baseUrl, String apiKey, String eventId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", apiKey);
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<StartList> response = restTemplate.exchange(
-                    baseUrl + "api/starts/event?eventId=" + eventId,
-                    HttpMethod.GET,
-                    request,
-                    StartList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<StartList> response = restTemplate.exchange(
+                baseUrl + "api/starts/event?eventId=" + eventId,
+                HttpMethod.GET,
+                request,
+                StartList.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public ResultList getEventResultList(String baseUrl, String apiKey, String eventId) throws EventorApiException {
+    public ResultList getEventResultList(String baseUrl, String apiKey, String eventId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", apiKey);
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<ResultList> response = restTemplate.exchange(
-                    baseUrl + "api/results/event?eventId=" + eventId + "&includeSplitTimes=true",
-                    HttpMethod.GET,
-                    request,
-                    ResultList.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<ResultList> response = restTemplate.exchange(
+                baseUrl + "api/results/event?eventId=" + eventId + "&includeSplitTimes=true",
+                HttpMethod.GET,
+                request,
+                ResultList.class,
+                1
+        );
+        return response.getBody();
     }
 
-    public Organisation getOrganisatonFromApiKey(String baseUrl, String apiKey) throws EventorApiException {
+    public Organisation getOrganisatonFromApiKey(String baseUrl, String apiKey) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("ApiKey", apiKey);
 
-        try {
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<Organisation> response = restTemplate.exchange(
-                    baseUrl + "api/organisation/apiKey",
-                    HttpMethod.GET,
-                    request,
-                    Organisation.class,
-                    1
-            );
-            return response.getBody();
-        } catch (HttpClientErrorException e){
-            if(e.getStatusCode().value() == 404){
-                throw new EventorApiException(e.getStatusCode(), "ApiKey does not belog to any organisation.");
-            }
-            log.warn(e.getStatusText());
-            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
-        }
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<Organisation> response = restTemplate.exchange(
+                baseUrl + "api/organisation/apiKey",
+                HttpMethod.GET,
+                request,
+                Organisation.class,
+                1
+        );
+        return response.getBody();
     }
 }

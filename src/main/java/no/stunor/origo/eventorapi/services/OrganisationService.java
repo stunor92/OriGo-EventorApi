@@ -1,16 +1,12 @@
 package no.stunor.origo.eventorapi.services;
 
-import java.text.ParseException;
-import java.util.concurrent.ExecutionException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
-import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpStatusClass;
 import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
-import no.stunor.origo.eventorapi.api.exception.EventorApiException;
+import no.stunor.origo.eventorapi.api.exception.EventorApiKeyException;
+import no.stunor.origo.eventorapi.api.exception.EventorConnectionException;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.OrganisationRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
@@ -27,7 +23,7 @@ public class OrganisationService {
     EventorService eventorService;
     
 
-    public Boolean validateApiKey(String eventorId, String organisationId) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public Boolean validateApiKey(String eventorId, String organisationId) {
         Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         Organisation organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId).block();
         if(organisation.getApiKey() == null) {
@@ -39,20 +35,31 @@ public class OrganisationService {
                 return false;
             }
             return organisation.getOrganisationId().equals(eventorOrganisation.getOrganisationId().getContent());
-        } catch (EventorApiException e) {
-            return false;
+        } catch (HttpClientErrorException e) {
+            if(e.getStatusCode().value() == 403) {
+                return false;
+            }
+            throw new EventorConnectionException();
         }
     }
 
-    public void updateApiKey(String eventorId, String organisationId, String apiKey) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public void updateApiKey(String eventorId, String organisationId, String apiKey) {
         Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         Organisation organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId).block();
-        org.iof.eventor.Organisation eventorOrganisation = eventorService.getOrganisatonFromApiKey(eventor.getBaseUrl(), organisation.getApiKey());
-        if(eventorOrganisation == null || !eventorOrganisation.getOrganisationId().getContent().equals(organisationId)) {
-            throw new EventorApiException(HttpStatusCode.valueOf(403), "API key is not valid for organisation");
+        
+        try{
+            org.iof.eventor.Organisation eventorOrganisation = eventorService.getOrganisatonFromApiKey(eventor.getBaseUrl(), apiKey);
+            if(eventorOrganisation == null || !eventorOrganisation.getOrganisationId().getContent().equals(organisationId)) {
+                throw new EventorApiKeyException( "API key is not valid for given organisation");
+            }
+        } catch (HttpClientErrorException e) {
+            if(e.getStatusCode().value() == 403) {
+                throw new EventorApiKeyException("ApiKey does not belong to any organisation.");
+            }
+            throw new EventorConnectionException();
         }
         organisation.setApiKey(apiKey);
-        organisationRepository.save(organisation);
+        organisationRepository.save(organisation).block();
     }
 
 }

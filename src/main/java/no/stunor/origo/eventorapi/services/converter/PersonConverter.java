@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.iof.eventor.Role;
 
-import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
 import no.stunor.origo.eventorapi.model.firestore.Person;
 import no.stunor.origo.eventorapi.model.origo.person.CompetitorPerson;
@@ -15,9 +14,7 @@ import no.stunor.origo.eventorapi.model.origo.person.PersonName;
 
 public class PersonConverter {
 
-    public static Person convertPerson(org.iof.eventor.Person eventorPerson, Eventor eventor) throws EntityNotFoundException {
-        if(eventorPerson == null)
-            throw new EntityNotFoundException("No user fetched from eventor.");
+    public static Person convertPerson(org.iof.eventor.Person eventorPerson, Eventor eventor) {
         return new Person(
             null,
             eventor.getEventorId(),
@@ -70,7 +67,7 @@ public class PersonConverter {
 
         return new PersonName(personName.getFamily().getContent(), given.toString());
     }
-    private static Map<String, String> convertMemberships(List<Role> roles) throws EntityNotFoundException  {
+    private static Map<String, String> convertMemberships(List<Role> roles) {
         Map<String, Integer> highestRole= new HashMap<>();
 
         for (Role role : roles){

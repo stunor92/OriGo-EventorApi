@@ -21,8 +21,6 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
-import no.stunor.origo.eventorapi.api.exception.EventorApiException;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.OrganisationRepository;
 import no.stunor.origo.eventorapi.data.RegionRepository;
@@ -58,7 +56,7 @@ public class EventServiceTest {
     }
 
     @Test                                                                                          
-    public void testSingelRaceEvent() throws EntityNotFoundException, EventorApiException, JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public void testSingelRaceEvent() throws JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
         when(eventorService.getEvent(anyString(), anyString(), anyString())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/Event.xml"));
         when(eventorService.getEventClasses(any(Eventor.class), anyString())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/EventClassList.xml"));
         when(eventorService.getEventDocuments(anyString(), anyString(),anyString())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/DocumentList.xml"));
@@ -66,7 +64,7 @@ public class EventServiceTest {
     }
 
    @Test                                                                                          
-    public void testMultiRaceEvent() throws EntityNotFoundException, EventorApiException, JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public void testMultiRaceEvent() throws JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
         when(eventorService.getEvent(anyString(), anyString(), anyString())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/Event.xml"));
         when(eventorService.getEventClasses(any(Eventor.class), anyString())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/EventClassList.xml"));
         when(eventorService.getEventDocuments(anyString(), anyString(),anyString())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/DocumentList.xml"));
@@ -76,7 +74,7 @@ public class EventServiceTest {
 
 
     @Test                                                                                          
-    public void testRelay() throws EntityNotFoundException, EventorApiException, JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public void testRelay() throws JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
         when(eventorService.getEvent(anyString(), anyString(), anyString())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/relayEvent/Event.xml"));
         when(eventorService.getEventClasses(any(Eventor.class),anyString())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/relayEvent/EventClassList.xml"));
         when(eventorService.getEventDocuments(anyString(), anyString(),anyString())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/relayEvent/DocumentList.xml"));
@@ -85,7 +83,7 @@ public class EventServiceTest {
     }
 
     private static Organisation generateOrganisation(){
-        return new Organisation( "141", "NOR", "IL Gneist", "CLUB", "NOR", null,  null, null, null, null);
+        return new Organisation("1234", "141", "NOR", "IL Gneist", "CLUB", "NOR", null,  null, null, null, null);
     }
 
     private static Region generateRegion(){

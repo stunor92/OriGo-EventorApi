@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import org.iof.eventor.CompetitorCount;
 import org.iof.eventor.CompetitorCountList;
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
-import no.stunor.origo.eventorapi.api.exception.EventorApiException;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.PersonRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
@@ -41,7 +38,7 @@ public class CalendarService {
     @Autowired
     EventConverter eventConverter;
 
-    public List<CalendarRace> getEventList(LocalDate from, LocalDate to, List<EventClassificationEnum> classifications, String userId) throws EntityNotFoundException, InterruptedException, ExecutionException {
+    public List<CalendarRace> getEventList(LocalDate from, LocalDate to, List<EventClassificationEnum> classifications, String userId) {
         List<Eventor> eventorList = eventorRepository.findAll().collectList().block();
         
         List<CalendarRace> result = new ArrayList<>();
@@ -53,7 +50,7 @@ public class CalendarService {
         return result;
     }
 
-    public List<CalendarRace> getEventList(String eventorId, LocalDate from, LocalDate to, List<String> organisations, List<EventClassificationEnum> classifications, String userId) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException {
+    public List<CalendarRace> getEventList(String eventorId, LocalDate from, LocalDate to, List<String> organisations, List<EventClassificationEnum> classifications, String userId) {
         Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         List<Person> persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventor.getEventorId()).collectList().block();
         
@@ -61,30 +58,23 @@ public class CalendarService {
     }
 
     private List<CalendarRace> getEventList(Eventor eventor, LocalDate from, LocalDate to, List<String> organisations, List<EventClassificationEnum> classifications, List<Person> persons) {
-        try {
-            EventList eventList = eventorService.getEventList(eventor, from, to, organisations, classifications);
-            List<String> events = new ArrayList<>();
-            for (Event event : eventList.getEvent()){
-                events.add(event.getEventId().getContent());
-            }
-
-            List<String> personIds = new ArrayList<>();
-            List<String> organisationIds = new ArrayList<>();
-
-            for (Person person : persons){
-                personIds.add(person.getPersonId());
-                organisationIds.addAll(person.getMemberships().keySet());
-            }
-
-            log.info("Fetcing cometitorcount for persons {} and orgaisations {}.", personIds, organisationIds);
-            CompetitorCountList competitorCountList = eventorService.getCompetitorCounts(eventor, events, organisationIds, personIds);
-            return convertEvents(eventList, eventor, competitorCountList);
-        } catch (EventorApiException e) {
-            log.warn("Not able to fetch evntlist from {}.", eventor.getName());
-            return new ArrayList<>();
+        EventList eventList = eventorService.getEventList(eventor, from, to, organisations, classifications);
+        List<String> events = new ArrayList<>();
+        for (Event event : eventList.getEvent()){
+            events.add(event.getEventId().getContent());
         }
-        
-        
+
+        List<String> personIds = new ArrayList<>();
+        List<String> organisationIds = new ArrayList<>();
+
+        for (Person person : persons){
+            personIds.add(person.getPersonId());
+            organisationIds.addAll(person.getMemberships().keySet());
+        }
+
+        log.info("Fetcing cometitorcount for persons {} and orgaisations {}.", personIds, organisationIds);
+        CompetitorCountList competitorCountList = eventorService.getCompetitorCounts(eventor, events, organisationIds, personIds);
+        return convertEvents(eventList, eventor, competitorCountList);
     }
 
     private List<CalendarRace> convertEvents(EventList eventList, Eventor eventor, CompetitorCountList competitorCountList) {

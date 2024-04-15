@@ -25,8 +25,6 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
-import no.stunor.origo.eventorapi.api.exception.EventorApiException;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.PersonRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
@@ -58,7 +56,7 @@ public class PersonalEventsServiceTest {
     }
    
     @Test                                                                                          
-    public void testPersonResultInactive() throws EntityNotFoundException, EventorApiException, JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public void testPersonResultInactive() throws JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
         when(eventorService.getGetOrganisationEntries(any(Eventor.class), anyList(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/OrganisationEntries.xml"));
         when(eventorService.getGetPersonalResults(any(Eventor.class), anyString(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/PersonalResult.xml"));
         when(eventorService.getGetPersonalStarts(any(Eventor.class), anyString(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/PersonalStart.xml"));
@@ -70,7 +68,7 @@ public class PersonalEventsServiceTest {
 
 
     @Test                                                                                          
-    public void testPersonNotSignedUp() throws EntityNotFoundException, EventorApiException, JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public void testPersonNotSignedUp() throws JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
         when(eventorService.getGetOrganisationEntries(any(Eventor.class), anyList(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/OrganisationEntries.xml"));
         when(eventorService.getGetPersonalResults(any(Eventor.class), anyString(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/PersonalResult.xml"));
         when(eventorService.getGetPersonalStarts(any(Eventor.class), anyString(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/PersonalStart.xml"));
@@ -90,7 +88,7 @@ public class PersonalEventsServiceTest {
 */
 
     @Test                                                                                          
-    public void testPersonStarttime() throws EntityNotFoundException, EventorApiException, JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public void testPersonStarttime() throws JAXBException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
         when(eventorService.getGetOrganisationEntries(any(Eventor.class), anyList(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/OrganisationEntries.xml"));
         when(eventorService.getGetPersonalResults(any(Eventor.class), anyString(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/PersonalResult.xml"));
         when(eventorService.getGetPersonalStarts(any(Eventor.class), anyString(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/PersonalStart.xml"));

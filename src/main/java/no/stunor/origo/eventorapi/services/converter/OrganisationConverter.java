@@ -46,6 +46,7 @@ public class OrganisationConverter {
 
     public static no.stunor.origo.eventorapi.model.firestore.Organisation convertOrganisation(org.iof.eventor.Organisation organisation, Eventor eventor) {
         return new Organisation(
+            null,
             organisation.getOrganisationId().getContent(),
             eventor.getEventorId(),
             organisation.getName().getContent(),

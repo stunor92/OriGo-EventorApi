@@ -80,7 +80,7 @@ public class PersonEntriesConverter {
         return raceMap;
     }
 
-    private Map<String, UserRace> convertStartListList(Eventor eventor, StartListList startListList,  Person person, Map<String, UserRace> raceMap) throws NumberFormatException, ParseException {
+    private Map<String, UserRace> convertStartListList(Eventor eventor, StartListList startListList,  Person person, Map<String, UserRace> raceMap) throws NumberFormatException, ParseException  {
         for(StartList startList : startListList.getStartList()){
             if(startList.getEvent().getEventRace().size() == 1){
                 EventRace race = startList.getEvent().getEventRace().get(0);
@@ -130,7 +130,7 @@ public class PersonEntriesConverter {
         return raceMap;
     }
 
-    private Map<String, UserRace> convertResultList(Eventor eventor, ResultListList resultListList,  Person person, Map<String, UserRace> raceMap) throws NumberFormatException, ParseException {
+    private Map<String, UserRace> convertResultList(Eventor eventor, ResultListList resultListList,  Person person, Map<String, UserRace> raceMap) throws NumberFormatException, ParseException  {
         for(ResultList resultList : resultListList.getResultList()){
             if(resultList.getEvent().getEventRace().size() == 1){
                 EventRace race = resultList.getEvent().getEventRace().get(0);
@@ -198,7 +198,7 @@ public class PersonEntriesConverter {
             eventConverter.convertEntryBreaks(event.getEntryBreak()));
     }
 
-    private static UserCompetitor createUserCompetitor(Person person, Entry entry, ClassStart classStart, Object start, ClassResult classResult, Object result, EventClassList eventClassList) throws NumberFormatException, ParseException{
+    private static UserCompetitor createUserCompetitor(Person person, Entry entry, ClassStart classStart, Object start, ClassResult classResult, Object result, EventClassList eventClassList) throws NumberFormatException, ParseException {
         return new UserCompetitor(
             person.getPersonId(),
             person.getName(),
@@ -221,7 +221,7 @@ public class PersonEntriesConverter {
             null);
     }
 
-    private static UserCompetitor updateUserResult(Person person, UserEntry userEntry, UserPersonStart personStart, UserTeamStart teamStart, ClassResult classResult, Object result) throws NumberFormatException, ParseException{
+    private static UserCompetitor updateUserResult(Person person, UserEntry userEntry, UserPersonStart personStart, UserTeamStart teamStart, ClassResult classResult, Object result) throws NumberFormatException, ParseException {
         return new UserCompetitor(
             person.getPersonId(),
             person.getName(),
@@ -264,7 +264,7 @@ public class PersonEntriesConverter {
         );
     }
     
-    public static UserPersonResult createPersonResult(PersonResult personResult, ClassResult classResult) throws NumberFormatException, ParseException {
+    public static UserPersonResult createPersonResult(PersonResult personResult, ClassResult classResult) throws NumberFormatException, ParseException  {
         Result result = null;
         if(personResult.getResult() != null){
             result = personResult.getResult();
@@ -279,7 +279,7 @@ public class PersonEntriesConverter {
         );
     }
 
-    public static UserTeamResult createTeamResult(TeamResult teamResult, ClassResult classResult) throws NumberFormatException, ParseException {
+    public static UserTeamResult createTeamResult(TeamResult teamResult, ClassResult classResult) throws NumberFormatException, ParseException  {
         return new UserTeamResult(
             teamResult.getTeamName().getContent(),
             teamResult.getBibNumber() != null ? teamResult.getBibNumber().getContent() : "",

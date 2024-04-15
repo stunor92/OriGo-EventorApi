@@ -2,6 +2,8 @@ logging:
   level:
     root: INFO
 server:
+  error:
+    include-message: always
   servlet:
     context-path: /rest
 springdoc:

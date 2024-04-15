@@ -1,8 +1,6 @@
 package no.stunor.origo.eventorapi.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
-import no.stunor.origo.eventorapi.api.exception.EventorApiException;
 import no.stunor.origo.eventorapi.model.firestore.Person;
 import no.stunor.origo.eventorapi.model.origo.calendar.CalendarRace;
 import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList;
@@ -19,16 +17,12 @@ import no.stunor.origo.eventorapi.services.UserEntryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -46,176 +40,59 @@ class EventorApiController {
     OrganisationService organisationService;
 
     @GetMapping("/authenticate/{eventorId}")
-    public ResponseEntity<Person> authenticate(
-        @PathVariable(value = "eventorId") String eventorId,
-        @RequestHeader(value = "username") String username,
-        @RequestHeader(value = "password") String password,
-        @RequestHeader(value = "userId") String userId)
-
-         throws ExecutionException, InterruptedException, IOException {
-        
+    public ResponseEntity<Person> authenticate(@PathVariable(value = "eventorId") String eventorId, @RequestHeader(value = "username") String username, @RequestHeader(value = "password") String password, @RequestHeader(value = "userId") String userId){
         log.info("Start authenticating user {}.", username);
-
-        try {
-             Person person = authService.authenticate(eventorId, username, password, userId);
-             return new ResponseEntity<>(person, HttpStatus.OK);
-        } catch (EventorApiException e) {
-            if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
-                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-            }
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(authService.authenticate(eventorId, username, password, userId), HttpStatus.OK);
     }
-
 
     @GetMapping("/eventList/{eventorId}")
-    public ResponseEntity<List<CalendarRace>> getEventList(
-            @PathVariable("eventorId") String eventorId,
-            @RequestParam("from") LocalDate from,
-            @RequestParam("to") LocalDate to,
-            @RequestParam(value = "organisations", required = false) List<String> organisations,
-            @RequestParam(value = "classifications", required = false) List<EventClassificationEnum> classifications,
-            @RequestHeader("userId") String userId) throws ExecutionException, InterruptedException {
-
+    public ResponseEntity<List<CalendarRace>> getEventList(@PathVariable("eventorId") String eventorId, @RequestParam("from") LocalDate from, @RequestParam("to") LocalDate to, @RequestParam(value = "organisations", required = false) List<String> organisations, @RequestParam(value = "classifications", required = false) List<EventClassificationEnum> classifications, @RequestHeader("userId") String userId) {
         log.info("Start to get eventlist from eventor-{}.", eventorId);
-
-        try {
-             List<CalendarRace> raceList = calendarService.getEventList(eventorId, from, to, organisations, classifications, userId);
-             return new ResponseEntity<>(raceList, HttpStatus.OK);
-        } catch (EventorApiException e) {
-            if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
-                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-            }
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-
+        return new ResponseEntity<>(calendarService.getEventList(eventorId, from, to, organisations, classifications, userId), HttpStatus.OK);
     }
+
     @GetMapping("/eventList")
-    public ResponseEntity<List<CalendarRace>> getEventList(
-            @RequestParam("from") LocalDate from,
-            @RequestParam("to") LocalDate to,
-            @RequestParam(value = "classifications", required = false) List<EventClassificationEnum> classifications,
-            @RequestHeader("userId") String userId) throws ExecutionException, InterruptedException {
-
+    public ResponseEntity<List<CalendarRace>> getEventList(@RequestParam("from") LocalDate from, @RequestParam("to") LocalDate to, @RequestParam(value = "classifications", required = false) List<EventClassificationEnum> classifications, @RequestHeader("userId") String userId)  {
         log.info("Start to get eventlist from all eventors.");
-
-        try {
-             List<CalendarRace> raceList = calendarService.getEventList(from, to, classifications, userId);
-             return new ResponseEntity<>(raceList, HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
+        return new ResponseEntity<>(calendarService.getEventList(from, to, classifications, userId), HttpStatus.OK);
     }
 
     @GetMapping("/personalEvents")
-    public ResponseEntity<List<UserRace>> getPersonalEvents(@RequestHeader("userId") String userId) throws NumberFormatException, ParseException {
+    public ResponseEntity<List<UserRace>> getPersonalEvents(@RequestHeader("userId") String userId) {
         log.info("Start to get personal events for user {}.", userId);
-        try {
-            List<UserRace> raceList;
-            raceList = userEntryService.userRaces(userId, null, null);
-            return new ResponseEntity<>(raceList, HttpStatus.OK);
-        } catch (InterruptedException | ExecutionException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
+        return new ResponseEntity<>(userEntryService.userRaces(userId, null, null), HttpStatus.OK);
+        
     }
 
     @GetMapping("/event/{eventorId}/{eventId}")
-    public ResponseEntity<Event> getEvent(
-            @PathVariable("eventorId") String eventorId,
-            @PathVariable("eventId") String eventId,
-            @RequestHeader("userId") String userId) throws ExecutionException, InterruptedException, NumberFormatException, ParseException {
-        try {
-            return new ResponseEntity<>(eventService.getEvent(eventorId, eventId, userId), HttpStatus.OK);
-        } catch (EventorApiException e) {
-            if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
-                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-            }
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);        
+    public ResponseEntity<Event> getEvent(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId, @RequestHeader("userId") String userId) {
+        return new ResponseEntity<>(eventService.getEvent(eventorId, eventId, userId), HttpStatus.OK); 
     }
 
     @GetMapping("/event/entrylist/{eventorId}/{eventId}")
-    public ResponseEntity<EventEntryList> getEventEntryList(
-            @PathVariable("eventorId") String eventorId,
-            @PathVariable("eventId") String eventId) throws ExecutionException, InterruptedException {                
-        try {
-            return new ResponseEntity<>(eventService.getEntryList(eventorId, eventId), HttpStatus.OK);
-        } catch (EventorApiException e) {
-            if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
-                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-            }
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);      
+    public ResponseEntity<EventEntryList> getEventEntryList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {                
+        return new ResponseEntity<>(eventService.getEntryList(eventorId, eventId), HttpStatus.OK);   
     }
 
     @GetMapping("/event/startlist/{eventorId}/{eventId}")
-    public ResponseEntity<List<RaceStartList>> getEventStartList(
-            @PathVariable("eventorId") String eventorId,
-            @PathVariable("eventId") String eventId) throws ExecutionException, InterruptedException {
-
-        try {
-            return new ResponseEntity<>(eventService.getStartList(eventorId, eventId), HttpStatus.OK);
-        } catch (EventorApiException e) {
-            if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
-                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-            }
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);    
+    public ResponseEntity<List<RaceStartList>> getEventStartList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {
+        return new ResponseEntity<>(eventService.getStartList(eventorId, eventId), HttpStatus.OK);
     }
 
     @GetMapping("/event/resultlist/{eventorId}/{eventId}")
-    public ResponseEntity<List<RaceResultList>> getEventResultList(
-            @PathVariable("eventorId") String eventorId,
-            @PathVariable("eventId") String eventId) throws ExecutionException, InterruptedException, NumberFormatException, ParseException {
-
-         try {
+    public ResponseEntity<List<RaceResultList>> getEventResultList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {
             return new ResponseEntity<>(eventService.getResultList(eventorId, eventId), HttpStatus.OK);
-        } catch (EventorApiException e) {
-            if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
-                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-            }
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);   
     }
 
 
-    @GetMapping("/organisation/validate/{eventorId}/{organisationId}")
-    public ResponseEntity<Boolean> validateApiKey(
-            @PathVariable("eventorId") String eventorId,
-            @PathVariable("organisationId") String organisationId) throws ExecutionException, InterruptedException, NumberFormatException, ParseException {
-
-         try {
-            return new ResponseEntity<>(organisationService.validateApiKey(eventorId, organisationId), HttpStatus.OK);
-        } catch (EventorApiException e) {
-            if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
-                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-            }
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);   
+    @GetMapping("/organisation/apiKey/validate/{eventorId}/{organisationId}")
+    public ResponseEntity<Boolean> validateApiKey(@PathVariable("eventorId") String eventorId, @PathVariable("organisationId") String organisationId) {
+        return new ResponseEntity<>(organisationService.validateApiKey(eventorId, organisationId), HttpStatus.OK);
     }
 
 
-    @PostMapping("/organisation/validate/{eventorId}/{organisationId}/{apiKey}")
-    public void validateApiKey(
-            @PathVariable("eventorId") String eventorId,
-            @PathVariable("organisationId") String organisationId,
-            @PathVariable("apiKey") String apiKey )throws ExecutionException, InterruptedException, NumberFormatException, ParseException, EntityNotFoundException, EventorApiException {
-
+    @PostMapping("/organisation/apiKey/{eventorId}/{organisationId}/{apiKey}")
+    public void updateApiKey(@PathVariable("eventorId") String eventorId, @PathVariable("organisationId") String organisationId, @PathVariable("apiKey") String apiKey) {
         organisationService.updateApiKey(eventorId, organisationId, apiKey);
-        
     }
 }

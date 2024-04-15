@@ -3,7 +3,6 @@ package no.stunor.origo.eventorapi.services;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.iof.eventor.DocumentList;
 import org.iof.eventor.EntryList;
@@ -15,8 +14,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EntityNotFoundException;
-import no.stunor.origo.eventorapi.api.exception.EventorApiException;
+import no.stunor.origo.eventorapi.api.exception.EventorParsingException;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.RegionRepository;
 import no.stunor.origo.eventorapi.model.firestore.Eventor;
@@ -49,7 +47,7 @@ public class EventService {
     EventConverter eventConverter;
     
 
-    public Event getEvent(String eventorId, String eventNumber, String userId) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public Event getEvent(String eventorId, String eventNumber, String userId) {
         Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
 
         org.iof.eventor.Event event = eventorService.getEvent(eventor.getBaseUrl(), eventor.getApiKey(), eventNumber);
@@ -66,7 +64,7 @@ public class EventService {
             if(org.getParentOrganisation().getOrganisationId() != null){
                 region  = regionRepository.findByOrganisationIdAndEventorId(org.getParentOrganisation().getOrganisationId().getContent(), eventorId).block();
             } if (region == null) {
-                log.info("{} does not have a region. chec if {} is a regon.", org.getName().getContent(), org.getName().getContent());
+                log.info("{} does not have a region. check if {} is a regon.", org.getName().getContent(), org.getName().getContent());
 
                 try {
                     region = regionRepository.findByOrganisationIdAndEventorId(org.getOrganisationId().getContent(), eventorId).block(); 
@@ -93,23 +91,26 @@ public class EventService {
         return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor, raceCompetitors);
     }
 
-    public EventEntryList getEntryList(String eventorId, String eventNumber) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException {
+    public EventEntryList getEntryList(String eventorId, String eventNumber) {
         Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         EntryList entryList = eventorService.getEventEntryList(eventor.getBaseUrl(), eventor.getApiKey(), eventNumber);
         return EntryListConverter.convertEventEntryList(entryList, eventor);
     }  
 
-    public List<RaceStartList> getStartList(String eventorId, String eventNumber) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException {
+    public List<RaceStartList> getStartList(String eventorId, String eventNumber) {
         Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         StartList startList = eventorService.getEventStartList(eventor.getBaseUrl(), eventor.getApiKey(), eventNumber);
         return StartListConverter.convertEventStartList(startList, eventor);
     }  
 
-    public List<RaceResultList> getResultList(String eventorId, String eventNumber) throws EntityNotFoundException, EventorApiException, InterruptedException, ExecutionException, NumberFormatException, ParseException {
+    public List<RaceResultList> getResultList(String eventorId, String eventNumber) {
         Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
         ResultList resultList = eventorService.getEventResultList(eventor.getBaseUrl(), eventor.getApiKey(), eventNumber);
-        return ResultListConverter.convertEventResultList(resultList, eventor);
+        try {
+            return ResultListConverter.convertEventResultList(resultList, eventor);
+        } catch (NumberFormatException | ParseException e ) {
+            log.warn(e.getMessage());
+            throw new EventorParsingException();
+        }
     }  
 }
-
-
