@@ -26,6 +26,7 @@ import org.iof.eventor.EntryList;
 import org.iof.eventor.Event;
 import org.iof.eventor.EventClassList;
 import org.iof.eventor.EventList;
+import org.iof.eventor.Organisation;
 import org.iof.eventor.Person;
 import org.iof.eventor.ResultList;
 import org.iof.eventor.ResultListList;
@@ -394,6 +395,29 @@ public class EventorService {
             );
             return response.getBody();
         } catch (HttpClientErrorException e){
+            log.warn(e.getStatusText());
+            throw new EventorApiException(e.getStatusCode(), e.getStatusText());
+        }
+    }
+
+    public Organisation getOrganisatonFromApiKey(String baseUrl, String apiKey) throws EventorApiException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("ApiKey", apiKey);
+
+        try {
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            ResponseEntity<Organisation> response = restTemplate.exchange(
+                    baseUrl + "api/organisation/apiKey",
+                    HttpMethod.GET,
+                    request,
+                    Organisation.class,
+                    1
+            );
+            return response.getBody();
+        } catch (HttpClientErrorException e){
+            if(e.getStatusCode().value() == 404){
+                throw new EventorApiException(e.getStatusCode(), "ApiKey does not belog to any organisation.");
+            }
             log.warn(e.getStatusText());
             throw new EventorApiException(e.getStatusCode(), e.getStatusText());
         }

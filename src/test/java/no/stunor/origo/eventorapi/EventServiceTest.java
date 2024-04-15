@@ -85,7 +85,7 @@ public class EventServiceTest {
     }
 
     private static Organisation generateOrganisation(){
-        return new Organisation( "141", "NOR", "IL Gneist", "CLUB", "NOR", null, null, null, null);
+        return new Organisation( "141", "NOR", "IL Gneist", "CLUB", "NOR", null,  null, null, null, null);
     }
 
     private static Region generateRegion(){

@@ -14,6 +14,7 @@ import no.stunor.origo.eventorapi.model.origo.user.UserRace;
 import no.stunor.origo.eventorapi.services.AuthService;
 import no.stunor.origo.eventorapi.services.CalendarService;
 import no.stunor.origo.eventorapi.services.EventService;
+import no.stunor.origo.eventorapi.services.OrganisationService;
 import no.stunor.origo.eventorapi.services.UserEntryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ class EventorApiController {
     UserEntryService userEntryService;
     @Autowired
     EventService eventService;
+    @Autowired
+    OrganisationService organisationService;
 
     @GetMapping("/authenticate/{eventorId}")
     public ResponseEntity<Person> authenticate(
@@ -187,4 +190,32 @@ class EventorApiController {
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);   
     }
 
+
+    @GetMapping("/organisation/validate/{eventorId}/{organisationId}")
+    public ResponseEntity<Boolean> validateApiKey(
+            @PathVariable("eventorId") String eventorId,
+            @PathVariable("organisationId") String organisationId) throws ExecutionException, InterruptedException, NumberFormatException, ParseException {
+
+         try {
+            return new ResponseEntity<>(organisationService.validateApiKey(eventorId, organisationId), HttpStatus.OK);
+        } catch (EventorApiException e) {
+            if(e.getStatusCode() == HttpStatusCode.valueOf(403) ){
+                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            }
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);   
+    }
+
+
+    @PostMapping("/organisation/validate/{eventorId}/{organisationId}/{apiKey}")
+    public void validateApiKey(
+            @PathVariable("eventorId") String eventorId,
+            @PathVariable("organisationId") String organisationId,
+            @PathVariable("apiKey") String apiKey )throws ExecutionException, InterruptedException, NumberFormatException, ParseException, EntityNotFoundException, EventorApiException {
+
+        organisationService.updateApiKey(eventorId, organisationId, apiKey);
+        
+    }
 }

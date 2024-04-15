@@ -25,6 +25,8 @@ public class Organisation {
     @JsonIgnore
     private String email;
     @JsonIgnore
+    private String apiKey;
+    @JsonIgnore
     private String region;
     @JsonIgnore
     private String contactPerson;
