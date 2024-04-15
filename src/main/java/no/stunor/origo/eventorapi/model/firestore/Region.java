@@ -16,6 +16,6 @@ import lombok.Setter;
 @Document(collectionName = "regions")
 public class Region {
     private String organisationId;
-    private String eventor;
+    private String eventorId;
     private String name;    
 }

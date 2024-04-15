@@ -9,6 +9,6 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface OrganisationRepository extends FirestoreReactiveRepository<Organisation> {
-    Mono<Organisation> findByOrganisationIdAndEventor(String organisationId, String eventor);
+    Mono<Organisation> findByOrganisationIdAndEventorId(String organisationId, String eventorId);
 
 }

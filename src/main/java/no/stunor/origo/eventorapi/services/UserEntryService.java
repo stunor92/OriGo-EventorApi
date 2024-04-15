@@ -59,8 +59,8 @@ public class UserEntryService {
         for (Person person : persons){
             Eventor personEventor = null;
             if(eventor == null){
-                personEventor = eventorRepository.findByEventorId(person.getEventor()).block();
-            } else if (!person.getEventor().equals(eventor.getEventorId())){
+                personEventor = eventorRepository.findByEventorId(person.getEventorId()).block();
+            } else if (!person.getEventorId().equals(eventor.getEventorId())){
                 continue;
             }
             List<String> organisationIds = new ArrayList<>();

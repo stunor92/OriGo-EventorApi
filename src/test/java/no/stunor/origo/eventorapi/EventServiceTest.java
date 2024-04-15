@@ -52,8 +52,8 @@ public class EventServiceTest {
    
     @BeforeEach
     public void setUp() {
-        when(organisationRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(Mono.just(generateOrganisation()));
-        when(regionRepository.findByOrganisationIdAndEventor(anyString(), anyString())).thenReturn(Mono.just(generateRegion()));
+        when(organisationRepository.findByOrganisationIdAndEventorId(anyString(), anyString())).thenReturn(Mono.just(generateOrganisation()));
+        when(regionRepository.findByOrganisationIdAndEventorId(anyString(), anyString())).thenReturn(Mono.just(generateRegion()));
         when(eventorRepository.findByEventorId(anyString())).thenReturn(Mono.just(generateEventor()));
     }
 

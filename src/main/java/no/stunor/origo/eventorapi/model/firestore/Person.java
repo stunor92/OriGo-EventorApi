@@ -24,7 +24,7 @@ public class Person {
     @JsonIgnore
     @DocumentId
     private String id;
-    private String eventor;
+    private String eventorId;
     private String personId;
     private PersonName name;
     private Integer birthYear;

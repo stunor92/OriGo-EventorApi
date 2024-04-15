@@ -9,6 +9,6 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface RegionRepository extends FirestoreReactiveRepository<Region> {
-    Mono<Region> findByOrganisationIdAndEventor(String organisationId, String eventor);
+    Mono<Region> findByOrganisationIdAndEventorId(String organisationId, String eventorId);
 
 }

@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface PersonRepository extends FirestoreReactiveRepository<Person> {
     Flux<Person> findAllByUsersContains(String user);
-    Flux<Person> findAllByUsersContainsAndEventor(String user, String eventor);
-    Mono<Person> findByPersonIdAndEventor(String personId, String eventor); 
+    Flux<Person> findAllByUsersContainsAndEventorId(String user, String eventorId);
+    Mono<Person> findByPersonIdAndEventorId(String personId, String eventorId); 
 
 }
