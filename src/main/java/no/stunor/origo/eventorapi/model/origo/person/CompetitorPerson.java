@@ -13,7 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompetitorPerson {
-    String eventoId;
+    String eventorId;
     String personid;
     PersonName name;
     Integer birthYear;
