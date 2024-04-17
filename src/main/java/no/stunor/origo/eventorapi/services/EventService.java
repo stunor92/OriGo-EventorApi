@@ -62,12 +62,12 @@ public class EventService {
             organisers.add(OrganisationConverter.convertOrganisation(org, eventor));
             Region region = null;
             if(org.getParentOrganisation().getOrganisationId() != null){
-                region  = regionRepository.findByOrganisationIdAndEventorId(org.getParentOrganisation().getOrganisationId().getContent(), eventorId).block();
+                region  = regionRepository.findByRegionIdAndEventorId(org.getParentOrganisation().getOrganisationId().getContent(), eventorId).block();
             } if (region == null) {
                 log.info("{} does not have a region. check if {} is a regon.", org.getName().getContent(), org.getName().getContent());
 
                 try {
-                    region = regionRepository.findByOrganisationIdAndEventorId(org.getOrganisationId().getContent(), eventorId).block(); 
+                    region = regionRepository.findByRegionIdAndEventorId(org.getOrganisationId().getContent(), eventorId).block(); 
                 } catch (Exception e1){
                     log.info("Region {} does not exist.", org.getOrganisationId().getContent());
                 }
