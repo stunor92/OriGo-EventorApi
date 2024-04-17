@@ -31,7 +31,7 @@ public class Organisation {
     @JsonIgnore
     private String apiKey;
     @JsonIgnore
-    private String region;
+    private String regionId;
     @JsonIgnore
     private String contactPerson;
     @JsonIgnore

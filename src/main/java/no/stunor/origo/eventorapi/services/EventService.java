@@ -75,7 +75,7 @@ public class EventService {
             boolean regionExist = false;
 
             for(Region r : regions){
-                if(region != null && region.getOrganisationId().equals(r.getOrganisationId())){
+                if(region != null && region.getRegionId().equals(r.getRegionId())){
                     regionExist = true;
                 }
             }
