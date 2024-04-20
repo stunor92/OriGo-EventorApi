@@ -12,7 +12,7 @@ data class Organisation (
     var type: OrganisationType = OrganisationType.CLUB,
     var country: String = "",
     @JsonIgnore
-    var email: String = "",
+    var email: String? = null,
     @JsonIgnore
     var apiKey: String? = null,
     @JsonIgnore
