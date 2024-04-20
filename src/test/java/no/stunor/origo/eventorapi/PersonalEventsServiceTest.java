@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import no.stunor.origo.eventorapi.model.person.Gender;
 import org.iof.eventor.EntryList;
 import org.iof.eventor.ResultListList;
 import org.iof.eventor.StartListList;
@@ -27,9 +28,9 @@ import jakarta.xml.bind.Unmarshaller;
 import no.stunor.origo.eventorapi.api.EventorService;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.PersonRepository;
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Person;
-import no.stunor.origo.eventorapi.model.origo.person.PersonName;
+import no.stunor.origo.eventorapi.model.Eventor;
+import no.stunor.origo.eventorapi.model.person.Person;
+import no.stunor.origo.eventorapi.model.person.PersonName;
 import no.stunor.origo.eventorapi.services.UserEntryService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -104,7 +105,7 @@ public class PersonalEventsServiceTest {
         List<String> owner = new ArrayList<>();
         owner.add("123");
 
-        return new Person(null, "NOR", "123", name, 1900, "NOR", "MAN", owner, new HashMap<>(), "12345678", "a@b.no");
+        return new Person(null, "NOR", "123", name, 1900, "NOR", Gender.MAN, owner, "12345678", "a@b.no", new HashMap<>());
     }
     
     private static Eventor generateEventor(){

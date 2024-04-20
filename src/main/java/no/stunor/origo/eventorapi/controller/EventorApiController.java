@@ -1,10 +1,10 @@
 package no.stunor.origo.eventorapi.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import no.stunor.origo.eventorapi.model.firestore.Person;
+import no.stunor.origo.eventorapi.model.person.Person;
+import no.stunor.origo.eventorapi.model.event.Event;
 import no.stunor.origo.eventorapi.model.origo.calendar.CalendarRace;
 import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList;
-import no.stunor.origo.eventorapi.model.origo.event.Event;
 import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList;
 import no.stunor.origo.eventorapi.model.origo.start.RaceStartList;
@@ -13,6 +13,7 @@ import no.stunor.origo.eventorapi.services.AuthService;
 import no.stunor.origo.eventorapi.services.CalendarService;
 import no.stunor.origo.eventorapi.services.EventService;
 import no.stunor.origo.eventorapi.services.OrganisationService;
+import no.stunor.origo.eventorapi.services.OrganiserService;
 import no.stunor.origo.eventorapi.services.UserEntryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ class EventorApiController {
     EventService eventService;
     @Autowired
     OrganisationService organisationService;
+    @Autowired
+    OrganiserService organiserService;
 
     @GetMapping("/authenticate/{eventorId}")
     public ResponseEntity<Person> authenticate(@PathVariable(value = "eventorId") String eventorId, @RequestHeader(value = "username") String username, @RequestHeader(value = "password") String password, @RequestHeader(value = "userId") String userId){
@@ -94,5 +97,10 @@ class EventorApiController {
     @PostMapping("/organisation/apiKey/{eventorId}/{organisationId}/{apiKey}")
     public void updateApiKey(@PathVariable("eventorId") String eventorId, @PathVariable("organisationId") String organisationId, @PathVariable("apiKey") String apiKey) {
         organisationService.updateApiKey(eventorId, organisationId, apiKey);
+    }
+
+    @GetMapping("/organiser/eventList/{eventorId}/{organisationId}")
+    public ResponseEntity<List<Event>> getOrganiserEventList(@PathVariable("eventorId") String eventorId, @PathVariable("organisationId") String organisationId)  {
+        return new ResponseEntity<>(organiserService.listEvents(eventorId, organisationId), HttpStatus.OK);
     }
 }

@@ -3,12 +3,12 @@ package no.stunor.origo.eventorapi.model.origo.result;
 import java.util.Date;
 import java.util.List;
 
-import no.stunor.origo.eventorapi.model.firestore.Organisation;
-import no.stunor.origo.eventorapi.model.origo.person.CompetitorPerson;
+import no.stunor.origo.eventorapi.model.organisation.Organisation;
+import no.stunor.origo.eventorapi.model.person.Competitor;
 
 public record PersonResult(
     String resultId,
-    CompetitorPerson person,
+    Competitor person,
     Organisation organisation,
     Date startTime,
     Date finishTime,

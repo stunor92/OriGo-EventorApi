@@ -20,8 +20,8 @@ import no.stunor.origo.eventorapi.api.EventorService;
 import no.stunor.origo.eventorapi.api.exception.EventorParsingException;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.PersonRepository;
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Person;
+import no.stunor.origo.eventorapi.model.Eventor;
+import no.stunor.origo.eventorapi.model.person.Person;
 import no.stunor.origo.eventorapi.model.origo.user.UserRace;
 import no.stunor.origo.eventorapi.services.converter.PersonEntriesConverter;
 

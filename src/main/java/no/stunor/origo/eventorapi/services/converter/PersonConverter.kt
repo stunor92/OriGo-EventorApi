@@ -1,101 +1,96 @@
-package no.stunor.origo.eventorapi.services.converter;
+package no.stunor.origo.eventorapi.services.converter
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.person.Competitor
+import no.stunor.origo.eventorapi.model.person.Gender
+import no.stunor.origo.eventorapi.model.person.MembershipType
+import no.stunor.origo.eventorapi.model.person.Person
+import no.stunor.origo.eventorapi.model.person.PersonName
 
-import org.iof.eventor.Role;
-
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Person;
-import no.stunor.origo.eventorapi.model.origo.person.CompetitorPerson;
-import no.stunor.origo.eventorapi.model.origo.person.PersonName;
-
-public class PersonConverter {
-
-    public static Person convertPerson(org.iof.eventor.Person eventorPerson, Eventor eventor) {
-        return new Person(
-            null,
-            eventor.getEventorId(),
-            eventorPerson.getPersonId().getContent(),
-            convertPersonName(eventorPerson.getPersonName()),
-            eventorPerson.getBirthDate()!= null ? Integer.parseInt(eventorPerson.getBirthDate().getDate().getContent().substring(0,4)) : null,
-            eventorPerson.getNationality() != null ? eventorPerson.getNationality().getCountry().getAlpha3().getValue() : null,
-            convertGender(eventorPerson.getSex()),
-            new ArrayList<>(),
-            convertMemberships(eventorPerson.getRole()),
-            ContactConverter.convertPhone(eventorPerson.getTele()),
-            ContactConverter.convertEmail(eventorPerson.getTele())
-        );
+object PersonConverter {
+    @JvmStatic
+    fun convertPerson(eventorPerson: org.iof.eventor.Person, eventor: Eventor): Person {
+        return Person(
+                null,
+                eventor.eventorId,
+                eventorPerson.personId.content,
+                convertPersonName(eventorPerson.personName),
+                eventorPerson.birthDate.date.content.substring(0, 4).toInt(),
+                eventorPerson.nationality.country.alpha3.value,
+                convertGender(eventorPerson.sex),
+                ArrayList(),
+                ContactConverter.convertPhone(eventorPerson.tele),
+                ContactConverter.convertEmail(eventorPerson.tele),
+                convertMemberships(eventorPerson.role)
+        )
     }
 
-    public static CompetitorPerson convertCompetitor(org.iof.eventor.Person person, Eventor eventor) {
-        return new CompetitorPerson(
-            eventor.getEventorId(),
-            person.getPersonId().getContent(),
-            convertPersonName(person.getPersonName()),
-            person.getBirthDate()!= null ? Integer.parseInt(person.getBirthDate().getDate().getContent().substring(0,4)) : null,
-            person.getNationality() != null && person.getNationality().getCountry() != null ? person.getNationality().getCountry().getAlpha3().getValue() : null,
-            convertGender(person.getSex())
-        );
+    @JvmStatic
+    fun convertCompetitor(person: org.iof.eventor.Person, eventor: Eventor): Competitor {
+        return Competitor(
+                eventor.eventorId,
+                person.personId.content,
+                convertPersonName(person.personName),
+                person.birthDate.date.content.substring(0, 4).toInt(),
+                person.nationality.country.alpha3.value,
+                convertGender(person.sex)
+        )
     }
 
-    private static String convertGender(String sex) {
-        if(sex == null){
-            return "OTHER";
+    private fun convertGender(sex: String?): Gender {
+        if (sex == null) {
+            return Gender.OTHER
         }
-        switch(sex){
-            case "M" : return "MAN";
-            case "F" : return "WOMAN";
-            default  : return "OTHER";
+        return when (sex) {
+            "M" -> Gender.MAN
+            "F" -> Gender.WOMAN
+            else -> Gender.OTHER
         }
     }
 
-    public static PersonName convertPersonName(org.iof.eventor.PersonName personName) {
-        StringBuilder given = new StringBuilder();
-        for(int i = 0; i < personName.getGiven().size(); i++) {
-            for (int j = 1; j <= personName.getGiven().size(); j++) {
-                if(Integer.parseInt(personName.getGiven().get(i).getSequence()) == j){
-                    if(!given.toString().equals("")){
-                        given.append(" ");
+    private fun convertPersonName(personName: org.iof.eventor.PersonName): PersonName {
+        val given = StringBuilder()
+        for (i in personName.given.indices) {
+            for (j in 1..personName.given.size) {
+                if (personName.given[i].sequence.toInt() == j) {
+                    if (given.toString() != "") {
+                        given.append(" ")
                     }
-                    given.append(personName.getGiven().get(i).getContent());
+                    given.append(personName.given[i].content)
                 }
             }
         }
-
-        return new PersonName(personName.getFamily().getContent(), given.toString());
+        return PersonName(personName.family.content, given.toString())
     }
-    private static Map<String, String> convertMemberships(List<Role> roles) {
-        Map<String, Integer> highestRole= new HashMap<>();
 
-        for (Role role : roles){
-            if(role.getRoleTypeId().getContent().equals("2")){
-                role.getRoleTypeId().setContent("10");;
+    private fun convertMemberships(roles: List<org.iof.eventor.Role>): Map<String, MembershipType> {
+        val highestRole: MutableMap<String, Int> = HashMap()
+
+        for (role in roles) {
+            if (role.roleTypeId.content == "2") {
+                role.roleTypeId.content = "10"
             }
 
-            if(!highestRole.containsKey(role.getOrganisationId().getContent())){
-                highestRole.put(role.getOrganisationId().getContent(), Integer.parseInt(role.getRoleTypeId().getContent()));
-            } else if(Integer.parseInt(role.getRoleTypeId().getContent()) > highestRole.get(role.getOrganisationId().getContent())){
-                highestRole.put(role.getOrganisationId().getContent(), Integer.parseInt(role.getRoleTypeId().getContent()));
+            if (!highestRole.containsKey(role.organisationId.content)) {
+                highestRole[role.organisationId.content] = role.roleTypeId.content.toInt()
+            } else if (role.roleTypeId.content.toInt() > highestRole[role.organisationId.content]!!) {
+                highestRole[role.organisationId.content] = role.roleTypeId.content.toInt()
             }
         }
 
-        Map<String, String> memberships = new HashMap<>();
+        val memberships: MutableMap<String, MembershipType> = HashMap()
 
-        for(String orgId : highestRole.keySet().stream().toList()){
-            if(highestRole.get(orgId) == 1){
-                memberships.put(orgId, "MEMBER");
-            } else if (highestRole.get(orgId) == 3 || highestRole.get(orgId) == 5) {
-                memberships.put(orgId, "ORGANISER");
-            } else if (highestRole.get(orgId) == 10) {
-                memberships.put(orgId, "ADMIN");
+        for (orgId in highestRole.keys.stream().toList()) {
+            if (highestRole[orgId] == 1) {
+                memberships[orgId] = MembershipType.MEMBER
+            } else if (highestRole[orgId] == 3 || highestRole[orgId] == 5) {
+                memberships[orgId] = MembershipType.ORGANISER
+            } else if (highestRole[orgId] == 10) {
+                memberships[orgId] = MembershipType.ADMIN
             }
         }
 
 
-        return memberships;
+        return memberships
     }
-    
 }

@@ -8,6 +8,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.util.concurrent.ExecutionException;
 
+import no.stunor.origo.eventorapi.model.organisation.OrganisationType;
 import org.iof.eventor.DocumentList;
 import org.iof.eventor.Event;
 import org.iof.eventor.EventClassList;
@@ -24,9 +25,9 @@ import no.stunor.origo.eventorapi.api.EventorService;
 import no.stunor.origo.eventorapi.data.EventorRepository;
 import no.stunor.origo.eventorapi.data.OrganisationRepository;
 import no.stunor.origo.eventorapi.data.RegionRepository;
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Organisation;
-import no.stunor.origo.eventorapi.model.firestore.Region;
+import no.stunor.origo.eventorapi.model.Eventor;
+import no.stunor.origo.eventorapi.model.organisation.Organisation;
+import no.stunor.origo.eventorapi.model.Region;
 import no.stunor.origo.eventorapi.services.EventService;
 import reactor.core.publisher.Mono;
 
@@ -83,7 +84,7 @@ public class EventServiceTest {
     }
 
     private static Organisation generateOrganisation(){
-        return new Organisation("1234", "141", "NOR", "IL Gneist", "CLUB", "NOR", null,  null, null, null, null);
+        return new Organisation("141", "NOR", "IL Gneist", OrganisationType.CLUB, "NOR", null,  null, null, null);
     }
 
     private static Region generateRegion(){

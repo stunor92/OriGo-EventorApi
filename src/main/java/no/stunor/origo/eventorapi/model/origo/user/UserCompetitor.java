@@ -1,6 +1,6 @@
 package no.stunor.origo.eventorapi.model.origo.user;
 
-import no.stunor.origo.eventorapi.model.origo.person.PersonName;
+import no.stunor.origo.eventorapi.model.person.PersonName;
 
 
 public record UserCompetitor(

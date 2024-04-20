@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.cloud.spring.data.firestore.FirestoreReactiveRepository;
 
-import no.stunor.origo.eventorapi.model.firestore.Person;
+import no.stunor.origo.eventorapi.model.person.Person;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

@@ -20,8 +20,8 @@ import org.iof.eventor.ResultList;
 import org.iof.eventor.TeamMemberResult.Position;
 import org.iof.eventor.TeamMemberResult.TimeBehind;
 
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Organisation;
+import no.stunor.origo.eventorapi.model.Eventor;
+import no.stunor.origo.eventorapi.model.organisation.Organisation;
 import no.stunor.origo.eventorapi.model.origo.result.PersonResult;
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList;
 import no.stunor.origo.eventorapi.model.origo.result.Result;

@@ -2,10 +2,10 @@ package no.stunor.origo.eventorapi.model.origo.start;
 
 import java.util.Date;
 
-import no.stunor.origo.eventorapi.model.origo.person.CompetitorPerson;
+import no.stunor.origo.eventorapi.model.person.Competitor;
 
 public record TeamMemberStart(
-    CompetitorPerson person,
+    Competitor person,
     int leg,
     Date startTime) {
 }

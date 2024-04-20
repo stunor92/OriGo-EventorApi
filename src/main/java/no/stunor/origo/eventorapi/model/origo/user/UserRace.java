@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
+import no.stunor.origo.eventorapi.model.Eventor;
 import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak;
 
 @Getter

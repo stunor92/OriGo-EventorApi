@@ -11,6 +11,7 @@ import org.iof.eventor.DisciplineId;
 import org.iof.eventor.DocumentList;
 import org.iof.eventor.EventCenterPosition;
 import org.iof.eventor.EventClassList;
+import org.iof.eventor.EventList;
 import org.iof.eventor.EventRace;
 import org.iof.eventor.EventRaceId;
 import org.iof.eventor.FinishDate;
@@ -25,16 +26,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import no.stunor.origo.eventorapi.data.OrganisationRepository;
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Organisation;
-import no.stunor.origo.eventorapi.model.firestore.Region;
+import no.stunor.origo.eventorapi.model.Eventor;
+import no.stunor.origo.eventorapi.model.organisation.Organisation;
+import no.stunor.origo.eventorapi.model.Region;
+import no.stunor.origo.eventorapi.model.event.Event;
 import no.stunor.origo.eventorapi.model.origo.common.CCard;
 import no.stunor.origo.eventorapi.model.origo.common.Position;
 import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak;
 import no.stunor.origo.eventorapi.model.origo.event.DisiplineEnum;
 import no.stunor.origo.eventorapi.model.origo.event.DistanceEnum;
 import no.stunor.origo.eventorapi.model.origo.event.Document;
-import no.stunor.origo.eventorapi.model.origo.event.Event;
 import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
 import no.stunor.origo.eventorapi.model.origo.event.EventFormEnum;
 import no.stunor.origo.eventorapi.model.origo.event.EventStatusEnum;
@@ -211,6 +212,7 @@ public class EventConverter {
         List<UserRace> raceCompetitors) {
         return new Event(
                 eventor,
+                null,
                 event.getEventId().getContent(),
                 event.getName().getContent(),
                 convertEventForm(event.getEventForm()),
@@ -365,6 +367,15 @@ public class EventConverter {
         List<String> result = new ArrayList<>();
         for(EventRaceId eventRaceId : eventRaceIds){
             result.add(eventRaceId.getContent());
+        }
+        return result;
+    }
+
+
+    public List<Event> convertEvents(EventList eventList, Eventor eventor) {
+        List<Event> result = new ArrayList<>();
+        for(org.iof.eventor.Event event : eventList.getEvent()){
+            result.add(convertEvent(event, null, null, null, null, eventor, null));
         }
         return result;
     }

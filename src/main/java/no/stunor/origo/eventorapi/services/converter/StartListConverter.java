@@ -15,8 +15,8 @@ import org.iof.eventor.RaceStart;
 import org.iof.eventor.StartList;
 import org.iof.eventor.StartTime;
 
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Organisation;
+import no.stunor.origo.eventorapi.model.Eventor;
+import no.stunor.origo.eventorapi.model.organisation.Organisation;
 import no.stunor.origo.eventorapi.model.origo.start.PersonStart;
 import no.stunor.origo.eventorapi.model.origo.start.RaceStartList;
 import no.stunor.origo.eventorapi.model.origo.start.TeamMemberStart;

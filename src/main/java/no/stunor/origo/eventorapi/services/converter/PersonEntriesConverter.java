@@ -27,13 +27,13 @@ import org.iof.eventor.TeamStart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Person;
 import no.stunor.origo.eventorapi.model.origo.user.UserPersonResult;
 import no.stunor.origo.eventorapi.model.origo.user.UserPersonStart;
 import no.stunor.origo.eventorapi.model.origo.user.UserRace;
 import no.stunor.origo.eventorapi.model.origo.user.UserTeamResult;
 import no.stunor.origo.eventorapi.model.origo.user.UserTeamStart;
+import no.stunor.origo.eventorapi.model.Eventor;
+import no.stunor.origo.eventorapi.model.person.Person;
 import no.stunor.origo.eventorapi.model.origo.user.UserCompetitor;
 import no.stunor.origo.eventorapi.model.origo.user.UserEntry;
 

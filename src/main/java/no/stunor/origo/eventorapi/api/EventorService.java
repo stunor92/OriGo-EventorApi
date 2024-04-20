@@ -30,7 +30,7 @@ import org.iof.eventor.ResultListList;
 import org.iof.eventor.StartList;
 import org.iof.eventor.StartListList;
 
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
+import no.stunor.origo.eventorapi.model.Eventor;
 import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
 @Service
 public class EventorService {

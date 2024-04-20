@@ -4,10 +4,11 @@ package no.stunor.origo.eventorapi.services.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.stunor.origo.eventorapi.model.organisation.OrganisationType;
 import org.iof.eventor.OrganisationId;
 
-import no.stunor.origo.eventorapi.model.firestore.Eventor;
-import no.stunor.origo.eventorapi.model.firestore.Organisation;
+import no.stunor.origo.eventorapi.model.Eventor;
+import no.stunor.origo.eventorapi.model.organisation.Organisation;
 
 public class OrganisationConverter {
 
@@ -44,15 +45,13 @@ public class OrganisationConverter {
         return result;
     }
 
-    public static no.stunor.origo.eventorapi.model.firestore.Organisation convertOrganisation(org.iof.eventor.Organisation organisation, Eventor eventor) {
+    public static Organisation convertOrganisation(org.iof.eventor.Organisation organisation, Eventor eventor) {
         return new Organisation(
-            null,
             organisation.getOrganisationId().getContent(),
             eventor.getEventorId(),
             organisation.getName().getContent(),
             convertOrganisationType(organisation),
-            organisation.getCountry() != null ? organisation.getCountry().getAlpha3().getValue() :null,
-            null,
+            organisation.getCountry() != null ? organisation.getCountry().getAlpha3().getValue() : null,
             null,
             null,
             null,
@@ -60,13 +59,13 @@ public class OrganisationConverter {
     }
 
 
-    public static String convertOrganisationType(org.iof.eventor.Organisation organisation){
+    public static OrganisationType convertOrganisationType(org.iof.eventor.Organisation organisation){
 
-        switch (organisation.getOrganisationTypeId().getContent()){
-            case "1": return "FEDERATION";
-            case "2": return "REGION";
-            case "5": return "IOF";
-            default:  return "CLUB";
-        }
+        return switch (organisation.getOrganisationTypeId().getContent()) {
+            case "1" -> OrganisationType.FEDERATION;
+            case "2" -> OrganisationType.REGION;
+            case "5" -> OrganisationType.IOF;
+            default -> OrganisationType.CLUB;
+        };
     }
 }

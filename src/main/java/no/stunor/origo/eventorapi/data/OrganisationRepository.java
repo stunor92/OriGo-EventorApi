@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.cloud.spring.data.firestore.FirestoreReactiveRepository;
 
-import no.stunor.origo.eventorapi.model.firestore.Organisation;
+import no.stunor.origo.eventorapi.model.organisation.Organisation;
 import reactor.core.publisher.Mono;
 
 @Repository
