@@ -6,9 +6,14 @@ import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.model.person.PersonName
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
-object PersonConverter {
-    @JvmStatic
+@Component
+class PersonConverter {
+
+    @Autowired
+    private lateinit var contactConverter: ContactConverter
     fun convertPerson(eventorPerson: org.iof.eventor.Person, eventor: Eventor): Person {
         return Person(
                 null,
@@ -19,13 +24,12 @@ object PersonConverter {
                 eventorPerson.nationality.country.alpha3.value,
                 convertGender(eventorPerson.sex),
                 ArrayList(),
-                ContactConverter.convertPhone(eventorPerson.tele),
-                ContactConverter.convertEmail(eventorPerson.tele),
+                contactConverter.convertPhone(eventorPerson.tele),
+                contactConverter.convertEmail(eventorPerson.tele),
                 convertMemberships(eventorPerson.role)
         )
     }
 
-    @JvmStatic
     fun convertCompetitor(person: org.iof.eventor.Person, eventor: Eventor): Competitor {
         return Competitor(
                 eventor.eventorId,

@@ -14,7 +14,7 @@ data class Person(
         var birthYear: Int = 0,
         var nationality: String = "",
         var gender: Gender = Gender.OTHER,
-        var users: List<String> = ArrayList(),
+        var users: MutableList<String> = mutableListOf(),
         var mobilePhone: String? = null,
         var email: String? = null,
         var memberships: Map<String, MembershipType> = HashMap(),

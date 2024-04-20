@@ -1,5 +1,5 @@
-package no.stunor.origo.eventorapi.model.origo.event;
+package no.stunor.origo.eventorapi.model.event
 
-public enum EventClassificationEnum {
-    CHAMPIONSHIP, NATIONAL, REGIONAL, LOCAL, CLUB;
+enum class EventClassificationEnum {
+    CHAMPIONSHIP, NATIONAL, REGIONAL, LOCAL, CLUB
 }

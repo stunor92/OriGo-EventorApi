@@ -1,115 +1,105 @@
-package no.stunor.origo.eventorapi.services.converter;
+package no.stunor.origo.eventorapi.services.converter
 
-import java.util.ArrayList;
-import java.util.List;
+import no.stunor.origo.eventorapi.model.event.EventClass
+import no.stunor.origo.eventorapi.model.event.EventClassTypeEnum
+import org.iof.eventor.ClassEntryFee
+import org.iof.eventor.EntryClass
+import org.iof.eventor.EventClassList
+import org.iof.eventor.HashTableEntry
+import org.springframework.stereotype.Component
 
-import org.iof.eventor.ClassEntryFee;
-import org.iof.eventor.EntryClass;
-import org.iof.eventor.EventClassList;
-import org.iof.eventor.HashTableEntry;
-
-import no.stunor.origo.eventorapi.model.origo.event.EventClass;
-import no.stunor.origo.eventorapi.model.origo.event.EventClassTypeEnum;
-
-public class EventClassConverter {
-    public static List<EventClass> convertEventClasses(EventClassList eventCLassList) {
-        List<EventClass> result = new ArrayList<>();
-        for (org.iof.eventor.EventClass eventClass : eventCLassList.getEventClass()) {
-            if(eventClass != null) {
-                result.add(convertEventClass(eventClass));
+@Component
+class EventClassConverter {
+    fun convertEventClasses(eventCLassList: EventClassList?): List<EventClass> {
+        if(eventCLassList == null)
+            return listOf()
+        val result: MutableList<EventClass> = ArrayList()
+        for (eventClass in eventCLassList.eventClass) {
+            if (eventClass != null) {
+                result.add(convertEventClass(eventClass))
             }
-
         }
-        return result;
+        return result
     }
 
-    public static EventClass convertEventClass(org.iof.eventor.EventClass eventClass) {
-        return new EventClass(
-                eventClass.getEventClassId().getContent(),
-                eventClass.getName().getContent(),
-                eventClass.getClassShortName().getContent(),
-                getClasstypeFromId(eventClass.getClassType() != null ? eventClass.getClassType().getClassTypeId().getContent() : eventClass.getClassTypeId().getContent()),
-                eventClass.getLowAge() != null ? Integer.parseInt(eventClass.getLowAge()) : null,
-                eventClass.getHighAge() != null ? Integer.parseInt(eventClass.getHighAge()) : null,
-                eventClass.getSex(),
-                getTimePresentation(eventClass.getHashTableEntry()),
-                getResultListMode(eventClass.getHashTableEntry()),
-                eventClass.getNumberOfLegs() != null ? Integer.parseInt(eventClass.getNumberOfLegs()) : null, 
-                eventClass.getMinAverageAge() != null ? Integer.parseInt(eventClass.getMinAverageAge()) : null, 
-                eventClass.getMaxAverageAge() != null ? Integer.parseInt(eventClass.getMaxAverageAge()) : null, 
-                convertEntryFees(eventClass.getClassEntryFee()));
+    fun convertEventClass(eventClass: org.iof.eventor.EventClass): EventClass {
+        return EventClass(
+                eventClassId = eventClass.eventClassId.content,
+                name = eventClass.name.content,
+                shortName = eventClass.classShortName.content,
+                type = getClassTypeFromId(if (eventClass.classType != null) eventClass.classType.classTypeId.content else eventClass.classTypeId.content),
+                minAge = if (eventClass.lowAge != null) eventClass.lowAge.toInt() else null,
+                maxAge = if (eventClass.highAge != null) eventClass.highAge.toInt() else null,
+                gender = eventClass.sex,
+                presentTime = getTimePresentation(eventClass.hashTableEntry),
+                orderedResult = getResultListMode(eventClass.hashTableEntry),
+                legs = (if (eventClass.numberOfLegs != null) eventClass.numberOfLegs.toInt() else null)!!,
+                minAverageAge = if (eventClass.minAverageAge != null) eventClass.minAverageAge.toInt() else null,
+                maxAverageAge =  if (eventClass.maxAverageAge != null) eventClass.maxAverageAge.toInt() else null,
+                entryFees = convertEntryFees(eventClass.classEntryFee))
     }
 
-    private static EventClassTypeEnum getClasstypeFromId(String classTypeId) {
-        switch (classTypeId) {
-            case "1":
-                return EventClassTypeEnum.ELITE;
-            case "2":
-                return EventClassTypeEnum.NORMAL;
-            case "3":
-                return EventClassTypeEnum.OPEN;
-            default:
-                return EventClassTypeEnum.NORMAL;
+    private fun getClassTypeFromId(classTypeId: String): EventClassTypeEnum {
+        return when (classTypeId) {
+            "1" -> EventClassTypeEnum.ELITE
+            "3" -> EventClassTypeEnum.OPEN
+            else -> EventClassTypeEnum.NORMAL
         }
     }
 
-    private static List<String> convertEntryFees(List<ClassEntryFee> classEntryFees) {
-        List<String> result = new ArrayList<>();
-        for(ClassEntryFee entryFee : classEntryFees){
-            result.add(entryFee.getEntryFeeId().getContent());
+    private fun convertEntryFees(classEntryFees: List<ClassEntryFee>): List<String> {
+        val result: MutableList<String> = ArrayList()
+        for (entryFee in classEntryFees) {
+            result.add(entryFee.entryFeeId.content)
         }
-        return result;
+        return result
     }
 
-    private static boolean getResultListMode(List<HashTableEntry> hashTableEntryList) {
-        for (HashTableEntry hashTableEntry : hashTableEntryList){
-            if(hashTableEntry.getKey().getContent().equals("Eventor_ResultListMode")){
-                if(hashTableEntry.getValue().getContent().equals("UnorderedNoTimes") ||
-                        hashTableEntry.getValue().getContent().equals("Unordered")){
-                    return false;
+    private fun getResultListMode(hashTableEntryList: List<HashTableEntry>): Boolean {
+        for (hashTableEntry in hashTableEntryList) {
+            if (hashTableEntry.key.content == "Eventor_ResultListMode") {
+                if (hashTableEntry.value.content == "UnorderedNoTimes" || hashTableEntry.value.content == "Unordered") {
+                    return false
                 }
             }
         }
-        return true;
+        return true
     }
 
-    private static boolean getTimePresentation(List<HashTableEntry> hashTableEntryList) {
-        for (HashTableEntry hashTableEntry : hashTableEntryList){
-            if(hashTableEntry.getKey().getContent().equals("Eventor_ResultListMode")){
-                if(hashTableEntry.getValue().getContent().equals("UnorderedNoTimes")){
-                    return false;
+    private fun getTimePresentation(hashTableEntryList: List<HashTableEntry>): Boolean {
+        for (hashTableEntry in hashTableEntryList) {
+            if (hashTableEntry.key.content == "Eventor_ResultListMode") {
+                if (hashTableEntry.value.content == "UnorderedNoTimes") {
+                    return false
                 }
             }
         }
-        return true;
+        return true
     }
 
-    public static List<String> convertEventClassIds(List<EntryClass> entryClasses) {
-        List<String> eventClassIds = new ArrayList<>();
-        for(EntryClass entryClass : entryClasses){
-            if(entryClass.getEventClassId()!= null){
-                eventClassIds.add(entryClass.getEventClassId().getContent());
+    fun convertEventClassIds(entryClasses: List<EntryClass>): List<String> {
+        val eventClassIds: MutableList<String> = ArrayList()
+        for (entryClass in entryClasses) {
+            if (entryClass.eventClassId != null) {
+                eventClassIds.add(entryClass.eventClassId.content)
             }
         }
-        return eventClassIds;
+        return eventClassIds
     }
 
-    public static String convertEventClassId(EntryClass entryClass) {
-        if(entryClass.getEventClassId()!= null){
-            return entryClass.getEventClassId().getContent();
+    fun convertEventClassId(entryClass: EntryClass): String? {
+        if (entryClass.eventClassId != null) {
+            return entryClass.eventClassId.content
         }
-        return null;
+        return null
     }
 
-    public static EventClass getEventClassFromId(EventClassList eventClassList, String entryClassId) {
-        for(org.iof.eventor.EventClass eventClass : eventClassList.getEventClass()){
-            if(eventClass.getEventClassId().getContent().equals(entryClassId)){
-                return convertEventClass(eventClass);
+    fun getEventClassFromId(eventClassList: EventClassList, entryClassId: String): EventClass? {
+        for (eventClass in eventClassList.eventClass) {
+            if (eventClass.eventClassId.content == entryClassId) {
+                return convertEventClass(eventClass)
             }
         }
-        return null;
+        return null
     }
-
-
-
 }

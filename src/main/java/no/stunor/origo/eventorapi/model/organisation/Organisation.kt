@@ -10,9 +10,9 @@ data class Organisation (
     var eventorId: String = "",
     var name: String = "",
     var type: OrganisationType = OrganisationType.CLUB,
-    var country: String? = null,
+    var country: String = "",
     @JsonIgnore
-    var email: String? = null,
+    var email: String = "",
     @JsonIgnore
     var apiKey: String? = null,
     @JsonIgnore

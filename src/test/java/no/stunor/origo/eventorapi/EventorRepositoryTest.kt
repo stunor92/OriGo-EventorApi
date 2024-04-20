@@ -1,21 +1,18 @@
-package no.stunor.origo.eventorapi;
+package no.stunor.origo.eventorapi
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import no.stunor.origo.eventorapi.data.EventorRepository;
+import no.stunor.origo.eventorapi.data.EventorRepository
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-public class EventorRepositoryTest {
-
+class EventorRepositoryTest {
     @Autowired
-    EventorRepository eventorRepository;
+    private lateinit var eventorRepository: EventorRepository
 
     @Test
-    public void testGetEventorNorge(){
-        assertEquals("Eventor Norge", eventorRepository.findByEventorId("NOR").block().getName());
+    fun testGetEventorNorway() {
+        Assertions.assertEquals("Eventor Norge", eventorRepository.findByEventorId("NOR")!!.block()!!.name)
     }
 }

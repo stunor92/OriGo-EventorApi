@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
 
 @Repository
-interface EventorRepository : FirestoreReactiveRepository<Eventor?> {
-    fun findByEventorId(eventorId: String?): Mono<Eventor?>?
+interface EventorRepository : FirestoreReactiveRepository<Eventor> {
+    fun findByEventorId(eventorId: String?): Mono<Eventor>
 }

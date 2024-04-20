@@ -1,5 +1,8 @@
-package no.stunor.origo.eventorapi.model.origo.common;
+package no.stunor.origo.eventorapi.model.event
 
-public record Position(double x,
-                       double y) {
-}
+import java.io.Serializable
+
+data class Position (
+        var x: Double = 0.0,
+        var y: Double = 0.0
+) : Serializable

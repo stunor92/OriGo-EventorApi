@@ -1,383 +1,358 @@
-package no.stunor.origo.eventorapi.services.converter;
+package no.stunor.origo.eventorapi.services.converter
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-
-import org.iof.eventor.DisciplineId;
-import org.iof.eventor.DocumentList;
-import org.iof.eventor.EventCenterPosition;
-import org.iof.eventor.EventClassList;
-import org.iof.eventor.EventList;
-import org.iof.eventor.EventRace;
-import org.iof.eventor.EventRaceId;
-import org.iof.eventor.FinishDate;
-import org.iof.eventor.HashTableEntry;
-import org.iof.eventor.OrganisationId;
-import org.iof.eventor.PunchingUnitType;
-import org.iof.eventor.RaceDate;
-import org.iof.eventor.StartDate;
-import org.iof.eventor.ValidFromDate;
-import org.iof.eventor.ValidToDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import no.stunor.origo.eventorapi.data.OrganisationRepository;
-import no.stunor.origo.eventorapi.model.Eventor;
-import no.stunor.origo.eventorapi.model.organisation.Organisation;
-import no.stunor.origo.eventorapi.model.Region;
-import no.stunor.origo.eventorapi.model.event.Event;
-import no.stunor.origo.eventorapi.model.origo.common.CCard;
-import no.stunor.origo.eventorapi.model.origo.common.Position;
-import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak;
-import no.stunor.origo.eventorapi.model.origo.event.DisiplineEnum;
-import no.stunor.origo.eventorapi.model.origo.event.DistanceEnum;
-import no.stunor.origo.eventorapi.model.origo.event.Document;
-import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
-import no.stunor.origo.eventorapi.model.origo.event.EventFormEnum;
-import no.stunor.origo.eventorapi.model.origo.event.EventStatusEnum;
-import no.stunor.origo.eventorapi.model.origo.event.LightConditionEnum;
-import no.stunor.origo.eventorapi.model.origo.event.Race;
-import no.stunor.origo.eventorapi.model.origo.user.UserCompetitor;
-import no.stunor.origo.eventorapi.model.origo.user.UserRace;
+import no.stunor.origo.eventorapi.data.OrganisationRepository
+import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.Region
+import no.stunor.origo.eventorapi.model.event.*
+import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.event.CCard
+import no.stunor.origo.eventorapi.model.event.Position
+import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak
+import no.stunor.origo.eventorapi.model.origo.event.*
+import no.stunor.origo.eventorapi.model.calendar.UserCompetitor
+import no.stunor.origo.eventorapi.model.calendar.UserRace
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.TimeZone
+import kotlin.collections.ArrayList
 
 @Component
-public class EventConverter {
+class EventConverter {
+    @Autowired
+    private lateinit var organisationRepository: OrganisationRepository
 
     @Autowired
-    OrganisationRepository organisationRepository;
-
-    public EventClassificationEnum convertEventClassification(String eventForm) {
-        return switch (eventForm) {
-            case "1" -> EventClassificationEnum.CHAMPIONSHIP;
-            case "2" -> EventClassificationEnum.NATIONAL;
-            case "3" -> EventClassificationEnum.REGIONAL;
-            case "4" -> EventClassificationEnum.LOCAL;
-            default -> EventClassificationEnum.CLUB;
-        };
-    }
-
-
-    public EventStatusEnum convertEventStatus(String eventStatusId) {
-        return switch (eventStatusId) {
-            case "2"    -> EventStatusEnum.REGIONAPPROVED;
-            case "3"    -> EventStatusEnum.APPROVED;
-            case "4"    -> EventStatusEnum.CREATED;
-            case "5"    -> EventStatusEnum.ENTRYOPEN;
-            case "6"    -> EventStatusEnum.ENTRYPAUSED;
-            case "7"    -> EventStatusEnum.ENTRYCLOSED;
-            case "8"    -> EventStatusEnum.LIVE;
-            case "9"    -> EventStatusEnum.COMPLETED;
-            case "10"   -> EventStatusEnum.CANCELED;
-            case "11"   -> EventStatusEnum.REPORTED;
-            default     -> EventStatusEnum.APPLIED;
-        };
-    }
-    public static Date convertRaceDate(RaceDate startTime) {
-        String dateString = startTime.getDate().getContent() + " " + startTime.getClock().getContent();
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        try {
-            return parser.parse(dateString);
-        } catch (ParseException e) {
-            return null;
+    private lateinit var eventClassConverter: EventClassConverter
+    fun convertEventClassification(eventForm: String?): EventClassificationEnum {
+        return when (eventForm) {
+            "1" -> EventClassificationEnum.CHAMPIONSHIP
+            "2" -> EventClassificationEnum.NATIONAL
+            "3" -> EventClassificationEnum.REGIONAL
+            "4" -> EventClassificationEnum.LOCAL
+            else -> EventClassificationEnum.CLUB
         }
     }
 
-    public Date convertRaceDateWhitoutTime(RaceDate startTime) {
-        String dateString = startTime.getDate().getContent();
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
-        parser.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        try {
-            return parser.parse(dateString);
-        } catch (ParseException e) {
-            return null;
+    fun convertEventStatus(eventStatusId: String?): EventStatusEnum {
+        return when (eventStatusId) {
+            "2" -> EventStatusEnum.REGIONAPPROVED
+            "3" -> EventStatusEnum.APPROVED
+            "4" -> EventStatusEnum.CREATED
+            "5" -> EventStatusEnum.ENTRYOPEN
+            "6" -> EventStatusEnum.ENTRYPAUSED
+            "7" -> EventStatusEnum.ENTRYCLOSED
+            "8" -> EventStatusEnum.LIVE
+            "9" -> EventStatusEnum.COMPLETED
+            "10" -> EventStatusEnum.CANCELED
+            "11" -> EventStatusEnum.REPORTED
+            else -> EventStatusEnum.APPLIED
         }
     }
 
-    public static Date convertStartDate(StartDate startTime) {
-        String dateString = startTime.getDate().getContent() + " " + startTime.getClock().getContent();
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+    fun convertRaceDateWithoutTime(startTime: org.iof.eventor.RaceDate): Date? {
+        val dateString = startTime.date.content
+        val parser = SimpleDateFormat("yyyy-MM-dd")
+        parser.timeZone = TimeZone.getTimeZone("UTC")
 
-        try {
-            return parser.parse(dateString);
-        } catch (ParseException e) {
-            return null;
+        return try {
+            parser.parse(dateString)
+        } catch (e: ParseException) {
+            null
         }
     }
-    
 
-    public static Date convertFinishDate(FinishDate startTime) {
-        String dateString = startTime.getDate().getContent() + " " + startTime.getClock().getContent();
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+    fun convertOrganisers(eventor: Eventor, organisers: List<Any>): List<Organisation> {
+        val result: MutableList<Organisation> = ArrayList()
+        for (organiser in organisers) {
+            val o = organisationRepository.findByOrganisationIdAndEventorId((organiser as org.iof.eventor.OrganisationId).content, eventor.eventorId).block()
+            if (o != null) result.add(o)
+        }
+        return result
+    }
 
-        try {
-            return parser.parse(dateString);
-        } catch (ParseException e) {
-            return null;
+    fun convertEventDisciplines(disciplineIds: List<Any>): List<DisciplineEnum> {
+        val result: MutableList<DisciplineEnum> = ArrayList()
+        for (disciplineId in disciplineIds) {
+            result.add(convertEventDiscipline(disciplineId))
+        }
+        return result
+    }
+
+    fun convertEventForm(eventForm: String?): EventFormEnum {
+        return when (eventForm) {
+            "IndSingleDay", "IndMultiDay" -> EventFormEnum.INDIVIDUAL
+            "RelaySingleDay", "RelayMultiDay" -> EventFormEnum.RELAY
+            "PatrolSingleDay", "PatrolMultiDay" -> EventFormEnum.PATROL
+            "TeamSingleDay", "TeamMultiDay" -> EventFormEnum.TEAM
+            else -> EventFormEnum.INDIVIDUAL
         }
     }
-    public static Position convertPosition(EventCenterPosition eventCenterPosition) {
-        return new Position(Double.parseDouble(eventCenterPosition.getX()),Double.parseDouble(eventCenterPosition.getY()));
-    }
 
-     public List<Organisation> convertOrganisers(Eventor eventor, List<Object> organisers) {
-        List<Organisation> result = new ArrayList<>();
-        for (Object organiser: organisers){
-            Organisation o = organisationRepository.findByOrganisationIdAndEventorId(((OrganisationId) organiser).getContent(), eventor.getEventorId()).block();
-            if(o != null) result.add(o);   
-        }
-        return result;
-    }
-
-    public List<DisiplineEnum> convertEventDisciplines(List<Object> disciplineIds) {
-        List<DisiplineEnum> result = new ArrayList<>();
-        for (Object disciplineId: disciplineIds){
-            result.add(convertEventDiscipline(disciplineId));
-        }
-        return result;
-    }
-
-       public EventFormEnum convertEventForm(String eventForm) {
-        return switch (eventForm) {
-            case "IndSingleDay", "IndMultiDay"-> EventFormEnum.INDIVIDUAL;
-            case "RelaySingleDay", "RelayMultiDay" -> EventFormEnum.RELAY;
-            case "PatrolSingleDay", "PatrolMultiDay" -> EventFormEnum.PATROL;
-            case "TeamSingleDay", "TeamMultiDay" -> EventFormEnum.TEAM;
-            default -> EventFormEnum.INDIVIDUAL;
-        };
-    }
-
-    public DisiplineEnum convertEventDiscipline(Object disciplineId) {
-        return switch (((DisciplineId) disciplineId).getContent()) {
-            case "1" -> DisiplineEnum.FOOT;
-            case "2" -> DisiplineEnum.MTB;
-            case "3" -> DisiplineEnum.SKI;
-            case "4" -> DisiplineEnum.PRE;
-            default -> DisiplineEnum.FOOT;
-        };
-    }
-
-    public List<EntryBreak> convertEntryBreaks(List<org.iof.eventor.EntryBreak> entryBreaks) {
-        List<EntryBreak> result = new ArrayList<>();
-        for(org.iof.eventor.EntryBreak entryBreak : entryBreaks){
-            result.add(convertEntryBreak(entryBreak));
-        }
-        return result;
-    }
-
-    private static EntryBreak convertEntryBreak(org.iof.eventor.EntryBreak entryBreak) {
-        return new EntryBreak(
-                entryBreak.getValidFromDate() != null ? convertValidFromDate(entryBreak.getValidFromDate()) : null,
-                entryBreak.getValidToDate() != null ? convertValidToDate(entryBreak.getValidToDate()) : null);
-    }
-
-    public static Date convertValidFromDate(ValidFromDate timeDate) {
-        String dateString = timeDate.getDate().getContent() + " " + timeDate.getClock().getContent();
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        try {
-            return parser.parse(dateString);
-        } catch (ParseException e) {
-            return null;
+    fun convertEventDiscipline(disciplineId: Any): DisciplineEnum {
+        return when ((disciplineId as org.iof.eventor.DisciplineId).content) {
+            "1" -> DisciplineEnum.FOOT
+            "2" -> DisciplineEnum.MTB
+            "3" -> DisciplineEnum.SKI
+            "4" -> DisciplineEnum.PRE
+            else -> DisciplineEnum.FOOT
         }
     }
-    public static Date convertValidToDate(ValidToDate timeDate) {
-        String dateString = timeDate.getDate().getContent() + " " + timeDate.getClock().getContent();
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        parser.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        try {
-            return parser.parse(dateString);
-        } catch (ParseException e) {
-            return null;
+    fun convertEntryBreaks(entryBreaks: List<org.iof.eventor.EntryBreak>): List<EntryBreak> {
+        val result: MutableList<EntryBreak> = ArrayList()
+        for (entryBreak in entryBreaks) {
+            result.add(convertEntryBreak(entryBreak))
         }
-    }
-    
-    public Event convertEvent(
-        org.iof.eventor.Event event, 
-        EventClassList eventCLassList, 
-        DocumentList documentList,
-        List<Organisation> organisations,
-        List<Region> regions,
-        Eventor eventor,
-        List<UserRace> raceCompetitors) {
-        return new Event(
-                eventor,
-                null,
-                event.getEventId().getContent(),
-                event.getName().getContent(),
-                convertEventForm(event.getEventForm()),
-                convertEventClassification(event.getEventClassificationId().getContent()),
-                convertEventStatus(event.getEventStatusId().getContent()),
-                convertEventDisciplines(event.getDisciplineIdOrDiscipline()),
-                event.getStartDate() != null ? convertStartDate(event.getStartDate()) : null,
-                event.getFinishDate() != null ? convertFinishDate(event.getFinishDate()) : null,
-                organisations,
-                regions,
-                EventClassConverter.convertEventClasses(eventCLassList),
-                convertEventDocument(documentList),
-                convertEntryBreaks(event.getEntryBreak()),
-                convertRaces(event, event.getEventRace(), raceCompetitors),
-                convertPunchingUnitTypes(event.getPunchingUnitType()),
-                null, //event.getWebURL(),
-                convertHostMessage(event.getHashTableEntry()),
-                null,
-                null);
-                //event.getContactData() != null ? CommonConverter.convertEmail(event.getContactData().getTele()) : null,
-                //event.getContactData() != null ? CommonConverter.convertPhone(event.getContactData().getTele()) : null);
+        return result
     }
 
-    private List<Race> convertRaces(org.iof.eventor.Event event, List<EventRace> eventRaces, List<UserRace> raceCompetitors) {
-        List<Race> result = new ArrayList<>();
-       
-        for(EventRace eventRace : eventRaces){
-            List<UserCompetitor> userCompetitors = new ArrayList<>();
+    @Throws(ParseException::class)
+    fun convertEvent(
+            event: org.iof.eventor.Event,
+            eventCLassList: org.iof.eventor.EventClassList?,
+            documentList: org.iof.eventor.DocumentList?,
+            organisations: List<Organisation>?,
+            regions: List<Region>?,
+            eventor: Eventor,
+            raceCompetitors: List<UserRace>?): Event {
+        return Event(
+                id = null,
+                eventor = eventor,
+                eventorId = eventor.eventorId,
+                eventId = event.eventId.content,
+                name = event.name.content,
+                type = convertEventForm(event.eventForm),
+                classification = convertEventClassification(event.eventClassificationId.content),
+                status = convertEventStatus(event.eventStatusId.content),
+                disciplines = convertEventDisciplines(event.disciplineIdOrDiscipline),
+                startDate = convertStartDate(event.startDate),
+                finishDate = convertFinishDate(event.finishDate),
+                organisers = organisations?: listOf(),
+                regions = regions?: listOf(),
+                eventClasses = eventClassConverter.convertEventClasses(eventCLassList),
+                documents = convertEventDocument(documentList),
+                entryBreaks = convertEntryBreaks(event.entryBreak),
+                races = convertRaces(event, event.eventRace, raceCompetitors),
+                punchingUnitTypes = convertPunchingUnitTypes(event.punchingUnitType),
+                webUrls = null,  //event.getWebURL(),
+                message = convertHostMessage(event.hashTableEntry),
+                email = null,
+                phone = null
+        )
+    }
 
-            for(UserRace r : raceCompetitors){
-                if(r.getRaceId().equals(eventRace.getEventRaceId().getContent())){
-                    userCompetitors.addAll(r.getUserCompetitors());
+    private fun convertRaces(event: org.iof.eventor.Event, eventRaces: List<org.iof.eventor.EventRace>, raceCompetitors: List<UserRace>?): List<Race> {
+        val result: MutableList<Race> = ArrayList()
+
+        for (eventRace in eventRaces) {
+            val userCompetitors: MutableList<UserCompetitor> = ArrayList()
+
+            for (r in raceCompetitors!!) {
+                if (r.raceId == eventRace.eventRaceId.content) {
+                    userCompetitors.addAll(r.userCompetitors)
                 }
             }
-            result.add(convertRace(event, eventRace, userCompetitors));
+            result.add(convertRace(event, eventRace, userCompetitors))
         }
-        return result;
+        return result
     }
 
-    private Race convertRace(org.iof.eventor.Event event, EventRace eventRace, List<UserCompetitor> competitors) {
-        return new Race(
-            eventRace.getEventRaceId().getContent(),
-            eventRace.getName().getContent(),
-            convertLightCondition(eventRace.getRaceLightCondition()),
-            convertRaceDistance(eventRace.getRaceDistance()),
-            eventRace.getRaceDate() != null ? convertRaceDate(eventRace.getRaceDate()) : null,
-            eventRace.getEventCenterPosition() != null ? convertPosition(eventRace.getEventCenterPosition()) : null,
-            hasStartList(event.getHashTableEntry(), eventRace.getEventRaceId().getContent()),
-            hasResultList(event.getHashTableEntry(), eventRace.getEventRaceId().getContent()),
-            hasLivelox(event.getHashTableEntry()),
-            competitors
-        );
-    }
-
-   
-
-    public LightConditionEnum convertLightCondition(String lightCondition) {
-         return switch (lightCondition) {
-            case "Day" -> LightConditionEnum.DAY;
-            case "Night" -> LightConditionEnum.NIGHT;
-            case "DayAndNight" -> LightConditionEnum.COMBINED;
-
-            default -> LightConditionEnum.DAY;
-        };
+    private fun convertRace(event: org.iof.eventor.Event, eventRace: org.iof.eventor.EventRace, competitors: List<UserCompetitor>): Race {
+        return Race(
+                eventRace.eventRaceId.content,
+                eventRace.name.content,
+                convertLightCondition(eventRace.raceLightCondition),
+                convertRaceDistance(eventRace.raceDistance),
+                if (eventRace.raceDate != null) convertRaceDate(eventRace.raceDate) else null,
+                if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
+                hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
+                hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
+                hasLivelox(event.hashTableEntry),
+                competitors
+        )
     }
 
 
-    public DistanceEnum convertRaceDistance(String raceDistance) {
-        if(raceDistance == null){
-            return DistanceEnum.MIDDLE;
+    fun convertLightCondition(lightCondition: String?): LightConditionEnum {
+        return when (lightCondition) {
+            "Day" -> LightConditionEnum.DAY
+            "Night" -> LightConditionEnum.NIGHT
+            "DayAndNight" -> LightConditionEnum.COMBINED
+            else -> LightConditionEnum.DAY
         }
-        return switch (raceDistance) {
-            case "Long" -> DistanceEnum.LONG;
-            case "Middle" -> DistanceEnum.MIDDLE;
-            case "Sprint", "SprintRelay" -> DistanceEnum.SPRINT;
-            case "Ultralong" -> DistanceEnum.ULTRALONG;
-            case "Pre-O" -> DistanceEnum.PREO;
-            case "Temp-O" -> DistanceEnum.TEMPO;
-            default -> DistanceEnum.MIDDLE;
-        };
     }
 
 
-    private static String convertHostMessage(List<HashTableEntry> hashTableEntries) {
-        for (HashTableEntry hashTableEntry : hashTableEntries){
-            if(hashTableEntry.getKey().getContent().equals("Eventor_Message")){
-                return hashTableEntry.getValue().getContent();
+    fun convertRaceDistance(raceDistance: String?): DistanceEnum {
+        if (raceDistance == null) {
+            return DistanceEnum.MIDDLE
+        }
+        return when (raceDistance) {
+            "Long" -> DistanceEnum.LONG
+            "Middle" -> DistanceEnum.MIDDLE
+            "Sprint", "SprintRelay" -> DistanceEnum.SPRINT
+            "Ultralong" -> DistanceEnum.ULTRALONG
+            "Pre-O" -> DistanceEnum.PREO
+            "Temp-O" -> DistanceEnum.TEMPO
+            else -> DistanceEnum.MIDDLE
+        }
+    }
+
+
+    fun hasStartList(hashTableEntries: List<org.iof.eventor.HashTableEntry>, eventRaceId: String): Boolean {
+        for (hashTableEntry in hashTableEntries) {
+            if (hashTableEntry.key.content == "startList_$eventRaceId") {
+                return true
             }
         }
-        return null;
+        return false
     }
 
-
-    public static List<String> convertPunchingUnitTypes(List<PunchingUnitType> punchingUnitTypes) {
-        List<String> result = new ArrayList<>();
-        for(PunchingUnitType punchingUnitType : punchingUnitTypes){
-            result.add(punchingUnitType.getValue());
-        }
-        return result;
-    }
-
-    public static List<CCard> convertCCards(List<org.iof.eventor.CCard> cCards) {
-        List<CCard> result = new ArrayList<>();
-        for(org.iof.eventor.CCard cCard : cCards){
-            result.add(convertCCard(cCard));
-        }
-        return result;
-    }
-
-    public static CCard convertCCard(org.iof.eventor.CCard cCard) {
-        return new CCard(cCard.getCCardId().getContent(), cCard.getPunchingUnitType().getValue());
-    }
-   
-
-    public static List<Document> convertEventDocument(DocumentList documentList) {
-        List<Document> result = new ArrayList<>();
-        for(org.iof.eventor.Document document :documentList.getDocument()){
-            result.add(new Document(document.getName(), document.getUrl(), document.getType()));
-        }
-        return result;
-    }
-
-    public boolean hasStartList(List<HashTableEntry> hashTableEntries, String eventRaceId) {
-        for (HashTableEntry hashTableEntry : hashTableEntries){
-            if(hashTableEntry.getKey().getContent().equals("startList_"+eventRaceId)){
-                return true;
+    fun hasResultList(hashTableEntries: List<org.iof.eventor.HashTableEntry>, eventRaceId: String): Boolean {
+        for (hashTableEntry in hashTableEntries) {
+            if (hashTableEntry.key.content == "officialResult_$eventRaceId") {
+                return true
             }
         }
-        return false;
+        return false
     }
 
-    public boolean hasResultList(List<HashTableEntry> hashTableEntries, String eventRaceId) {
-        for (HashTableEntry hashTableEntry : hashTableEntries){
-            if(hashTableEntry.getKey().getContent().equals("officialResult_"+eventRaceId)){
-                return true;
+    fun hasLivelox(hashTableEntries: List<org.iof.eventor.HashTableEntry>): Boolean {
+        for (hashTableEntry in hashTableEntries) {
+            if (hashTableEntry.key.content == "Eventor_LiveloxEventConfigurations") {
+                return true
             }
         }
-        return false;
+        return false
     }
 
-    public boolean hasLivelox(List<HashTableEntry> hashTableEntries) {
-        for (HashTableEntry hashTableEntry : hashTableEntries){
-            if(hashTableEntry.getKey().getContent().equals("Eventor_LiveloxEventConfigurations")){
-                return true;
+
+    @Throws(ParseException::class)
+    fun convertEvents(eventList: org.iof.eventor.EventList?, eventor: Eventor): List<Event> {
+        val result: MutableList<Event> = ArrayList()
+        if (eventList != null) {
+            for (event in eventList.event) {
+                result.add(convertEvent(event, null, null, null, null, eventor, null))
             }
         }
-        return false;
+        return result
     }
+    private fun convertRaceDate(startTime: org.iof.eventor.RaceDate): Date? {
+        val dateString = startTime.date.content + " " + startTime.clock.content
+        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        parser.timeZone = TimeZone.getTimeZone("UTC")
 
-
-    public static List<String> convertEventRaceIds(List<EventRaceId> eventRaceIds) {
-        List<String> result = new ArrayList<>();
-        for(EventRaceId eventRaceId : eventRaceIds){
-            result.add(eventRaceId.getContent());
+        return try {
+            parser.parse(dateString)
+        } catch (e: ParseException) {
+            null
         }
-        return result;
+    }
+
+    @Throws(ParseException::class)
+    fun convertStartDate(startTime: org.iof.eventor.StartDate): Date {
+        val dateString = startTime.date.content + " " + startTime.clock.content
+        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        parser.timeZone = TimeZone.getTimeZone("UTC")
+
+        return parser.parse(dateString)
     }
 
 
-    public List<Event> convertEvents(EventList eventList, Eventor eventor) {
-        List<Event> result = new ArrayList<>();
-        for(org.iof.eventor.Event event : eventList.getEvent()){
-            result.add(convertEvent(event, null, null, null, null, eventor, null));
+    @Throws(ParseException::class)
+    fun convertFinishDate(startTime: org.iof.eventor.FinishDate): Date {
+        val dateString = startTime.date.content + " " + startTime.clock.content
+        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        parser.timeZone = TimeZone.getTimeZone("UTC")
+
+        return parser.parse(dateString)
+    }
+
+    fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): Position {
+        return Position(eventCenterPosition.x.toDouble(), eventCenterPosition.y.toDouble())
+    }
+
+    private fun convertEntryBreak(entryBreak: org.iof.eventor.EntryBreak): EntryBreak {
+        return EntryBreak(
+                if (entryBreak.validFromDate != null) convertValidFromDate(entryBreak.validFromDate) else null,
+                if (entryBreak.validToDate != null) convertValidToDate(entryBreak.validToDate) else null)
+    }
+
+    private fun convertValidFromDate(timeDate: org.iof.eventor.ValidFromDate): Date? {
+        val dateString = timeDate.date.content + " " + timeDate.clock.content
+        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        parser.timeZone = TimeZone.getTimeZone("UTC")
+
+        return try {
+            parser.parse(dateString)
+        } catch (e: ParseException) {
+            null
         }
-        return result;
     }
 
+    private fun convertValidToDate(timeDate: org.iof.eventor.ValidToDate): Date? {
+        val dateString = timeDate.date.content + " " + timeDate.clock.content
+        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        parser.timeZone = TimeZone.getTimeZone("UTC")
+
+        return try {
+            parser.parse(dateString)
+        } catch (e: ParseException) {
+            null
+        }
+    }
+
+    private fun convertHostMessage(hashTableEntries: List<org.iof.eventor.HashTableEntry>): String? {
+        for (hashTableEntry in hashTableEntries) {
+            if (hashTableEntry.key.content == "Eventor_Message") {
+                return hashTableEntry.value.content
+            }
+        }
+        return null
+    }
+
+
+    fun convertPunchingUnitTypes(punchingUnitTypes: List<org.iof.eventor.PunchingUnitType>): List<String> {
+        val result: MutableList<String> = ArrayList()
+        for (punchingUnitType in punchingUnitTypes) {
+            result.add(punchingUnitType.value)
+        }
+        return result
+    }
+
+    fun convertCCards(cCards: List<org.iof.eventor.CCard>): List<CCard> {
+        val result: MutableList<CCard> = ArrayList()
+        for (cCard in cCards) {
+            result.add(convertCCard(cCard))
+        }
+        return result
+    }
+
+    fun convertCCard(cCard: org.iof.eventor.CCard): CCard {
+        return CCard(cCard.cCardId.content, cCard.punchingUnitType.value)
+    }
+
+
+    fun convertEventDocument(documentList: org.iof.eventor.DocumentList?): List<Document> {
+        val result: MutableList<Document> = ArrayList()
+        if(documentList == null){
+            return listOf()
+        }
+        for (document in documentList.document) {
+            result.add(Document(document.name, document.url, document.type))
+        }
+        return result
+    }
+
+    fun convertEventRaceIds(eventRaceIds: List<org.iof.eventor.EventRaceId>): List<String> {
+        val result: MutableList<String> = ArrayList()
+        for (eventRaceId in eventRaceIds) {
+            result.add(eventRaceId.content)
+        }
+        return result
+    }
 }

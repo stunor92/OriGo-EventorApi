@@ -1,108 +1,96 @@
-package no.stunor.origo.eventorapi.services;
+package no.stunor.origo.eventorapi.services
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import no.stunor.origo.eventorapi.api.EventorService
+import no.stunor.origo.eventorapi.api.exception.EventorParsingException
+import no.stunor.origo.eventorapi.data.EventorRepository
+import no.stunor.origo.eventorapi.data.PersonRepository
+import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.calendar.UserRace
+import no.stunor.origo.eventorapi.services.converter.PersonEntriesConverter
+import org.iof.eventor.EntryList
+import org.iof.eventor.EventClassList
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import java.text.ParseException
 
-import org.iof.eventor.Entry;
-import org.iof.eventor.EntryList;
-import org.iof.eventor.EventClassList;
-import org.iof.eventor.EventRaceId;
-import org.iof.eventor.ResultListList;
-import org.iof.eventor.StartListList;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
-import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EventorParsingException;
-import no.stunor.origo.eventorapi.data.EventorRepository;
-import no.stunor.origo.eventorapi.data.PersonRepository;
-import no.stunor.origo.eventorapi.model.Eventor;
-import no.stunor.origo.eventorapi.model.person.Person;
-import no.stunor.origo.eventorapi.model.origo.user.UserRace;
-import no.stunor.origo.eventorapi.services.converter.PersonEntriesConverter;
-
-@Slf4j
 @Service
-public class UserEntryService {
+class UserEntryService{
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
     @Autowired
-    EventorRepository eventorRepository;
+    private lateinit var eventorRepository: EventorRepository
+
     @Autowired
-    PersonRepository personRepository;
+    private lateinit var personRepository: PersonRepository
+
     @Autowired
-    EventorService eventorService;
+    private lateinit var eventorService: EventorService
+
     @Autowired
-    PersonEntriesConverter personEntriesConverter;
+    private lateinit var personEntriesConverter: PersonEntriesConverter
+    fun userRaces(userId: String, eventor: Eventor?, eventNumber: String?): List<UserRace> {
+        val raceList: MutableList<UserRace> = ArrayList()
 
-    
-    public UserEntryService(EventorRepository eventorRepository, PersonRepository personRepository,
-            EventorService eventorService, PersonEntriesConverter personEntriesConverter) {
-        this.eventorRepository = eventorRepository;
-        this.personRepository = personRepository;
-        this.eventorService = eventorService;
-        this.personEntriesConverter = personEntriesConverter;
-    }
+        val persons = personRepository.findAllByUsersContains(userId).collectList().block()?: listOf()
 
-
-
-
-    public  List<UserRace>  userRaces(String userId, Eventor eventor, String eventNumber) {
-        List<UserRace> raceList = new ArrayList<>();
-
-        List<Person> persons = personRepository.findAllByUsersContains(userId).collectList().block();
-
-        for (Person person : persons){
-            Eventor personEventor = null;
-            if(eventor == null){
-                personEventor = eventorRepository.findByEventorId(person.getEventorId()).block();
-            } else if (!person.getEventorId().equals(eventor.getEventorId())){
-                continue;
+        for (person in persons) {
+            var personSpecificEventor: Eventor? = null
+            if (eventor == null) {
+                personSpecificEventor = eventorRepository.findByEventorId(person.eventorId).block()
+            } else if (person.eventorId != eventor.eventorId) {
+                continue
             }
-            List<String> organisationIds = new ArrayList<>();
-            for(String organisationId : person.getMemberships().keySet()){
-                organisationIds.add(organisationId);
+            val organisationIds: MutableList<String> = ArrayList()
+            for (organisationId in person.memberships.keys) {
+                organisationIds.add(organisationId)
             }
-  
-            EntryList entryList;
+
+            var entryList: EntryList?
             try {
-                entryList = eventorService.getGetOrganisationEntries(eventor != null ? eventor : personEventor, organisationIds, eventNumber);
-                Map<String, EventClassList> eventClassMap = new HashMap<>();
-                for(Entry entry :entryList.getEntry()){
-                    for(EventRaceId raceId : entry.getEventRaceId()){
-                        if(!eventClassMap.containsKey(raceId.getContent())){
-                           EventClassList eventClassList = eventorService.getEventClasses(eventor != null ? eventor : personEventor, entry.getEvent().getEventId().getContent());
-                           eventClassMap.put(raceId.getContent(), eventClassList);
-                          
+                entryList = eventorService.getGetOrganisationEntries((eventor
+                        ?: personSpecificEventor)!!, organisationIds, eventNumber)
+                val eventClassMap: MutableMap<String, EventClassList> = HashMap()
+                for (entry in entryList!!.entry) {
+                    for (raceId in entry.eventRaceId) {
+                        if (!eventClassMap.containsKey(raceId.content)) {
+                            val eventClassList = eventorService.getEventClasses((eventor
+                                    ?: personSpecificEventor)!!, entry.event.eventId.content)
+                            if(eventClassList !=  null) {
+                                eventClassMap[raceId.content] = eventClassList
+                            }
                         }
                     }
                 }
-                StartListList startListList = eventorService.getGetPersonalStarts(eventor != null ? eventor : personEventor, person.getPersonId(), eventNumber);
-                ResultListList resultListList = eventorService.getGetPersonalResults(eventor != null ? eventor : personEventor, person.getPersonId(), eventNumber);
-                List<UserRace> personRaces = personEntriesConverter.convertPersonEntries(eventor != null ? eventor : personEventor, person, entryList, startListList, resultListList, eventClassMap);
+                val startListList = eventorService.getGetPersonalStarts((eventor
+                        ?: personSpecificEventor)!!, person.personId, eventNumber)
+                val resultListList = eventorService.getGetPersonalResults((eventor
+                        ?: personSpecificEventor)!!, person.personId, eventNumber)
+                val personRaces = personEntriesConverter.convertPersonEntries((eventor
+                        ?: personSpecificEventor)!!, person, entryList, startListList!!, resultListList!!, eventClassMap)
 
-                for(UserRace race : personRaces){
-                    boolean raceExist = false;
-                    for(UserRace r : raceList){
-                        if(race.getEventor().getEventorId().equals(r.getEventor().getEventorId()) && race.getRaceId().equals(r.getRaceId())){
-                            raceExist = true;
-                            r.getUserCompetitors().addAll(race.getUserCompetitors());
-                            r.getOrganisationEntries().putAll(race.getOrganisationEntries());
+                for (race in personRaces) {
+                    var raceExist = false
+                    for ((eventor1, _, _, raceId, _, _, _, userCompetitors, organisationEntries) in raceList) {
+                        if (race.eventor.eventorId == eventor1.eventorId && race.raceId == raceId) {
+                            raceExist = true
+                            userCompetitors.addAll(race.userCompetitors)
+                            organisationEntries.putAll(race.organisationEntries)
                         }
                     }
-                    if(!raceExist){
-                        raceList.add(race);
+                    if (!raceExist) {
+                        raceList.add(race)
                     }
                 }
-            } catch (NumberFormatException | ParseException e ) {
-                log.warn(e.getMessage());
-                throw new EventorParsingException();
+            } catch (e: NumberFormatException) {
+                log.warn(e.message)
+                throw EventorParsingException()
+            } catch (e: ParseException) {
+                log.warn(e.message)
+                throw EventorParsingException()
             }
         }
 
-        return raceList;
+        return raceList
     }
 }

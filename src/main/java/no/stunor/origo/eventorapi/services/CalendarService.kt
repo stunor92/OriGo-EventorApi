@@ -1,172 +1,78 @@
-package no.stunor.origo.eventorapi.services;
+package no.stunor.origo.eventorapi.services
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import no.stunor.origo.eventorapi.api.EventorService
+import no.stunor.origo.eventorapi.api.exception.EventorNotFoundException
+import no.stunor.origo.eventorapi.data.EventorRepository
+import no.stunor.origo.eventorapi.data.PersonRepository
+import no.stunor.origo.eventorapi.model.calendar.CalendarRace
+import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
+import no.stunor.origo.eventorapi.model.person.Person
+import no.stunor.origo.eventorapi.services.converter.CalendarConverter
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import java.time.LocalDate
 
-import org.iof.eventor.CompetitorCount;
-import org.iof.eventor.CompetitorCountList;
-import org.iof.eventor.Event;
-import org.iof.eventor.EventList;
-import org.iof.eventor.EventRace;
-import org.iof.eventor.OrganisationCompetitorCount;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
-import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.data.EventorRepository;
-import no.stunor.origo.eventorapi.data.PersonRepository;
-import no.stunor.origo.eventorapi.model.Eventor;
-import no.stunor.origo.eventorapi.model.person.Person;
-import no.stunor.origo.eventorapi.model.origo.calendar.CalendarRace;
-import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
-import no.stunor.origo.eventorapi.services.converter.EventConverter;
-
-
-@Slf4j
 @Service
-public class CalendarService {
+class CalendarService {
+
+    private val log = LoggerFactory.getLogger(this.javaClass)
+
     @Autowired
-    EventorRepository eventorRepository;
+    private lateinit var eventorRepository: EventorRepository
+
     @Autowired
-    PersonRepository personRepository;
+    private lateinit var personRepository: PersonRepository
+
     @Autowired
-    EventorService eventorService;
+    private lateinit var eventorService: EventorService
+
     @Autowired
-    EventConverter eventConverter;
+    private lateinit var calendarConverter: CalendarConverter
 
-    public List<CalendarRace> getEventList(LocalDate from, LocalDate to, List<EventClassificationEnum> classifications, String userId) {
-        List<Eventor> eventorList = eventorRepository.findAll().collectList().block();
-        
-        List<CalendarRace> result = new ArrayList<>();
+    fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
+        val eventorList: List<Eventor?> = eventorRepository.findAll().collectList().block()?.toList() ?: listOf()
 
-        for(Eventor eventor : eventorList){
-            List<Person> persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventor.getEventorId()).collectList().block();
-            result.addAll(getEventList(eventor, from, to, null, classifications, persons));
-        }
-        return result;
-    }
+        val result: MutableList<CalendarRace> = ArrayList()
 
-    public List<CalendarRace> getEventList(String eventorId, LocalDate from, LocalDate to, List<String> organisations, List<EventClassificationEnum> classifications, String userId) {
-        Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
-        List<Person> persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventor.getEventorId()).collectList().block();
-        
-        return getEventList(eventor, from, to, organisations, classifications, persons);
-    }
-
-    private List<CalendarRace> getEventList(Eventor eventor, LocalDate from, LocalDate to, List<String> organisations, List<EventClassificationEnum> classifications, List<Person> persons) {
-        EventList eventList = eventorService.getEventList(eventor, from, to, organisations, classifications);
-        List<String> events = new ArrayList<>();
-        for (Event event : eventList.getEvent()){
-            events.add(event.getEventId().getContent());
-        }
-
-        List<String> personIds = new ArrayList<>();
-        List<String> organisationIds = new ArrayList<>();
-
-        for (Person person : persons){
-            personIds.add(person.getPersonId());
-            organisationIds.addAll(person.getMemberships().keySet());
-        }
-
-        log.info("Fetcing cometitorcount for persons {} and orgaisations {}.", personIds, organisationIds);
-        CompetitorCountList competitorCountList = eventorService.getCompetitorCounts(eventor, events, organisationIds, personIds);
-        return convertEvents(eventList, eventor, competitorCountList);
-    }
-
-    private List<CalendarRace> convertEvents(EventList eventList, Eventor eventor, CompetitorCountList competitorCountList) {
-        List<CalendarRace> result = new ArrayList<>();
-        for(Event event : eventList.getEvent()){
-            result.addAll(convertEvent(event, eventor, competitorCountList));
-        }
-        return result;
-    }
-
-    private List<CalendarRace> convertEvent(Event event, Eventor eventor, CompetitorCountList competitorCountList) {
-        List<CalendarRace> result = new ArrayList<>();
-        for(EventRace eventRace : event.getEventRace()){
-            result.add(convertRace(event, eventRace, eventor, competitorCountList));
-        }
-        return result;
-    }
-
-    private CalendarRace convertRace(Event event, EventRace eventRace, Eventor eventor, CompetitorCountList competitorCountList) {
-        return new CalendarRace(
-                eventor,
-                event.getEventId().getContent(),
-                eventRace.getEventRaceId().getContent(),
-                event.getName().getContent(),
-                eventRace.getName().getContent(),
-                eventRace.getRaceDate() != null ? eventConverter.convertRaceDateWhitoutTime(eventRace.getRaceDate()) : null,
-                eventConverter.convertEventForm(event.getEventForm()),
-                eventConverter.convertEventClassification(event.getEventClassificationId().getContent()),
-                eventConverter.convertLightCondition(eventRace.getRaceLightCondition()),
-                eventConverter.convertRaceDistance(eventRace.getRaceDistance()),
-                eventRace.getEventCenterPosition() != null ? EventConverter.convertPosition(eventRace.getEventCenterPosition()) : null,
-                eventConverter.convertEventStatus(event.getEventStatusId().getContent()),
-                eventConverter.convertEventDisciplines(event.getDisciplineIdOrDiscipline()),
-                eventConverter.convertOrganisers(eventor, event.getOrganiser().getOrganisationIdOrOrganisation()),
-                eventConverter.convertEntryBreaks(event.getEntryBreak()),
-                isSignedUp(event.getEventId().getContent(), competitorCountList),
-                getEntries(event.getEventId().getContent(), eventRace.getEventRaceId().getContent(), competitorCountList),
-                getOrganisationEntries(eventor, event.getEventId().getContent(), eventRace.getEventRaceId().getContent(), competitorCountList),
-                eventConverter.hasStartList(event.getHashTableEntry(), eventRace.getEventRaceId().getContent()),
-                eventConverter.hasResultList(event.getHashTableEntry(), eventRace.getEventRaceId().getContent()),
-                eventConverter.hasLivelox(event.getHashTableEntry()));
-    }
-
-    private static boolean isSignedUp(String eventId, CompetitorCountList competitorCountList) {
-        for(CompetitorCount competitorCount : competitorCountList.getCompetitorCount()) {
-            if(competitorCount.getEventId().equals(eventId) && competitorCount.getClassCompetitorCount() != null && !competitorCount.getClassCompetitorCount().isEmpty()){
-                return true;
+        for (eventor in eventorList) {
+            if (eventor != null) {
+                val persons: List<Person> = personRepository.findAllByUsersContainsAndEventorId(user = userId, eventorId = eventor.eventorId).collectList().block()?.toList()
+                        ?: listOf()
+                result.addAll(getEventList(eventor = eventor, from = from, to = to, organisations = null, classifications = classifications, persons = persons))
             }
         }
-        return false;
+        return result
     }
 
-    private static Integer getEntries(String eventId, String eventRaceId, CompetitorCountList competitorCountList) {
+    fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
+        val eventor = eventorRepository.findByEventorId(eventorId).block() ?: throw EventorNotFoundException()
+        val persons: List<Person> = personRepository.findAllByUsersContainsAndEventorId(userId, eventor.eventorId).collectList().block()?.toList()
+                ?: listOf()
 
-        for(CompetitorCount competitorCount : competitorCountList.getCompetitorCount()) {
-            if(competitorCount.getEventId().equals(eventId)){
-                if(competitorCount.getEventRaceId() == null){
-                    return Integer.parseInt(competitorCount.getNumberOfEntries());
-                } else if(competitorCount.getEventRaceId().equals(eventRaceId)){
-                    return Integer.parseInt(competitorCount.getNumberOfEntries());
-                }
-            }
+        return getEventList(eventor = eventor, from = from, to = to, organisations = organisations, classifications = classifications, persons = persons )
+    }
+
+    private fun getEventList(eventor: Eventor, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, persons: List<Person>): List<CalendarRace> {
+        val eventList = eventorService.getEventList(eventor, from, to, organisations, classifications)
+        val events: MutableList<String?> = ArrayList()
+        for (event in eventList!!.event) {
+            events.add(event.eventId.content)
         }
-        return 0;
-    }
 
-    private static Map<String,Integer> getOrganisationEntries(Eventor eventor, String eventId, String eventRaceId, CompetitorCountList competitorCountList) {
-        Map<String,Integer> result = new HashMap<>();
+        val personIds: MutableList<String?> = ArrayList()
+        val organisationIds: MutableList<String?> = ArrayList()
 
-        for(CompetitorCount competitorCount : competitorCountList.getCompetitorCount()) {
-            if(competitorCount.getEventId().equals(eventId)){
-                if(competitorCount.getEventRaceId() == null){
-                    if(competitorCount.getOrganisationCompetitorCount() != null){
-                            for (OrganisationCompetitorCount organisationCompetitorCount : competitorCount.getOrganisationCompetitorCount()){
-                                result.put(organisationCompetitorCount.getOrganisationId(), Integer.parseInt(organisationCompetitorCount.getNumberOfEntries()));
-                            }
-                        }
-                } else if(competitorCount.getEventRaceId().equals(eventRaceId)){
-                    if(competitorCount.getOrganisationCompetitorCount() != null){
-                            for (OrganisationCompetitorCount organisationCompetitorCount : competitorCount.getOrganisationCompetitorCount()){
-                                result.put(organisationCompetitorCount.getOrganisationId(), Integer.parseInt(organisationCompetitorCount.getNumberOfEntries()));
-                            }
-                        }
-                }
-            }
-                        
+
+        for (person in persons) {
+            personIds.add(person.personId)
+            organisationIds.addAll(person.memberships.keys)
         }
-        return result;
+
+        log.info("Fetching competitor-count for persons {} and organisations {}.", personIds, organisationIds)
+        val competitorCountList = eventorService.getCompetitorCounts(eventor, events, organisationIds, personIds)
+        return calendarConverter.convertEvents(eventList, eventor, competitorCountList)
     }
-
-     
-
-    
-    
 }
+

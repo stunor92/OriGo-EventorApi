@@ -1,5 +1,5 @@
-package no.stunor.origo.eventorapi.model.origo.event;
+package no.stunor.origo.eventorapi.model.event
 
-public enum DistanceEnum {
-    SPRINT, MIDDLE, LONG, ULTRALONG, PREO, TEMPO;
+enum class DistanceEnum {
+    SPRINT, MIDDLE, LONG, ULTRALONG, PREO, TEMPO
 }

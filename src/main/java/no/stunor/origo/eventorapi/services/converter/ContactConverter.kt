@@ -1,36 +1,36 @@
-package no.stunor.origo.eventorapi.services.converter;
+package no.stunor.origo.eventorapi.services.converter
 
-import java.util.List;
+import org.iof.eventor.Tele
+import org.springframework.stereotype.Component
 
-import org.iof.eventor.Tele;
+@Component
 
-public class ContactConverter {
- 
-      public static String convertEmail(List<Tele> teleList) {
-        if(teleList == null){
-            return null;
+class ContactConverter {
+    fun convertEmail(teleList: List<Tele>?): String? {
+        if (teleList == null) {
+            return null
         }
-        for(Tele tele : teleList){
-            if(tele.getTeleType().getValue().equals("official")){
-                if(tele.getMailAddress() != null){
-                    return tele.getMailAddress();
+        for (tele in teleList) {
+            if (tele.teleType.value == "official") {
+                if (tele.mailAddress != null) {
+                    return tele.mailAddress
                 }
             }
         }
-        return null;
+        return null
     }
 
-    public static String convertPhone(List<Tele> teleList) {
-        if(teleList == null){
-            return null;
+    fun convertPhone(teleList: List<Tele>?): String? {
+        if (teleList == null) {
+            return null
         }
-        for(Tele tele : teleList){
-            if(tele.getTeleType().getValue().equals("official")){
-                if(tele.getMobilePhoneNumber() != null){
-                    return tele.getMobilePhoneNumber();
+        for (tele in teleList) {
+            if (tele.teleType.value == "official") {
+                if (tele.mobilePhoneNumber != null) {
+                    return tele.mobilePhoneNumber
                 }
             }
         }
-        return null;
+        return null
     }
 }

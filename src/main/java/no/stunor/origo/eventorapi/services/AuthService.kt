@@ -1,62 +1,65 @@
-package no.stunor.origo.eventorapi.services;
+package no.stunor.origo.eventorapi.services
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
+import no.stunor.origo.eventorapi.api.EventorService
+import no.stunor.origo.eventorapi.api.exception.EventorAuthException
+import no.stunor.origo.eventorapi.api.exception.EventorConnectionException
+import no.stunor.origo.eventorapi.data.EventorRepository
+import no.stunor.origo.eventorapi.data.PersonRepository
+import no.stunor.origo.eventorapi.model.person.Person
+import no.stunor.origo.eventorapi.services.converter.PersonConverter
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpClientErrorException
 
-import lombok.extern.slf4j.Slf4j;
-import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EventorAuthException;
-import no.stunor.origo.eventorapi.api.exception.EventorConnectionException;
-import no.stunor.origo.eventorapi.data.EventorRepository;
-import no.stunor.origo.eventorapi.data.PersonRepository;
-import no.stunor.origo.eventorapi.model.Eventor;
-import no.stunor.origo.eventorapi.model.person.Person;
-import no.stunor.origo.eventorapi.services.converter.PersonConverter;
-
-
-@Slf4j
 @Service
-public class AuthService {
+class AuthService {
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
     @Autowired
-    EventorRepository eventorRepository;
+    private lateinit var eventorRepository: EventorRepository
+
     @Autowired
-    PersonRepository personRepository;
+    private lateinit var personRepository: PersonRepository
+
     @Autowired
-    EventorService eventorService;
+    private lateinit var eventorService: EventorService
 
-    public Person authenticate(String eventorId, String username, String password, String userId) {
-        try{
-            Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
+    @Autowired
+    private lateinit var personConverter: PersonConverter
 
-            log.info("Start authenticating user {} on {}.", username, eventor.getName());
+    fun authenticate(eventorId: String, username: String, password: String, userId: String): Person {
+        try {
+            val eventor = eventorRepository.findByEventorId(eventorId).block()!!
 
-            Person person = PersonConverter.convertPerson(eventorService.authenticatePerson(eventor, username, password), eventor);
+            log.info("Start authenticating user {} on {}.", username, eventor.name)
 
-            Person existingPerson = personRepository.findByPersonIdAndEventorId(person.getPersonId(), eventor.getEventorId()).block();
+            val eventorPerson = eventorService.authenticatePerson(eventor, username, password)?: throw EventorAuthException()
 
-            if(existingPerson == null){
-                person.getUsers().add(userId);
-                personRepository.save(person).block();
-            } else {    
-                person.setId(existingPerson.getId());
+            val person = personConverter.convertPerson(eventorPerson, eventor)
 
-                person.getUsers().addAll(existingPerson.getUsers());
-            
-                if(!person.getUsers().contains(userId)){
-                    person.getUsers().add(userId);
+            val existingPerson = personRepository.findByPersonIdAndEventorId(person.personId, eventor.eventorId).block()
+
+            if (existingPerson == null) {
+                person.users.add(userId)
+                personRepository.save(person).block()
+            } else {
+                person.id = existingPerson.id
+
+                person.users = existingPerson.users
+
+                if (!person.users.contains(userId)) {
+                    person.users.add(userId)
                 }
 
-                personRepository.save(person).block();
+                personRepository.save(person).block()
             }
-            return person;
-        } catch (HttpClientErrorException e) {
-            if(e.getStatusCode().value() == 401) {
-                throw new EventorAuthException();
+            return person
+        } catch (e: HttpClientErrorException) {
+            if (e.statusCode.value() == 401) {
+                throw EventorAuthException()
             }
-            throw new EventorConnectionException();
+            throw EventorConnectionException()
         }
-        
     }
 }

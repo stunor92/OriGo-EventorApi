@@ -1,5 +1,5 @@
-package no.stunor.origo.eventorapi.model.origo.event;
+package no.stunor.origo.eventorapi.model.event
 
-public enum EventStatusEnum {
-    APPLIED, REGIONAPPROVED, APPROVED, CREATED, ENTRYOPEN, ENTRYPAUSED, ENTRYCLOSED, LIVE, COMPLETED, CANCELED, REPORTED;    
+enum class EventStatusEnum {
+    APPLIED, REGIONAPPROVED, APPROVED, CREATED, ENTRYOPEN, ENTRYPAUSED, ENTRYCLOSED, LIVE, COMPLETED, CANCELED, REPORTED
 }

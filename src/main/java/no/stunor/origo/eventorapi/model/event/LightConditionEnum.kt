@@ -1,5 +1,5 @@
-package no.stunor.origo.eventorapi.model.origo.event;
+package no.stunor.origo.eventorapi.model.event
 
-public enum LightConditionEnum {
-    DAY, NIGHT, COMBINED;
+enum class LightConditionEnum {
+    DAY, NIGHT, COMBINED
 }

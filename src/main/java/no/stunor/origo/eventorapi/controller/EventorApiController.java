@@ -3,12 +3,12 @@ package no.stunor.origo.eventorapi.controller;
 import lombok.extern.slf4j.Slf4j;
 import no.stunor.origo.eventorapi.model.person.Person;
 import no.stunor.origo.eventorapi.model.event.Event;
-import no.stunor.origo.eventorapi.model.origo.calendar.CalendarRace;
+import no.stunor.origo.eventorapi.model.calendar.CalendarRace;
 import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList;
-import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
+import no.stunor.origo.eventorapi.model.event.EventClassificationEnum;
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList;
 import no.stunor.origo.eventorapi.model.origo.start.RaceStartList;
-import no.stunor.origo.eventorapi.model.origo.user.UserRace;
+import no.stunor.origo.eventorapi.model.calendar.UserRace;
 import no.stunor.origo.eventorapi.services.AuthService;
 import no.stunor.origo.eventorapi.services.CalendarService;
 import no.stunor.origo.eventorapi.services.EventService;
@@ -33,7 +33,7 @@ class EventorApiController {
     AuthService authService;
     @Autowired
     CalendarService calendarService;
-    @Autowired  
+    @Autowired
     UserEntryService userEntryService;
     @Autowired
     EventService eventService;
@@ -64,17 +64,17 @@ class EventorApiController {
     public ResponseEntity<List<UserRace>> getPersonalEvents(@RequestHeader("userId") String userId) {
         log.info("Start to get personal events for user {}.", userId);
         return new ResponseEntity<>(userEntryService.userRaces(userId, null, null), HttpStatus.OK);
-        
+
     }
 
     @GetMapping("/event/{eventorId}/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId, @RequestHeader("userId") String userId) {
-        return new ResponseEntity<>(eventService.getEvent(eventorId, eventId, userId), HttpStatus.OK); 
+        return new ResponseEntity<>(eventService.getEvent(eventorId, eventId, userId), HttpStatus.OK);
     }
 
     @GetMapping("/event/entrylist/{eventorId}/{eventId}")
-    public ResponseEntity<EventEntryList> getEventEntryList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {                
-        return new ResponseEntity<>(eventService.getEntryList(eventorId, eventId), HttpStatus.OK);   
+    public ResponseEntity<EventEntryList> getEventEntryList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {
+        return new ResponseEntity<>(eventService.getEntryList(eventorId, eventId), HttpStatus.OK);
     }
 
     @GetMapping("/event/startlist/{eventorId}/{eventId}")

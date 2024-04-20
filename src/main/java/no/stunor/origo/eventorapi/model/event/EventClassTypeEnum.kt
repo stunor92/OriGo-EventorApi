@@ -1,5 +1,5 @@
-package no.stunor.origo.eventorapi.model.origo.event;
+package no.stunor.origo.eventorapi.model.event
 
-public enum EventClassTypeEnum {
-    ELITE, NORMAL, OPEN;
+enum class EventClassTypeEnum {
+    ELITE, NORMAL, OPEN
 }

@@ -1,350 +1,307 @@
-package no.stunor.origo.eventorapi.api;
+package no.stunor.origo.eventorapi.api
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
+import org.iof.eventor.*
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter
+import org.springframework.stereotype.Service
+import org.springframework.web.client.RestTemplate
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import org.iof.eventor.CompetitorCountList;
-import org.iof.eventor.DocumentList;
-import org.iof.eventor.EntryList;
-import org.iof.eventor.Event;
-import org.iof.eventor.EventClassList;
-import org.iof.eventor.EventList;
-import org.iof.eventor.Organisation;
-import org.iof.eventor.Person;
-import org.iof.eventor.ResultList;
-import org.iof.eventor.ResultListList;
-import org.iof.eventor.StartList;
-import org.iof.eventor.StartListList;
-
-import no.stunor.origo.eventorapi.model.Eventor;
-import no.stunor.origo.eventorapi.model.origo.event.EventClassificationEnum;
 @Service
-public class EventorService {
+class EventorService {
+    @Value("\${config.personalEntries.start}")
+    private val personalEntriesStart = 0
 
-    @Value("${config.personalEntries.start}")
-    private int perosnalEtriesStart;
+    @Value("\${config.personalEntries.end}")
+    private val personalEntriesEnd = 0
 
-    @Value("${config.personalEntries.end}")
-    private int perosnalEtriesEnd;
+    @Value("\${config.personalStarts.start}")
+    private val personalStartsStart = 0
 
-    @Value("${config.personalStarts.start}")
-    private int perosnaStartsStart;
+    @Value("\${config.personalStarts.end}")
+    private val personalStartsEnd = 0
 
-    @Value("${config.personalStarts.end}")
-    private int perosnalStartsEnd;
+    @Value("\${config.personalResults.start}")
+    private val personalResultsStart = 0
 
-    @Value("${config.personalResults.start}")
-    private int perosnaResultsStart;
-
-    @Value("${config.personalResults.end}")
-    private int perosnalResultsEnd;
+    @Value("\${config.personalResults.end}")
+    private val personalResultsEnd = 0
 
 
-    RestTemplate restTemplate;
-    public EventorService() {
-        restTemplate = new RestTemplate();
-        SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
-        rf.setReadTimeout(6000);
-        rf.setConnectTimeout(6000);
+    private var restTemplate: RestTemplate = RestTemplate()
 
-        List<HttpMessageConverter<?>> converters = new ArrayList<>();
-        converters.add(new Jaxb2RootElementHttpMessageConverter());
-        restTemplate.setMessageConverters(converters);
+    init {
+        val rf = restTemplate.requestFactory as SimpleClientHttpRequestFactory
+        rf.setReadTimeout(6000)
+        rf.setConnectTimeout(6000)
+
+        val converters: MutableList<HttpMessageConverter<*>> = ArrayList()
+        converters.add(Jaxb2RootElementHttpMessageConverter())
+        restTemplate.messageConverters = converters
     }
 
-    public Person authenticatePerson(Eventor eventor, String username, String password) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Username", username);
-        headers.set("Password", password);
-        
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<Person> response = restTemplate.exchange(
-                eventor.getBaseUrl() + "api/authenticatePerson",
+    fun authenticatePerson(eventor: Eventor, username: String?, password: String?): Person? {
+        val headers = HttpHeaders()
+        headers["Username"] = username
+        headers["Password"] = password
+
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+                eventor.baseUrl + "api/authenticatePerson",
                 HttpMethod.GET,
                 request,
-                Person.class,
+                Person::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
-    public EventList getEventList(Eventor eventor, LocalDate fromDate, LocalDate toDate, List<String> organisationIds, List<EventClassificationEnum> classifications) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", eventor.getApiKey());
 
-        List<String> classificationIds = new ArrayList<>();
+    fun getEventList(eventor: Eventor, fromDate: LocalDate?, toDate: LocalDate?, organisationIds: List<String?>?, classifications: List<EventClassificationEnum?>?): EventList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = eventor.apiKey
 
-        if(classifications != null){
-            for(EventClassificationEnum eventClassificatiion : classifications){
-                switch (eventClassificatiion) {
-                    case CHAMPIONSHIP:
-                        classificationIds.add("1");
-                        break;
-                    case NATIONAL:
-                        classificationIds.add("2");
-                        break;
-                    case REGIONAL:
-                        classificationIds.add("3");
-                        break;
-                    case LOCAL:
-                        classificationIds.add("4");
-                        break;
-                    case CLUB:
-                        classificationIds.add("5");
-                        break;
-                    default:
-                        break;
+        val classificationIds: MutableList<String> = ArrayList()
+
+        if (classifications != null) {
+            for (eventClassification in classifications) {
+                when (eventClassification) {
+                    EventClassificationEnum.CHAMPIONSHIP -> classificationIds.add("1")
+                    EventClassificationEnum.NATIONAL -> classificationIds.add("2")
+                    EventClassificationEnum.REGIONAL -> classificationIds.add("3")
+                    EventClassificationEnum.LOCAL -> classificationIds.add("4")
+                    EventClassificationEnum.CLUB -> classificationIds.add("5")
+                    else -> {}
                 }
             }
         }
-    
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<EventList> response = restTemplate.exchange(
-                eventor.getBaseUrl() + "api/events?fromDate=" + (fromDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate)) +
-                        "&toDate=" + (toDate == null ? "" : DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate)) +
-                        "&organisationIds=" + (organisationIds == null ? "" : String.join(",", organisationIds)) +
-                        "&classificationIds=" + String.join(",", classificationIds) +
+
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+                eventor.baseUrl + "api/events?fromDate=" + (if (fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate)) +
+                        "&toDate=" + (if (toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate)) +
+                        "&organisationIds=" + (if (organisationIds == null) "" else java.lang.String.join(",", organisationIds)) +
+                        "&classificationIds=" + java.lang.String.join(",", classificationIds) +
                         "&includeEntryBreaks=true",
                 HttpMethod.GET,
                 request,
-                EventList.class,
+                EventList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public CompetitorCountList getCompetitorCounts(Eventor eventor, List<String> events, List<String> organisations, List<String> persons) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", eventor.getApiKey());
+    fun getCompetitorCounts(eventor: Eventor, events: List<String?>?, organisations: List<String?>?, persons: List<String?>?): CompetitorCountList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = eventor.apiKey
 
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<CompetitorCountList> response = restTemplate.exchange(
-                eventor.getBaseUrl() + "api/competitorcount?eventIds=" + String.join(",", events) +
-                        ",&organisationIds=" + String.join(",", organisations) + 
-                        "&personIds=" + String.join(",", persons),
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+                eventor.baseUrl + "api/competitorcount?eventIds=" + java.lang.String.join(",", events) +
+                        ",&organisationIds=" + java.lang.String.join(",", organisations) +
+                        "&personIds=" + java.lang.String.join(",", persons),
                 HttpMethod.GET,
                 request,
-                CompetitorCountList.class,
+                CompetitorCountList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public StartListList getGetPersonalStarts(Eventor eventor, String personId, String eventId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", eventor.getApiKey());
+    fun getGetPersonalStarts(eventor: Eventor, personId: String, eventId: String?): StartListList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = eventor.apiKey
 
-        String fromDate = "";
-        String toDate = "";
-        if(eventId == null){
-            Calendar start = Calendar.getInstance();
-            start.add(Calendar.DATE, perosnaStartsStart);
+        var fromDate = ""
+        var toDate = ""
+        if (eventId == null) {
+            val start = Calendar.getInstance()
+            start.add(Calendar.DATE, personalStartsStart)
 
-            Calendar end = Calendar.getInstance();
-            end.add(Calendar.DATE, perosnalStartsEnd);
-            fromDate = start.get(Calendar.YEAR) + "-" + (start.get(Calendar.MONTH) + 1) + "-" + start.get(Calendar.DAY_OF_MONTH);
-            toDate = end.get(Calendar.YEAR) + "-" + (end.get(Calendar.MONTH) + 1) + "-" + end.get(Calendar.DAY_OF_MONTH);
-
+            val end = Calendar.getInstance()
+            end.add(Calendar.DATE, personalStartsEnd)
+            fromDate = start[Calendar.YEAR].toString() + "-" + (start[Calendar.MONTH] + 1) + "-" + start[Calendar.DAY_OF_MONTH]
+            toDate = end[Calendar.YEAR].toString() + "-" + (end[Calendar.MONTH] + 1) + "-" + end[Calendar.DAY_OF_MONTH]
         }
 
-        if(eventId == null){
-            eventId = "";
-        }
-
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<StartListList> response = restTemplate.exchange(
-                eventor.getBaseUrl() + "api/starts/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + eventId,
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+                eventor.baseUrl + "api/starts/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + (eventId?: ""),
                 HttpMethod.GET,
                 request,
-                StartListList.class,
+                StartListList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public ResultListList getGetPersonalResults(Eventor eventor, String personId, String eventNumber) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", eventor.getApiKey());
+    fun getGetPersonalResults(eventor: Eventor, personId: String, eventId: String?): ResultListList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = eventor.apiKey
 
-        String fromDate = "";
-        String toDate = "";
-        if(eventNumber == null){
-            Calendar start = Calendar.getInstance();
-            start.add(Calendar.DATE, perosnaResultsStart);
+        var fromDate = ""
+        var toDate = ""
+        if (eventId == null) {
+            val start = Calendar.getInstance()
+            start.add(Calendar.DATE, personalResultsStart)
 
-            Calendar end = Calendar.getInstance();
-            end.add(Calendar.DATE, perosnalResultsEnd);
+            val end = Calendar.getInstance()
+            end.add(Calendar.DATE, personalResultsEnd)
 
 
-            fromDate = start.get(Calendar.YEAR) + "-" + (start.get(Calendar.MONTH) + 1) + "-" + start.get(Calendar.DAY_OF_MONTH);
-            toDate = end.get(Calendar.YEAR) + "-" + (end.get(Calendar.MONTH) + 1) + "-" + end.get(Calendar.DAY_OF_MONTH);
-
+            fromDate = start[Calendar.YEAR].toString() + "-" + (start[Calendar.MONTH] + 1) + "-" + start[Calendar.DAY_OF_MONTH]
+            toDate = end[Calendar.YEAR].toString() + "-" + (end[Calendar.MONTH] + 1) + "-" + end[Calendar.DAY_OF_MONTH]
         }
 
-        if(eventNumber == null){
-            eventNumber = "";
-        }
-
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<ResultListList> response = restTemplate.exchange(
-                eventor.getBaseUrl() + "api/results/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + eventNumber ,
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+                eventor.baseUrl + "api/results/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + (eventId?: ""),
                 HttpMethod.GET,
                 request,
-                ResultListList.class,
+                ResultListList::class.java,
                 1
-        );
-        return response.getBody();
-
+        )
+        return response.body
     }
 
-    public EntryList getGetOrganisationEntries(Eventor eventor, List<String> organisations, String eventNumber) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", eventor.getApiKey());
+    fun getGetOrganisationEntries(eventor: Eventor, organisations: List<String>, eventId: String?): EntryList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = eventor.apiKey
 
-        String fromDate = "";
-        String toDate = "";
-        if(eventNumber == null){
-            Calendar start = Calendar.getInstance();
-            start.add(Calendar.DATE, perosnalEtriesStart);
+        var fromDate = ""
+        var toDate = ""
+        if (eventId == null) {
+            val start = Calendar.getInstance()
+            start.add(Calendar.DATE, personalEntriesStart)
 
-            Calendar end = Calendar.getInstance();
-            end.add(Calendar.DATE, perosnalEtriesEnd);
-            
-            fromDate = start.get(Calendar.YEAR) + "-" + (start.get(Calendar.MONTH) + 1) + "-" + start.get(Calendar.DAY_OF_MONTH);
-            toDate = end.get(Calendar.YEAR) + "-" + (end.get(Calendar.MONTH) + 1) + "-" + end.get(Calendar.DAY_OF_MONTH);
+            val end = Calendar.getInstance()
+            end.add(Calendar.DATE, personalEntriesEnd)
 
+            fromDate = start[Calendar.YEAR].toString() + "-" + (start[Calendar.MONTH] + 1) + "-" + start[Calendar.DAY_OF_MONTH]
+            toDate = end[Calendar.YEAR].toString() + "-" + (end[Calendar.MONTH] + 1) + "-" + end[Calendar.DAY_OF_MONTH]
         }
 
-        if(eventNumber == null){
-            eventNumber = "";
-        }
-
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<EntryList> response = restTemplate.exchange(
-                eventor.getBaseUrl() + "api/entries?organisationIds=" + String.join(",", organisations) + "&fromEventDate=" + fromDate + "&toEventDate=" + toDate + "&includeEventElement=true&eventIds=" + eventNumber,
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+                eventor.baseUrl + "api/entries?organisationIds=" + java.lang.String.join(",", organisations) + "&fromEventDate=" + fromDate + "&toEventDate=" + toDate + "&includeEventElement=true&eventIds=" + (eventId?: ""),
                 HttpMethod.GET,
                 request,
-                EntryList.class,
+                EntryList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public Event getEvent(String baseUrl, String apiKey, String eventId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", apiKey);
+    fun getEvent(baseUrl: String, apiKey: String?, eventId: String): Event? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = apiKey
 
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<Event> response = restTemplate.exchange(
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
                 baseUrl + "api/event/" + eventId,
                 HttpMethod.GET,
                 request,
-                Event.class,
+                Event::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public EventClassList getEventClasses(Eventor eventor, String eventId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", eventor.getApiKey());
+    fun getEventClasses(eventor: Eventor, eventId: String): EventClassList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = eventor.apiKey
 
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<EventClassList> response = restTemplate.exchange(
-                eventor.getBaseUrl() + "api/eventclasses?includeEntryFees=true&eventId=" + eventId,
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+                eventor.baseUrl + "api/eventclasses?includeEntryFees=true&eventId=" + eventId,
                 HttpMethod.GET,
                 request,
-                EventClassList.class,
+                EventClassList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public DocumentList getEventDocuments(String baseUrl, String apiKey, String eventId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", apiKey);
+    fun getEventDocuments(baseUrl: String, apiKey: String?, eventId: String): DocumentList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = apiKey
 
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<DocumentList> response = restTemplate.exchange(
-                baseUrl+ "api/events/documents?eventIds=" + eventId,
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+                baseUrl + "api/events/documents?eventIds=" + eventId,
                 HttpMethod.GET,
                 request,
-                DocumentList.class,
+                DocumentList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public EntryList getEventEntryList(String baseUrl, String apiKey, String eventId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", apiKey);
+    fun getEventEntryList(baseUrl: String, apiKey: String?, eventId: String): EntryList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = apiKey
 
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<EntryList> response = restTemplate.exchange(
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
                 baseUrl + "api/entries?includePersonElement=true&includeEntryFees=true&includeOrganisationElement=true&eventIds=" + eventId,
                 HttpMethod.GET,
                 request,
-                EntryList.class,
+                EntryList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public StartList getEventStartList(String baseUrl, String apiKey, String eventId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", apiKey);
+    fun getEventStartList(baseUrl: String, apiKey: String?, eventId: String): StartList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = apiKey
 
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<StartList> response = restTemplate.exchange(
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
                 baseUrl + "api/starts/event?eventId=" + eventId,
                 HttpMethod.GET,
                 request,
-                StartList.class,
+                StartList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public ResultList getEventResultList(String baseUrl, String apiKey, String eventId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", apiKey);
+    fun getEventResultList(baseUrl: String, apiKey: String?, eventId: String): ResultList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = apiKey
 
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<ResultList> response = restTemplate.exchange(
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
                 baseUrl + "api/results/event?eventId=" + eventId + "&includeSplitTimes=true",
                 HttpMethod.GET,
                 request,
-                ResultList.class,
+                ResultList::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 
-    public Organisation getOrganisatonFromApiKey(String baseUrl, String apiKey) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("ApiKey", apiKey);
+    fun getOrganisationFromApiKey(baseUrl: String, apiKey: String?): Organisation? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = apiKey
 
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<Organisation> response = restTemplate.exchange(
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
                 baseUrl + "api/organisation/apiKey",
                 HttpMethod.GET,
                 request,
-                Organisation.class,
+                Organisation::class.java,
                 1
-        );
-        return response.getBody();
+        )
+        return response.body
     }
 }

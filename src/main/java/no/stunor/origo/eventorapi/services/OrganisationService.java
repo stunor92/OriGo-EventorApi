@@ -30,7 +30,7 @@ public class OrganisationService {
             return false;
         }
         try{
-            org.iof.eventor.Organisation eventorOrganisation = eventorService.getOrganisatonFromApiKey(eventor.getBaseUrl(), organisation.getApiKey());
+            org.iof.eventor.Organisation eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.getBaseUrl(), organisation.getApiKey());
             if(eventorOrganisation == null || eventorOrganisation.getOrganisationId() == null) {
                 return false;
             }
@@ -48,7 +48,7 @@ public class OrganisationService {
         Organisation organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId).block();
         
         try{
-            org.iof.eventor.Organisation eventorOrganisation = eventorService.getOrganisatonFromApiKey(eventor.getBaseUrl(), apiKey);
+            org.iof.eventor.Organisation eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.getBaseUrl(), apiKey);
             if(eventorOrganisation == null || !eventorOrganisation.getOrganisationId().getContent().equals(organisationId)) {
                 throw new EventorApiKeyException( "API key is not valid for given organisation");
             }

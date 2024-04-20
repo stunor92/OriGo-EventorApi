@@ -1,228 +1,234 @@
-package no.stunor.origo.eventorapi.services.converter;
+package no.stunor.origo.eventorapi.services.converter
 
+import no.stunor.origo.eventorapi.data.OrganisationRepository
+import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.origo.result.PersonResult
+import no.stunor.origo.eventorapi.model.origo.result.RaceResultList
+import no.stunor.origo.eventorapi.model.origo.result.Result
+import no.stunor.origo.eventorapi.model.origo.result.SplitTime
+import no.stunor.origo.eventorapi.model.origo.result.TeamMemberResult
+import no.stunor.origo.eventorapi.model.origo.result.TeamResult
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+import java.text.DateFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+@Component
+class ResultListConverter {
+    @Autowired
+    private lateinit var personConverter: PersonConverter
+    @Autowired
+    private lateinit var startListConverter: StartListConverter
+    @Autowired
+    private lateinit var organisationRepository: OrganisationRepository
 
-import org.iof.eventor.ClassResult;
-import org.iof.eventor.EventRace;
-import org.iof.eventor.FinishTime;
-import org.iof.eventor.OverallResult;
-import org.iof.eventor.RaceResult;
-import org.iof.eventor.ResultList;
-import org.iof.eventor.TeamMemberResult.Position;
-import org.iof.eventor.TeamMemberResult.TimeBehind;
+    @Throws(NumberFormatException::class, ParseException::class)
+    fun convertEventResultList(resultList: org.iof.eventor.ResultList, eventor: Eventor): List<RaceResultList> {
+        val raceResultListMap: MutableMap<String, RaceResultList> = HashMap()
 
-import no.stunor.origo.eventorapi.model.Eventor;
-import no.stunor.origo.eventorapi.model.organisation.Organisation;
-import no.stunor.origo.eventorapi.model.origo.result.PersonResult;
-import no.stunor.origo.eventorapi.model.origo.result.RaceResultList;
-import no.stunor.origo.eventorapi.model.origo.result.Result;
-import no.stunor.origo.eventorapi.model.origo.result.SplitTime;
-import no.stunor.origo.eventorapi.model.origo.result.TeamMemberResult;
-import no.stunor.origo.eventorapi.model.origo.result.TeamResult;
-
-public class ResultListConverter {
-
-    public static List<RaceResultList> convertEventResultList(ResultList resultList, Eventor eventor) throws NumberFormatException, ParseException{
-        Map<String, RaceResultList> raceResutlListMap = new HashMap<>();
-
-        for (EventRace eventRace : resultList.getEvent().getEventRace()){
-            String raceId = eventRace.getEventRaceId().getContent();
-            raceResutlListMap.put(raceId, new RaceResultList(raceId, new ArrayList<>(), new ArrayList<>()));
+        for (eventRace in resultList.event.eventRace) {
+            val raceId = eventRace.eventRaceId.content
+            raceResultListMap[raceId] = RaceResultList(raceId, ArrayList(), ArrayList())
         }
 
-        for (ClassResult classResult : resultList.getClassResult()) {
-            for (Object personOrTeamResult : classResult.getPersonResultOrTeamResult()){
-                if(personOrTeamResult instanceof org.iof.eventor.PersonResult){
-                    if (((org.iof.eventor.PersonResult) personOrTeamResult).getRaceResult() != null && !((org.iof.eventor.PersonResult) personOrTeamResult).getRaceResult().isEmpty()){
-                        for(RaceResult raceResult : ((org.iof.eventor.PersonResult) personOrTeamResult).getRaceResult()){
-                            raceResutlListMap
-                                .get(raceResult.getEventRaceId().getContent())
-                                .personResultList()
-                                .add(convertMulitDayPersonResult(classResult, ((org.iof.eventor.PersonResult) personOrTeamResult), raceResult, eventor));
+        for (classResult in resultList.classResult) {
+            for (personOrTeamResult in classResult.personResultOrTeamResult) {
+                if (personOrTeamResult is org.iof.eventor.PersonResult) {
+                    if (personOrTeamResult.raceResult != null && personOrTeamResult.raceResult.isNotEmpty()) {
+                        for (raceResult in personOrTeamResult.raceResult) {
+                            raceResultListMap[raceResult.eventRaceId.content]
+                                    ?.personResultList
+                                    ?.add(convertMultiDayPersonResult(classResult, personOrTeamResult, raceResult, eventor))
                         }
                     } else {
-                        raceResutlListMap
-                            .get(resultList.getEvent().getEventRace().get(0).getEventRaceId().getContent())
-                            .personResultList()
-                            .add(convertOneDayPersonResult(classResult, ((org.iof.eventor.PersonResult) personOrTeamResult), eventor));
+                        raceResultListMap[resultList.event.eventRace[0].eventRaceId.content]
+                                ?.personResultList
+                                ?.add(convertOneDayPersonResult(classResult, personOrTeamResult, eventor))
                     }
-                } else if(personOrTeamResult instanceof org.iof.eventor.TeamResult){
-                        raceResutlListMap
-                            .get(resultList.getEvent().getEventRace().get(0).getEventRaceId().getContent())
-                            .teamResultList()
-                            .add(convertTeamResult(classResult, ((org.iof.eventor.TeamResult) personOrTeamResult), eventor));
-                } 
+                } else if (personOrTeamResult is org.iof.eventor.TeamResult) {
+                    raceResultListMap[resultList.event.eventRace[0].eventRaceId.content]
+                            ?.teamResultList
+                            ?.add(convertTeamResult(classResult, personOrTeamResult, eventor))
+                }
             }
         }
 
-        return raceResutlListMap.values().stream().toList();
-
+        return raceResultListMap.values.stream().toList()
     }
 
-    private static PersonResult convertOneDayPersonResult(ClassResult classResult, org.iof.eventor.PersonResult personResult, Eventor eventor) throws NumberFormatException, ParseException {
-        return new PersonResult(
-            personResult.getResult().getResultId().getContent(),
-            PersonConverter.convertCompetitor(personResult.getPerson(), eventor),
-            personResult.getOrganisation() != null && personResult.getOrganisation().getOrganisationId() != null? OrganisationConverter.convertOrganisation(personResult.getOrganisation(), eventor) : null,
-            personResult.getResult().getStartTime() != null ? StartListConverter.convertStartTime(personResult.getResult().getStartTime()) : null,
-            personResult.getResult().getFinishTime() != null ? convertFinishTime(personResult.getResult().getFinishTime()) : null,
-            convertPersonResult(personResult.getResult()),
-            convertSplitTimes(personResult.getResult().getSplitTime()),
-            personResult.getResult().getBibNumber() != null ? personResult.getResult().getBibNumber().getContent() : "",
-            classResult.getEventClass().getEventClassId().getContent());
+    @Throws(NumberFormatException::class, ParseException::class)
+    private fun convertOneDayPersonResult(classResult: org.iof.eventor.ClassResult, personResult: org.iof.eventor.PersonResult, eventor: Eventor): PersonResult {
+        return PersonResult(
+                personResult.result.resultId.content,
+                personConverter.convertCompetitor(personResult.person, eventor),
+                if (personResult.organisation != null && personResult.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personResult.organisation.organisationId.content, eventor.eventorId).block() else null,
+                if (personResult.result.startTime != null) startListConverter.convertStartTime(personResult.result.startTime) else null,
+                if (personResult.result.finishTime != null) convertFinishTime(personResult.result.finishTime) else null,
+                convertPersonResult(personResult.result),
+                convertSplitTimes(personResult.result.splitTime),
+                if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else "",
+                classResult.eventClass.eventClassId.content)
     }
 
-    private static PersonResult convertMulitDayPersonResult(ClassResult classResult, org.iof.eventor.PersonResult personResult, RaceResult raceResult, Eventor eventor) throws NumberFormatException, ParseException {
-        return new PersonResult(
-            raceResult.getEventRaceId().getContent(),
-            PersonConverter.convertCompetitor(personResult.getPerson(), eventor),
-            personResult.getOrganisation() != null && personResult.getOrganisation().getOrganisationId() != null? OrganisationConverter.convertOrganisation(personResult.getOrganisation(), eventor) : null,
-            raceResult.getResult().getStartTime() != null ? StartListConverter.convertStartTime(raceResult.getResult().getStartTime()) : null,
-            raceResult.getResult().getFinishTime() != null ? convertFinishTime(raceResult.getResult().getFinishTime()) : null,
-            convertPersonResult(raceResult.getResult()),
-            convertSplitTimes(raceResult.getResult().getSplitTime()),
-            raceResult.getResult().getBibNumber() != null ? raceResult.getResult().getBibNumber().getContent() : "",
-            classResult.getEventClass().getEventClassId().getContent());
+    @Throws(NumberFormatException::class, ParseException::class)
+    private fun convertMultiDayPersonResult(classResult: org.iof.eventor.ClassResult, personResult: org.iof.eventor.PersonResult, raceResult: org.iof.eventor.RaceResult, eventor: Eventor): PersonResult {
+        return PersonResult(
+                raceResult.eventRaceId.content,
+                personConverter.convertCompetitor(personResult.person, eventor),
+                if (personResult.organisation != null && personResult.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personResult.organisation.organisationId.content, eventor.eventorId).block() else null,
+                if (raceResult.result.startTime != null) startListConverter.convertStartTime(raceResult.result.startTime) else null,
+                if (raceResult.result.finishTime != null) convertFinishTime(raceResult.result.finishTime) else null,
+                convertPersonResult(raceResult.result),
+                convertSplitTimes(raceResult.result.splitTime),
+                if (raceResult.result.bibNumber != null) raceResult.result.bibNumber.content else "",
+                classResult.eventClass.eventClassId.content)
     }
 
-    public static Result convertPersonResult(org.iof.eventor.Result result) throws NumberFormatException, ParseException {
-        return new Result(
-            result.getTime() != null ? convertTimetoSec(result.getTime().getContent()) : null,
-            result.getTimeDiff() != null ?  convertTimetoSec(result.getTimeDiff().getContent()) : null,
-            result.getResultPosition() != null && !result.getResultPosition().getContent().equals("0") ? Integer.parseInt(result.getResultPosition().getContent()) : null ,
-            result.getCompetitorStatus().getValue());
+    @Throws(NumberFormatException::class, ParseException::class)
+    fun convertPersonResult(result: org.iof.eventor.Result): Result {
+        return Result(
+                if (result.time != null) convertTimeSec(result.time.content) else null,
+                if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null,
+                if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
+                result.competitorStatus.value)
     }
 
-    private static TeamResult convertTeamResult(ClassResult classResult, org.iof.eventor.TeamResult teamResult, Eventor eventor) throws NumberFormatException, ParseException {
-         List<Organisation> organisations = new ArrayList<>();
-        for (Object organisation : teamResult.getOrganisationIdOrOrganisationOrCountryId()) {
-            organisations.add(OrganisationConverter.convertOrganisation((org.iof.eventor.Organisation) organisation, eventor));
-        }
-        return new TeamResult(
-            "",
-            organisations,
-            convertTeamMembers(teamResult.getTeamMemberResult(), eventor),
-            teamResult.getTeamName().getContent(),
-            teamResult.getStartTime() != null ? StartListConverter.convertStartTime(teamResult.getStartTime()) : null,
-            teamResult.getFinishTime() != null ? convertFinishTime(teamResult.getFinishTime()) : null,
-            convertTeamResult(teamResult),
-            teamResult.getBibNumber() != null ? teamResult.getBibNumber().getContent() : null,
-            classResult.getEventClass().getEventClassId().getContent());
-    }
-
-    private static List<SplitTime> convertSplitTimes(List<org.iof.eventor.SplitTime> splitTimes) throws NumberFormatException, ParseException {
-        List<SplitTime> result = new ArrayList<>();
-        for (org.iof.eventor.SplitTime splitTime: splitTimes) {
-            result.add(convertSplitTime(splitTime));
-        }
-        return result;
-
-    }
-
-    private static SplitTime convertSplitTime(org.iof.eventor.SplitTime splitTime) throws NumberFormatException, ParseException {
-        return new SplitTime(
-            Integer.parseInt(splitTime.getSequence()), 
-            splitTime.getControlCode().getContent(), 
-            splitTime.getTime() != null ? convertTimetoSec(splitTime.getTime().getContent()) : null);
-    }
-
-    public static List<TeamMemberResult> convertTeamMembers(List<org.iof.eventor.TeamMemberResult> teamMembers, Eventor eventor) throws ParseException {
-        List<TeamMemberResult> result = new ArrayList<>();
-        for (org.iof.eventor.TeamMemberResult teamMember: teamMembers) {
-            result.add(convertTeamMember(teamMember, eventor));
-        }
-        return result;
-    }
-
-    private static TeamMemberResult convertTeamMember(org.iof.eventor.TeamMemberResult teamMember, Eventor eventor) throws ParseException {
-        return new TeamMemberResult(
-            teamMember.getPerson() != null ? PersonConverter.convertCompetitor(teamMember.getPerson(), eventor) : null,
-            teamMember.getLeg().intValue(),
-            teamMember.getStartTime() != null ? StartListConverter.convertStartTime(teamMember.getStartTime()) : null,
-            teamMember.getFinishTime() != null ? convertFinishTime(teamMember.getFinishTime()) : null,
-            convertLegResult(teamMember),
-            teamMember.getOverallResult() != null ? convertOverallResult(teamMember.getOverallResult()) : null,
-            convertSplitTimes(teamMember.getSplitTime()));
-    }
-    
-    public static Result convertTeamResult(org.iof.eventor.TeamResult teamResult) throws NumberFormatException, ParseException {
-        return new Result(
-            teamResult.getTime() != null ? convertTimetoSec(teamResult.getTime().getContent()) : null,
-            teamResult.getTimeDiff() != null ? convertTimetoSec(teamResult.getTimeDiff().getContent()) : null,
-            teamResult.getResultPosition() != null && !teamResult.getResultPosition().getContent().equals("0") ? Integer.parseInt(teamResult.getResultPosition().getContent()) : null,
-            teamResult.getTeamStatus().getValue());
-    }
-
-    private static Result convertOverallResult(OverallResult overallResult) throws NumberFormatException, ParseException {
-        return new Result(
-            overallResult.getTime() != null ? convertTimetoSec(overallResult.getTime().getContent()) : null,
-            overallResult.getTimeDiff() != null ? convertTimetoSec(overallResult.getTimeDiff().getContent()) : null,
-            overallResult.getResultPosition() != null && !overallResult.getResultPosition().getContent().equals("0") ? Integer.parseInt(overallResult.getResultPosition().getContent()) : null,
-            overallResult.getTeamStatus().getValue());
-    }
-
-    private static Result convertLegResult(org.iof.eventor.TeamMemberResult teamMember) throws ParseException {
-        return new Result(
-            teamMember.getTime() != null ? convertTimetoSec(teamMember.getTime().getContent()) : null,
-            teamMember.getTimeBehind() != null ? getTimeBehind(teamMember.getTimeBehind()) : null,
-            teamMember.getPosition() != null ? getLegPosition(teamMember.getPosition()) : null,
-            teamMember.getCompetitorStatus().getValue());
-    }
-
-    private static Integer getLegPosition(List<Position> positionList) {
-        for(Position position : positionList){
-            if(position.getType().equals("Leg") && position.getValue().intValue() > 0){
-                return position.getValue().intValue();
+    @Throws(NumberFormatException::class, ParseException::class)
+    private fun convertTeamResult(classResult: org.iof.eventor.ClassResult, teamResult: org.iof.eventor.TeamResult, eventor: Eventor): TeamResult {
+        val organisations: MutableList<Organisation> = ArrayList()
+        for (organisation  in teamResult.organisationIdOrOrganisationOrCountryId) {
+            if(organisation is org.iof.eventor.Organisation) {
+                organisationRepository.findByOrganisationIdAndEventorId(organisation.organisationId.content, eventor.eventorId).block()?.let { organisations.add(it) }
             }
         }
-        return null;
+
+        return TeamResult(
+                "",
+                organisations,
+                convertTeamMembers(teamResult.teamMemberResult, eventor),
+                teamResult.teamName.content,
+                if (teamResult.startTime != null) startListConverter.convertStartTime(teamResult.startTime) else null,
+                if (teamResult.finishTime != null) convertFinishTime(teamResult.finishTime) else null,
+                convertTeamResult(teamResult),
+                if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
+                classResult.eventClass.eventClassId.content)
     }
 
-    public static Integer convertTimetoSec(String time) throws ParseException {
-        Date date;
-        Date reference;
+    @Throws(NumberFormatException::class, ParseException::class)
+    private fun convertSplitTimes(splitTimes: List<org.iof.eventor.SplitTime>): List<SplitTime> {
+        val result: MutableList<SplitTime> = ArrayList()
+        for (splitTime in splitTimes) {
+            result.add(convertSplitTime(splitTime))
+        }
+        return result
+    }
+
+    @Throws(NumberFormatException::class, ParseException::class)
+    private fun convertSplitTime(splitTime: org.iof.eventor.SplitTime): SplitTime {
+        return SplitTime(
+                splitTime.sequence.toInt(),
+                splitTime.controlCode.content,
+                if (splitTime.time != null) convertTimeSec(splitTime.time.content) else null)
+    }
+
+    @Throws(ParseException::class)
+    fun convertTeamMembers(teamMembers: List<org.iof.eventor.TeamMemberResult>, eventor: Eventor): List<TeamMemberResult> {
+        val result: MutableList<TeamMemberResult> = ArrayList()
+        for (teamMember in teamMembers) {
+            result.add(convertTeamMember(teamMember, eventor))
+        }
+        return result
+    }
+
+    @Throws(ParseException::class)
+    private fun convertTeamMember(teamMember: org.iof.eventor.TeamMemberResult, eventor: Eventor): TeamMemberResult {
+        return TeamMemberResult(
+                if (teamMember.person != null) personConverter.convertCompetitor(teamMember.person, eventor) else null,
+                teamMember.leg.toInt(),
+                if (teamMember.startTime != null) startListConverter.convertStartTime(teamMember.startTime) else null,
+                if (teamMember.finishTime != null) convertFinishTime(teamMember.finishTime) else null,
+                convertLegResult(teamMember),
+                if (teamMember.overallResult != null) convertOverallResult(teamMember.overallResult) else null,
+                convertSplitTimes(teamMember.splitTime))
+    }
+
+    @Throws(NumberFormatException::class, ParseException::class)
+    fun convertTeamResult(teamResult: org.iof.eventor.TeamResult): Result {
+        return Result(
+                if (teamResult.time != null) convertTimeSec(teamResult.time.content) else null,
+                if (teamResult.timeDiff != null) convertTimeSec(teamResult.timeDiff.content) else null,
+                if (teamResult.resultPosition != null && teamResult.resultPosition.content != "0") teamResult.resultPosition.content.toInt() else null,
+                teamResult.teamStatus.value)
+    }
+
+    @Throws(NumberFormatException::class, ParseException::class)
+    private fun convertOverallResult(overallResult: org.iof.eventor.OverallResult): Result {
+        return Result(
+                if (overallResult.time != null) convertTimeSec(overallResult.time.content) else null,
+                if (overallResult.timeDiff != null) convertTimeSec(overallResult.timeDiff.content) else null,
+                if (overallResult.resultPosition != null && overallResult.resultPosition.content != "0") overallResult.resultPosition.content.toInt() else null,
+                overallResult.teamStatus.value)
+    }
+
+    @Throws(ParseException::class)
+    private fun convertLegResult(teamMember: org.iof.eventor.TeamMemberResult): Result {
+        return Result(
+                if (teamMember.time != null) convertTimeSec(teamMember.time.content) else null,
+                if (teamMember.timeBehind != null) getTimeBehind(teamMember.timeBehind) else null,
+                if (teamMember.position != null) getLegPosition(teamMember.position) else null,
+                teamMember.competitorStatus.value)
+    }
+
+    private fun getLegPosition(positionList: List<org.iof.eventor.TeamMemberResult.Position>): Int? {
+        for (position in positionList) {
+            if (position.type == "Leg" && position.value.toInt() > 0) {
+                return position.value.toInt()
+            }
+        }
+        return null
+    }
+
+    @Throws(ParseException::class)
+    fun convertTimeSec(time: String?): Int {
+        var date: Date
+        var reference: Date
         try {
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-            reference = dateFormat.parse("00:00:00");
-            date = dateFormat.parse(time);
-        } catch (ParseException e) {
-            DateFormat dateFormat = new SimpleDateFormat("mm:ss");
-            reference = dateFormat.parse("00:00");
-            date = dateFormat.parse(time);
+            val dateFormat: DateFormat = SimpleDateFormat("HH:mm:ss")
+            reference = dateFormat.parse("00:00:00")
+            date = dateFormat.parse(time)
+        } catch (e: ParseException) {
+            val dateFormat: DateFormat = SimpleDateFormat("mm:ss")
+            reference = dateFormat.parse("00:00")
+            date = dateFormat.parse(time)
         }
-        long seconds = (date.getTime() - reference.getTime()) / 1000L;
-        return (int) seconds;
+        val seconds = (date.time - reference.time) / 1000L
+        return seconds.toInt()
     }
 
-    
 
-    private static Integer getTimeBehind(List<TimeBehind> timeBehindList) {
-        for(TimeBehind timeBehind : timeBehindList){
-            if(timeBehind.getType().equals("Leg")){
-                return (int) timeBehind.getValue();
+    private fun getTimeBehind(timeBehindList: List<org.iof.eventor.TeamMemberResult.TimeBehind>): Int? {
+        for (timeBehind in timeBehindList) {
+            if (timeBehind.type == "Leg") {
+                return timeBehind.value.toInt()
             }
         }
-        return null;
+        return null
     }
 
-    public static Date convertFinishTime(FinishTime finishTime) {
-        String dateString = finishTime.getDate().getContent() + " " + finishTime.getClock().getContent();
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+    private fun convertFinishTime(finishTime: org.iof.eventor.FinishTime): Date? {
+        val dateString = finishTime.date.content + " " + finishTime.clock.content
+        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        parser.timeZone = TimeZone.getTimeZone("UTC")
 
-        try {
-            return parser.parse(dateString);
-        } catch (ParseException e) {
-            return null;
+        return try {
+            parser.parse(dateString)
+        } catch (e: ParseException) {
+            null
         }
     }
 }

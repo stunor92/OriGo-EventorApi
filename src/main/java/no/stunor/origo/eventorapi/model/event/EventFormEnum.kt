@@ -1,5 +1,5 @@
-package no.stunor.origo.eventorapi.model.origo.event;
+package no.stunor.origo.eventorapi.model.event
 
-public enum EventFormEnum {
-    INDIVIDUAL, RELAY, PATROL, TEAM;
+enum class EventFormEnum {
+    INDIVIDUAL, RELAY, PATROL, TEAM
 }

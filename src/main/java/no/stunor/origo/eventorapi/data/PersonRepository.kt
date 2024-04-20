@@ -1,17 +1,14 @@
-package no.stunor.origo.eventorapi.data;
+package no.stunor.origo.eventorapi.data
 
-import org.springframework.stereotype.Repository;
-
-import com.google.cloud.spring.data.firestore.FirestoreReactiveRepository;
-
-import no.stunor.origo.eventorapi.model.person.Person;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import com.google.cloud.spring.data.firestore.FirestoreReactiveRepository
+import no.stunor.origo.eventorapi.model.person.Person
+import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @Repository
-public interface PersonRepository extends FirestoreReactiveRepository<Person> {
-    Flux<Person> findAllByUsersContains(String user);
-    Flux<Person> findAllByUsersContainsAndEventorId(String user, String eventorId);
-    Mono<Person> findByPersonIdAndEventorId(String personId, String eventorId); 
-
+interface PersonRepository : FirestoreReactiveRepository<Person> {
+    fun findAllByUsersContains(user: String): Flux<Person>
+    fun findAllByUsersContainsAndEventorId(user: String, eventorId: String): Flux<Person>
+    fun findByPersonIdAndEventorId(personId: String, eventorId: String): Mono<Person>
 }
