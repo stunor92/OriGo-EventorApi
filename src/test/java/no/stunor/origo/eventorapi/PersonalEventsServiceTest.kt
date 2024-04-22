@@ -9,7 +9,8 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.model.person.PersonName
-import no.stunor.origo.eventorapi.services.UserEntryService
+import no.stunor.origo.eventorapi.services.CalendarService
+import no.stunor.origo.eventorapi.services.CompetitorService
 import org.iof.eventor.EntryList
 import org.iof.eventor.ResultListList
 import org.iof.eventor.StartListList
@@ -29,7 +30,7 @@ import java.util.concurrent.ExecutionException
 @SpringBootTest
 class PersonalEventsServiceTest {
     @Autowired
-    private lateinit var userEntryService: UserEntryService
+    private lateinit var calendarService: CalendarService
 
     @MockBean
     private lateinit var eventorService: EventorService
@@ -49,23 +50,23 @@ class PersonalEventsServiceTest {
     @Test
     @Throws(JAXBException::class, InterruptedException::class, ExecutionException::class, NumberFormatException::class, ParseException::class)
     fun testPersonResultInactive() {
-        whenever(eventorService.getGetOrganisationEntries(any(), any(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/OrganisationEntries.xml"))
-        whenever(eventorService.getGetPersonalResults(any(), any(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/PersonalResult.xml"))
-        whenever(eventorService.getGetPersonalStarts(any(), any(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/PersonalStart.xml"))
+        whenever(eventorService.getGetOrganisationEntries(any(), any(), any(), any(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/OrganisationEntries.xml"))
+        whenever(eventorService.getGetPersonalResults(any(), any(), any(), any(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/PersonalResult.xml"))
+        whenever(eventorService.getGetPersonalStarts(any(), any(), any(), any(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/resultInactive/PersonalStart.xml"))
 
 
-        userEntryService.userRaces("abc", generateEventor(), "123")
+        calendarService.getEventList(userId = "abc")
     }
 
 
     @Test
     @Throws(JAXBException::class, InterruptedException::class, ExecutionException::class, NumberFormatException::class, ParseException::class)
     fun testPersonNotSignedUp() {
-        whenever(eventorService.getGetOrganisationEntries(any(), any(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/OrganisationEntries.xml"))
-        whenever(eventorService.getGetPersonalResults(any(), any(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/PersonalResult.xml"))
-        whenever(eventorService.getGetPersonalStarts(any(), any(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/PersonalStart.xml"))
-        
-        userEntryService.userRaces("abc", generateEventor(), "123")
+        whenever(eventorService.getGetOrganisationEntries(any(), any(), any(), any(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/OrganisationEntries.xml"))
+        whenever(eventorService.getGetPersonalResults(any(), any(), any(), any(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/PersonalResult.xml"))
+        whenever(eventorService.getGetPersonalStarts(any(), any(), any(), any(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/notSignedUp/PersonalStart.xml"))
+
+        calendarService.getEventList(userId = "abc")
     }
 
     /* 
@@ -75,17 +76,17 @@ class PersonalEventsServiceTest {
         when(eventorService.getGetPersonalResults(any(Eventor.class), anyString(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/signedUp/PersonalResult.xml"));
         when(eventorService.getGetPersonalStarts(any(Eventor.class), anyString(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/signedUp/PersonalStart.xml"));
 
-        userEntryService.userRaces("abc", generateEventor(), "123");
+        calendarService.getEventList(userId = "abc")
     }
 */
     @Test
     @Throws(JAXBException::class, NumberFormatException::class)
     fun testPersonStartTime() {
-        whenever(eventorService.getGetOrganisationEntries(any(), any(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/OrganisationEntries.xml"))
-        whenever(eventorService.getGetPersonalResults(any(), any(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/PersonalResult.xml"))
-        whenever(eventorService.getGetPersonalStarts(any(), any(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/PersonalStart.xml"))
+        whenever(eventorService.getGetOrganisationEntries(any(), any(), any(), any(), any())).thenReturn(generateEntryListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/OrganisationEntries.xml"))
+        whenever(eventorService.getGetPersonalResults(any(), any(), any(), any(), any())).thenReturn(generateResultListListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/PersonalResult.xml"))
+        whenever(eventorService.getGetPersonalStarts(any(), any(), any(), any(), any())).thenReturn(generateStartListListFromXml("src/test/resources/eventorResponse/personalEventsService/personStartTime/PersonalStart.xml"))
 
-        userEntryService.userRaces("abc", generateEventor(), "123")
+        calendarService.getEventList(userId = "abc")
     }
 
 

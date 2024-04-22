@@ -86,11 +86,12 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl + "api/events?fromDate=" + (if (fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate)) +
-                        "&toDate=" + (if (toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate)) +
-                        "&organisationIds=" + (if (organisationIds == null) "" else java.lang.String.join(",", organisationIds)) +
-                        "&classificationIds=" + java.lang.String.join(",", classificationIds) +
-                        "&includeEntryBreaks=true",
+                eventor.baseUrl
+                        + "api/events?fromDate=" + (if(fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate))
+                        + "&toDate=" + (if(toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate))
+                        + (if (organisationIds != null) ("&organisationIds=" + java.lang.String.join(",", organisationIds)) else "")
+                        + "&classificationIds=" + java.lang.String.join(",", classificationIds)
+                        + "&includeEntryBreaks=true",
                 HttpMethod.GET,
                 request,
                 EventList::class.java,
@@ -116,25 +117,17 @@ class EventorService {
         return response.body
     }
 
-    fun getGetPersonalStarts(eventor: Eventor, personId: String, eventId: String?): StartListList? {
+    fun getGetPersonalStarts(eventor: Eventor, personId: String, eventId: String?, fromDate: LocalDate?, toDate: LocalDate?): StartListList? {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
-        var fromDate = ""
-        var toDate = ""
-        if (eventId == null) {
-            val start = Calendar.getInstance()
-            start.add(Calendar.DATE, personalStartsStart)
-
-            val end = Calendar.getInstance()
-            end.add(Calendar.DATE, personalStartsEnd)
-            fromDate = start[Calendar.YEAR].toString() + "-" + (start[Calendar.MONTH] + 1) + "-" + start[Calendar.DAY_OF_MONTH]
-            toDate = end[Calendar.YEAR].toString() + "-" + (end[Calendar.MONTH] + 1) + "-" + end[Calendar.DAY_OF_MONTH]
-        }
-
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl + "api/starts/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + (eventId?: ""),
+                eventor.baseUrl
+                        + "api/starts/person?personId=" + personId
+                        + "&fromDate=" + (if(fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate))
+                        + "&toDate=" + (if(toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate))
+                        + "&eventIds=" + (eventId?: ""),
                 HttpMethod.GET,
                 request,
                 StartListList::class.java,
@@ -143,27 +136,17 @@ class EventorService {
         return response.body
     }
 
-    fun getGetPersonalResults(eventor: Eventor, personId: String, eventId: String?): ResultListList? {
+    fun getGetPersonalResults(eventor: Eventor, personId: String, eventId: String?, fromDate: LocalDate?, toDate: LocalDate?): ResultListList? {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
-        var fromDate = ""
-        var toDate = ""
-        if (eventId == null) {
-            val start = Calendar.getInstance()
-            start.add(Calendar.DATE, personalResultsStart)
-
-            val end = Calendar.getInstance()
-            end.add(Calendar.DATE, personalResultsEnd)
-
-
-            fromDate = start[Calendar.YEAR].toString() + "-" + (start[Calendar.MONTH] + 1) + "-" + start[Calendar.DAY_OF_MONTH]
-            toDate = end[Calendar.YEAR].toString() + "-" + (end[Calendar.MONTH] + 1) + "-" + end[Calendar.DAY_OF_MONTH]
-        }
-
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl + "api/results/person?personId=" + personId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&eventIds=" + (eventId?: ""),
+                eventor.baseUrl
+                        + "api/results/person?personId=" + personId
+                        + "&fromDate=" + (if(fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate))
+                        + "&toDate=" + (if(toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate))
+                        + "&eventIds=" + (eventId?: ""),
                 HttpMethod.GET,
                 request,
                 ResultListList::class.java,
@@ -172,26 +155,17 @@ class EventorService {
         return response.body
     }
 
-    fun getGetOrganisationEntries(eventor: Eventor, organisations: List<String>, eventId: String?): EntryList? {
+    fun getGetOrganisationEntries(eventor: Eventor, organisations: List<String>, eventId: String?, fromDate: LocalDate?, toDate: LocalDate?): EntryList? {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
-        var fromDate = ""
-        var toDate = ""
-        if (eventId == null) {
-            val start = Calendar.getInstance()
-            start.add(Calendar.DATE, personalEntriesStart)
-
-            val end = Calendar.getInstance()
-            end.add(Calendar.DATE, personalEntriesEnd)
-
-            fromDate = start[Calendar.YEAR].toString() + "-" + (start[Calendar.MONTH] + 1) + "-" + start[Calendar.DAY_OF_MONTH]
-            toDate = end[Calendar.YEAR].toString() + "-" + (end[Calendar.MONTH] + 1) + "-" + end[Calendar.DAY_OF_MONTH]
-        }
-
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl + "api/entries?organisationIds=" + java.lang.String.join(",", organisations) + "&fromEventDate=" + fromDate + "&toEventDate=" + toDate + "&includeEventElement=true&eventIds=" + (eventId?: ""),
+                eventor.baseUrl
+                        + "api/entries?organisationIds=" + java.lang.String.join(",", organisations)
+                        + "&fromEventDate=" + (if(fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate))
+                        + "&toEventDate=" + (if(toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate))
+                        + "&includeEventElement=true&eventIds=" + (eventId ?: ""),
                 HttpMethod.GET,
                 request,
                 EntryList::class.java,

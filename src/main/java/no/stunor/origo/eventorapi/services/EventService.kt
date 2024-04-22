@@ -1,11 +1,7 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.api.exception.EntryListNotFoundException
-import no.stunor.origo.eventorapi.api.exception.EventNotFoundException
-import no.stunor.origo.eventorapi.api.exception.EventorParsingException
-import no.stunor.origo.eventorapi.api.exception.ResultListNotFoundException
-import no.stunor.origo.eventorapi.api.exception.StartListNotFoundException
+import no.stunor.origo.eventorapi.api.exception.*
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.data.RegionRepository
@@ -15,7 +11,6 @@ import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList
 import no.stunor.origo.eventorapi.model.origo.start.RaceStartList
-import no.stunor.origo.eventorapi.model.calendar.UserRace
 import no.stunor.origo.eventorapi.services.converter.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +29,7 @@ class EventService {
     private lateinit var regionRepository: RegionRepository
 
     @Autowired
-    private lateinit var userEntryService: UserEntryService
+    private lateinit var userEntryService: CompetitorService
 
     @Autowired
     private lateinit var eventorService: EventorService
@@ -52,11 +47,9 @@ class EventService {
     @Autowired
     private lateinit var resultListConverter: ResultListConverter
 
-
-    fun getEvent(eventorId: String, eventId: String, userId: String?): Event {
-        val eventor = Objects.requireNonNull(eventorRepository.findByEventorId(eventorId))?.block()
-
-        val event = eventorService.getEvent(eventor!!.baseUrl, eventor.apiKey, eventId) ?: throw EventNotFoundException()
+    fun getEvent(eventorId: String, eventId: String): Event {
+        val eventor = eventorRepository.findByEventorId(eventorId).block()?: throw EventorNotFoundException()
+        val event = eventorService.getEvent(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EventNotFoundException()
         val eventClassList = eventorService.getEventClasses(eventor, eventId)
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.apiKey, eventId)
 
@@ -90,12 +83,7 @@ class EventService {
                 regions.add(region)
             }
         }
-
-        var raceCompetitors: List<UserRace>? = ArrayList()
-        if (userId != null) {
-            raceCompetitors = userEntryService.userRaces(userId, eventor, eventId)
-        }
-        return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor, raceCompetitors)
+        return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor)
     }
 
     fun getEntryList(eventorId: String, eventId: String): EventEntryList {

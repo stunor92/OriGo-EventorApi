@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.model.calendar
 
-import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.event.Position
@@ -9,12 +8,12 @@ import java.io.Serializable
 import java.util.Date
 
 data class CalendarRace(
-        var eventor: Eventor = Eventor(),
+        var eventorId: String = "",
         var eventId: String = "",
         var eventName: String = "",
         var raceId: String = "",
         var raceName: String? = null,
-        var raceDate: Date = Date(),
+        var raceDate: Date? = Date(),
         var type: EventFormEnum = EventFormEnum.INDIVIDUAL,
         var classification: EventClassificationEnum = EventClassificationEnum.CLUB,
         var lightCondition: LightConditionEnum = LightConditionEnum.DAY,
@@ -26,7 +25,8 @@ data class CalendarRace(
         var entryBreaks: List<EntryBreak> = listOf(),
         var signedUp: Boolean = false,
         var entries: Int = 0,
-        var organisationEntries: Map<String, Int> = mapOf(),
+        var userEntries: MutableList<CalendarCompetitor> = mutableListOf(),
+        var organisationEntries: MutableMap<String, Int> = mutableMapOf(),
         var startList: Boolean = false,
         var resultList: Boolean = false,
         var livelox: Boolean = false

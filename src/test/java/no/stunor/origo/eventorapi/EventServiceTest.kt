@@ -16,8 +16,6 @@ import org.iof.eventor.Event
 import org.iof.eventor.EventClassList
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,55 +29,55 @@ import java.util.concurrent.ExecutionException
 @SpringBootTest
 class EventServiceTest {
     @Autowired
-    var eventService: EventService? = null
+    private lateinit var eventService: EventService
 
     @MockBean
-    var eventorService: EventorService? = null
+    private lateinit var eventorService: EventorService
 
     @MockBean
-    var organisationRepository: OrganisationRepository? = null
+    private lateinit var organisationRepository: OrganisationRepository
 
     @MockBean
-    var regionRepository: RegionRepository? = null
+    private lateinit var regionRepository: RegionRepository
 
     @MockBean
-    var eventorRepository: EventorRepository? = null
+    private lateinit var eventorRepository: EventorRepository
 
     @BeforeEach
     fun setUp() {
-        whenever(organisationRepository!!.findByOrganisationIdAndEventorId(any(), any())).thenReturn(Mono.just(generateOrganisation()))
-        whenever(regionRepository!!.findByRegionIdAndEventorId(any(), any())).thenReturn(Mono.just(generateRegion()))
-        whenever(eventorRepository!!.findByEventorId(any())).thenReturn(Mono.just(generateEventor()))
+        whenever(organisationRepository.findByOrganisationIdAndEventorId(any(), any())).thenReturn(Mono.just(generateOrganisation()))
+        whenever(regionRepository.findByRegionIdAndEventorId(any(), any())).thenReturn(Mono.just(generateRegion()))
+        whenever(eventorRepository.findByEventorId(any())).thenReturn(Mono.just(generateEventor()))
     }
 
     @Test
     @Throws(JAXBException::class, InterruptedException::class, ExecutionException::class, NumberFormatException::class, ParseException::class)
     fun testSingleRaceEvent() {
-        whenever(eventorService!!.getEvent(any(), any(), any())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/Event.xml"))
-        whenever(eventorService!!.getEventClasses(any(), any())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/EventClassList.xml"))
-        whenever(eventorService!!.getEventDocuments(any(), any(), any())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/DocumentList.xml"))
-        eventService!!.getEvent(eventorId = "NOR", eventId= "17535", userId = null)
+        whenever(eventorService.getEvent(any(), any(), any())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/Event.xml"))
+        whenever(eventorService.getEventClasses(any(), any())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/EventClassList.xml"))
+        whenever(eventorService.getEventDocuments(any(), any(), any())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/oneDayEvent/DocumentList.xml"))
+        eventService.getEvent(eventorId = "NOR", eventId= "17535")
     }
 
     @Test
     @Throws(JAXBException::class, InterruptedException::class, ExecutionException::class, NumberFormatException::class, ParseException::class)
     fun testMultiRaceEvent() {
-        whenever(eventorService!!.getEvent(any(), any(), any())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/Event.xml"))
-        whenever(eventorService!!.getEventClasses(any(), any())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/EventClassList.xml"))
-        whenever(eventorService!!.getEventDocuments(any(), any(), any())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/DocumentList.xml"))
+        whenever(eventorService.getEvent(any(), any(), any())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/Event.xml"))
+        whenever(eventorService.getEventClasses(any(), any())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/EventClassList.xml"))
+        whenever(eventorService.getEventDocuments(any(), any(), any())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/multiDaysEvent/DocumentList.xml"))
 
-        eventService!!.getEvent(eventorId = "NOR", eventId = "18527", userId = null)
+        eventService.getEvent(eventorId = "NOR", eventId = "18527")
     }
 
 
     @Test
     @Throws(JAXBException::class, InterruptedException::class, ExecutionException::class, NumberFormatException::class, ParseException::class)
     fun testRelay() {
-        whenever(eventorService!!.getEvent(any(), any(), any())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/relayEvent/Event.xml"))
-        whenever(eventorService!!.getEventClasses(any(), any())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/relayEvent/EventClassList.xml"))
-        whenever(eventorService!!.getEventDocuments(any(), any(), any())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/relayEvent/DocumentList.xml"))
+        whenever(eventorService.getEvent(any(), any(), any())).thenReturn(generateEventFromXml("src/test/resources/eventorResponse/eventService/relayEvent/Event.xml"))
+        whenever(eventorService.getEventClasses(any(), any())).thenReturn(generateEventClassListFromXml("src/test/resources/eventorResponse/eventService/relayEvent/EventClassList.xml"))
+        whenever(eventorService.getEventDocuments(any(), any(), any())).thenReturn(generateDocumentListFromXml("src/test/resources/eventorResponse/eventService/relayEvent/DocumentList.xml"))
 
-        eventService!!.getEvent(eventorId = "NOR", eventId = "17469", userId = null)
+        eventService.getEvent(eventorId = "NOR", eventId = "17469")
     }
 
     @Throws(JAXBException::class)

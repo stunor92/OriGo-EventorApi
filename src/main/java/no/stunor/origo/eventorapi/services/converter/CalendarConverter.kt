@@ -1,7 +1,8 @@
 package no.stunor.origo.eventorapi.services.converter
 
-import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.calendar.*
+import no.stunor.origo.eventorapi.model.person.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import kotlin.collections.ArrayList
@@ -10,6 +11,13 @@ import kotlin.collections.ArrayList
 class CalendarConverter {
     @Autowired
     private lateinit var eventConverter: EventConverter
+
+    @Autowired
+    private lateinit var eventClassConverter: EventClassConverter
+
+    @Autowired
+    private lateinit var competitorConverter: CompetitorConverter
+
     fun convertEvents(eventList: org.iof.eventor.EventList?, eventor: Eventor, competitorCountList: org.iof.eventor.CompetitorCountList?): List<CalendarRace> {
         val result: MutableList<CalendarRace> = ArrayList()
         for (event in eventList!!.event) {
@@ -21,47 +29,40 @@ class CalendarConverter {
     private fun convertEvent(event: org.iof.eventor.Event, eventor: Eventor, competitorCountList: org.iof.eventor.CompetitorCountList?): List<CalendarRace> {
         val result: MutableList<CalendarRace> = ArrayList()
         for (eventRace in event.eventRace) {
-            result.add(convertRace(event, eventRace, eventor, competitorCountList))
+            result.add(generateRace(event, eventRace, eventor, competitorCountList))
         }
         return result
     }
 
-    private fun convertRace(event: org.iof.eventor.Event, eventRace: org.iof.eventor.EventRace, eventor: Eventor, competitorCountList: org.iof.eventor.CompetitorCountList?): CalendarRace {
+    private fun generateRace(event: org.iof.eventor.Event, eventRace: org.iof.eventor.EventRace, eventor: Eventor, competitorCountList: org.iof.eventor.CompetitorCountList?): CalendarRace {
         return CalendarRace(
-                eventor,
-                event.eventId.content,
-                eventRace.eventRaceId.content,
-                event.name.content,
-                eventRace.name.content,
-                (if (eventRace.raceDate != null) eventConverter.convertRaceDateWithoutTime(eventRace.raceDate) else null)!!,
-                eventConverter.convertEventForm(event.eventForm),
-                eventConverter.convertEventClassification(event.eventClassificationId.content),
-                eventConverter.convertLightCondition(eventRace.raceLightCondition),
-                eventConverter.convertRaceDistance(eventRace.raceDistance),
-                if (eventRace.eventCenterPosition != null) eventConverter.convertPosition(eventRace.eventCenterPosition) else null,
-                eventConverter.convertEventStatus(event.eventStatusId.content),
-                eventConverter.convertEventDisciplines(event.disciplineIdOrDiscipline),
-                eventConverter.convertOrganisers(eventor, event.organiser.organisationIdOrOrganisation),
-                eventConverter.convertEntryBreaks(event.entryBreak),
-                isSignedUp(event.eventId.content, competitorCountList),
-                getEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
-                getOrganisationEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
-                eventConverter.hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
-                eventConverter.hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
-                eventConverter.hasLivelox(event.hashTableEntry))
-    }
-
-    private fun isSignedUp(eventId: String, competitorCountList: org.iof.eventor.CompetitorCountList?): Boolean {
-        for (competitorCount in competitorCountList!!.competitorCount) {
-            if (competitorCount.eventId == eventId && competitorCount.classCompetitorCount != null && competitorCount.classCompetitorCount.isNotEmpty()) {
-                return true
-            }
-        }
-        return false
+                eventorId = eventor.eventorId,
+                eventId = event.eventId.content,
+                eventName = event.name.content,
+                raceId = eventRace.eventRaceId.content,
+                raceName = eventRace.name.content,
+                raceDate = eventConverter.convertRaceDateWithoutTime(eventRace.raceDate),
+                type = eventConverter.convertEventForm(event.eventForm),
+                classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
+                lightCondition = eventConverter.convertLightCondition(eventRace.raceLightCondition),
+                distance = eventConverter.convertRaceDistance(eventRace.raceDistance),
+                position = if (eventRace.eventCenterPosition != null) eventConverter.convertPosition(eventRace.eventCenterPosition) else null,
+                status = eventConverter.convertEventStatus(event.eventStatusId.content),
+                disciplines = eventConverter.convertEventDisciplines(event.disciplineIdOrDiscipline),
+                organisers = if(event.organiser != null) eventConverter.convertOrganisers(eventor, event.organiser.organisationIdOrOrganisation) else listOf(),
+                entryBreaks = eventConverter.convertEntryBreaks(event.entryBreak),
+                entries = getEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
+                userEntries = mutableListOf(),
+                organisationEntries = getOrganisationEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
+                startList = eventConverter.hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
+                resultList = eventConverter.hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
+                livelox = eventConverter.hasLivelox(event.hashTableEntry))
     }
 
     private fun getEntries(eventId: String, eventRaceId: String, competitorCountList: org.iof.eventor.CompetitorCountList?): Int {
-        for (competitorCount in competitorCountList!!.competitorCount) {
+        if(competitorCountList == null)
+            return 0
+        for (competitorCount in competitorCountList.competitorCount) {
             if (competitorCount.eventId == eventId) {
                 if (competitorCount.eventRaceId == null) {
                     return competitorCount.numberOfEntries.toInt()
@@ -73,10 +74,12 @@ class CalendarConverter {
         return 0
     }
 
-    private fun getOrganisationEntries(eventId: String, eventRaceId: String, competitorCountList: org.iof.eventor.CompetitorCountList?): Map<String, Int> {
+    private fun getOrganisationEntries(eventId: String, eventRaceId: String, competitorCountList: org.iof.eventor.CompetitorCountList?): MutableMap<String, Int> {
         val result: MutableMap<String, Int> = HashMap()
+        if(competitorCountList == null)
+            return result
 
-        for (competitorCount in competitorCountList!!.competitorCount) {
+        for (competitorCount in competitorCountList.competitorCount) {
             if (competitorCount.eventId == eventId) {
                 if (competitorCount.eventRaceId == null) {
                     if (competitorCount.organisationCompetitorCount != null) {
@@ -94,5 +97,241 @@ class CalendarConverter {
             }
         }
         return result
+    }
+
+    fun convertEntryList(eventor: Eventor, entryList: org.iof.eventor.EntryList?, person: Person, eventClassMap: Map<String, org.iof.eventor.EventClassList>): MutableMap<String?, CalendarRace> {
+        val raceMap: MutableMap<String?, CalendarRace> = HashMap()
+
+        if(entryList == null)
+            return raceMap
+
+        for (entry in entryList.entry) {
+            for (eventRaceId in entry.eventRaceId) {
+                for (race in entry.event.eventRace) {
+                    if (race.eventRaceId.content == eventRaceId.content) {
+                        val raceId = eventRaceId.content
+                        if (!raceMap.containsKey(raceId)) {
+                            raceMap[raceId] = generateRace(event = entry.event, eventRace = race, eventor = eventor, competitorCountList = null)
+                        }
+
+                        if (!raceMap[raceId]!!.organisationEntries.containsKey(entry.competitor.organisationId.content)) {
+                            raceMap[raceId]!!.organisationEntries[entry.competitor.organisationId.content] = 1
+                        } else {
+                            val count = raceMap[raceId]!!.organisationEntries[entry.competitor.organisationId.content]!!
+                            raceMap[raceId]!!.organisationEntries[entry.competitor.organisationId.content] = count + 1
+                        }
+
+                        if (entry.competitor.personId.content == person.personId) {
+                            raceMap[raceId]!!.userEntries.add(generateCompetitor(person = person, entry = entry, classStart = null, start = null, classResult = null, result = null, eventClassList = eventClassMap[raceId]))
+                        }
+                    }
+                }
+            }
+        }
+        return raceMap
+    }
+
+    fun convertStartListList(eventor: Eventor, startListList: org.iof.eventor.StartListList?, person: Person, raceMap: MutableMap<String?, CalendarRace>): MutableMap<String?, CalendarRace> {
+        if(startListList == null)
+            return raceMap
+
+        for (startList in startListList.startList) {
+            if (startList.event.eventRace.size == 1) {
+                val race = startList.event.eventRace[0]
+                val raceId = race.eventRaceId.content
+
+                if (!raceMap.containsKey(raceId)) {
+                    raceMap[raceId] = generateRace(eventor = eventor, event = startList.event, eventRace = race, competitorCountList = null)
+                }
+
+                for (classStart in startList.classStart) {
+                    for (start in classStart.personStartOrTeamStart) {
+                        if (raceMap[raceId]!!.userEntries.isEmpty()) {
+                            raceMap[raceId]!!.userEntries.add(generateCompetitor(person, null, classStart, start, null, null, null))
+                        } else {
+                            val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
+                            raceMap[raceId]!!.userEntries.removeAt(0)
+                            raceMap[raceId]!!.userEntries.add(updateUserStart(person, userEntry, classStart, start))
+                        }
+                    }
+                }
+            } else {
+                for (classStart in startList.classStart) {
+                    for (start in classStart.personStartOrTeamStart) {
+                        if (start is org.iof.eventor.PersonStart) {
+                            val raceId: String = start.raceStart[0].eventRaceId.content
+                            for (race in startList.event.eventRace) {
+                                if (race.eventRaceId.content == raceId) {
+                                    if (!raceMap.containsKey(raceId)) {
+                                        raceMap[raceId] = generateRace(eventor = eventor, event = startList.event, eventRace = race, competitorCountList = null)
+                                    }
+                                    if (raceMap[raceId]!!.userEntries.isEmpty()) {
+                                        raceMap[raceId]!!.userEntries.add(generateCompetitor(person, null, classStart, start, null, null, null))
+                                    } else {
+                                        val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
+                                        raceMap[raceId]!!.userEntries.removeAt(0)
+                                        raceMap[raceId]!!.userEntries.add(updateUserStart(person, userEntry, classStart, start))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return raceMap
+    }
+
+    fun convertResultList(eventor: Eventor, resultListList: org.iof.eventor.ResultListList?, person: Person, raceMap: MutableMap<String?, CalendarRace>): MutableMap<String?, CalendarRace> {
+        if(resultListList == null)
+            return raceMap
+        for (resultList in resultListList.resultList) {
+            if (resultList.event.eventRace.size == 1) {
+                val race = resultList.event.eventRace[0]
+                val raceId = race.eventRaceId.content
+
+                if (!raceMap.containsKey(raceId)) {
+                    raceMap[raceId] = generateRace(eventor = eventor, event = resultList.event, eventRace = race, competitorCountList = null)
+                }
+
+                for (classResult in resultList.classResult) {
+                    for (result in classResult.personResultOrTeamResult) {
+                        if (raceMap[raceId]!!.userEntries.isEmpty()) {
+                            raceMap[raceId]!!.userEntries.add(generateCompetitor(person, null, null, null, classResult, result, null))
+                        } else {
+                            val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
+                            val personStart = raceMap[raceId]!!.userEntries[0].personStart
+                            val teamStart = raceMap[raceId]!!.userEntries[0].teamStart
+
+                            raceMap[raceId]!!.userEntries.removeAt(0)
+                            raceMap[raceId]!!.userEntries.add(updateUserResult(person, userEntry, personStart, teamStart, classResult, result))
+                        }
+                    }
+                }
+            } else {
+                for (classResult in resultList.classResult) {
+                    for (result in classResult.personResultOrTeamResult) {
+                        if (result is org.iof.eventor.PersonResult) {
+                            val raceId: String = result.raceResult[0].eventRaceId.content
+                            for (race in resultList.event.eventRace) {
+                                if (race.eventRaceId.content == raceId) {
+                                    if (!raceMap.containsKey(raceId)) {
+                                        raceMap[raceId] = generateRace(eventor = eventor, event = resultList.event, eventRace = race, competitorCountList = null)
+                                    }
+                                    if (raceMap[raceId]!!.userEntries.isEmpty()) {
+                                        raceMap[raceId]!!.userEntries.add(generateCompetitor(person, null, null, null, classResult, result, null))
+                                    } else {
+                                        val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
+                                        val personStart = raceMap[raceId]!!.userEntries[0].personStart
+                                        val teamStart = raceMap[raceId]!!.userEntries[0].teamStart
+                                        raceMap[raceId]!!.userEntries.removeAt(0)
+                                        raceMap[raceId]!!.userEntries.add(updateUserResult(person, userEntry, personStart, teamStart, classResult, result))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return raceMap
+    }
+
+    private fun generateCompetitor(person: Person, entry: org.iof.eventor.Entry?, classStart: org.iof.eventor.ClassStart?, start: Any?, classResult: org.iof.eventor.ClassResult?, result: Any?, eventClassList: org.iof.eventor.EventClassList?): CalendarCompetitor {
+        return CalendarCompetitor(
+                person.personId,
+                person.name,
+                if (entry != null) createUserEntry(entry, eventClassList) else null,
+                if (start != null && start is org.iof.eventor.PersonStart && classStart != null) createPersonStart(start, classStart) else null,
+                if (start != null && start is org.iof.eventor.TeamStart && classStart != null) createTeamStart(start, classStart) else null,
+                if (result != null && result is org.iof.eventor.PersonResult && classResult != null) createPersonResult(result, classResult) else null,
+                if (result != null && result is org.iof.eventor.TeamResult && classResult != null) createTeamResult(result, classResult) else null
+        )
+    }
+
+    private fun updateUserStart(person: Person, userEntry: CalendarEntry?, classStart: org.iof.eventor.ClassStart, start: Any?): CalendarCompetitor {
+        return CalendarCompetitor(
+                person.personId,
+                person.name,
+                userEntry,
+                if (start != null && start is org.iof.eventor.PersonStart) createPersonStart(start, classStart) else null,
+                if (start != null && start is org.iof.eventor.TeamStart) createTeamStart(start, classStart) else null,
+                null,
+                null)
+    }
+
+    private fun updateUserResult(person: Person, userEntry: CalendarEntry?, personStart:CalendarPersonStart?, teamStart: CalendarTeamStart?, classResult: org.iof.eventor.ClassResult, result: Any?): CalendarCompetitor {
+        return CalendarCompetitor(
+                person.personId,
+                person.name,
+                userEntry,
+                personStart,
+                teamStart,
+                if (result != null && result is org.iof.eventor.PersonResult) createPersonResult(result, classResult) else null,
+                if (result != null && result is org.iof.eventor.TeamResult) createTeamResult(result, classResult) else null
+        )
+    }
+
+    private fun createUserEntry(entry: org.iof.eventor.Entry, eventClassList: org.iof.eventor.EventClassList?): CalendarEntry {
+        return CalendarEntry(
+                if (entry.entryClass != null && entry.entryClass.isNotEmpty()) eventClassConverter.getEventClassFromId(eventClassList!!, entry.entryClass[0].eventClassId.content) else null,
+                if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(entry.competitor.cCard[0]) else null)
+    }
+
+    private fun createPersonStart(personStart: org.iof.eventor.PersonStart, classStart: org.iof.eventor.ClassStart): CalendarPersonStart {
+        val start: org.iof.eventor.Start = if (personStart.start != null) {
+            personStart.start
+        } else {
+            personStart.raceStart[0].start
+        }
+
+        return CalendarPersonStart(
+                if (start.startTime != null) competitorConverter.convertStartTime(start.startTime) else null,
+                if (start.bibNumber != null) start.bibNumber.content else "",
+                eventClassConverter.convertEventClass(classStart.eventClass)
+        )
+    }
+
+    private fun createTeamStart(teamStart: org.iof.eventor.TeamStart, classStart: org.iof.eventor.ClassStart): CalendarTeamStart {
+        return CalendarTeamStart(
+                teamStart.teamName.content,
+                if (teamStart.startTime != null) competitorConverter.convertStartTime(teamStart.startTime) else null,
+                if (teamStart.bibNumber != null) teamStart.bibNumber.content else "",
+                teamStart.teamMemberStart[0].leg.toInt(),
+                eventClassConverter.convertEventClass(classStart.eventClass)
+        )
+    }
+
+    private fun createPersonResult(personResult: org.iof.eventor.PersonResult, classResult: org.iof.eventor.ClassResult): CalendarPersonResult {
+        val result: org.iof.eventor.Result = if (personResult.result != null) {
+            personResult.result
+        } else {
+            personResult.raceResult[0].result
+        }
+
+        return CalendarPersonResult(
+                time = if (result.time != null) competitorConverter.convertTimeSec(result.time.content) else null,
+                timeBehind = if (result.timeDiff != null) competitorConverter.convertTimeSec(result.timeDiff.content) else null,
+                position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
+                status = result.competitorStatus.value,
+                bib = if (result.bibNumber != null) result.bibNumber.content else "",
+                eventClass = eventClassConverter.convertEventClass(classResult.eventClass)
+        )
+    }
+
+    private fun createTeamResult(teamResult: org.iof.eventor.TeamResult, classResult: org.iof.eventor.ClassResult): CalendarTeamResult {
+        return CalendarTeamResult(
+                teamName = teamResult.teamName.content,
+                bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else "",
+                time = if (teamResult.time != null) competitorConverter.convertTimeSec(teamResult.time.content) else null,
+                timeBehind = if (teamResult.timeDiff != null) competitorConverter.convertTimeSec(teamResult.timeDiff.content) else null,
+                position = if (teamResult.resultPosition != null && teamResult.resultPosition.content != "0") teamResult.resultPosition.content.toInt() else null,
+                status = teamResult.teamStatus.value,
+                leg = teamResult.teamMemberResult[0].leg.toInt(),
+                legTime = competitorConverter.convertTimeSec(teamResult.teamMemberResult[0].time.content),
+                eventClass = eventClassConverter.convertEventClass(classResult.eventClass)
+        )
     }
 }

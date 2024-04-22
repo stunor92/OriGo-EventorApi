@@ -1,6 +1,7 @@
 package no.stunor.origo.eventorapi.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import no.stunor.origo.eventorapi.model.event.competitor.Competitor;
 import no.stunor.origo.eventorapi.model.person.Person;
 import no.stunor.origo.eventorapi.model.event.Event;
 import no.stunor.origo.eventorapi.model.calendar.CalendarRace;
@@ -8,13 +9,12 @@ import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList;
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum;
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList;
 import no.stunor.origo.eventorapi.model.origo.start.RaceStartList;
-import no.stunor.origo.eventorapi.model.calendar.UserRace;
 import no.stunor.origo.eventorapi.services.AuthService;
 import no.stunor.origo.eventorapi.services.CalendarService;
 import no.stunor.origo.eventorapi.services.EventService;
 import no.stunor.origo.eventorapi.services.OrganisationService;
 import no.stunor.origo.eventorapi.services.OrganiserService;
-import no.stunor.origo.eventorapi.services.UserEntryService;
+import no.stunor.origo.eventorapi.services.CompetitorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ class EventorApiController {
     @Autowired
     CalendarService calendarService;
     @Autowired
-    UserEntryService userEntryService;
+    CompetitorService competitorService;
     @Autowired
     EventService eventService;
     @Autowired
@@ -50,26 +50,31 @@ class EventorApiController {
 
     @GetMapping("/eventList/{eventorId}")
     public ResponseEntity<List<CalendarRace>> getEventList(@PathVariable("eventorId") String eventorId, @RequestParam("from") LocalDate from, @RequestParam("to") LocalDate to, @RequestParam(value = "organisations", required = false) List<String> organisations, @RequestParam(value = "classifications", required = false) List<EventClassificationEnum> classifications, @RequestHeader("userId") String userId) {
-        log.info("Start to get eventlist from eventor-{}.", eventorId);
+        log.info("Start to get event-list from eventor-{}.", eventorId);
         return new ResponseEntity<>(calendarService.getEventList(eventorId, from, to, organisations, classifications, userId), HttpStatus.OK);
     }
 
     @GetMapping("/eventList")
     public ResponseEntity<List<CalendarRace>> getEventList(@RequestParam("from") LocalDate from, @RequestParam("to") LocalDate to, @RequestParam(value = "classifications", required = false) List<EventClassificationEnum> classifications, @RequestHeader("userId") String userId)  {
-        log.info("Start to get eventlist from all eventors.");
+        log.info("Start to get event-list from all eventors.");
         return new ResponseEntity<>(calendarService.getEventList(from, to, classifications, userId), HttpStatus.OK);
     }
 
-    @GetMapping("/personalEvents")
-    public ResponseEntity<List<UserRace>> getPersonalEvents(@RequestHeader("userId") String userId) {
+    @GetMapping("/eventList/user/")
+    public ResponseEntity<List<CalendarRace>> getUserEntries(@RequestHeader("userId") String userId) {
         log.info("Start to get personal events for user {}.", userId);
-        return new ResponseEntity<>(userEntryService.userRaces(userId, null, null), HttpStatus.OK);
-
+        return new ResponseEntity<>(calendarService.getEventList(userId), HttpStatus.OK);
     }
 
+
     @GetMapping("/event/{eventorId}/{eventId}")
-    public ResponseEntity<Event> getEvent(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId, @RequestHeader("userId") String userId) {
-        return new ResponseEntity<>(eventService.getEvent(eventorId, eventId, userId), HttpStatus.OK);
+    public ResponseEntity<Event> getEvent(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {
+        return new ResponseEntity<>(eventService.getEvent(eventorId, eventId), HttpStatus.OK);
+    }
+
+    @GetMapping("/event/{eventorId}/{eventId}/competitors/{userId}")
+    public ResponseEntity<List<Competitor>> getEvent(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId, @PathVariable("userId") String userId) {
+        return new ResponseEntity<>(competitorService.getCompetitors(eventorId, eventId, userId), HttpStatus.OK);
     }
 
     @GetMapping("/event/entrylist/{eventorId}/{eventId}")

@@ -1,18 +1,10 @@
 package no.stunor.origo.eventorapi.services.converter
 
-import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.calendar.UserCompetitor
-import no.stunor.origo.eventorapi.model.calendar.UserRace
-import no.stunor.origo.eventorapi.model.origo.user.*
-import no.stunor.origo.eventorapi.model.person.Person
-import org.iof.eventor.*
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
-import java.text.ParseException
 
+import org.springframework.stereotype.Component
 @Component
 class PersonEntriesConverter {
-    @Autowired
+   /* @Autowired
     private lateinit var eventConverter: EventConverter
 
     @Autowired
@@ -25,17 +17,17 @@ class PersonEntriesConverter {
     private lateinit var eventClassConverter: EventClassConverter
 
     @Throws(NumberFormatException::class, ParseException::class)
-    fun convertPersonEntries(eventor: Eventor, person: Person, entryList: EntryList, startListList: StartListList, resultListList: ResultListList, eventClassMap: MutableMap<String, EventClassList>): List<UserRace> {
-        var result = convertEntryList(eventor, entryList, person, eventClassMap)
-        result = convertStartListList(eventor, startListList, person, result)
-        result = convertResultList(eventor, resultListList, person, result)
+    fun convertPersonEntries(eventor: Eventor, person: Person, entryList: EntryList?, startListList: StartListList?, resultListList: ResultListList?, eventClassMap: MutableMap<String, EventClassList>): List<CalendarRace> {
+        var result = if(entryList != null) convertEntryList(eventor, entryList, person, eventClassMap) else mutableMapOf()
+        result = if(startListList != null) convertStartListList(eventor, startListList, person, result) else result
+        result = if(resultListList != null) convertResultList(eventor, resultListList, person, result) else result
         return result.values.stream().toList()
     }
 
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertEntryList(eventor: Eventor, entryList: EntryList, person: Person, eventClassMap: Map<String, EventClassList>): MutableMap<String?, UserRace> {
-        val raceMap: MutableMap<String?, UserRace> = HashMap()
+    private fun convertEntryList(eventor: Eventor, entryList: EntryList, person: Person, eventClassMap: Map<String, EventClassList>): MutableMap<String, CalendarRace> {
+        val raceMap: MutableMap<String, CalendarRace> = HashMap()
 
         for (entry in entryList.entry) {
             for (eventRaceId in entry.eventRaceId) {
@@ -54,7 +46,7 @@ class PersonEntriesConverter {
                         }
 
                         if (entry.competitor.personId.content == person.personId) {
-                            raceMap[raceId]!!.userCompetitors.add(createUserCompetitor(person = person, entry = entry, classStart = null, start = null, classResult = null, result = null, eventClassList = eventClassMap[raceId]))
+                            raceMap[raceId]!!.userEntries.add(createUserCompetitor(person = person, entry = entry, classStart = null, start = null, classResult = null, result = null, eventClassList = eventClassMap[raceId]))
                         }
                     }
                 }
@@ -64,7 +56,7 @@ class PersonEntriesConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertStartListList(eventor: Eventor, startListList: StartListList, person: Person, raceMap: MutableMap<String?, UserRace>): MutableMap<String?, UserRace> {
+    private fun convertStartListList(eventor: Eventor, startListList: StartListList, person: Person, raceMap: MutableMap<String,CalendarRace>): MutableMap<String, CalendarRace> {
         for (startList in startListList.startList) {
             if (startList.event.eventRace.size == 1) {
                 val race = startList.event.eventRace[0]
@@ -76,12 +68,12 @@ class PersonEntriesConverter {
 
                 for (classStart in startList.classStart) {
                     for (start in classStart.personStartOrTeamStart) {
-                        if (raceMap[raceId]!!.userCompetitors.isEmpty()) {
-                            raceMap[raceId]!!.userCompetitors.add(createUserCompetitor(person, null, classStart, start, null, null, null))
+                        if (raceMap[raceId]!!.userEntries.isEmpty()) {
+                            raceMap[raceId]!!.userEntries.add(createUserCompetitor(person, null, classStart, start, null, null, null))
                         } else {
-                            val userEntry = raceMap[raceId]!!.userCompetitors[0].personEntry
-                            raceMap[raceId]!!.userCompetitors.removeAt(0)
-                            raceMap[raceId]!!.userCompetitors.add(updateUserStart(person, userEntry, classStart, start))
+                            val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
+                            raceMap[raceId]!!.userEntries.removeAt(0)
+                            raceMap[raceId]!!.userEntries.add(updateUserStart(person, userEntry, classStart, start))
                         }
                     }
                 }
@@ -95,12 +87,12 @@ class PersonEntriesConverter {
                                     if (!raceMap.containsKey(raceId)) {
                                         raceMap[raceId] = createUserRace(eventor, startList.event, race)
                                     }
-                                    if (raceMap[raceId]!!.userCompetitors.isEmpty()) {
-                                        raceMap[raceId]!!.userCompetitors.add(createUserCompetitor(person, null, classStart, start, null, null, null))
+                                    if (raceMap[raceId]!!.userEntries.isEmpty()) {
+                                        raceMap[raceId]!!.userEntries.add(createUserCompetitor(person, null, classStart, start, null, null, null))
                                     } else {
-                                        val userEntry = raceMap[raceId]!!.userCompetitors[0].personEntry
-                                        raceMap[raceId]!!.userCompetitors.removeAt(0)
-                                        raceMap[raceId]!!.userCompetitors.add(updateUserStart(person, userEntry, classStart, start))
+                                        val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
+                                        raceMap[raceId]!!.userEntries.removeAt(0)
+                                        raceMap[raceId]!!.userEntries.add(updateUserStart(person, userEntry, classStart, start))
                                     }
                                 }
                             }
@@ -114,7 +106,7 @@ class PersonEntriesConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertResultList(eventor: Eventor, resultListList: ResultListList, person: Person, raceMap: MutableMap<String?, UserRace>): MutableMap<String?, UserRace> {
+    private fun convertResultList(eventor: Eventor, resultListList: ResultListList, person: Person, raceMap: MutableMap<String, CalendarRace>): MutableMap<String, CalendarRace> {
         for (resultList in resultListList.resultList) {
             if (resultList.event.eventRace.size == 1) {
                 val race = resultList.event.eventRace[0]
@@ -126,15 +118,15 @@ class PersonEntriesConverter {
 
                 for (classResult in resultList.classResult) {
                     for (result in classResult.personResultOrTeamResult) {
-                        if (raceMap[raceId]!!.userCompetitors.isEmpty()) {
-                            raceMap[raceId]!!.userCompetitors.add(createUserCompetitor(person, null, null, null, classResult, result, null))
+                        if (raceMap[raceId]!!.userEntries.isEmpty()) {
+                            raceMap[raceId]!!.userEntries.add(createUserCompetitor(person, null, null, null, classResult, result, null))
                         } else {
-                            val userEntry = raceMap[raceId]!!.userCompetitors[0].personEntry
-                            val personStart = raceMap[raceId]!!.userCompetitors[0].personStart
-                            val teamStart = raceMap[raceId]!!.userCompetitors[0].teamStart
+                            val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
+                            val personStart = raceMap[raceId]!!.userEntries[0].personStart
+                            val teamStart = raceMap[raceId]!!.userEntries[0].teamStart
 
-                            raceMap[raceId]!!.userCompetitors.removeAt(0)
-                            raceMap[raceId]!!.userCompetitors.add(updateUserResult(person, userEntry, personStart, teamStart, classResult, result))
+                            raceMap[raceId]!!.userEntries.removeAt(0)
+                            raceMap[raceId]!!.userEntries.add(updateUserResult(person, userEntry, personStart, teamStart, classResult, result))
                         }
                     }
                 }
@@ -148,14 +140,14 @@ class PersonEntriesConverter {
                                     if (!raceMap.containsKey(raceId)) {
                                         raceMap[raceId] = createUserRace(eventor, resultList.event, race)
                                     }
-                                    if (raceMap[raceId]!!.userCompetitors.isEmpty()) {
-                                        raceMap[raceId]!!.userCompetitors.add(createUserCompetitor(person, null, null, null, classResult, result, null))
+                                    if (raceMap[raceId]!!.userEntries.isEmpty()) {
+                                        raceMap[raceId]!!.userEntries.add(createUserCompetitor(person, null, null, null, classResult, result, null))
                                     } else {
-                                        val userEntry = raceMap[raceId]!!.userCompetitors[0].personEntry
-                                        val personStart = raceMap[raceId]!!.userCompetitors[0].personStart
-                                        val teamStart = raceMap[raceId]!!.userCompetitors[0].teamStart
-                                        raceMap[raceId]!!.userCompetitors.removeAt(0)
-                                        raceMap[raceId]!!.userCompetitors.add(updateUserResult(person, userEntry, personStart, teamStart, classResult, result))
+                                        val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
+                                        val personStart = raceMap[raceId]!!.userEntries[0].personStart
+                                        val teamStart = raceMap[raceId]!!.userEntries[0].teamStart
+                                        raceMap[raceId]!!.userEntries.removeAt(0)
+                                        raceMap[raceId]!!.userEntries.add(updateUserResult(person, userEntry, personStart, teamStart, classResult, result))
                                     }
                                 }
                             }
@@ -168,23 +160,34 @@ class PersonEntriesConverter {
         return raceMap
     }
 
-    private fun createUserRace(eventor: Eventor, event: Event, race: EventRace): UserRace {
-        return UserRace(
+    private fun createUserRace(eventor: Eventor, event: Event, race: EventRace): CalendarRace {
+        return CalendarRace(
                 eventor = eventor,
                 eventId = event.eventId.content,
                 eventName = event.name.content,
                 raceId = race.eventRaceId.content,
                 raceName = race.name.content,
-                canceled = event.eventStatusId.content == "10",
                 raceDate = eventConverter.convertRaceDateWithoutTime(race.raceDate),
-                userCompetitors = mutableListOf(),
+                type = eventConverter.convertEventForm(event.eventForm),
+                classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
+                lightCondition = eventConverter.convertLightCondition(race.raceLightCondition),
+                distance = eventConverter.convertRaceDistance(race.raceDistance),
+                position = if (race.eventCenterPosition != null) eventConverter.convertPosition(race.eventCenterPosition) else null,
+                status = eventConverter.convertEventStatus(event.eventStatusId.content),
+                disciplines = eventConverter.convertEventDisciplines(event.disciplineIdOrDiscipline),
+                organisers = if(event.organiser != null) eventConverter.convertOrganisers(eventor, event.organiser.organisationIdOrOrganisation) else listOf(),
+                entryBreaks = eventConverter.convertEntryBreaks(event.entryBreak),
+                entries = 0,
+                userEntries = mutableListOf(),
                 organisationEntries = mutableMapOf(),
-                entryBreaks = eventConverter.convertEntryBreaks(event.entryBreak))
+                startList = eventConverter.hasStartList(event.hashTableEntry, race.eventRaceId.content),
+                resultList = eventConverter.hasResultList(event.hashTableEntry, race.eventRaceId.content),
+                livelox = eventConverter.hasLivelox(event.hashTableEntry))
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun createUserCompetitor(person: Person, entry: Entry?, classStart: ClassStart?, start: Any?, classResult: ClassResult?, result: Any?, eventClassList: EventClassList?): UserCompetitor {
-        return UserCompetitor(
+    private fun createUserCompetitor(person: Person, entry: Entry?, classStart: ClassStart?, start: Any?, classResult: ClassResult?, result: Any?, eventClassList: EventClassList?): Competitor2 {
+        return Competitor2(
                 person.personId,
                 person.name,
                 if (entry != null) createUserEntry(entry, eventClassList) else null,
@@ -195,8 +198,8 @@ class PersonEntriesConverter {
         )
     }
 
-    private fun updateUserStart(person: Person, userEntry: UserEntry?, classStart: ClassStart, start: Any?): UserCompetitor {
-        return UserCompetitor(
+    private fun updateUserStart(person: Person, userEntry: UserEntry?, classStart: ClassStart, start: Any?): Competitor2 {
+        return Competitor2(
                 person.personId,
                 person.name,
                 userEntry,
@@ -207,8 +210,8 @@ class PersonEntriesConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun updateUserResult(person: Person, userEntry: UserEntry?, personStart: UserPersonStart?, teamStart: UserTeamStart?, classResult: ClassResult, result: Any?): UserCompetitor {
-        return UserCompetitor(
+    private fun updateUserResult(person: Person, userEntry: UserEntry?, personStart: UserPersonStart?, teamStart: UserTeamStart?, classResult: ClassResult, result: Any?): Competitor2 {
+        return Competitor2(
                 person.personId,
                 person.name,
                 userEntry,
@@ -275,4 +278,6 @@ class PersonEntriesConverter {
                 eventClassConverter.convertEventClass(classResult!!.eventClass)
         )
     }
+
+    */
 }

@@ -1,5 +1,6 @@
 package no.stunor.origo.eventorapi.services.converter
 
+import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.Region
@@ -8,9 +9,6 @@ import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.event.CCard
 import no.stunor.origo.eventorapi.model.event.Position
 import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak
-import no.stunor.origo.eventorapi.model.origo.event.*
-import no.stunor.origo.eventorapi.model.calendar.UserCompetitor
-import no.stunor.origo.eventorapi.model.calendar.UserRace
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
@@ -68,8 +66,13 @@ class EventConverter {
     fun convertOrganisers(eventor: Eventor, organisers: List<Any>): List<Organisation> {
         val result: MutableList<Organisation> = ArrayList()
         for (organiser in organisers) {
-            val o = organisationRepository.findByOrganisationIdAndEventorId((organiser as org.iof.eventor.OrganisationId).content, eventor.eventorId).block()
-            if (o != null) result.add(o)
+            if(organiser is org.iof.eventor.Organisation){
+                val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.organisationId.content, eventor.eventorId).block()
+                if (o != null) result.add(o)
+            } else if(organiser is org.iof.eventor.OrganisationId){
+                val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.content, eventor.eventorId).block()
+                if (o != null) result.add(o)
+            }
         }
         return result
     }
@@ -92,7 +95,7 @@ class EventConverter {
         }
     }
 
-    fun convertEventDiscipline(disciplineId: Any): DisciplineEnum {
+    private fun convertEventDiscipline(disciplineId: Any): DisciplineEnum {
         return when ((disciplineId as org.iof.eventor.DisciplineId).content) {
             "1" -> DisciplineEnum.FOOT
             "2" -> DisciplineEnum.MTB
@@ -115,13 +118,11 @@ class EventConverter {
             event: org.iof.eventor.Event,
             eventCLassList: org.iof.eventor.EventClassList?,
             documentList: org.iof.eventor.DocumentList?,
-            organisations: List<Organisation>?,
-            regions: List<Region>?,
-            eventor: Eventor,
-            raceCompetitors: List<UserRace>?): Event {
+            organisations: List<Organisation>,
+            regions: List<Region>,
+            eventor: Eventor): Event {
         return Event(
                 id = null,
-                eventor = eventor,
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 name = event.name.content,
@@ -131,48 +132,40 @@ class EventConverter {
                 disciplines = convertEventDisciplines(event.disciplineIdOrDiscipline),
                 startDate = convertStartDate(event.startDate),
                 finishDate = convertFinishDate(event.finishDate),
-                organisers = organisations?: listOf(),
-                regions = regions?: listOf(),
+                organisers = organisations,
+                regions = regions,
                 eventClasses = eventClassConverter.convertEventClasses(eventCLassList),
                 documents = convertEventDocument(documentList),
                 entryBreaks = convertEntryBreaks(event.entryBreak),
-                races = convertRaces(event, event.eventRace, raceCompetitors),
+                races = convertRaces(event, event.eventRace),
                 punchingUnitTypes = convertPunchingUnitTypes(event.punchingUnitType),
-                webUrls = null,  //event.getWebURL(),
+                webUrls = null,
                 message = convertHostMessage(event.hashTableEntry),
                 email = null,
                 phone = null
         )
     }
 
-    private fun convertRaces(event: org.iof.eventor.Event, eventRaces: List<org.iof.eventor.EventRace>, raceCompetitors: List<UserRace>?): List<Race> {
+    private fun convertRaces(event: org.iof.eventor.Event, eventRaces: List<org.iof.eventor.EventRace>): List<Race> {
         val result: MutableList<Race> = ArrayList()
 
         for (eventRace in eventRaces) {
-            val userCompetitors: MutableList<UserCompetitor> = ArrayList()
-
-            for (r in raceCompetitors!!) {
-                if (r.raceId == eventRace.eventRaceId.content) {
-                    userCompetitors.addAll(r.userCompetitors)
-                }
-            }
-            result.add(convertRace(event, eventRace, userCompetitors))
+            result.add(convertRace(event, eventRace))
         }
         return result
     }
 
-    private fun convertRace(event: org.iof.eventor.Event, eventRace: org.iof.eventor.EventRace, competitors: List<UserCompetitor>): Race {
+    private fun convertRace(event: org.iof.eventor.Event, eventRace: org.iof.eventor.EventRace): Race {
         return Race(
-                eventRace.eventRaceId.content,
-                eventRace.name.content,
-                convertLightCondition(eventRace.raceLightCondition),
-                convertRaceDistance(eventRace.raceDistance),
-                if (eventRace.raceDate != null) convertRaceDate(eventRace.raceDate) else null,
-                if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
-                hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
-                hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
-                hasLivelox(event.hashTableEntry),
-                competitors
+                raceId = eventRace.eventRaceId.content,
+                name = eventRace.name.content,
+                lightCondition = convertLightCondition(eventRace.raceLightCondition),
+                distance = convertRaceDistance(eventRace.raceDistance),
+                date = if (eventRace.raceDate != null) convertRaceDate(eventRace.raceDate) else null,
+                position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
+                startList = hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
+                resultList = hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
+                livelox = hasLivelox(event.hashTableEntry)
         )
     }
 
@@ -231,45 +224,38 @@ class EventConverter {
     }
 
 
-    @Throws(ParseException::class)
     fun convertEvents(eventList: org.iof.eventor.EventList?, eventor: Eventor): List<Event> {
         val result: MutableList<Event> = ArrayList()
         if (eventList != null) {
             for (event in eventList.event) {
-                result.add(convertEvent(event, null, null, null, null, eventor, null))
+                result.add(
+                        convertEvent(
+                            event = event,
+                            eventCLassList = null,
+                            documentList = null,
+                            organisations = listOf(),
+                            regions = listOf(),
+                            eventor = eventor
+                    )
+                )
             }
         }
         return result
     }
-    private fun convertRaceDate(startTime: org.iof.eventor.RaceDate): Date? {
-        val dateString = startTime.date.content + " " + startTime.clock.content
-        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        parser.timeZone = TimeZone.getTimeZone("UTC")
-
-        return try {
-            parser.parse(dateString)
-        } catch (e: ParseException) {
-            null
-        }
+    private fun convertRaceDate(time: org.iof.eventor.RaceDate): Timestamp {
+        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
+        return Timestamp.parseTimestamp(timeString)
     }
 
-    @Throws(ParseException::class)
-    fun convertStartDate(startTime: org.iof.eventor.StartDate): Date {
-        val dateString = startTime.date.content + " " + startTime.clock.content
-        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        parser.timeZone = TimeZone.getTimeZone("UTC")
-
-        return parser.parse(dateString)
+    private fun convertStartDate(time: org.iof.eventor.StartDate): Timestamp {
+        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
+        return Timestamp.parseTimestamp(timeString)
     }
 
 
-    @Throws(ParseException::class)
-    fun convertFinishDate(startTime: org.iof.eventor.FinishDate): Date {
-        val dateString = startTime.date.content + " " + startTime.clock.content
-        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        parser.timeZone = TimeZone.getTimeZone("UTC")
-
-        return parser.parse(dateString)
+    private fun convertFinishDate(time: org.iof.eventor.FinishDate): Timestamp {
+        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
+        return Timestamp.parseTimestamp(timeString)
     }
 
     fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): Position {
@@ -282,28 +268,14 @@ class EventConverter {
                 if (entryBreak.validToDate != null) convertValidToDate(entryBreak.validToDate) else null)
     }
 
-    private fun convertValidFromDate(timeDate: org.iof.eventor.ValidFromDate): Date? {
-        val dateString = timeDate.date.content + " " + timeDate.clock.content
-        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        parser.timeZone = TimeZone.getTimeZone("UTC")
-
-        return try {
-            parser.parse(dateString)
-        } catch (e: ParseException) {
-            null
-        }
+    private fun convertValidFromDate(time: org.iof.eventor.ValidFromDate): Timestamp? {
+        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
+        return Timestamp.parseTimestamp(timeString)
     }
 
-    private fun convertValidToDate(timeDate: org.iof.eventor.ValidToDate): Date? {
-        val dateString = timeDate.date.content + " " + timeDate.clock.content
-        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        parser.timeZone = TimeZone.getTimeZone("UTC")
-
-        return try {
-            parser.parse(dateString)
-        } catch (e: ParseException) {
-            null
-        }
+    private fun convertValidToDate(time: org.iof.eventor.ValidToDate): Timestamp {
+        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
+        return Timestamp.parseTimestamp(timeString)
     }
 
     private fun convertHostMessage(hashTableEntries: List<org.iof.eventor.HashTableEntry>): String? {
@@ -316,7 +288,7 @@ class EventConverter {
     }
 
 
-    fun convertPunchingUnitTypes(punchingUnitTypes: List<org.iof.eventor.PunchingUnitType>): List<String> {
+    private fun convertPunchingUnitTypes(punchingUnitTypes: List<org.iof.eventor.PunchingUnitType>): List<String> {
         val result: MutableList<String> = ArrayList()
         for (punchingUnitType in punchingUnitTypes) {
             result.add(punchingUnitType.value)
@@ -324,20 +296,12 @@ class EventConverter {
         return result
     }
 
-    fun convertCCards(cCards: List<org.iof.eventor.CCard>): List<CCard> {
-        val result: MutableList<CCard> = ArrayList()
-        for (cCard in cCards) {
-            result.add(convertCCard(cCard))
-        }
-        return result
-    }
-
-    fun convertCCard(cCard: org.iof.eventor.CCard): CCard {
-        return CCard(cCard.cCardId.content, cCard.punchingUnitType.value)
-    }
 
 
-    fun convertEventDocument(documentList: org.iof.eventor.DocumentList?): List<Document> {
+
+
+
+    private fun convertEventDocument(documentList: org.iof.eventor.DocumentList?): List<Document> {
         val result: MutableList<Document> = ArrayList()
         if(documentList == null){
             return listOf()

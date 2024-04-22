@@ -46,7 +46,7 @@ class EntryListConverter {
                 entry.entryId.content,
                 personConverter.convertCompetitor(entry.competitor.person, eventor),
                 if (entry.competitor.organisation != null && entry.competitor.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(entry.competitor.organisation.organisationId.content, eventor.eventorId).block() else null,
-                if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) eventConverter.convertCCard(entry.competitor.cCard[0]) else null,
+                null,//if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) eventConverter.convertCCard(entry.competitor.cCard[0]) else null,
                 if (entry.bibNumber != null) entry.bibNumber.content else "",
                 if (entry.eventRaceId != null) eventConverter.convertEventRaceIds(entry.eventRaceId) else ArrayList(),
                 if (entry.entryEntryFee != null) convertEntryFees(entry.entryEntryFee) else ArrayList(),
@@ -105,7 +105,7 @@ class EntryListConverter {
         return TeamMemberEntry(
                 if (teamMember.person != null) personConverter.convertCompetitor(teamMember.person, eventor) else null,
                 teamMember.teamSequence.content.toInt(),
-                if (teamMember.cCard != null && teamMember.cCard.isNotEmpty()) eventConverter.convertCCard(teamMember.cCard[0]) else null
+                null,//if (teamMember.cCard != null && teamMember.cCard.isNotEmpty()) eventConverter.convertCCard(teamMember.cCard[0]) else null
         )
     }
 }

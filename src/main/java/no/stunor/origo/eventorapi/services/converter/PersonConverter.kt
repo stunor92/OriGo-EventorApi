@@ -1,7 +1,7 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.person.Competitor
+import no.stunor.origo.eventorapi.model.origo.CompetitorPerson
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
@@ -30,8 +30,8 @@ class PersonConverter {
         )
     }
 
-    fun convertCompetitor(person: org.iof.eventor.Person, eventor: Eventor): Competitor {
-        return Competitor(
+    fun convertCompetitor(person: org.iof.eventor.Person, eventor: Eventor): CompetitorPerson {
+        return CompetitorPerson(
                 eventor.eventorId,
                 person.personId.content,
                 convertPersonName(person.personName),
@@ -41,7 +41,13 @@ class PersonConverter {
         )
     }
 
-    private fun convertGender(sex: String?): Gender {
+    fun convertBirthYear(birthDate: org.iof.eventor.BirthDate?): Int? {
+        if (birthDate == null) {
+            return null
+        }
+        return birthDate.date.content.substring(0, 4).toInt()
+    }
+    fun convertGender(sex: String?): Gender {
         if (sex == null) {
             return Gender.OTHER
         }
@@ -52,7 +58,7 @@ class PersonConverter {
         }
     }
 
-    private fun convertPersonName(personName: org.iof.eventor.PersonName): PersonName {
+    fun convertPersonName(personName: org.iof.eventor.PersonName): PersonName {
         val given = StringBuilder()
         for (i in personName.given.indices) {
             for (j in 1..personName.given.size) {

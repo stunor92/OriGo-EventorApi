@@ -1,6 +1,9 @@
-package no.stunor.origo.eventorapi.model.person
+package no.stunor.origo.eventorapi.model.origo
 
-data class Competitor (
+import no.stunor.origo.eventorapi.model.person.Gender
+import no.stunor.origo.eventorapi.model.person.PersonName
+
+data class CompetitorPerson (
         var eventorId: String = "",
         var personId: String?,
         var name: PersonName = PersonName(),

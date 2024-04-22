@@ -11,6 +11,7 @@ import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.CalendarConverter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -30,6 +31,90 @@ class CalendarService {
 
     @Autowired
     private lateinit var calendarConverter: CalendarConverter
+
+    @Value("\${config.personalEntries.start}")
+    private val personalEntriesStart = 0L
+
+    @Value("\${config.personalEntries.end}")
+    private val personalEntriesEnd = 0L
+
+    @Value("\${config.personalStarts.start}")
+    private val personalStartsStart = 0L
+
+    @Value("\${config.personalStarts.end}")
+    private val personalStartsEnd = 0L
+
+    @Value("\${config.personalResults.start}")
+    private val personalResultsStart = 0L
+
+    @Value("\${config.personalResults.end}")
+    private val personalResultsEnd = 0L
+
+    fun getEventList(userId: String): List<CalendarRace> {
+        val raceList: MutableList<CalendarRace> = mutableListOf()
+        val persons = personRepository.findAllByUsersContains(userId).collectList().block() ?: listOf()
+
+        for (person in persons) {
+            val eventor = eventorRepository.findByEventorId(person.eventorId).block()
+            val organisationIds = person.memberships.keys.toList()
+
+            if (eventor != null) {
+                val entryList = eventorService.getGetOrganisationEntries(
+                        eventor = eventor,
+                        organisations = organisationIds,
+                        eventId = null,
+                        fromDate = LocalDate.now().minusDays(personalEntriesStart),
+                        toDate = LocalDate.now().plusDays(personalEntriesEnd)
+                )
+                val eventClassMap: MutableMap<String, org.iof.eventor.EventClassList> = HashMap()
+                if (entryList != null) {
+                    for (entry in entryList.entry) {
+                        for (raceId in entry.eventRaceId) {
+                            if (!eventClassMap.containsKey(raceId.content)) {
+                                val eventClassList = eventorService.getEventClasses(eventor = eventor, eventId = entry.event.eventId.content)
+                                if (eventClassList != null) {
+                                    eventClassMap[raceId.content] = eventClassList
+                                }
+                            }
+                        }
+                    }
+                }
+                val startListList = eventorService.getGetPersonalStarts(
+                        eventor = eventor,
+                        personId = person.personId,
+                        eventId = null,
+                        fromDate = LocalDate.now().minusDays(personalStartsStart),
+                        toDate = LocalDate.now().plusDays(personalStartsEnd)
+                )
+                val resultListList = eventorService.getGetPersonalResults(
+                        eventor = eventor,
+                        personId = person.personId,
+                        eventId = null,
+                        fromDate = LocalDate.now().minusDays(personalResultsStart),
+                        toDate = LocalDate.now().plusDays(personalResultsEnd)
+                )
+                val personRaces = generateCalendarRaceForPerson(eventor, person, entryList, startListList, resultListList, eventClassMap)
+
+                for (race in personRaces) {
+                    var raceExist = false
+                    for (r in raceList) {
+                        if (race.eventorId == r.eventorId && race.raceId == r.raceId) {
+                            raceExist = true
+                            r.userEntries.addAll(race.userEntries)
+                            r.organisationEntries.putAll(race.organisationEntries)
+                        }
+                    }
+                    if (!raceExist) {
+                        raceList.add(race)
+                    }
+                }
+
+            }
+
+
+        }
+        return raceList
+    }
 
     fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
         val eventorList: List<Eventor?> = eventorRepository.findAll().collectList().block()?.toList() ?: listOf()
@@ -73,6 +158,13 @@ class CalendarService {
         log.info("Fetching competitor-count for persons {} and organisations {}.", personIds, organisationIds)
         val competitorCountList = eventorService.getCompetitorCounts(eventor, events, organisationIds, personIds)
         return calendarConverter.convertEvents(eventList, eventor, competitorCountList)
+    }
+
+    private fun generateCalendarRaceForPerson(eventor: Eventor, person: Person, entryList: org.iof.eventor.EntryList?, startListList: org.iof.eventor.StartListList?, resultListList: org.iof.eventor.ResultListList?, eventClassMap: MutableMap<String, org.iof.eventor.EventClassList>): List<CalendarRace> {
+        var result = calendarConverter.convertEntryList(eventor, entryList, person, eventClassMap)
+        result = calendarConverter.convertStartListList(eventor, startListList, person, result)
+        result = calendarConverter.convertResultList(eventor, resultListList, person, result)
+        return result.values.stream().toList()
     }
 }
 
