@@ -60,7 +60,7 @@ class EventorApiController {
         return new ResponseEntity<>(calendarService.getEventList(from, to, classifications, userId), HttpStatus.OK);
     }
 
-    @GetMapping("/eventList/user/")
+    @GetMapping("/eventList/user")
     public ResponseEntity<List<CalendarRace>> getUserEntries(@RequestHeader("userId") String userId) {
         log.info("Start to get personal events for user {}.", userId);
         return new ResponseEntity<>(calendarService.getEventList(userId), HttpStatus.OK);
