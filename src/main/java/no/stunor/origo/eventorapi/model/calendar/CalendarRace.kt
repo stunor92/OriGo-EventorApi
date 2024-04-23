@@ -1,11 +1,11 @@
 package no.stunor.origo.eventorapi.model.calendar
 
+import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.event.Position
 import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak
 import java.io.Serializable
-import java.util.Date
 
 data class CalendarRace(
         var eventorId: String = "",
@@ -13,7 +13,7 @@ data class CalendarRace(
         var eventName: String = "",
         var raceId: String = "",
         var raceName: String? = null,
-        var raceDate: Date? = Date(),
+        var raceDate: Timestamp? = null,
         var type: EventFormEnum = EventFormEnum.INDIVIDUAL,
         var classification: EventClassificationEnum = EventClassificationEnum.CLUB,
         var lightCondition: LightConditionEnum = LightConditionEnum.DAY,
