@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import no.stunor.origo.eventorapi.model.origo.CompetitorPerson;
-import no.stunor.origo.eventorapi.model.origo.Result;
+import no.stunor.origo.eventorapi.model.calendar.Result;
 
 public record TeamMemberResult(
         CompetitorPerson person,

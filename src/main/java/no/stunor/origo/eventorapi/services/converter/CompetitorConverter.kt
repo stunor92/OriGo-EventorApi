@@ -3,7 +3,6 @@ package no.stunor.origo.eventorapi.services.converter
 import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.event.CCard
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
@@ -218,9 +217,9 @@ class CompetitorConverter {
         return competitors
     }
 
-    fun convertTimeSec(time: String?): Int? {
-        val date: Date
-        val reference: Date
+    fun convertTimeSec(time: String?): Int {
+        var date: Date
+        var reference: Date
         try {
             val dateFormat: DateFormat = SimpleDateFormat("HH:mm:ss")
             reference = dateFormat.parse("00:00:00")
@@ -228,7 +227,11 @@ class CompetitorConverter {
             val seconds = (date.time - reference.time) / 1000L
             return seconds.toInt()
         } catch (e: ParseException) {
-            return null
+            val dateFormat: DateFormat = SimpleDateFormat("mm:ss")
+            reference = dateFormat.parse("00:00:00")
+            date = dateFormat.parse(time)
+            val seconds = (date.time - reference.time) / 1000L
+            return seconds.toInt()
         }
 
     }

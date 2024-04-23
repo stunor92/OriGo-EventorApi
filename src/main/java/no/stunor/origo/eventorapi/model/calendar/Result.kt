@@ -1,4 +1,4 @@
-package no.stunor.origo.eventorapi.model.origo
+package no.stunor.origo.eventorapi.model.calendar
 
 import java.io.Serializable
 

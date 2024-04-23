@@ -23,7 +23,6 @@ data class CalendarRace(
         var disciplines: List<DisciplineEnum> = listOf(),
         var organisers: List<Organisation> = listOf(),
         var entryBreaks: List<EntryBreak> = listOf(),
-        var signedUp: Boolean = false,
         var entries: Int = 0,
         var userEntries: MutableList<CalendarCompetitor> = mutableListOf(),
         var organisationEntries: MutableMap<String, Int> = mutableMapOf(),

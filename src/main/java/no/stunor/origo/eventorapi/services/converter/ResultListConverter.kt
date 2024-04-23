@@ -5,7 +5,7 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.origo.result.PersonResult
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList
-import no.stunor.origo.eventorapi.model.origo.Result
+import no.stunor.origo.eventorapi.model.calendar.Result
 import no.stunor.origo.eventorapi.model.origo.result.SplitTime
 import no.stunor.origo.eventorapi.model.origo.result.TeamMemberResult
 import no.stunor.origo.eventorapi.model.origo.result.TeamResult

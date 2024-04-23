@@ -2,6 +2,7 @@ package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.calendar.*
+import no.stunor.origo.eventorapi.model.calendar.Result
 import no.stunor.origo.eventorapi.model.person.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -312,10 +313,12 @@ class CalendarConverter {
         }
 
         return CalendarPersonResult(
-                time = if (result.time != null) competitorConverter.convertTimeSec(result.time.content) else null,
-                timeBehind = if (result.timeDiff != null) competitorConverter.convertTimeSec(result.timeDiff.content) else null,
-                position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
-                status = result.competitorStatus.value,
+                result = Result(
+                        time = if (result.time != null) competitorConverter.convertTimeSec(result.time.content) else null,
+                        timeBehind = if (result.timeDiff != null) competitorConverter.convertTimeSec(result.timeDiff.content) else null,
+                        position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
+                        status = result.competitorStatus.value,
+                ),
                 bib = if (result.bibNumber != null) result.bibNumber.content else "",
                 eventClass = eventClassConverter.convertEventClass(classResult.eventClass)
         )
@@ -325,12 +328,19 @@ class CalendarConverter {
         return CalendarTeamResult(
                 teamName = teamResult.teamName.content,
                 bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else "",
-                time = if (teamResult.time != null) competitorConverter.convertTimeSec(teamResult.time.content) else null,
-                timeBehind = if (teamResult.timeDiff != null) competitorConverter.convertTimeSec(teamResult.timeDiff.content) else null,
-                position = if (teamResult.resultPosition != null && teamResult.resultPosition.content != "0") teamResult.resultPosition.content.toInt() else null,
-                status = teamResult.teamStatus.value,
+                result = Result(
+                        time = if (teamResult.time != null) competitorConverter.convertTimeSec(teamResult.time.content) else null,
+                        timeBehind = if (teamResult.timeDiff != null) competitorConverter.convertTimeSec(teamResult.timeDiff.content) else null,
+                        position = if (teamResult.resultPosition != null && teamResult.resultPosition.content != "0") teamResult.resultPosition.content.toInt() else null,
+                        status = teamResult.teamStatus.value,
+                ),
                 leg = teamResult.teamMemberResult[0].leg.toInt(),
-                legTime = competitorConverter.convertTimeSec(teamResult.teamMemberResult[0].time.content),
+                legResult = Result(
+                        time = if(teamResult.teamMemberResult[0].time != null) competitorConverter.convertTimeSec(teamResult.teamMemberResult[0].time.content) else null,
+                        timeBehind =  null,
+                        position = null,
+                        status = teamResult.teamStatus.value
+                ),
                 eventClass = eventClassConverter.convertEventClass(classResult.eventClass)
         )
     }

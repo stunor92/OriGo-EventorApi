@@ -6,11 +6,8 @@ import java.io.Serializable
 data class CalendarTeamResult(
         var teamName: String = "",
         var leg: Int = 0,
-        var legTime: Int? = null,
-        var time: Int? = null,
-        var timeBehind: Int? =  null,
-        val position: Int? = null,
-        val status: String = "OK",
+        var result: Result,
+        var legResult: Result,
         var bib: String? = null,
         var eventClass: EventClass = EventClass()
 ) : Serializable
