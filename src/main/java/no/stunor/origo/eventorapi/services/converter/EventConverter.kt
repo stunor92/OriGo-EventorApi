@@ -6,15 +6,11 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.model.event.CCard
 import no.stunor.origo.eventorapi.model.event.Position
 import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.TimeZone
 import kotlin.collections.ArrayList
 
 @Component
@@ -48,18 +44,6 @@ class EventConverter {
             "10" -> EventStatusEnum.CANCELED
             "11" -> EventStatusEnum.REPORTED
             else -> EventStatusEnum.APPLIED
-        }
-    }
-
-    fun convertRaceDateWithoutTime(startTime: org.iof.eventor.RaceDate): Date? {
-        val dateString = startTime.date.content
-        val parser = SimpleDateFormat("yyyy-MM-dd")
-        parser.timeZone = TimeZone.getTimeZone("UTC")
-
-        return try {
-            parser.parse(dateString)
-        } catch (e: ParseException) {
-            null
         }
     }
 
@@ -242,7 +226,7 @@ class EventConverter {
         }
         return result
     }
-    private fun convertRaceDate(time: org.iof.eventor.RaceDate): Timestamp {
+    fun convertRaceDate(time: org.iof.eventor.RaceDate): Timestamp {
         val timeString = time.date.content + "T" + time.clock.content + ".000Z"
         return Timestamp.parseTimestamp(timeString)
     }

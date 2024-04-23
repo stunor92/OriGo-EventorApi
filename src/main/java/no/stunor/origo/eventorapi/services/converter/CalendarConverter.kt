@@ -42,7 +42,7 @@ class CalendarConverter {
                 eventName = event.name.content,
                 raceId = eventRace.eventRaceId.content,
                 raceName = eventRace.name.content,
-                raceDate = eventConverter.convertRaceDateWithoutTime(eventRace.raceDate),
+                raceDate = eventConverter.convertRaceDate(eventRace.raceDate),
                 type = eventConverter.convertEventForm(event.eventForm),
                 classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
                 lightCondition = eventConverter.convertLightCondition(eventRace.raceLightCondition),
