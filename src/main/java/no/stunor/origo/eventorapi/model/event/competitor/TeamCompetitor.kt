@@ -12,7 +12,7 @@ data class TeamCompetitor(
         override var eventId: String = "",
         override var raceId: String = "",
         override var eventClassId: String = "",
-        var organisations: List<String> = listOf(),
+        var organisations: List<Organisation> = listOf(),
         var teamMembers: List<TeamMemberCompetitor> = listOf(),
         var name: String = "",
         override var bib: String? = null,

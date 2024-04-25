@@ -11,7 +11,6 @@ import java.io.Serializable
 data class TeamMemberCompetitor(
         var personId: String?,
         var name: PersonName = PersonName(),
-        var organisation: Organisation? = null,
         var birthYear: Int? = null,
         var nationality: String = "",
         var gender: Gender = Gender.OTHER,
