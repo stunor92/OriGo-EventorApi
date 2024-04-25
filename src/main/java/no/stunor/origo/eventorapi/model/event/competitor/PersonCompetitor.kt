@@ -22,10 +22,7 @@ data class PersonCompetitor(
         override var bib: String? = null,
         override var startTime: Timestamp? = null,
         override var finishTime: Timestamp? = null,
-        var time: Int? = null,
-        var timeBehind: Int? =  null,
-        val position: Int? = null,
-        val status: String = "OK",
+        var result: Result? = null,
         var splitTimes: List<SplitTime> = listOf(),
         override var entryFeeIds: List<String> = listOf()
 ) : Competitor

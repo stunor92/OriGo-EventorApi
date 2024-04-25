@@ -5,7 +5,8 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.origo.result.PersonResult
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList
-import no.stunor.origo.eventorapi.model.calendar.Result
+import no.stunor.origo.eventorapi.model.event.competitor.Result
+import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
 import no.stunor.origo.eventorapi.model.origo.result.SplitTime
 import no.stunor.origo.eventorapi.model.origo.result.TeamMemberResult
 import no.stunor.origo.eventorapi.model.origo.result.TeamResult
@@ -95,7 +96,7 @@ class ResultListConverter {
                 if (result.time != null) convertTimeSec(result.time.content) else null,
                 if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null,
                 if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
-                result.competitorStatus.value)
+                ResultStatus.valueOf(result.competitorStatus.value))
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
@@ -163,7 +164,7 @@ class ResultListConverter {
                 if (teamResult.time != null) convertTimeSec(teamResult.time.content) else null,
                 if (teamResult.timeDiff != null) convertTimeSec(teamResult.timeDiff.content) else null,
                 if (teamResult.resultPosition != null && teamResult.resultPosition.content != "0") teamResult.resultPosition.content.toInt() else null,
-                teamResult.teamStatus.value)
+                ResultStatus.valueOf(teamResult.teamStatus.value))
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
@@ -172,7 +173,7 @@ class ResultListConverter {
                 if (overallResult.time != null) convertTimeSec(overallResult.time.content) else null,
                 if (overallResult.timeDiff != null) convertTimeSec(overallResult.timeDiff.content) else null,
                 if (overallResult.resultPosition != null && overallResult.resultPosition.content != "0") overallResult.resultPosition.content.toInt() else null,
-                overallResult.teamStatus.value)
+                ResultStatus.valueOf(overallResult.teamStatus.value))
     }
 
     @Throws(ParseException::class)
@@ -181,7 +182,7 @@ class ResultListConverter {
                 if (teamMember.time != null) convertTimeSec(teamMember.time.content) else null,
                 if (teamMember.timeBehind != null) getTimeBehind(teamMember.timeBehind) else null,
                 if (teamMember.position != null) getLegPosition(teamMember.position) else null,
-                teamMember.competitorStatus.value)
+                ResultStatus.valueOf(teamMember.competitorStatus.value))
     }
 
     private fun getLegPosition(positionList: List<org.iof.eventor.TeamMemberResult.Position>): Int? {

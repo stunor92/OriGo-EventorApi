@@ -3,7 +3,7 @@ package no.stunor.origo.eventorapi.model.origo.result;
 import java.util.Date;
 import java.util.List;
 
-import no.stunor.origo.eventorapi.model.calendar.Result;
+import no.stunor.origo.eventorapi.model.event.competitor.Result;
 import no.stunor.origo.eventorapi.model.organisation.Organisation;
 import no.stunor.origo.eventorapi.model.origo.CompetitorPerson;
 

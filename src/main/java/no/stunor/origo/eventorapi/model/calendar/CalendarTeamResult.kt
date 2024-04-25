@@ -1,6 +1,7 @@
 package no.stunor.origo.eventorapi.model.calendar
 
 import no.stunor.origo.eventorapi.model.event.EventClass
+import no.stunor.origo.eventorapi.model.event.competitor.Result
 import java.io.Serializable
 
 data class CalendarTeamResult(

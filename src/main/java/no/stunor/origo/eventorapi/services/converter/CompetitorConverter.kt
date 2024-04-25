@@ -6,6 +6,8 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.CCard
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.Result
+import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
 import no.stunor.origo.eventorapi.model.person.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -47,10 +49,12 @@ class CompetitorConverter {
                                             bib = null,
                                             startTime =  if (result.result.startTime != null) convertStartTime(result.result.startTime) else null,
                                             finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime) else null,
-                                            status = result.result.competitorStatus.value,
-                                            position =  if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
-                                            time = if (result.result.time != null) convertTimeSec(result.result.time.content) else null,
-                                            timeBehind = if (result.result.timeDiff != null) convertTimeSec(result.result.timeDiff.content) else null,
+                                            result = Result(
+                                                status = ResultStatus.valueOf(result.result.competitorStatus.value),
+                                                position =  if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
+                                                time = if (result.result.time != null) convertTimeSec(result.result.time.content) else null,
+                                                timeBehind = if (result.result.timeDiff != null) convertTimeSec(result.result.timeDiff.content) else null
+                                            ),
                                             splitTimes = listOf(),
                                             entryFeeIds = listOf()
                                     )
@@ -82,10 +86,12 @@ class CompetitorConverter {
                                                 bib = null,
                                                 startTime =  if (result.result.startTime != null) convertStartTime(result.result.startTime) else null,
                                                 finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime) else null,
-                                                status = result.result.competitorStatus.value,
-                                                position =  if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
-                                                time = if (result.result.time != null) convertTimeSec(result.result.time.content) else null,
-                                                timeBehind = if (result.result.timeDiff != null) convertTimeSec(result.result.timeDiff.content) else null,
+                                                result = Result(
+                                                    status = ResultStatus.valueOf(result.result.competitorStatus.value),
+                                                    position =  if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
+                                                    time = if (result.result.time != null) convertTimeSec(result.result.time.content) else null,
+                                                    timeBehind = if (result.result.timeDiff != null) convertTimeSec(result.result.timeDiff.content) else null
+                                                ),
                                                 splitTimes = listOf(),
                                                 entryFeeIds = listOf()
                                         )
@@ -124,10 +130,7 @@ class CompetitorConverter {
                                             bib = null,
                                             startTime =  if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
                                             finishTime = null,
-                                            status = "NOT_STARTED",
-                                            position =  null,
-                                            time = null,
-                                            timeBehind = null,
+                                            result = null,
                                             splitTimes = listOf(),
                                             entryFeeIds = listOf()
                                     )
@@ -159,10 +162,7 @@ class CompetitorConverter {
                                                 bib = null,
                                                 startTime =  if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
                                                 finishTime = null,
-                                                status = "NOT_STARTED",
-                                                position =  null,
-                                                time = null,
-                                                timeBehind = null,
+                                                result = null,
                                                 splitTimes = listOf(),
                                                 entryFeeIds = listOf()
                                         )
@@ -199,10 +199,7 @@ class CompetitorConverter {
                                     bib = entry.bibNumber?.content,
                                     startTime =  null,
                                     finishTime = null,
-                                    status = "ENTRY",
-                                    position =  null,
-                                    time = null,
-                                    timeBehind = null,
+                                    result = null,
                                     splitTimes = listOf(),
                                     entryFeeIds = listOf()
                             )

@@ -19,12 +19,7 @@ data class TeamMemberCompetitor(
         var leg: Int = 1,
         var startTime: Timestamp? = null,
         var finishTime: Timestamp? = null,
-        var legTime: Int? = null,
-        var legTimeBehind: Int? =  null,
-        val legPosition: Int? = null,
-        var overallTime: Int? = null,
-        var overallTimeBehind: Int? =  null,
-        val overallPosition: Int? = null,
-        val status: String = "OK",
+        var legResult: Result? = null,
+        var overallResult: Result? = null,
         var splitTimes: List<SplitTime> = listOf()
 ) : Serializable
