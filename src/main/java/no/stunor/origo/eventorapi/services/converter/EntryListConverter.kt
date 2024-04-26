@@ -45,7 +45,7 @@ class EntryListConverter {
                         eventClassId = entry.entryClass[0].eventClassId.content,
                         personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
                         name = personConverter.convertPersonName(entry.competitor.person.personName),
-                        organisation = if (entry.competitor.organisation != null && entry.competitor.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(entry.competitor.organisation.organisationId.content, eventor.eventorId).block() else null,
+                        organisation = if (entry.competitor.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(entry.competitor.organisationId.content, eventor.eventorId).block() else null,
                         birthYear = if(entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(0, 4).toInt() else null,
                         nationality = if(entry.competitor.person.nationality != null) entry.competitor.person.nationality .country.alpha3.value else null,
                         gender = personConverter.convertGender(entry.competitor.person.sex),

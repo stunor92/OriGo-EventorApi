@@ -18,25 +18,6 @@ import java.util.*
 
 @Service
 class EventorService {
-    @Value("\${config.personalEntries.start}")
-    private val personalEntriesStart = 0
-
-    @Value("\${config.personalEntries.end}")
-    private val personalEntriesEnd = 0
-
-    @Value("\${config.personalStarts.start}")
-    private val personalStartsStart = 0
-
-    @Value("\${config.personalStarts.end}")
-    private val personalStartsEnd = 0
-
-    @Value("\${config.personalResults.start}")
-    private val personalResultsStart = 0
-
-    @Value("\${config.personalResults.end}")
-    private val personalResultsEnd = 0
-
-
     private var restTemplate: RestTemplate = RestTemplate()
 
     init {
