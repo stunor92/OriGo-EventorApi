@@ -8,7 +8,6 @@ import no.stunor.origo.eventorapi.model.calendar.CalendarRace;
 import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList;
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum;
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList;
-import no.stunor.origo.eventorapi.model.origo.start.RaceStartList;
 import no.stunor.origo.eventorapi.services.AuthService;
 import no.stunor.origo.eventorapi.services.CalendarService;
 import no.stunor.origo.eventorapi.services.EventService;
@@ -77,17 +76,17 @@ class EventorApiController {
         return new ResponseEntity<>(competitorService.getCompetitors(eventorId, eventId, userId), HttpStatus.OK);
     }
 
-    @GetMapping("/event/entrylist/{eventorId}/{eventId}")
+    @GetMapping("/event/{eventorId}/{eventId}/entrylist")
     public ResponseEntity<EventEntryList> getEventEntryList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {
         return new ResponseEntity<>(eventService.getEntryList(eventorId, eventId), HttpStatus.OK);
     }
 
-    @GetMapping("/event/startlist/{eventorId}/{eventId}")
-    public ResponseEntity<List<RaceStartList>> getEventStartList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {
+    @GetMapping("/event/{eventorId}/{eventId}/startlist")
+    public ResponseEntity<List<Competitor>> getEventStartList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {
         return new ResponseEntity<>(eventService.getStartList(eventorId, eventId), HttpStatus.OK);
     }
 
-    @GetMapping("/event/resultlist/{eventorId}/{eventId}")
+    @GetMapping("/event/{eventorId}/{eventId}/resultList")
     public ResponseEntity<List<RaceResultList>> getEventResultList(@PathVariable("eventorId") String eventorId, @PathVariable("eventId") String eventId) {
             return new ResponseEntity<>(eventService.getResultList(eventorId, eventId), HttpStatus.OK);
     }

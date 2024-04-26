@@ -7,10 +7,10 @@ import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.data.RegionRepository
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
+import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList
 import no.stunor.origo.eventorapi.model.origo.result.RaceResultList
-import no.stunor.origo.eventorapi.model.origo.start.RaceStartList
 import no.stunor.origo.eventorapi.services.converter.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -92,7 +92,7 @@ class EventService {
         return entryListConverter.convertEventEntryList(entryList, eventor)
     }
 
-    fun getStartList(eventorId: String, eventId: String): List<RaceStartList> {
+    fun getStartList(eventorId: String, eventId: String): List<Competitor> {
         val eventor = eventorRepository.findByEventorId(eventorId).block()!!
         val startList = eventorService.getEventStartList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw StartListNotFoundException()
         return startListConverter.convertEventStartList(startList, eventor)
