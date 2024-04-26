@@ -75,7 +75,6 @@ class CompetitorConverter {
                                                     time = if (result.time != null) convertTimeSec(result.time.content) else null,
                                                     timeBehind = if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null
                                             ),
-                                            entryFeeIds = listOf(),
                                             teamMembers = convertTeamMemberResults(result.teamMemberResult)
                                     )
                             )
@@ -146,11 +145,12 @@ class CompetitorConverter {
                             ),
                             overallResult = Result(
                                     status = ResultStatus.valueOf(teamMember.overallResult.teamStatus.value),
-                                    position =  if (teamMember.overallResult?.resultPosition != null && teamMember.overallResult.resultPosition.content != "0") Integer.valueOf(teamMember.overallResult.resultPosition.content) else null,
+                                    position =  if (teamMember.overallResult?.resultPosition != null && teamMember.overallResult.resultPosition.content != "0") teamMember.overallResult.resultPosition.content.toInt() else null,
                                     time = if (teamMember.overallResult.time != null) convertTimeSec(teamMember.overallResult.time.content) else null,
                                     timeBehind = if (teamMember.overallResult.timeDiff != null) convertTimeSec(teamMember.overallResult.timeDiff.content) else null
                             ),
-                            splitTimes = listOf()
+                            splitTimes = listOf(),
+                            entryFeeIds = listOf()
                     )
             )
         }
@@ -199,7 +199,6 @@ class CompetitorConverter {
                                             startTime =  if (start.startTime != null) convertStartTime(start.startTime) else null,
                                             finishTime =  null,
                                             result = null,
-                                            entryFeeIds = listOf(),
                                             teamMembers = convertTeamMemberStarts(start.teamMemberStart)
                                     )
                             )
@@ -311,7 +310,6 @@ class CompetitorConverter {
                                     startTime = null,
                                     finishTime = null,
                                     result = null,
-                                    entryFeeIds = listOf(),
                                     teamMembers = convertTeamMemberEntries(entry.teamCompetitor)
                             )
                         }
@@ -334,7 +332,8 @@ class CompetitorConverter {
                             nationality = teamMember.person.nationality.country.alpha3.value,
                             gender = personConverter.convertGender(teamMember.person.sex),
                             cCard = if(!teamMember.cCard.isNullOrEmpty()) convertCCard(teamMember.cCard[0]) else null,
-                            leg = Integer.valueOf(teamMember.teamSequence.content),
+                            leg = teamMember.teamSequence.content.toInt(),
+                            entryFeeIds = listOf(),
                             startTime = null,
                             finishTime = null,
                             legResult = null,

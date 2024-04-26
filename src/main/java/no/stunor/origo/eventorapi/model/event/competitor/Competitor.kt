@@ -12,5 +12,4 @@ interface Competitor : Serializable {
     var bib: String?
     var startTime: Timestamp?
     var finishTime: Timestamp?
-    var entryFeeIds: List<String>
 }

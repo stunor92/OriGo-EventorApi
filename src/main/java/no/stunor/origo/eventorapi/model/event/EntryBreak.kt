@@ -1,9 +1,9 @@
-package no.stunor.origo.eventorapi.model.origo.entry;
+package no.stunor.origo.eventorapi.model.event
 
-import com.google.cloud.Timestamp;
+import com.google.cloud.Timestamp
+import java.io.Serializable
 
-import java.util.Date;
-
-public record EntryBreak(Timestamp from,
-                         Timestamp to) {
-}
+data class EntryBreak(
+        val from: Timestamp? = null,
+        val to: Timestamp? = null
+) : Serializable

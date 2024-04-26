@@ -5,7 +5,6 @@ import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak
 import java.io.Serializable
 import java.util.*
 

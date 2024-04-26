@@ -23,5 +23,5 @@ data class PersonCompetitor(
         override var finishTime: Timestamp? = null,
         var result: Result? = null,
         var splitTimes: List<SplitTime> = listOf(),
-        override var entryFeeIds: List<String> = listOf()
+        var entryFeeIds: List<String> = listOf()
 ) : Competitor

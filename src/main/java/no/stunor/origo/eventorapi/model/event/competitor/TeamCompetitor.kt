@@ -15,5 +15,4 @@ data class TeamCompetitor(
         override var startTime: Timestamp? = null,
         override var finishTime: Timestamp? = null,
         var result: Result? = null,
-        override var entryFeeIds: List<String> = listOf()
 ) : Competitor

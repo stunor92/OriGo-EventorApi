@@ -4,7 +4,6 @@ import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
-import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.*
 import org.slf4j.LoggerFactory
@@ -116,7 +115,7 @@ internal class EventorApiController {
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/entrylist")
-    fun getEventEntryList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<EventEntryList> {
+    fun getEventEntryList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<Competitor>> {
         return ResponseEntity(
                 eventService.getEntryList(
                         eventorId = eventorId,

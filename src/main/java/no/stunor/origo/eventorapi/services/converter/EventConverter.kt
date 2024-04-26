@@ -7,7 +7,7 @@ import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.event.Position
-import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak
+import no.stunor.origo.eventorapi.model.event.EntryBreak
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
@@ -281,10 +281,6 @@ class EventConverter {
     }
 
 
-
-
-
-
     private fun convertEventDocument(documentList: org.iof.eventor.DocumentList?): List<Document> {
         val result: MutableList<Document> = ArrayList()
         if(documentList == null){
@@ -296,11 +292,4 @@ class EventConverter {
         return result
     }
 
-    fun convertEventRaceIds(eventRaceIds: List<org.iof.eventor.EventRaceId>): List<String> {
-        val result: MutableList<String> = ArrayList()
-        for (eventRaceId in eventRaceIds) {
-            result.add(eventRaceId.content)
-        }
-        return result
-    }
 }

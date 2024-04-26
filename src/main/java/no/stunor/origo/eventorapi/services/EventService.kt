@@ -9,13 +9,14 @@ import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList
-import no.stunor.origo.eventorapi.services.converter.*
+import no.stunor.origo.eventorapi.services.converter.EntryListConverter
+import no.stunor.origo.eventorapi.services.converter.EventConverter
+import no.stunor.origo.eventorapi.services.converter.ResultListConverter
+import no.stunor.origo.eventorapi.services.converter.StartListConverter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.text.ParseException
-import java.util.*
 
 @Service
 class EventService {
@@ -82,7 +83,7 @@ class EventService {
         return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor)
     }
 
-    fun getEntryList(eventorId: String, eventId: String): EventEntryList {
+    fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
         val eventor = eventorRepository.findByEventorId(eventorId).block()!!
         val entryList = eventorService.getEventEntryList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EntryListNotFoundException()
         return entryListConverter.convertEventEntryList(entryList, eventor)

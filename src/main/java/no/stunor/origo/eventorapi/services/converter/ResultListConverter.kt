@@ -52,14 +52,14 @@ class ResultListConverter {
                 eventId = event.eventId.content,
                 raceId = event.eventRace[0].eventRaceId.content,
                 eventClassId = classResult.eventClass.eventClassId.content,
-                personId = personResult.person.personId.content,
+                personId = if(personResult.person.personId != null) personResult.person.personId.content else null,
                 name = personConverter.convertPersonName(personResult.person.personName),
                 organisation = if (personResult.organisation != null && personResult.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personResult.organisation.organisationId.content, eventor.eventorId).block() else null,
                 birthYear = if(personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(0, 4).toInt() else null,
                 nationality = if(personResult.person.nationality != null) personResult.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personResult.person.sex),
                 cCard = null,
-                bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else "",
+                bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
                 startTime = if (personResult.result.startTime != null) convertStartTime(personResult.result.startTime) else null,
                 finishTime = if (personResult.result.finishTime != null) convertFinishTime(personResult.result.finishTime) else null,
                 result = convertPersonResult(personResult.result),
@@ -75,7 +75,7 @@ class ResultListConverter {
                 eventId = event.eventId.content,
                 raceId = raceResult.eventRaceId.content,
                 eventClassId = classResult.eventClass.eventClassId.content,
-                personId = personResult.person.personId.content,
+                personId = if(personResult.person.personId != null) personResult.person.personId.content else null,
                 name = personConverter.convertPersonName(personResult.person.personName),
                 organisation = if (personResult.organisation != null && personResult.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personResult.organisation.organisationId.content, eventor.eventorId).block() else null,
                 birthYear = if(personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(0, 4).toInt() else null,
@@ -120,7 +120,6 @@ class ResultListConverter {
                 startTime = if (teamResult.startTime != null) convertStartTime(teamResult.startTime) else null,
                 finishTime = if (teamResult.finishTime != null) convertFinishTime(teamResult.finishTime) else null,
                 result = convertTeamResult(teamResult),
-                entryFeeIds = listOf()
         )
     }
 
@@ -153,13 +152,14 @@ class ResultListConverter {
     @Throws(ParseException::class)
     private fun convertTeamMember(teamMember: org.iof.eventor.TeamMemberResult): TeamMemberCompetitor {
         return TeamMemberCompetitor(
-                personId = teamMember.person.personId.content,
-                name = personConverter.convertPersonName(teamMember.person.personName),
-                birthYear = if(teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(0, 4).toInt() else null,
-                nationality = if(teamMember.person.nationality != null) teamMember.person.nationality .country.alpha3.value else null,
-                gender = personConverter.convertGender(teamMember.person.sex),
+                personId = if(teamMember.person != null && teamMember.person.personId != null) teamMember.person.personId.content else null,
+                name = if(teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
+                birthYear = if(teamMember.person != null &&teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(0, 4).toInt() else null,
+                nationality = if(teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality .country.alpha3.value else null,
+                gender = if(teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
                 cCard = null,
                 leg = teamMember.leg.toInt(),
+                entryFeeIds = listOf(),
                 startTime = if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
                 finishTime = if (teamMember.finishTime != null) convertFinishTime(teamMember.finishTime) else null,
                 legResult = convertLegResult(teamMember),

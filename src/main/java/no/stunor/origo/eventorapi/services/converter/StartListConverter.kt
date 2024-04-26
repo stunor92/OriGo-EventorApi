@@ -46,7 +46,7 @@ class StartListConverter {
                 eventId = event.eventId.content,
                 raceId = raceStart.eventRaceId.content,
                 eventClassId = classStart.eventClass.eventClassId.content,
-                personId = personStart.person.personId.content,
+                personId = if(personStart.person.personId != null) personStart.person.personId.content else null,
                 name = personConverter.convertPersonName(personStart.person.personName),
                 organisation = if (personStart.organisation != null && personStart.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personStart.organisation.organisationId.content, eventor.eventorId).block() else null,
                 birthYear = if(personStart.person.birthDate != null) personStart.person.birthDate.date.content.substring(0, 4).toInt() else null,
@@ -68,14 +68,14 @@ class StartListConverter {
                 eventId = event.eventId.content,
                 raceId = event.eventRace[0].eventRaceId.content,
                 eventClassId = classStart.eventClass.eventClassId.content,
-                personId = personStart.person.personId.content,
+                personId = if(personStart.person.personId != null) personStart.person.personId.content else null,
                 name = personConverter.convertPersonName(personStart.person.personName),
                 organisation = if (personStart.organisation != null && personStart.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personStart.organisation.organisationId.content, eventor.eventorId).block() else null,
                 birthYear = if(personStart.person.birthDate != null) personStart.person.birthDate.date.content.substring(0, 4).toInt() else null,
                 nationality = if(personStart.person.nationality != null) personStart.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personStart.person.sex),
                 cCard = null,
-                bib = if (personStart.start.bibNumber != null) personStart.start.bibNumber.content else "",
+                bib = if (personStart.start.bibNumber != null) personStart.start.bibNumber.content else null,
                 startTime = if (personStart.start.startTime != null) convertStartTime(personStart.start.startTime) else null,
                 finishTime = null,
                 result = null,
@@ -103,7 +103,6 @@ class StartListConverter {
                 startTime = if (teamStart.startTime != null) convertStartTime(teamStart.startTime) else null,
                 finishTime = null,
                 result = null,
-                entryFeeIds = listOf()
         )
 
     }
@@ -118,18 +117,19 @@ class StartListConverter {
 
     private fun convertTeamMember(teamMember: org.iof.eventor.TeamMemberStart): TeamMemberCompetitor {
         return TeamMemberCompetitor(
-                personId = teamMember.person.personId.content,
-                name = personConverter.convertPersonName(teamMember.person.personName),
-                birthYear = if(teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(0, 4).toInt() else null,
-                nationality = if(teamMember.person.nationality != null) teamMember.person.nationality .country.alpha3.value else null,
-                gender = personConverter.convertGender(teamMember.person.sex),
+                personId = if(teamMember.person != null &&teamMember.person.personId != null) teamMember.person.personId.content else null,
+                name = if(teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
+                birthYear = if(teamMember.person != null && teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(0, 4).toInt() else null,
+                nationality = if(teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality .country.alpha3.value else null,
+                gender = if(teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
                 cCard = null,
                 leg = teamMember.leg.toInt(),
                 startTime = if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
                 finishTime = null,
                 legResult = null,
                 overallResult = null,
-                splitTimes = listOf()
+                splitTimes = listOf(),
+                entryFeeIds = listOf()
         )
     }
 

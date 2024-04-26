@@ -291,7 +291,7 @@ class CalendarConverter {
 
         return CalendarPersonStart(
                 if (start.startTime != null) competitorConverter.convertStartTime(start.startTime) else null,
-                if (start.bibNumber != null) start.bibNumber.content else "",
+                if (start.bibNumber != null) start.bibNumber.content else null,
                 eventClassConverter.convertEventClass(classStart.eventClass)
         )
     }
@@ -300,7 +300,7 @@ class CalendarConverter {
         return CalendarTeamStart(
                 teamStart.teamName.content,
                 if (teamStart.startTime != null) competitorConverter.convertStartTime(teamStart.startTime) else null,
-                if (teamStart.bibNumber != null) teamStart.bibNumber.content else "",
+                if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
                 teamStart.teamMemberStart[0].leg.toInt(),
                 eventClassConverter.convertEventClass(classStart.eventClass)
         )
@@ -320,7 +320,7 @@ class CalendarConverter {
                         position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
                         status = ResultStatus.valueOf(result.competitorStatus.value),
                 ),
-                bib = if (result.bibNumber != null) result.bibNumber.content else "",
+                bib = if (result.bibNumber != null) result.bibNumber.content else null,
                 eventClass = eventClassConverter.convertEventClass(classResult.eventClass)
         )
     }
@@ -328,7 +328,7 @@ class CalendarConverter {
     private fun createTeamResult(teamResult: org.iof.eventor.TeamResult, classResult: org.iof.eventor.ClassResult): CalendarTeamResult {
         return CalendarTeamResult(
                 teamName = teamResult.teamName.content,
-                bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else "",
+                bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
                 result = Result(
                         time = if (teamResult.time != null) competitorConverter.convertTimeSec(teamResult.time.content) else null,
                         timeBehind = if (teamResult.timeDiff != null) competitorConverter.convertTimeSec(teamResult.timeDiff.content) else null,

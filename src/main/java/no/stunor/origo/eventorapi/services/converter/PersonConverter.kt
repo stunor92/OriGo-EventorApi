@@ -1,7 +1,6 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.origo.CompetitorPerson
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
@@ -27,17 +26,6 @@ class PersonConverter {
                 contactConverter.convertPhone(eventorPerson.tele),
                 contactConverter.convertEmail(eventorPerson.tele),
                 convertMemberships(eventorPerson.role)
-        )
-    }
-
-    fun convertCompetitor(person: org.iof.eventor.Person, eventor: Eventor): CompetitorPerson {
-        return CompetitorPerson(
-                eventor.eventorId,
-                person.personId.content,
-                convertPersonName(person.personName),
-                person.birthDate.date.content.substring(0, 4).toInt(),
-                person.nationality.country.alpha3.value,
-                convertGender(person.sex)
         )
     }
 

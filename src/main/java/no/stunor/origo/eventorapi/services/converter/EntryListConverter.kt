@@ -2,15 +2,11 @@ package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.event.competitor.Competitor
+import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.model.origo.entry.EventEntryList
-import no.stunor.origo.eventorapi.model.origo.entry.PersonEntry
-import no.stunor.origo.eventorapi.model.origo.entry.TeamEntry
-import no.stunor.origo.eventorapi.model.origo.entry.TeamMemberEntry
-import org.iof.eventor.Entry
-import org.iof.eventor.EntryEntryFee
-import org.iof.eventor.EntryList
-import org.iof.eventor.TeamCompetitor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -20,92 +16,128 @@ class EntryListConverter {
     private lateinit var personConverter: PersonConverter
 
     @Autowired
-    private lateinit var eventConverter: EventConverter
-
-    @Autowired
-    private lateinit var eventClassConverter: EventClassConverter
+    private lateinit var competitorConverter: CompetitorConverter
 
     @Autowired
     private lateinit var organisationRepository: OrganisationRepository
-    fun convertEventEntryList(entryList: EntryList, eventor: Eventor): EventEntryList {
-        val personEntries: MutableList<PersonEntry> = ArrayList()
-        val teamEntries: MutableList<TeamEntry> = ArrayList()
+    fun convertEventEntryList(entryList: org.iof.eventor.EntryList, eventor: Eventor): List<Competitor> {
+        val result: MutableList<Competitor> = mutableListOf()
 
         for (entry in entryList.entry) {
             if (entry.competitor != null) {
-                personEntries.add(convertPersonEntry(entry, eventor))
+                result.addAll(convertPersonEventEntries(entry, eventor))
             } else if (entry.teamCompetitor != null) {
-                teamEntries.add(convertTeamEntry(entry, eventor))
+                result.addAll(convertTeamEventEntries(entry, eventor))
             }
         }
-        return EventEntryList(personEntries, teamEntries)
+        return result
     }
 
-    private fun convertPersonEntry(entry: Entry, eventor: Eventor): PersonEntry {
-        return PersonEntry(
-                entry.entryId.content,
-                personConverter.convertCompetitor(entry.competitor.person, eventor),
-                if (entry.competitor.organisation != null && entry.competitor.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(entry.competitor.organisation.organisationId.content, eventor.eventorId).block() else null,
-                null,//if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) eventConverter.convertCCard(entry.competitor.cCard[0]) else null,
-                if (entry.bibNumber != null) entry.bibNumber.content else "",
-                if (entry.eventRaceId != null) eventConverter.convertEventRaceIds(entry.eventRaceId) else ArrayList(),
-                if (entry.entryEntryFee != null) convertEntryFees(entry.entryEntryFee) else ArrayList(),
-                if (entry.entryClass != null && entry.entryClass.isNotEmpty()) eventClassConverter.convertEventClassId(entry.entryClass[0]) else null
-        )
+    private fun convertPersonEventEntries(entry: org.iof.eventor.Entry, eventor: Eventor): List<Competitor> {
+        val result: MutableList<Competitor> = mutableListOf()
+
+        for(raceId in entry.eventRaceId) {
+            result.add(
+                    PersonCompetitor(
+                        eventorId = eventor.eventorId,
+                        eventId = entry.eventId.content,
+                        raceId = raceId.content,
+                        eventClassId = entry.entryClass[0].eventClassId.content,
+                        personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
+                        name = personConverter.convertPersonName(entry.competitor.person.personName),
+                        organisation = if (entry.competitor.organisation != null && entry.competitor.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(entry.competitor.organisation.organisationId.content, eventor.eventorId).block() else null,
+                        birthYear = if(entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(0, 4).toInt() else null,
+                        nationality = if(entry.competitor.person.nationality != null) entry.competitor.person.nationality .country.alpha3.value else null,
+                        gender = personConverter.convertGender(entry.competitor.person.sex),
+                        cCard = if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(entry.competitor.cCard[0]) else null,
+                        bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
+                        startTime = null,
+                        finishTime = null,
+                        result = null,
+                        splitTimes = listOf(),
+                        entryFeeIds = if (entry.entryEntryFee != null) convertEntryFees(entry.entryEntryFee, null) else listOf()
+                )
+            )
+        }
+        return result
     }
 
 
-    private fun convertTeamEntry(entry: Entry, eventor: Eventor): TeamEntry {
-        return TeamEntry(
-                entry.entryId.content,
-                convertTeamOrganisations(entry.teamCompetitor, eventor),
-                convertTeamMembers(entry.teamCompetitor, eventor),
-                entry.teamName.content,
-                if (entry.bibNumber != null) entry.bibNumber.content else "",
-                if (entry.entryEntryFee != null) convertEntryFees(entry.entryEntryFee) else ArrayList(),
-                if (entry.entryClass != null) eventClassConverter.convertEventClassIds(entry.entryClass) else ArrayList()
-        )
+    private fun convertTeamEventEntries(entry: org.iof.eventor.Entry, eventor: Eventor): List<Competitor> {
+        val result: MutableList<Competitor> = mutableListOf()
+
+        for(race in entry.teamCompetitor[0].entryEntryFee) {
+            result.add(
+                    TeamCompetitor(
+                            eventorId = eventor.eventorId,
+                            eventId = entry.eventId.content,
+                            raceId = race.eventRaceId,
+                            eventClassId = entry.entryClass[0].eventClassId.content,
+                            name = entry.teamName.content,
+                            organisations = convertTeamOrganisations(entry.teamCompetitor, eventor),
+                            bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
+                            teamMembers = convertTeamMembers(entry.teamCompetitor, race.eventRaceId),
+                            startTime = null,
+                            finishTime = null,
+                            result = null,
+                    )
+            )
+
+        }
+        return result
     }
 
-    private fun convertTeamOrganisations(teamCompetitors: List<TeamCompetitor>, eventor: Eventor): List<Organisation> {
-        val result: MutableList<Organisation> = ArrayList()
+    private fun convertTeamOrganisations(teamCompetitors: List<org.iof.eventor.TeamCompetitor>, eventor: Eventor): List<Organisation> {
+        val result: MutableList<Organisation> = mutableListOf()
         for (teamCompetitor in teamCompetitors) {
-            if (teamCompetitor.organisation != null) {
+            if (teamCompetitor.organisationId != null) {
                 var organisationExist = false
                 for ((organisationId) in result) {
-                    if (organisationId == teamCompetitor.organisation.organisationId.content) {
+                    if (organisationId == teamCompetitor.organisationId.content) {
                         organisationExist = true
                     }
                 }
                 if (!organisationExist) {
-                    organisationRepository.findByOrganisationIdAndEventorId(teamCompetitor.organisation.organisationId.content, eventor.eventorId).block()?.let { result.add(it) }
+                    organisationRepository.findByOrganisationIdAndEventorId(teamCompetitor.organisationId.content, eventor.eventorId).block()?.let { result.add(it) }
                 }
             }
         }
         return result
     }
 
-    private fun convertTeamMembers(teamMembers: List<TeamCompetitor>, eventor: Eventor): List<TeamMemberEntry> {
-        val result: MutableList<TeamMemberEntry> = ArrayList()
+    private fun convertTeamMembers(teamMembers: List<org.iof.eventor.TeamCompetitor>, raceId: String): List<TeamMemberCompetitor> {
+        val result: MutableList<TeamMemberCompetitor> = ArrayList()
         for (teamMember in teamMembers) {
-            result.add(convertTeamMember(teamMember, eventor))
+            result.add(convertTeamMember(teamMember, raceId))
         }
         return result
     }
 
-    private fun convertEntryFees(entryFees: List<EntryEntryFee>): List<String> {
+    private fun convertEntryFees(entryFees: List<org.iof.eventor.EntryEntryFee>, raceId: String?): List<String> {
         val result: MutableList<String> = ArrayList()
         for (entryFee in entryFees) {
-            result.add(entryFee.entryFeeId.content)
+            if(raceId == null || entryFee.eventRaceId == raceId)
+                result.add(entryFee.entryFeeId.content)
         }
         return result
     }
 
-    private fun convertTeamMember(teamMember: TeamCompetitor, eventor: Eventor): TeamMemberEntry {
-        return TeamMemberEntry(
-                if (teamMember.person != null) personConverter.convertCompetitor(teamMember.person, eventor) else null,
-                teamMember.teamSequence.content.toInt(),
-                null,//if (teamMember.cCard != null && teamMember.cCard.isNotEmpty()) eventConverter.convertCCard(teamMember.cCard[0]) else null
+    private fun convertTeamMember(teamMember: org.iof.eventor.TeamCompetitor, raceId: String): TeamMemberCompetitor {
+        return TeamMemberCompetitor(
+                personId = if(teamMember.person != null && teamMember.person.personId != null) teamMember.person.personId.content else null,
+                name = if(teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
+                birthYear = if(teamMember.person != null && teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(0, 4).toInt() else null,
+                nationality = if(teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality .country.alpha3.value else null,
+                gender = if(teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
+                cCard = if (teamMember.cCard != null && teamMember.cCard.isNotEmpty()) competitorConverter.convertCCard(teamMember.cCard[0]) else null,
+                leg = teamMember.teamSequence.content.toInt(),
+                startTime = null,
+                finishTime = null,
+                legResult = null,
+                overallResult = null,
+                splitTimes = listOf(),
+                entryFeeIds = if (teamMember.entryEntryFee != null) convertEntryFees(teamMember.entryEntryFee, raceId) else listOf()
+
         )
     }
 }

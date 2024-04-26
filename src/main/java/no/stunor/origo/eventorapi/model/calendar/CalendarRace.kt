@@ -4,7 +4,7 @@ import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.event.Position
-import no.stunor.origo.eventorapi.model.origo.entry.EntryBreak
+import no.stunor.origo.eventorapi.model.event.EntryBreak
 import java.io.Serializable
 
 data class CalendarRace(
