@@ -12,7 +12,7 @@ data class TeamMemberCompetitor(
         var personId: String?,
         var name: PersonName = PersonName(),
         var birthYear: Int? = null,
-        var nationality: String = "",
+        var nationality: String? = null,
         var gender: Gender = Gender.OTHER,
         var cCard: CCard? = null,
         var leg: Int = 1,

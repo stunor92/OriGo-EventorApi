@@ -16,7 +16,7 @@ data class PersonCompetitor(
         var name: PersonName = PersonName(),
         var organisation: Organisation? = null,
         var birthYear: Int? = null,
-        var nationality: String = "",
+        var nationality: String? = null,
         var gender: Gender = Gender.OTHER,
         var cCard: CCard? =  null,
         override var bib: String? = null,
