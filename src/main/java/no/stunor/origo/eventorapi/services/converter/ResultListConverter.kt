@@ -138,8 +138,7 @@ class ResultListConverter {
         return SplitTime(
                 splitTime.sequence.toInt(),
                 splitTime.controlCode.content,
-                convertTimeSec(splitTime.time.content)
-        )
+                if (splitTime.time != null) convertTimeSec(splitTime.time.content) else null)
     }
 
     @Throws(ParseException::class)
