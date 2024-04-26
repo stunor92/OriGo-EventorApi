@@ -1,7 +1,9 @@
-package no.stunor.origo.eventorapi.model.origo.result;
+package no.stunor.origo.eventorapi.model.event.competitor
 
-public record SplitTime(
-    Integer sequence,
-    String controlCode,
-    Integer time) {
-}
+import java.io.Serializable
+
+data class SplitTime(
+        val sequence: Int,
+        val controlCode: String,
+        val time: Int
+) : Serializable

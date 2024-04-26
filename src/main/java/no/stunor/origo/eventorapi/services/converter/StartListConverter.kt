@@ -98,26 +98,25 @@ class StartListConverter {
                 eventClassId = classStart.eventClass.eventClassId.content,
                 name = teamStart.teamName.content,
                 organisations = organisations,
-                teamMembers = convertTeamMembers(teamStart.teamMemberStart, eventor),
+                teamMembers = convertTeamMembers(teamStart.teamMemberStart),
                 bib = if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
                 startTime = if (teamStart.startTime != null) convertStartTime(teamStart.startTime) else null,
                 finishTime = null,
                 result = null,
-                splitTimes = listOf(),
                 entryFeeIds = listOf()
         )
 
     }
 
-    private fun convertTeamMembers(teamMembers: List<org.iof.eventor.TeamMemberStart>, eventor: Eventor): List<TeamMemberCompetitor> {
+    private fun convertTeamMembers(teamMembers: List<org.iof.eventor.TeamMemberStart>): List<TeamMemberCompetitor> {
         val result: MutableList<TeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
-            result.add(convertTeamMember(teamMember, eventor))
+            result.add(convertTeamMember(teamMember))
         }
         return result
     }
 
-    private fun convertTeamMember(teamMember: org.iof.eventor.TeamMemberStart, eventor: Eventor): TeamMemberCompetitor {
+    private fun convertTeamMember(teamMember: org.iof.eventor.TeamMemberStart): TeamMemberCompetitor {
         return TeamMemberCompetitor(
                 personId = teamMember.person.personId.content,
                 name = personConverter.convertPersonName(teamMember.person.personName),
@@ -134,7 +133,7 @@ class StartListConverter {
         )
     }
 
-    fun convertStartTime(startTime: org.iof.eventor.StartTime): Timestamp? {
+    private fun convertStartTime(startTime: org.iof.eventor.StartTime): Timestamp? {
         val timeString = startTime.date.content + "T" + startTime.clock.content + ".000Z"
         return Timestamp.parseTimestamp(timeString)
     }

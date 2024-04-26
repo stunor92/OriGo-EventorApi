@@ -75,7 +75,6 @@ class CompetitorConverter {
                                                     time = if (result.time != null) convertTimeSec(result.time.content) else null,
                                                     timeBehind = if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null
                                             ),
-                                            splitTimes = listOf(),
                                             entryFeeIds = listOf(),
                                             teamMembers = convertTeamMemberResults(result.teamMemberResult)
                                     )
@@ -200,7 +199,6 @@ class CompetitorConverter {
                                             startTime =  if (start.startTime != null) convertStartTime(start.startTime) else null,
                                             finishTime =  null,
                                             result = null,
-                                            splitTimes = listOf(),
                                             entryFeeIds = listOf(),
                                             teamMembers = convertTeamMemberStarts(start.teamMemberStart)
                                     )
@@ -313,7 +311,6 @@ class CompetitorConverter {
                                     startTime = null,
                                     finishTime = null,
                                     result = null,
-                                    splitTimes = listOf(),
                                     entryFeeIds = listOf(),
                                     teamMembers = convertTeamMemberEntries(entry.teamCompetitor)
                             )

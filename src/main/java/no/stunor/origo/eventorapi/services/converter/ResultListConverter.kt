@@ -1,93 +1,94 @@
 package no.stunor.origo.eventorapi.services.converter
 
+import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.event.competitor.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.model.origo.result.PersonResult
-import no.stunor.origo.eventorapi.model.origo.result.RaceResultList
-import no.stunor.origo.eventorapi.model.event.competitor.Result
-import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
-import no.stunor.origo.eventorapi.model.origo.result.SplitTime
-import no.stunor.origo.eventorapi.model.origo.result.TeamMemberResult
-import no.stunor.origo.eventorapi.model.origo.result.TeamResult
+import no.stunor.origo.eventorapi.model.event.competitor.SplitTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 @Component
 class ResultListConverter {
     @Autowired
     private lateinit var personConverter: PersonConverter
-    @Autowired
-    private lateinit var startListConverter: StartListConverter
+
     @Autowired
     private lateinit var organisationRepository: OrganisationRepository
 
     @Throws(NumberFormatException::class, ParseException::class)
-    fun convertEventResultList(resultList: org.iof.eventor.ResultList, eventor: Eventor): List<RaceResultList> {
-        val raceResultListMap: MutableMap<String, RaceResultList> = HashMap()
+    fun convertEventResultList(resultList: org.iof.eventor.ResultList, eventor: Eventor): List<Competitor> {
+        val competitorList: MutableList<Competitor> = mutableListOf()
 
-        for (eventRace in resultList.event.eventRace) {
-            val raceId = eventRace.eventRaceId.content
-            raceResultListMap[raceId] = RaceResultList(raceId, ArrayList(), ArrayList())
-        }
 
         for (classResult in resultList.classResult) {
             for (personOrTeamResult in classResult.personResultOrTeamResult) {
                 if (personOrTeamResult is org.iof.eventor.PersonResult) {
                     if (personOrTeamResult.raceResult != null && personOrTeamResult.raceResult.isNotEmpty()) {
                         for (raceResult in personOrTeamResult.raceResult) {
-                            raceResultListMap[raceResult.eventRaceId.content]
-                                    ?.personResultList
-                                    ?.add(convertMultiDayPersonResult(classResult, personOrTeamResult, raceResult, eventor))
+                            competitorList.add(convertMultiDayPersonResult(resultList.event,classResult, personOrTeamResult, raceResult, eventor))
                         }
                     } else {
-                        raceResultListMap[resultList.event.eventRace[0].eventRaceId.content]
-                                ?.personResultList
-                                ?.add(convertOneDayPersonResult(classResult, personOrTeamResult, eventor))
+                        competitorList.add(convertOneDayPersonResult(resultList.event,classResult, personOrTeamResult, eventor))
                     }
                 } else if (personOrTeamResult is org.iof.eventor.TeamResult) {
-                    raceResultListMap[resultList.event.eventRace[0].eventRaceId.content]
-                            ?.teamResultList
-                            ?.add(convertTeamResult(classResult, personOrTeamResult, eventor))
+                    competitorList.add(convertTeamResult(resultList.event, classResult, personOrTeamResult, eventor))
                 }
             }
         }
 
-        return raceResultListMap.values.stream().toList()
+        return competitorList
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertOneDayPersonResult(classResult: org.iof.eventor.ClassResult, personResult: org.iof.eventor.PersonResult, eventor: Eventor): PersonResult {
-        return PersonResult(
-                personResult.result.resultId.content,
-                personConverter.convertCompetitor(personResult.person, eventor),
-                if (personResult.organisation != null && personResult.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personResult.organisation.organisationId.content, eventor.eventorId).block() else null,
-                null,//if (personResult.result.startTime != null) startListConverter.convertStartTime(personResult.result.startTime) else null,
-                if (personResult.result.finishTime != null) convertFinishTime(personResult.result.finishTime) else null,
-                convertPersonResult(personResult.result),
-                convertSplitTimes(personResult.result.splitTime),
-                if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else "",
-                classResult.eventClass.eventClassId.content)
+    private fun convertOneDayPersonResult(event: org.iof.eventor.Event, classResult: org.iof.eventor.ClassResult, personResult: org.iof.eventor.PersonResult, eventor: Eventor): PersonCompetitor {
+        return PersonCompetitor(
+                eventorId = eventor.eventorId,
+                eventId = event.eventId.content,
+                raceId = event.eventRace[0].eventRaceId.content,
+                eventClassId = classResult.eventClass.eventClassId.content,
+                personId = personResult.person.personId.content,
+                name = personConverter.convertPersonName(personResult.person.personName),
+                organisation = if (personResult.organisation != null && personResult.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personResult.organisation.organisationId.content, eventor.eventorId).block() else null,
+                birthYear = if(personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(0, 4).toInt() else null,
+                nationality = if(personResult.person.nationality != null) personResult.person.nationality .country.alpha3.value else null,
+                gender = personConverter.convertGender(personResult.person.sex),
+                cCard = null,
+                bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else "",
+                startTime = if (personResult.result.startTime != null) convertStartTime(personResult.result.startTime) else null,
+                finishTime = if (personResult.result.finishTime != null) convertFinishTime(personResult.result.finishTime) else null,
+                result = convertPersonResult(personResult.result),
+                splitTimes = convertSplitTimes(personResult.result.splitTime),
+                entryFeeIds = listOf()
+        )
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertMultiDayPersonResult(classResult: org.iof.eventor.ClassResult, personResult: org.iof.eventor.PersonResult, raceResult: org.iof.eventor.RaceResult, eventor: Eventor): PersonResult {
-        return PersonResult(
-                raceResult.eventRaceId.content,
-                personConverter.convertCompetitor(personResult.person, eventor),
-                if (personResult.organisation != null && personResult.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personResult.organisation.organisationId.content, eventor.eventorId).block() else null,
-                null, //if (raceResult.result.startTime != null) startListConverter.convertStartTime(raceResult.result.startTime) else null,
-                if (raceResult.result.finishTime != null) convertFinishTime(raceResult.result.finishTime) else null,
-                convertPersonResult(raceResult.result),
-                convertSplitTimes(raceResult.result.splitTime),
-                if (raceResult.result.bibNumber != null) raceResult.result.bibNumber.content else "",
-                classResult.eventClass.eventClassId.content)
+    private fun convertMultiDayPersonResult(event: org.iof.eventor.Event, classResult: org.iof.eventor.ClassResult, personResult: org.iof.eventor.PersonResult, raceResult: org.iof.eventor.RaceResult, eventor: Eventor): Competitor {
+        return PersonCompetitor(
+                eventorId = eventor.eventorId,
+                eventId = event.eventId.content,
+                raceId = raceResult.eventRaceId.content,
+                eventClassId = classResult.eventClass.eventClassId.content,
+                personId = personResult.person.personId.content,
+                name = personConverter.convertPersonName(personResult.person.personName),
+                organisation = if (personResult.organisation != null && personResult.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personResult.organisation.organisationId.content, eventor.eventorId).block() else null,
+                birthYear = if(personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(0, 4).toInt() else null,
+                nationality = if(personResult.person.nationality != null) personResult.person.nationality .country.alpha3.value else null,
+                gender = personConverter.convertGender(personResult.person.sex),
+                cCard = null,
+                bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
+                startTime = if (personResult.result.startTime != null) convertStartTime(raceResult.result.startTime) else null,
+                finishTime = if (raceResult.result.finishTime != null) convertFinishTime(raceResult.result.finishTime) else null,
+                result = convertPersonResult(raceResult.result),
+                splitTimes = convertSplitTimes(raceResult.result.splitTime),
+                entryFeeIds = listOf()
+        )
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
@@ -100,24 +101,27 @@ class ResultListConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertTeamResult(classResult: org.iof.eventor.ClassResult, teamResult: org.iof.eventor.TeamResult, eventor: Eventor): TeamResult {
+    private fun convertTeamResult(event: org.iof.eventor.Event, classResult: org.iof.eventor.ClassResult, teamResult: org.iof.eventor.TeamResult, eventor: Eventor): Competitor {
         val organisations: MutableList<Organisation> = ArrayList()
         for (organisation  in teamResult.organisationIdOrOrganisationOrCountryId) {
             if(organisation is org.iof.eventor.Organisation) {
                 organisationRepository.findByOrganisationIdAndEventorId(organisation.organisationId.content, eventor.eventorId).block()?.let { organisations.add(it) }
             }
         }
-
-        return TeamResult(
-                "",
-                organisations,
-                convertTeamMembers(teamResult.teamMemberResult, eventor),
-                teamResult.teamName.content,
-                null, //if (teamResult.startTime != null) startListConverter.convertStartTime(teamResult.startTime) else null,
-                if (teamResult.finishTime != null) convertFinishTime(teamResult.finishTime) else null,
-                convertTeamResult(teamResult),
-                if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
-                classResult.eventClass.eventClassId.content)
+        return TeamCompetitor(
+                eventorId = eventor.eventorId,
+                eventId = event.eventId.content,
+                raceId = event.eventRace[0].eventRaceId.content,
+                eventClassId = classResult.eventClass.eventClassId.content,
+                name = teamResult.teamName.content,
+                organisations = organisations,
+                teamMembers = convertTeamMembers(teamResult.teamMemberResult),
+                bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
+                startTime = if (teamResult.startTime != null) convertStartTime(teamResult.startTime) else null,
+                finishTime = if (teamResult.finishTime != null) convertFinishTime(teamResult.finishTime) else null,
+                result = convertTeamResult(teamResult),
+                entryFeeIds = listOf()
+        )
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
@@ -134,28 +138,35 @@ class ResultListConverter {
         return SplitTime(
                 splitTime.sequence.toInt(),
                 splitTime.controlCode.content,
-                if (splitTime.time != null) convertTimeSec(splitTime.time.content) else null)
+                convertTimeSec(splitTime.time.content)
+        )
     }
 
     @Throws(ParseException::class)
-    fun convertTeamMembers(teamMembers: List<org.iof.eventor.TeamMemberResult>, eventor: Eventor): List<TeamMemberResult> {
-        val result: MutableList<TeamMemberResult> = ArrayList()
+    fun convertTeamMembers(teamMembers: List<org.iof.eventor.TeamMemberResult>): List<TeamMemberCompetitor> {
+        val result: MutableList<TeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
-            result.add(convertTeamMember(teamMember, eventor))
+            result.add(convertTeamMember(teamMember))
         }
         return result
     }
 
     @Throws(ParseException::class)
-    private fun convertTeamMember(teamMember: org.iof.eventor.TeamMemberResult, eventor: Eventor): TeamMemberResult {
-        return TeamMemberResult(
-                if (teamMember.person != null) personConverter.convertCompetitor(teamMember.person, eventor) else null,
-                teamMember.leg.toInt(),
-                null, //if (teamMember.startTime != null) startListConverter.convertStartTime(teamMember.startTime) else null,
-                if (teamMember.finishTime != null) convertFinishTime(teamMember.finishTime) else null,
-                convertLegResult(teamMember),
-                if (teamMember.overallResult != null) convertOverallResult(teamMember.overallResult) else null,
-                convertSplitTimes(teamMember.splitTime))
+    private fun convertTeamMember(teamMember: org.iof.eventor.TeamMemberResult): TeamMemberCompetitor {
+        return TeamMemberCompetitor(
+                personId = teamMember.person.personId.content,
+                name = personConverter.convertPersonName(teamMember.person.personName),
+                birthYear = if(teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(0, 4).toInt() else null,
+                nationality = if(teamMember.person.nationality != null) teamMember.person.nationality .country.alpha3.value else null,
+                gender = personConverter.convertGender(teamMember.person.sex),
+                cCard = null,
+                leg = teamMember.leg.toInt(),
+                startTime = if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
+                finishTime = if (teamMember.finishTime != null) convertFinishTime(teamMember.finishTime) else null,
+                legResult = convertLegResult(teamMember),
+                overallResult = if (teamMember.overallResult != null) convertOverallResult(teamMember.overallResult) else null,
+                splitTimes = convertSplitTimes(teamMember.splitTime)
+        )
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
@@ -221,15 +232,12 @@ class ResultListConverter {
         return null
     }
 
-    private fun convertFinishTime(finishTime: org.iof.eventor.FinishTime): Date? {
-        val dateString = finishTime.date.content + " " + finishTime.clock.content
-        val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        parser.timeZone = TimeZone.getTimeZone("UTC")
-
-        return try {
-            parser.parse(dateString)
-        } catch (e: ParseException) {
-            null
-        }
+    private fun convertFinishTime(finishTime: org.iof.eventor.FinishTime): Timestamp? {
+        val timeString = finishTime.date.content + "T" + finishTime.clock.content + ".000Z"
+        return Timestamp.parseTimestamp(timeString)
+    }
+    private fun convertStartTime(startTime: org.iof.eventor.StartTime): Timestamp? {
+        val timeString = startTime.date.content + "T" + startTime.clock.content + ".000Z"
+        return Timestamp.parseTimestamp(timeString)
     }
 }
