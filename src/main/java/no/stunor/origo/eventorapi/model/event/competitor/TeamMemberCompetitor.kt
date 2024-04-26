@@ -1,7 +1,7 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
 import com.google.cloud.Timestamp
-import no.stunor.origo.eventorapi.model.event.CCard
+import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
 import java.io.Serializable
@@ -12,7 +12,7 @@ data class TeamMemberCompetitor(
         var birthYear: Int? = null,
         var nationality: String? = null,
         var gender: Gender? = null,
-        var cCard: CCard? = null,
+        var punchingUnit: PunchingUnit? = null,
         var leg: Int = 1,
         var startTime: Timestamp? = null,
         var finishTime: Timestamp? = null,

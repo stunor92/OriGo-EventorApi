@@ -3,7 +3,7 @@ package no.stunor.origo.eventorapi.services.converter
 import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.event.CCard
+import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.event.competitor.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Person
@@ -43,7 +43,7 @@ class CompetitorConverter {
                                             birthYear = personConverter.convertBirthYear(result.person.birthDate),
                                             nationality = result.person.nationality.country.alpha3.value,
                                             gender = personConverter.convertGender(result.person.sex),
-                                            cCard = null,
+                                            punchingUnit = null,
                                             bib = null,
                                             startTime =  if (result.result.startTime != null) convertStartTime(result.result.startTime) else null,
                                             finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime) else null,
@@ -99,7 +99,7 @@ class CompetitorConverter {
                                                 birthYear = personConverter.convertBirthYear(result.person.birthDate),
                                                 nationality = result.person.nationality.country.alpha3.value,
                                                 gender = personConverter.convertGender(result.person.sex),
-                                                cCard = null,
+                                                punchingUnit = null,
                                                 bib = null,
                                                 startTime =  if (result.result.startTime != null) convertStartTime(result.result.startTime) else null,
                                                 finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime) else null,
@@ -133,7 +133,7 @@ class CompetitorConverter {
                             birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
                             nationality = teamMember.person.nationality.country.alpha3.value,
                             gender = personConverter.convertGender(teamMember.person.sex),
-                            cCard = null,
+                            punchingUnit = null,
                             leg = teamMember.leg.toInt(),
                             startTime =  if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
                             finishTime = if (teamMember.finishTime != null) convertFinishTime(teamMember.finishTime) else null,
@@ -177,7 +177,7 @@ class CompetitorConverter {
                                             birthYear = personConverter.convertBirthYear(start.person.birthDate),
                                             nationality = start.person.nationality.country.alpha3.value,
                                             gender = personConverter.convertGender(start.person.sex),
-                                            cCard = null,
+                                            punchingUnit = null,
                                             bib = null,
                                             startTime =  if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
                                             finishTime = null,
@@ -223,7 +223,7 @@ class CompetitorConverter {
                                                 birthYear = personConverter.convertBirthYear(start.person.birthDate),
                                                 nationality = start.person.nationality.country.alpha3.value,
                                                 gender = personConverter.convertGender(start.person.sex),
-                                                cCard = null,
+                                                punchingUnit = null,
                                                 bib = null,
                                                 startTime =  if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
                                                 finishTime = null,
@@ -252,7 +252,7 @@ class CompetitorConverter {
                             birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
                             nationality = teamMember.person.nationality.country.alpha3.value,
                             gender = personConverter.convertGender(teamMember.person.sex),
-                            cCard = null,
+                            punchingUnit = null,
                             leg = teamMember.leg.toInt(),
                             startTime =  if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
                             finishTime = null,
@@ -283,7 +283,7 @@ class CompetitorConverter {
                                     birthYear = personConverter.convertBirthYear(entry.competitor.person.birthDate),
                                     nationality = entry.competitor.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(entry.competitor.person.sex),
-                                    cCard = if(!entry.competitor.cCard.isNullOrEmpty()) convertCCard(entry.competitor.cCard[0]) else null,
+                                    punchingUnit = if(!entry.competitor.cCard.isNullOrEmpty()) convertCCard(entry.competitor.cCard[0]) else null,
                                     bib = entry.bibNumber?.content,
                                     startTime =  null,
                                     finishTime = null,
@@ -331,7 +331,7 @@ class CompetitorConverter {
                             birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
                             nationality = teamMember.person.nationality.country.alpha3.value,
                             gender = personConverter.convertGender(teamMember.person.sex),
-                            cCard = if(!teamMember.cCard.isNullOrEmpty()) convertCCard(teamMember.cCard[0]) else null,
+                            punchingUnit = if(!teamMember.cCard.isNullOrEmpty()) convertCCard(teamMember.cCard[0]) else null,
                             leg = teamMember.teamSequence.content.toInt(),
                             entryFeeIds = listOf(),
                             startTime = null,
@@ -385,8 +385,8 @@ class CompetitorConverter {
         return Timestamp.parseTimestamp(timeString)
     }
 
-    fun convertCCard(cCard: org.iof.eventor.CCard): CCard {
-        return CCard(cCard.cCardId.content, cCard.punchingUnitType.value)
+    fun convertCCard(cCard: org.iof.eventor.CCard): PunchingUnit {
+        return PunchingUnit(cCard.cCardId.content, cCard.punchingUnitType.value)
     }
 
     private fun convertOrganisations(organisationList: List<Any>, eventor: Eventor): List<Organisation>{
