@@ -6,8 +6,8 @@ import java.io.Serializable
 data class Race (
         var raceId: String = "",
         var name: String = "",
-        var lightCondition: LightConditionEnum = LightConditionEnum.DAY,
-        var distance: DistanceEnum = DistanceEnum.MIDDLE,
+        var lightCondition: LightConditionEnum = LightConditionEnum.Day,
+        var distance: DistanceEnum = DistanceEnum.Middle,
         var date: Timestamp? = null,
         var position: Position? = null,
         var startList: Boolean = false,

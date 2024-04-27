@@ -3,7 +3,6 @@ package no.stunor.origo.eventorapi.api
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import org.iof.eventor.*
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -55,11 +54,11 @@ class EventorService {
         if (classifications != null) {
             for (eventClassification in classifications) {
                 when (eventClassification) {
-                    EventClassificationEnum.CHAMPIONSHIP -> classificationIds.add("1")
-                    EventClassificationEnum.NATIONAL -> classificationIds.add("2")
-                    EventClassificationEnum.REGIONAL -> classificationIds.add("3")
-                    EventClassificationEnum.LOCAL -> classificationIds.add("4")
-                    EventClassificationEnum.CLUB -> classificationIds.add("5")
+                    EventClassificationEnum.Championship -> classificationIds.add("1")
+                    EventClassificationEnum.National -> classificationIds.add("2")
+                    EventClassificationEnum.Regional -> classificationIds.add("3")
+                    EventClassificationEnum.Local -> classificationIds.add("4")
+                    EventClassificationEnum.Club -> classificationIds.add("5")
                     else -> {}
                 }
             }

@@ -7,7 +7,7 @@ data class EventClass (
         var eventClassId: String = "",
         var name: String = "",
         var shortName: String = "",
-        var type: EventClassTypeEnum = EventClassTypeEnum.NORMAL,
+        var type: EventClassTypeEnum = EventClassTypeEnum.Normal,
         var minAge: Int? = 0,
         var maxAge: Int? = 99,
         var gender: String = "B",

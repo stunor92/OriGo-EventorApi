@@ -6,17 +6,17 @@ import java.io.Serializable
 
 @Document(collectionName = "organisations")
 data class Organisation (
-    var organisationId: String = "",
-    var eventorId: String = "",
-    var name: String = "",
-    var type: OrganisationType = OrganisationType.CLUB,
-    var country: String = "",
-    @JsonIgnore
+        var organisationId: String = "",
+        var eventorId: String = "",
+        var name: String = "",
+        var type: OrganisationType = OrganisationType.Club,
+        var country: String = "",
+        @JsonIgnore
     var email: String? = null,
-    @JsonIgnore
+        @JsonIgnore
     var apiKey: String? = null,
-    @JsonIgnore
+        @JsonIgnore
     var regionId: String? = null,
-    @JsonIgnore
+        @JsonIgnore
     var contactPerson: String? = null
 ) : Serializable

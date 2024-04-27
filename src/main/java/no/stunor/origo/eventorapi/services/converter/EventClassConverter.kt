@@ -41,9 +41,9 @@ class EventClassConverter {
 
     private fun getClassTypeFromId(classTypeId: String): EventClassTypeEnum {
         return when (classTypeId) {
-            "1" -> EventClassTypeEnum.ELITE
-            "3" -> EventClassTypeEnum.OPEN
-            else -> EventClassTypeEnum.NORMAL
+            "1" -> EventClassTypeEnum.Elite
+            "3" -> EventClassTypeEnum.Open
+            else -> EventClassTypeEnum.Normal
         }
     }
 

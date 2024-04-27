@@ -22,28 +22,28 @@ class EventConverter {
     private lateinit var eventClassConverter: EventClassConverter
     fun convertEventClassification(eventForm: String?): EventClassificationEnum {
         return when (eventForm) {
-            "1" -> EventClassificationEnum.CHAMPIONSHIP
-            "2" -> EventClassificationEnum.NATIONAL
-            "3" -> EventClassificationEnum.REGIONAL
-            "4" -> EventClassificationEnum.LOCAL
-            else -> EventClassificationEnum.CLUB
+            "1" -> EventClassificationEnum.Championship
+            "2" -> EventClassificationEnum.National
+            "3" -> EventClassificationEnum.Regional
+            "4" -> EventClassificationEnum.Local
+            else -> EventClassificationEnum.Club
         }
     }
 
 
     fun convertEventStatus(eventStatusId: String?): EventStatusEnum {
         return when (eventStatusId) {
-            "2" -> EventStatusEnum.REGIONAPPROVED
-            "3" -> EventStatusEnum.APPROVED
-            "4" -> EventStatusEnum.CREATED
-            "5" -> EventStatusEnum.ENTRYOPEN
-            "6" -> EventStatusEnum.ENTRYPAUSED
-            "7" -> EventStatusEnum.ENTRYCLOSED
-            "8" -> EventStatusEnum.LIVE
-            "9" -> EventStatusEnum.COMPLETED
-            "10" -> EventStatusEnum.CANCELED
-            "11" -> EventStatusEnum.REPORTED
-            else -> EventStatusEnum.APPLIED
+            "2" -> EventStatusEnum.RegionApproved
+            "3" -> EventStatusEnum.Approved
+            "4" -> EventStatusEnum.Created
+            "5" -> EventStatusEnum.EntryOpen
+            "6" -> EventStatusEnum.EntryPaused
+            "7" -> EventStatusEnum.EntryClosed
+            "8" -> EventStatusEnum.Live
+            "9" -> EventStatusEnum.Completed
+            "10" -> EventStatusEnum.Canceled
+            "11" -> EventStatusEnum.Reported
+            else -> EventStatusEnum.Applied
         }
     }
 
@@ -71,21 +71,21 @@ class EventConverter {
 
     fun convertEventForm(eventForm: String?): EventFormEnum {
         return when (eventForm) {
-            "IndSingleDay", "IndMultiDay" -> EventFormEnum.INDIVIDUAL
-            "RelaySingleDay", "RelayMultiDay" -> EventFormEnum.RELAY
-            "PatrolSingleDay", "PatrolMultiDay" -> EventFormEnum.PATROL
-            "TeamSingleDay", "TeamMultiDay" -> EventFormEnum.TEAM
-            else -> EventFormEnum.INDIVIDUAL
+            "IndSingleDay", "IndMultiDay" -> EventFormEnum.Individual
+            "RelaySingleDay", "RelayMultiDay" -> EventFormEnum.Relay
+            "PatrolSingleDay", "PatrolMultiDay" -> EventFormEnum.Patrol
+            "TeamSingleDay", "TeamMultiDay" -> EventFormEnum.Team
+            else -> EventFormEnum.Individual
         }
     }
 
     private fun convertEventDiscipline(disciplineId: Any): DisciplineEnum {
         return when ((disciplineId as org.iof.eventor.DisciplineId).content) {
-            "1" -> DisciplineEnum.FOOT
-            "2" -> DisciplineEnum.MTB
-            "3" -> DisciplineEnum.SKI
-            "4" -> DisciplineEnum.PRE
-            else -> DisciplineEnum.FOOT
+            "1" -> DisciplineEnum.FootO
+            "2" -> DisciplineEnum.MtbO
+            "3" -> DisciplineEnum.SkiO
+            "4" -> DisciplineEnum.PreO
+            else -> DisciplineEnum.FootO
         }
     }
 
@@ -156,26 +156,26 @@ class EventConverter {
 
     fun convertLightCondition(lightCondition: String?): LightConditionEnum {
         return when (lightCondition) {
-            "Day" -> LightConditionEnum.DAY
-            "Night" -> LightConditionEnum.NIGHT
-            "DayAndNight" -> LightConditionEnum.COMBINED
-            else -> LightConditionEnum.DAY
+            "Day" -> LightConditionEnum.Day
+            "Night" -> LightConditionEnum.Night
+            "DayAndNight" -> LightConditionEnum.DayAndNight
+            else -> LightConditionEnum.Day
         }
     }
 
 
     fun convertRaceDistance(raceDistance: String?): DistanceEnum {
         if (raceDistance == null) {
-            return DistanceEnum.MIDDLE
+            return DistanceEnum.Middle
         }
         return when (raceDistance) {
-            "Long" -> DistanceEnum.LONG
-            "Middle" -> DistanceEnum.MIDDLE
-            "Sprint", "SprintRelay" -> DistanceEnum.SPRINT
-            "Ultralong" -> DistanceEnum.ULTRALONG
-            "Pre-O" -> DistanceEnum.PREO
-            "Temp-O" -> DistanceEnum.TEMPO
-            else -> DistanceEnum.MIDDLE
+            "Long" -> DistanceEnum.Long
+            "Middle" -> DistanceEnum.Middle
+            "Sprint", "SprintRelay" -> DistanceEnum.Sprint
+            "Ultralong" -> DistanceEnum.UltraLong
+            "Pre-O" -> DistanceEnum.PreO
+            "Temp-O" -> DistanceEnum.TempO
+            else -> DistanceEnum.Middle
         }
     }
 

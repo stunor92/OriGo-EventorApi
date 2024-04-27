@@ -108,7 +108,7 @@ class EventServiceTest {
     }
 
     private fun generateOrganisation(): Organisation {
-        return Organisation(organisationId = "141", eventorId = "NOR", name = "O Club", type = OrganisationType.CLUB, country = "NOR", email = "mail@club.org", apiKey = null, regionId = null, contactPerson = null)
+        return Organisation(organisationId = "141", eventorId = "NOR", name = "O Club", type = OrganisationType.Club, country = "NOR", email = "mail@club.org", apiKey = null, regionId = null, contactPerson = null)
     }
 
     private fun generateRegion(): Region {
