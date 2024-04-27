@@ -10,7 +10,6 @@ import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.model.person.PersonName
 import no.stunor.origo.eventorapi.services.CalendarService
-import no.stunor.origo.eventorapi.services.CompetitorService
 import org.iof.eventor.EntryList
 import org.iof.eventor.ResultListList
 import org.iof.eventor.StartListList
@@ -123,7 +122,7 @@ class PersonalEventsServiceTest {
         val owner: MutableList<String> = ArrayList()
         owner.add("123")
 
-        return Person(id = null, eventorId = "NOR", personId = "123", name =  name, birthYear = 1900, nationality = "NOR", gender = Gender.MAN, users = owner, mobilePhone = "12345678", email = "a@b.no", memberships = HashMap())
+        return Person(id = null, eventorId = "NOR", personId = "123", name =  name, birthYear = 1900, nationality = "NOR", gender = Gender.Man, users = owner, mobilePhone = "12345678", email = "a@b.no", memberships = HashMap())
     }
 
     private fun generateEventor(): Eventor {

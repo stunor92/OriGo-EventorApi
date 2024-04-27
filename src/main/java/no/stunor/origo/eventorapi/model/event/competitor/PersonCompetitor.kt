@@ -16,7 +16,7 @@ data class PersonCompetitor(
         var organisation: Organisation? = null,
         var birthYear: Int? = null,
         var nationality: String? = null,
-        var gender: Gender = Gender.OTHER,
+        var gender: Gender = Gender.Other,
         var punchingUnit: PunchingUnit? = null,
         override var bib: String? = null,
         override var startTime: Timestamp? = null,

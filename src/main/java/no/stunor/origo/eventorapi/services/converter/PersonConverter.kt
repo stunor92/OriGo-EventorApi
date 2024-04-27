@@ -37,12 +37,12 @@ class PersonConverter {
     }
     fun convertGender(sex: String?): Gender {
         if (sex == null) {
-            return Gender.OTHER
+            return Gender.Other
         }
         return when (sex) {
-            "M" -> Gender.MAN
-            "F" -> Gender.WOMAN
-            else -> Gender.OTHER
+            "M" -> Gender.Man
+            "F" -> Gender.Woman
+            else -> Gender.Other
         }
     }
 

@@ -13,7 +13,7 @@ data class Person(
         var name: PersonName = PersonName(),
         var birthYear: Int = 0,
         var nationality: String = "",
-        var gender: Gender = Gender.OTHER,
+        var gender: Gender = Gender.Other,
         var users: MutableList<String> = mutableListOf(),
         var mobilePhone: String? = null,
         var email: String? = null,
