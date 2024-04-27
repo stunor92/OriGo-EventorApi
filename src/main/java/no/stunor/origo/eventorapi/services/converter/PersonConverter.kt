@@ -80,11 +80,11 @@ class PersonConverter {
 
         for (orgId in highestRole.keys.stream().toList()) {
             if (highestRole[orgId] == 1) {
-                memberships[orgId] = MembershipType.MEMBER
+                memberships[orgId] = MembershipType.Member
             } else if (highestRole[orgId] == 3 || highestRole[orgId] == 5) {
-                memberships[orgId] = MembershipType.ORGANISER
+                memberships[orgId] = MembershipType.Organiser
             } else if (highestRole[orgId] == 10) {
-                memberships[orgId] = MembershipType.ADMIN
+                memberships[orgId] = MembershipType.Admin
             }
         }
 
