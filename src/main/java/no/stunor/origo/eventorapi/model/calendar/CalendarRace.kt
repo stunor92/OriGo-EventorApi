@@ -26,6 +26,7 @@ data class CalendarRace(
         var entries: Int = 0,
         var userEntries: MutableList<CalendarCompetitor> = mutableListOf(),
         var organisationEntries: MutableMap<String, Int> = mutableMapOf(),
+        var signedUp: Boolean = false,
         var startList: Boolean = false,
         var resultList: Boolean = false,
         var livelox: Boolean = false

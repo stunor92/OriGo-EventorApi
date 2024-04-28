@@ -6,9 +6,10 @@ import no.stunor.origo.eventorapi.model.calendar.*
 import no.stunor.origo.eventorapi.model.event.competitor.Result
 import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
 import no.stunor.origo.eventorapi.model.person.Person
+import org.iof.eventor.CompetitorCountList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import kotlin.collections.ArrayList
+
 
 @Component
 class CalendarConverter {
@@ -57,6 +58,7 @@ class CalendarConverter {
                 entries = getEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
                 userEntries = mutableListOf(),
                 organisationEntries = getOrganisationEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
+                signedUp = isSignedUp(event.eventId.content, competitorCountList),
                 startList = eventConverter.hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
                 resultList = eventConverter.hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
                 livelox = eventConverter.hasLivelox(event.hashTableEntry))
@@ -106,6 +108,17 @@ class CalendarConverter {
         return result
     }
 
+    private fun isSignedUp(eventId: String, competitorCountList: CompetitorCountList?): Boolean {
+        if (competitorCountList != null) {
+            for (competitorCount in competitorCountList.competitorCount) {
+                if (competitorCount.eventId == eventId && competitorCount.classCompetitorCount != null && competitorCount.classCompetitorCount.isNotEmpty()) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     fun convertEntryList(eventor: Eventor, entryList: org.iof.eventor.EntryList?, person: Person, eventClassMap: Map<String, org.iof.eventor.EventClassList>): MutableMap<String?, CalendarRace> {
         val raceMap: MutableMap<String?, CalendarRace> = HashMap()
 
@@ -131,6 +144,10 @@ class CalendarConverter {
                         if (entry.competitor.personId.content == person.personId) {
                             raceMap[raceId]!!.userEntries.add(generateCompetitor(person = person, entry = entry, classStart = null, start = null, classResult = null, result = null, eventClassList = eventClassMap[raceId]))
                         }
+                        if(raceMap[raceId]!!.userEntries.isNotEmpty()){
+                            raceMap[raceId]!!.signedUp = true
+                        }
+
                     }
                 }
             }
@@ -162,6 +179,9 @@ class CalendarConverter {
                         }
                     }
                 }
+                if(raceMap[raceId]!!.userEntries.isNotEmpty()){
+                    raceMap[raceId]!!.signedUp = true
+                }
             } else {
                 for (classStart in startList.classStart) {
                     for (start in classStart.personStartOrTeamStart) {
@@ -178,6 +198,9 @@ class CalendarConverter {
                                         val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
                                         raceMap[raceId]!!.userEntries.removeAt(0)
                                         raceMap[raceId]!!.userEntries.add(updateUserStart(person, userEntry, classStart, start))
+                                    }
+                                    if(raceMap[raceId]!!.userEntries.isNotEmpty()){
+                                        raceMap[raceId]!!.signedUp = true
                                     }
                                 }
                             }
@@ -214,6 +237,9 @@ class CalendarConverter {
                             raceMap[raceId]!!.userEntries.removeAt(0)
                             raceMap[raceId]!!.userEntries.add(updateUserResult(person, userEntry, personStart, teamStart, classResult, result))
                         }
+                        if(raceMap[raceId]!!.userEntries.isNotEmpty()){
+                            raceMap[raceId]!!.signedUp = true
+                        }
                     }
                 }
             } else {
@@ -234,6 +260,9 @@ class CalendarConverter {
                                         val teamStart = raceMap[raceId]!!.userEntries[0].teamStart
                                         raceMap[raceId]!!.userEntries.removeAt(0)
                                         raceMap[raceId]!!.userEntries.add(updateUserResult(person, userEntry, personStart, teamStart, classResult, result))
+                                    }
+                                    if(raceMap[raceId]!!.userEntries.isNotEmpty()){
+                                        raceMap[raceId]!!.signedUp = true
                                     }
                                 }
                             }
