@@ -1,5 +1,6 @@
 package no.stunor.origo.eventorapi.services.converter
 
+import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.calendar.*
 import no.stunor.origo.eventorapi.model.event.competitor.Result
@@ -43,7 +44,7 @@ class CalendarConverter {
                 eventName = event.name.content,
                 raceId = eventRace.eventRaceId.content,
                 raceName = eventRace.name.content,
-                raceDate = eventConverter.convertRaceDate(eventRace.raceDate),
+                raceDate = convertRaceDate(eventRace.raceDate),
                 type = eventConverter.convertEventForm(event.eventForm),
                 classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
                 lightCondition = eventConverter.convertLightCondition(eventRace.raceLightCondition),
@@ -61,6 +62,10 @@ class CalendarConverter {
                 livelox = eventConverter.hasLivelox(event.hashTableEntry))
     }
 
+    private fun convertRaceDate(time: org.iof.eventor.RaceDate): Timestamp {
+        val timeString = time.date.content + "T00:00:00.000Z"
+        return Timestamp.parseTimestamp(timeString)
+    }
     private fun getEntries(eventId: String, eventRaceId: String, competitorCountList: org.iof.eventor.CompetitorCountList?): Int {
         if(competitorCountList == null)
             return 0
