@@ -18,22 +18,20 @@ class EntryListConverter {
     @Autowired
     private lateinit var competitorConverter: CompetitorConverter
 
-    @Autowired
-    private lateinit var organisationRepository: OrganisationRepository
-    fun convertEventEntryList(entryList: org.iof.eventor.EntryList, eventor: Eventor): List<Competitor> {
+    fun convertEventEntryList(entryList: org.iof.eventor.EntryList, eventor: Eventor, organisations: List<Organisation>): List<Competitor> {
         val result: MutableList<Competitor> = mutableListOf()
 
         for (entry in entryList.entry) {
             if (entry.competitor != null) {
-                result.addAll(convertPersonEventEntries(entry, eventor))
+                result.addAll(convertPersonEventEntries(entry, eventor, organisations))
             } else if (entry.teamCompetitor != null) {
-                result.addAll(convertTeamEventEntries(entry, eventor))
+                result.addAll(convertTeamEventEntries(entry, eventor, organisations))
             }
         }
         return result
     }
 
-    private fun convertPersonEventEntries(entry: org.iof.eventor.Entry, eventor: Eventor): List<Competitor> {
+    private fun convertPersonEventEntries(entry: org.iof.eventor.Entry, eventor: Eventor, organisations: List<Organisation>): List<Competitor> {
         val result: MutableList<Competitor> = mutableListOf()
 
         for(raceId in entry.eventRaceId) {
@@ -45,7 +43,7 @@ class EntryListConverter {
                         eventClassId = entry.entryClass[0].eventClassId.content,
                         personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
                         name = personConverter.convertPersonName(entry.competitor.person.personName),
-                        organisation = if (entry.competitor.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(entry.competitor.organisationId.content, eventor.eventorId).block() else null,
+                        organisation = if (entry.competitor.organisationId != null) organisations.find { it.organisationId == entry.competitor.organisationId.content } else null,
                         birthYear = if(entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(0, 4).toInt() else null,
                         nationality = if(entry.competitor.person.nationality != null) entry.competitor.person.nationality .country.alpha3.value else null,
                         gender = personConverter.convertGender(entry.competitor.person.sex),
@@ -63,7 +61,7 @@ class EntryListConverter {
     }
 
 
-    private fun convertTeamEventEntries(entry: org.iof.eventor.Entry, eventor: Eventor): List<Competitor> {
+    private fun convertTeamEventEntries(entry: org.iof.eventor.Entry, eventor: Eventor, organisations: List<Organisation>): List<Competitor> {
         val result: MutableList<Competitor> = mutableListOf()
 
         for(race in entry.teamCompetitor[0].entryEntryFee) {
@@ -74,7 +72,7 @@ class EntryListConverter {
                             raceId = race.eventRaceId,
                             eventClassId = entry.entryClass[0].eventClassId.content,
                             name = entry.teamName.content,
-                            organisations = convertTeamOrganisations(entry.teamCompetitor, eventor),
+                            organisations = convertTeamOrganisations(entry.teamCompetitor, organisations),
                             bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
                             teamMembers = convertTeamMembers(entry.teamCompetitor, race.eventRaceId),
                             startTime = null,
@@ -87,7 +85,7 @@ class EntryListConverter {
         return result
     }
 
-    private fun convertTeamOrganisations(teamCompetitors: List<org.iof.eventor.TeamCompetitor>, eventor: Eventor): List<Organisation> {
+    private fun convertTeamOrganisations(teamCompetitors: List<org.iof.eventor.TeamCompetitor>, organisations: List<Organisation>): List<Organisation> {
         val result: MutableList<Organisation> = mutableListOf()
         for (teamCompetitor in teamCompetitors) {
             if (teamCompetitor.organisationId != null) {
@@ -98,7 +96,7 @@ class EntryListConverter {
                     }
                 }
                 if (!organisationExist) {
-                    organisationRepository.findByOrganisationIdAndEventorId(teamCompetitor.organisationId.content, eventor.eventorId).block()?.let { result.add(it) }
+                    organisations.find { it.organisationId ==  teamCompetitor.organisationId.content }?.let { result.add(it) }
                 }
             }
         }

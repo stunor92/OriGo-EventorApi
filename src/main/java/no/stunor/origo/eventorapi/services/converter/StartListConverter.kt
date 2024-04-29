@@ -16,9 +16,7 @@ class StartListConverter {
     @Autowired
     private lateinit var personConverter: PersonConverter
 
-    @Autowired
-    private lateinit var organisationRepository: OrganisationRepository
-    fun convertEventStartList(startList: org.iof.eventor.StartList, eventor: Eventor): List<Competitor> {
+    fun convertEventStartList(startList: org.iof.eventor.StartList, eventor: Eventor, organisations: List<Organisation>): List<Competitor> {
         val competitorList: MutableList<Competitor> = mutableListOf()
 
         for (classStart in startList.classStart) {
@@ -26,13 +24,13 @@ class StartListConverter {
                 if (personOrTeamStart is org.iof.eventor.PersonStart) {
                     if (personOrTeamStart.raceStart != null && personOrTeamStart.raceStart.isNotEmpty()) {
                         for (raceStart in personOrTeamStart.raceStart) {
-                            competitorList.add(convertMultiDayPersonStart(startList.event, classStart, personOrTeamStart, raceStart, eventor))
+                            competitorList.add(convertMultiDayPersonStart(startList.event, classStart, personOrTeamStart, raceStart, eventor, organisations))
                         }
                     } else {
-                        competitorList.add(convertOneDayPersonStart(startList.event, classStart, personOrTeamStart, eventor))
+                        competitorList.add(convertOneDayPersonStart(startList.event, classStart, personOrTeamStart, eventor, organisations))
                     }
                 } else if (personOrTeamStart is org.iof.eventor.TeamStart) {
-                    competitorList.add(convertTeamStart(startList.event, classStart, personOrTeamStart, eventor))
+                    competitorList.add(convertTeamStart(startList.event, classStart, personOrTeamStart, eventor, organisations))
                 }
             }
         }
@@ -40,7 +38,7 @@ class StartListConverter {
         return competitorList
     }
 
-    private fun convertMultiDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, raceStart: org.iof.eventor.RaceStart, eventor: Eventor): Competitor {
+    private fun convertMultiDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, raceStart: org.iof.eventor.RaceStart, eventor: Eventor, organisations: List<Organisation>): Competitor {
         return PersonCompetitor(
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
@@ -48,7 +46,7 @@ class StartListConverter {
                 eventClassId = classStart.eventClass.eventClassId.content,
                 personId = if(personStart.person.personId != null) personStart.person.personId.content else null,
                 name = personConverter.convertPersonName(personStart.person.personName),
-                organisation = if (personStart.organisation != null && personStart.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personStart.organisation.organisationId.content, eventor.eventorId).block() else null,
+                organisation = if (personStart.organisation != null && personStart.organisation.organisationId != null) organisations.find { it.organisationId == personStart.organisation.organisationId.content } else null,
                 birthYear = if(personStart.person.birthDate != null) personStart.person.birthDate.date.content.substring(0, 4).toInt() else null,
                 nationality = if(personStart.person.nationality != null) personStart.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personStart.person.sex),
@@ -62,7 +60,7 @@ class StartListConverter {
         )
     }
 
-    private fun convertOneDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, eventor: Eventor): Competitor {
+    private fun convertOneDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, eventor: Eventor, organisations: List<Organisation>): Competitor {
         return PersonCompetitor(
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
@@ -70,7 +68,7 @@ class StartListConverter {
                 eventClassId = classStart.eventClass.eventClassId.content,
                 personId = if(personStart.person.personId != null) personStart.person.personId.content else null,
                 name = personConverter.convertPersonName(personStart.person.personName),
-                organisation = if (personStart.organisation != null && personStart.organisation.organisationId != null) organisationRepository.findByOrganisationIdAndEventorId(personStart.organisation.organisationId.content, eventor.eventorId).block() else null,
+                organisation = if (personStart.organisation != null && personStart.organisation.organisationId != null) organisations.find { it.organisationId == personStart.organisation.organisationId.content } else null,
                 birthYear = if(personStart.person.birthDate != null) personStart.person.birthDate.date.content.substring(0, 4).toInt() else null,
                 nationality = if(personStart.person.nationality != null) personStart.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personStart.person.sex),
@@ -84,11 +82,11 @@ class StartListConverter {
         )
     }
 
-    private fun convertTeamStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, teamStart: org.iof.eventor.TeamStart, eventor: Eventor): TeamCompetitor {
+    private fun convertTeamStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, teamStart: org.iof.eventor.TeamStart, eventor: Eventor, organisationList: List<Organisation>): TeamCompetitor {
         val organisations: MutableList<Organisation> = ArrayList()
         for (organisation in teamStart.organisationIdOrOrganisationOrCountryId) {
             if (organisation is org.iof.eventor.Organisation) {
-                organisationRepository.findByOrganisationIdAndEventorId(organisation.organisationId.content, eventor.eventorId).block()?.let { organisations.add(it) }
+                organisationList.find { it.organisationId == organisation.organisationId.content }?.let { organisations.add(it) }
             }
         }
         return TeamCompetitor(
