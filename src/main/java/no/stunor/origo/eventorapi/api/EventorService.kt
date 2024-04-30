@@ -205,7 +205,7 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                baseUrl + "api/entries?includePersonElement=true&includeEntryFees=true&eventIds=" + eventId,
+                baseUrl + "api/entries?includePersonElement=true&includeEntryFees=true&includeOrganisationElement=true&eventIds=" + eventId,
                 HttpMethod.GET,
                 request,
                 EntryList::class.java,
