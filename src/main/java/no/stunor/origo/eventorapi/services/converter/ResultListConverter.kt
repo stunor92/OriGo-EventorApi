@@ -87,17 +87,19 @@ class ResultListConverter {
                 nationality = if(personResult.person.nationality != null) personResult.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personResult.person.sex),
                 punchingUnit = null,
-                bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
-                startTime = if (personResult.result.startTime != null) convertStartTime(raceResult.result.startTime) else null,
-                finishTime = if (raceResult.result.finishTime != null) convertFinishTime(raceResult.result.finishTime) else null,
+                bib = if (personResult.result?.bibNumber != null) personResult.result.bibNumber.content else null,
+                startTime = if (personResult.result?.startTime != null) convertStartTime(raceResult.result.startTime) else null,
+                finishTime = if (raceResult.result?.finishTime != null) convertFinishTime(raceResult.result.finishTime) else null,
                 result = convertPersonResult(raceResult.result),
-                splitTimes = convertSplitTimes(raceResult.result.splitTime),
+                splitTimes = convertSplitTimes(raceResult.result?.splitTime),
                 entryFeeIds = listOf()
         )
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    fun convertPersonResult(result: org.iof.eventor.Result): Result {
+    fun convertPersonResult(result: org.iof.eventor.Result?): Result? {
+        if(result == null)
+            return null
         return Result(
                 if (result.time != null) convertTimeSec(result.time.content) else null,
                 if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null,
@@ -129,7 +131,9 @@ class ResultListConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertSplitTimes(splitTimes: List<org.iof.eventor.SplitTime>): List<SplitTime> {
+    private fun convertSplitTimes(splitTimes: List<org.iof.eventor.SplitTime>?): List<SplitTime> {
+        if (splitTimes == null)
+            return listOf()
         val result: MutableList<SplitTime> = ArrayList()
         for (splitTime in splitTimes) {
             result.add(convertSplitTime(splitTime))
