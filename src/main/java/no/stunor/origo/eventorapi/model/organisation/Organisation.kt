@@ -10,7 +10,7 @@ data class Organisation (
         var eventorId: String = "",
         var name: String = "",
         var type: OrganisationType = OrganisationType.Club,
-        var country: String?,
+        var country: String? = null,
         @JsonIgnore
     var email: String? = null,
         @JsonIgnore
