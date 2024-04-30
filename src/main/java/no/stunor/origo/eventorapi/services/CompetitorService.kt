@@ -54,11 +54,11 @@ class CompetitorService{
                     toDate = null
             )
 
-            if(resultListList != null) {
+            if(resultListList != null && !resultListList.resultList.isNullOrEmpty()) {
                 competitorList.addAll(competitorConverter.generateCompetitors(eventor = eventor, resultListList = resultListList, person = person))
-            } else if(startListList != null){
+            } else if(startListList != null && !startListList.startList.isNullOrEmpty()){
                 competitorList.addAll(competitorConverter.generateCompetitors(eventor = eventor, startListList = startListList, person = person))
-            } else if (entryList != null){
+            } else if (entryList != null && !entryList.entry.isNullOrEmpty()){
                 competitorList.addAll(competitorConverter.generateCompetitors(eventor = eventor, entryList = entryList, person = person))
             }
         }

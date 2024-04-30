@@ -269,22 +269,22 @@ class CompetitorConverter {
         val competitors: MutableList<Competitor> = mutableListOf()
 
         for (entry in entryList.entry) {
-            if (entry.competitor?.person?.personId?.content == person.personId) {
+            if (entry.competitor?.person?.personId?.content == person.personId || entry.competitor?.personId?.content == person.personId) {
                 for (eventRaceId in entry.eventRaceId) {
                     competitors.add(
                             PersonCompetitor(
                                     eventorId =  eventor.eventorId,
-                                    eventId = entry.eventId.content,
+                                    eventId = if(entry.eventId != null) entry.eventId.content else entry.event.eventId.content,
                                     raceId = eventRaceId.content,
                                     eventClassId = entry.entryClass[0].eventClassId.content,
                                     personId = person.personId,
-                                    name = personConverter.convertPersonName(entry.competitor.person.personName),
+                                    name = person.name,
                                     organisation = if(!entry.organisationId.isNullOrEmpty()) organisationRepository.findByOrganisationIdAndEventorId(entry.organisationId[0].content, eventor.eventorId).block() else null,
-                                    birthYear = personConverter.convertBirthYear(entry.competitor.person.birthDate),
-                                    nationality = entry.competitor.person.nationality.country.alpha3.value,
-                                    gender = personConverter.convertGender(entry.competitor.person.sex),
+                                    birthYear = person.birthYear,
+                                    nationality = person.nationality,
+                                    gender = person.gender,
                                     punchingUnit = if(!entry.competitor.cCard.isNullOrEmpty()) convertCCard(entry.competitor.cCard[0]) else null,
-                                    bib = entry.bibNumber?.content,
+                                    bib = if (entry.bibNumber != null) entry.bibNumber?.content else null,
                                     startTime =  null,
                                     finishTime = null,
                                     result = null,
