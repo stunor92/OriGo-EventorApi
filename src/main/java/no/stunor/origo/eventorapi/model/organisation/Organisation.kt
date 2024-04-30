@@ -6,7 +6,7 @@ import java.io.Serializable
 
 @Document(collectionName = "organisations")
 data class Organisation (
-        var organisationId: String = "",
+        var organisationId: String? = null,
         var eventorId: String = "",
         var name: String = "",
         var type: OrganisationType = OrganisationType.Club,

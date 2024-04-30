@@ -14,7 +14,7 @@ class OrganisationConverter {
         if(organisation == null)
             return null
         return Organisation(
-            organisation.organisationId.content,
+            if(organisation.organisationId != null) organisation.organisationId.content else null,
             eventor.eventorId,
             organisation.name.content,
             convertOrganisationType(organisation),

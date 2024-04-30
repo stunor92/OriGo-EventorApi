@@ -58,7 +58,6 @@ class CompetitorService{
                 competitorList.addAll(competitorConverter.generateCompetitors(eventor = eventor, resultListList = resultListList, person = person))
             } else if(startListList != null){
                 competitorList.addAll(competitorConverter.generateCompetitors(eventor = eventor, startListList = startListList, person = person))
-
             } else if (entryList != null){
                 competitorList.addAll(competitorConverter.generateCompetitors(eventor = eventor, entryList = entryList, person = person))
             }

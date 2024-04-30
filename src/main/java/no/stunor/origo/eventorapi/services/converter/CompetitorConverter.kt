@@ -101,13 +101,13 @@ class CompetitorConverter {
                                                 gender = personConverter.convertGender(result.person.sex),
                                                 punchingUnit = null,
                                                 bib = null,
-                                                startTime =  if (result.result.startTime != null) convertStartTime(result.result.startTime) else null,
-                                                finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime) else null,
+                                                startTime =  if (raceResult.result?.startTime != null) convertStartTime(raceResult.result.startTime) else null,
+                                                finishTime = if (raceResult.result?.finishTime != null) convertFinishTime(raceResult.result.finishTime) else null,
                                                 result = Result(
-                                                    status = ResultStatus.valueOf(result.result.competitorStatus.value),
-                                                    position =  if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
-                                                    time = if (result.result.time != null) convertTimeSec(result.result.time.content) else null,
-                                                    timeBehind = if (result.result.timeDiff != null) convertTimeSec(result.result.timeDiff.content) else null
+                                                    status = ResultStatus.valueOf(raceResult.result.competitorStatus.value),
+                                                    position =  if (raceResult.result.resultPosition != null && raceResult.result.resultPosition.content != "0") raceResult.result.resultPosition.content.toInt() else null,
+                                                    time = if (raceResult.result.time != null) convertTimeSec(raceResult.result.time.content) else null,
+                                                    timeBehind = if (raceResult.result.timeDiff != null) convertTimeSec(raceResult.result.timeDiff.content) else null
                                                 ),
                                                 splitTimes = listOf(),
                                                 entryFeeIds = listOf()
