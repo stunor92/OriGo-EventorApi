@@ -47,7 +47,7 @@ class EntryListConverter {
                         name = personConverter.convertPersonName(entry.competitor.person.personName),
                         organisation = organisationConverter.convertOrganisation(entry.competitor.organisation, eventor),
                         birthYear = if(entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(0, 4).toInt() else null,
-                        nationality = if(entry.competitor.person.nationality != null) entry.competitor.person.nationality .country.alpha3.value else null,
+                        nationality = if(entry.competitor.person.nationality?.country != null) entry.competitor.person.nationality.country.alpha3.value else null,
                         gender = personConverter.convertGender(entry.competitor.person.sex),
                         punchingUnit = if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(entry.competitor.cCard[0]) else null,
                         bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
