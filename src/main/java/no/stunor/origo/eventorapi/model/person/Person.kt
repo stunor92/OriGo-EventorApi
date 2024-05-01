@@ -1,11 +1,13 @@
 package no.stunor.origo.eventorapi.model.person
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.firestore.annotation.DocumentId
 import com.google.cloud.spring.data.firestore.Document
 import java.io.Serializable
 
 @Document(collectionName = "persons")
 data class Person(
+        @JsonIgnore
         @DocumentId
         var id: String? = null,
         var eventorId: String = "",
@@ -14,6 +16,7 @@ data class Person(
         var birthYear: Int = 0,
         var nationality: String = "",
         var gender: Gender = Gender.Other,
+        @JsonIgnore
         var users: MutableList<String> = mutableListOf(),
         var mobilePhone: String? = null,
         var email: String? = null,
