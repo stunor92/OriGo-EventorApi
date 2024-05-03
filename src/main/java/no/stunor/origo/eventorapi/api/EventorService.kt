@@ -10,6 +10,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -249,13 +250,17 @@ class EventorService {
         headers["ApiKey"] = apiKey
 
         val request = HttpEntity<String>(headers)
-        val response = restTemplate.exchange(
-                baseUrl + "api/organisation/apiKey",
-                HttpMethod.GET,
-                request,
-                Organisation::class.java,
-                1
-        )
-        return response.body
+        try {
+            val response = restTemplate.exchange(
+                    baseUrl + "api/organisation/apiKey",
+                    HttpMethod.GET,
+                    request,
+                    Organisation::class.java,
+                    1
+            )
+            return response.body
+        } catch (e: HttpClientErrorException){
+            return null
+        }
     }
 }

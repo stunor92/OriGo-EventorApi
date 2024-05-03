@@ -29,8 +29,8 @@ class OrganisationService {
             return false
         }
 
-        val eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.baseUrl, organisation.apiKey) ?: throw OrganisationApiKeyException()
-        if (eventorOrganisation.organisationId == null) {
+        val eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.baseUrl, organisation.apiKey)
+        if (eventorOrganisation == null || eventorOrganisation.organisationId == null) {
             return false
         }
         return organisation.organisationId == eventorOrganisation.organisationId.content
