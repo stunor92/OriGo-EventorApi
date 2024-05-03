@@ -1,67 +1,52 @@
-package no.stunor.origo.eventorapi.services;
+package no.stunor.origo.eventorapi.services
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-
-import no.stunor.origo.eventorapi.api.EventorService;
-import no.stunor.origo.eventorapi.api.exception.EventorApiKeyException;
-import no.stunor.origo.eventorapi.api.exception.EventorConnectionException;
-import no.stunor.origo.eventorapi.data.EventorRepository;
-import no.stunor.origo.eventorapi.data.OrganisationRepository;
-import no.stunor.origo.eventorapi.model.Eventor;
-import no.stunor.origo.eventorapi.model.organisation.Organisation;
+import no.stunor.origo.eventorapi.api.EventorService
+import no.stunor.origo.eventorapi.api.exception.EventorApiKeyException
+import no.stunor.origo.eventorapi.api.exception.EventorNotFoundException
+import no.stunor.origo.eventorapi.api.exception.OrganisationApiKeyException
+import no.stunor.origo.eventorapi.api.exception.OrganisationNotFoundException
+import no.stunor.origo.eventorapi.data.EventorRepository
+import no.stunor.origo.eventorapi.data.OrganisationRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
-public class OrganisationService {
+class OrganisationService {
+    @Autowired
+    private lateinit var eventorRepository: EventorRepository
 
     @Autowired
-    EventorRepository eventorRepository;
-    @Autowired
-    OrganisationRepository organisationRepository;
-    @Autowired
-    EventorService eventorService;
-    
+    private lateinit var organisationRepository: OrganisationRepository
 
-    public Boolean validateApiKey(String eventorId, String organisationId) {
-        Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
-        Organisation organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId).block();
-        if(organisation.getApiKey() == null) {
-            return false;
+    @Autowired
+    private lateinit var eventorService: EventorService
+
+
+    fun validateApiKey(eventorId: String, organisationId: String): Boolean {
+        val eventor = eventorRepository.findByEventorId(eventorId).block() ?: throw EventorNotFoundException()
+        val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId).block() ?: throw OrganisationNotFoundException()
+        if (organisation.apiKey == null) {
+            return false
         }
-        try{
-            org.iof.eventor.Organisation eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.getBaseUrl(), organisation.getApiKey());
-            if(eventorOrganisation == null || eventorOrganisation.getOrganisationId() == null) {
-                return false;
-            }
-            return organisation.getOrganisationId().equals(eventorOrganisation.getOrganisationId().getContent());
-        } catch (HttpClientErrorException e) {
-            if(e.getStatusCode().value() == 403) {
-                return false;
-            }
-            throw new EventorConnectionException();
+
+        val eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.baseUrl, organisation.apiKey) ?: throw OrganisationApiKeyException()
+        if (eventorOrganisation.organisationId == null) {
+            return false
         }
+        return organisation.organisationId == eventorOrganisation.organisationId.content
     }
 
-    public void updateApiKey(String eventorId, String organisationId, String apiKey) {
-        Eventor eventor = eventorRepository.findByEventorId(eventorId).block();
-        Organisation organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId).block();
-        
-        try{
-            org.iof.eventor.Organisation eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.getBaseUrl(), apiKey);
-            if(eventorOrganisation == null || !eventorOrganisation.getOrganisationId().getContent().equals(organisationId)) {
-                throw new EventorApiKeyException( "API key is not valid for given organisation");
-            }
-        } catch (HttpClientErrorException e) {
-            if(e.getStatusCode().value() == 403) {
-                throw new EventorApiKeyException("ApiKey does not belong to any organisation.");
-            }
-            throw new EventorConnectionException();
-        }
-        organisation.setApiKey(apiKey);
-        organisationRepository.save(organisation).block();
-    }
+    fun updateApiKey(eventorId: String?, organisationId: String, apiKey: String?) {
+        val eventor = eventorRepository.findByEventorId(eventorId).block() ?: throw EventorNotFoundException()
+        val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId!!).block() ?: throw OrganisationNotFoundException()
 
+        val eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.baseUrl, apiKey) ?: throw OrganisationApiKeyException()
+        if (eventorOrganisation.organisationId.content != organisationId) {
+            throw EventorApiKeyException("API key is not valid for given organisation")
+        }
+        organisation.apiKey = apiKey
+        organisationRepository.save(organisation).block()
+    }
 }
 
 

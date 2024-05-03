@@ -148,14 +148,14 @@ internal class EventorApiController {
     }
 
 
-    @GetMapping("/organisation/apiKey/validate/{eventorId}/{organisationId}")
+    @GetMapping("/organisation/apiKey/{eventorId}/{organisationId}/validate")
     fun validateApiKey(@PathVariable("eventorId") eventorId: String, @PathVariable("organisationId") organisationId: String): ResponseEntity<Boolean> {
         return ResponseEntity(organisationService.validateApiKey(eventorId, organisationId), HttpStatus.OK)
     }
 
 
     @PostMapping("/organisation/apiKey/{eventorId}/{organisationId}/{apiKey}")
-    fun updateApiKey(@PathVariable("eventorId") eventorId: String, @PathVariable("organisationId") organisationId: String, @PathVariable("apiKey") apiKey: String?) {
+    fun updateApiKey(@PathVariable("eventorId") eventorId: String, @PathVariable("organisationId") organisationId: String, @PathVariable("apiKey") apiKey: String) {
         organisationService.updateApiKey(eventorId, organisationId, apiKey)
     }
 
