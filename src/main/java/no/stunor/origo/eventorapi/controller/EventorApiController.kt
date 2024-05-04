@@ -155,8 +155,8 @@ internal class EventorApiController {
 
 
     @PostMapping("/organisation/apiKey/{eventorId}/{organisationId}/{apiKey}")
-    fun updateApiKey(@PathVariable("eventorId") eventorId: String, @PathVariable("organisationId") organisationId: String, @PathVariable("apiKey") apiKey: String) {
-        organisationService.updateApiKey(eventorId, organisationId, apiKey)
+    fun updateApiKey(@PathVariable("eventorId") eventorId: String, @PathVariable("organisationId") organisationId: String, @PathVariable("apiKey") apiKey: String):  ResponseEntity<Boolean> {
+        return ResponseEntity(organisationService.updateApiKey(eventorId, organisationId, apiKey), HttpStatus.OK)
     }
 
     @GetMapping("/organiser/eventList/{eventorId}/{organisationId}")
