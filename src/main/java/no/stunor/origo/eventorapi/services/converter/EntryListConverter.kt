@@ -6,8 +6,10 @@ import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
+import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import kotlin.collections.ArrayList
 
 @Component
 class EntryListConverter {
@@ -39,23 +41,24 @@ class EntryListConverter {
         for(raceId in entry.eventRaceId) {
             result.add(
                     PersonCompetitor(
-                        eventorId = eventor.eventorId,
-                        eventId = entry.eventId.content,
-                        raceId = raceId.content,
-                        eventClassId = entry.entryClass[0].eventClassId.content,
-                        personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
-                        name = personConverter.convertPersonName(entry.competitor.person.personName),
-                        organisation = organisationConverter.convertOrganisation(entry.competitor.organisation, eventor),
-                        birthYear = if(entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(0, 4).toInt() else null,
-                        nationality = if(entry.competitor.person.nationality?.country != null) entry.competitor.person.nationality.country.alpha3.value else null,
-                        gender = personConverter.convertGender(entry.competitor.person.sex),
-                        punchingUnit = if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(entry.competitor.cCard[0]) else null,
-                        bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
-                        startTime = null,
-                        finishTime = null,
-                        result = null,
-                        splitTimes = listOf(),
-                        entryFeeIds = if (entry.entryEntryFee != null) convertEntryFees(entry.entryEntryFee, null) else listOf()
+                            id = RandomStringUtils.random(20, true, true),
+                            eventorId = eventor.eventorId,
+                            eventId = entry.eventId.content,
+                            raceId = raceId.content,
+                            eventClassId = entry.entryClass[0].eventClassId.content,
+                            personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
+                            name = personConverter.convertPersonName(entry.competitor.person.personName),
+                            organisation = organisationConverter.convertOrganisation(entry.competitor.organisation, eventor),
+                            birthYear = if(entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(0, 4).toInt() else null,
+                            nationality = if(entry.competitor.person.nationality?.country != null) entry.competitor.person.nationality.country.alpha3.value else null,
+                            gender = personConverter.convertGender(entry.competitor.person.sex),
+                            punchingUnit = if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(entry.competitor.cCard[0]) else null,
+                            bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
+                            startTime = null,
+                            finishTime = null,
+                            result = null,
+                            splitTimes = listOf(),
+                            entryFeeIds = if (entry.entryEntryFee != null) convertEntryFees(entry.entryEntryFee, null) else listOf()
                 )
             )
         }
@@ -69,6 +72,7 @@ class EntryListConverter {
         for(race in entry.teamCompetitor[0].entryEntryFee) {
             result.add(
                     TeamCompetitor(
+                            id = RandomStringUtils.random(20, true, true),
                             eventorId = eventor.eventorId,
                             eventId = entry.eventId.content,
                             raceId = race.eventRaceId,

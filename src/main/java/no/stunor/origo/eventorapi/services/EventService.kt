@@ -4,11 +4,14 @@ import no.stunor.origo.eventorapi.api.EventorService
 import no.stunor.origo.eventorapi.api.exception.*
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.OrganisationRepository
+import no.stunor.origo.eventorapi.data.PersonRepository
 import no.stunor.origo.eventorapi.data.RegionRepository
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.person.MembershipType
+import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
 import no.stunor.origo.eventorapi.services.converter.EventConverter
 import no.stunor.origo.eventorapi.services.converter.ResultListConverter
@@ -24,19 +27,18 @@ class EventService {
 
     @Autowired
     private lateinit var eventorRepository: EventorRepository
-
     @Autowired
     private lateinit var regionRepository: RegionRepository
-
     @Autowired
     private lateinit var eventorService: EventorService
-
     @Autowired
     private lateinit var eventConverter: EventConverter
-
     @Autowired
     private lateinit var organisationRepository: OrganisationRepository
-
+    @Autowired
+    private lateinit var organisationService: OrganisationService
+    @Autowired
+    private lateinit var personRepository: PersonRepository
     @Autowired
     private lateinit var entryListConverter: EntryListConverter
     @Autowired
@@ -107,5 +109,34 @@ class EventService {
             log.warn(e.message)
             throw EventorParsingException()
         }
+    }
+
+    fun download(eventorId: String, eventId: String, organisationId: String, userId: String) {
+        val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId = organisationId, eventorId = eventorId).block() ?: throw OrganisationNotFoundException()
+        val persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventorId).collectList().block() ?: listOf()
+        authenticateOrganiserMembership(organisation, persons)
+        if(!organisationService.validateApiKey(eventorId, organisationId))
+            throw OrganisationApiKeyException()
+        val event = getEvent(eventorId = eventorId, eventId = eventId)
+        authenticateEventOrganiser(event = event, organisation = organisation)
+
+    }
+
+    private fun authenticateOrganiserMembership(organisation: Organisation, persons: List<Person>) {
+        for(person in persons){
+            if(person.memberships[organisation.organisationId] != null
+                    && (person.memberships[organisation.organisationId] == MembershipType.Admin
+                            || person.memberships[organisation.organisationId] == MembershipType.Organiser))
+                return
+        }
+        throw UserNotOrganiserException()
+    }
+
+    private fun authenticateEventOrganiser(event: Event, organisation: Organisation) {
+        for(organiser in event.organisers){
+            if(organiser.organisationId ==  organisation.organisationId)
+                return
+        }
+        throw OrganisationNotOrganiserException()
     }
 }

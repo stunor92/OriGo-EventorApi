@@ -8,6 +8,7 @@ import no.stunor.origo.eventorapi.model.event.competitor.Result
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.event.competitor.SplitTime
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
+import org.apache.commons.lang3.RandomStringUtils
 import org.iof.eventor.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -53,6 +54,7 @@ class ResultListConverter {
     @Throws(NumberFormatException::class, ParseException::class)
     private fun convertOneDayPersonResult(event: Event, classResult: ClassResult, personResult: PersonResult, eventor: Eventor): PersonCompetitor {
         return PersonCompetitor(
+                id = RandomStringUtils.random(20, true, true),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 raceId = event.eventRace[0].eventRaceId.content,
@@ -76,6 +78,7 @@ class ResultListConverter {
     @Throws(NumberFormatException::class, ParseException::class)
     private fun convertMultiDayPersonResult(event: Event, classResult: ClassResult, personResult: PersonResult, raceResult: RaceResult, eventor: Eventor): Competitor {
         return PersonCompetitor(
+                id = RandomStringUtils.random(20, true, true),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 raceId = raceResult.eventRaceId.content,
@@ -116,6 +119,7 @@ class ResultListConverter {
             }
         }
         return TeamCompetitor(
+                id = RandomStringUtils.random(20, true, true),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 raceId = event.eventRace[0].eventRaceId.content,

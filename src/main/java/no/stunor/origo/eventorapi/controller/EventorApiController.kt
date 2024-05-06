@@ -159,8 +159,8 @@ internal class EventorApiController {
         return ResponseEntity(organisationService.updateApiKey(eventorId, organisationId, apiKey), HttpStatus.OK)
     }
 
-    @GetMapping("/organiser/eventList/{eventorId}/{organisationId}")
-    fun getOrganiserEventList(@PathVariable("eventorId") eventorId: String, @PathVariable("organisationId") organisationId: String): ResponseEntity<List<Event>> {
-        return ResponseEntity(organiserService.listEvents(eventorId, organisationId), HttpStatus.OK)
+    @GetMapping("/event/{eventorId}/{eventId}/download")
+    fun getOrganiserEventList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String, @RequestHeader(value = "organisationId") organisationId: String, @RequestHeader(value = "userId") userId: String) {
+        eventService.download(eventorId, eventId, organisationId, userId)
     }
 }

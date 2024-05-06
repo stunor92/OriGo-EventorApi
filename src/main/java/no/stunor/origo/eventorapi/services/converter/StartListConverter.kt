@@ -7,8 +7,10 @@ import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
+import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import kotlin.collections.ArrayList
 
 @Component
 class StartListConverter {
@@ -42,6 +44,7 @@ class StartListConverter {
 
     private fun convertMultiDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, raceStart: org.iof.eventor.RaceStart, eventor: Eventor): Competitor {
         return PersonCompetitor(
+                id = RandomStringUtils.random(20, true, true),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 raceId = raceStart.eventRaceId.content,
@@ -64,6 +67,7 @@ class StartListConverter {
 
     private fun convertOneDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, eventor: Eventor): Competitor {
         return PersonCompetitor(
+                id = RandomStringUtils.random(20, true, true),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 raceId = event.eventRace[0].eventRaceId.content,
@@ -92,6 +96,7 @@ class StartListConverter {
             }
         }
         return TeamCompetitor(
+                id = RandomStringUtils.random(20, true, true),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 raceId = event.eventRace[0].eventRaceId.content,

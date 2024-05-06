@@ -8,9 +8,11 @@ import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.event.Position
 import no.stunor.origo.eventorapi.model.event.EntryBreak
+import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
+import java.util.UUID
 import kotlin.collections.ArrayList
 
 @Component
@@ -106,7 +108,7 @@ class EventConverter {
             regions: List<Region>,
             eventor: Eventor): Event {
         return Event(
-                id = null,
+                id = RandomStringUtils.random(20),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 name = event.name.content,
