@@ -25,7 +25,7 @@ data class Event (
         var documents: List<Document> = ArrayList(),
         var entryBreaks: List<EntryBreak> = ArrayList(),
         var races: List<Race> = ArrayList(),
-        var punchingUnitTypes: List<String> = ArrayList(),
+        var punchingUnitTypes: List<PunchingUnitType> = ArrayList(),
         var webUrls: List<String>? = ArrayList(),
         var message: String? = null,
         var email: String? = null,

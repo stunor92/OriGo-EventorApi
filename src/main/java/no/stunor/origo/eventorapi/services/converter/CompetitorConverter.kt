@@ -398,7 +398,7 @@ class CompetitorConverter {
         return PunchingUnit(cCard.cCardId.content, convertPunchingUnitType(cCard.punchingUnitType.value))
     }
 
-    private fun convertPunchingUnitType(value: String): PunchingUnitType {
+    fun convertPunchingUnitType(value: String): PunchingUnitType {
         return when (value) {
             "manual" -> PunchingUnitType.Manual
             "Emit" -> PunchingUnitType.Emit

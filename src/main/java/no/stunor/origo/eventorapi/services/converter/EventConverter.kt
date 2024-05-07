@@ -21,6 +21,9 @@ class EventConverter {
 
     @Autowired
     private lateinit var eventClassConverter: EventClassConverter
+
+    @Autowired
+    private lateinit var competitorConverter: CompetitorConverter
     fun convertEventClassification(eventForm: String?): EventClassificationEnum {
         return when (eventForm) {
             "1" -> EventClassificationEnum.Championship
@@ -273,10 +276,10 @@ class EventConverter {
     }
 
 
-    private fun convertPunchingUnitTypes(punchingUnitTypes: List<org.iof.eventor.PunchingUnitType>): List<String> {
-        val result: MutableList<String> = ArrayList()
+    private fun convertPunchingUnitTypes(punchingUnitTypes: List<org.iof.eventor.PunchingUnitType>): List<PunchingUnitType> {
+        val result: MutableList<PunchingUnitType> = ArrayList()
         for (punchingUnitType in punchingUnitTypes) {
-            result.add(punchingUnitType.value)
+            result.add(competitorConverter.convertPunchingUnitType(punchingUnitType.value))
         }
         return result
     }
