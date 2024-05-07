@@ -110,7 +110,7 @@ class EventConverter {
             regions: List<Region>,
             eventor: Eventor): Event {
         return Event(
-                id = RandomStringUtils.random(20),
+                id = RandomStringUtils.random(20, true, true),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 name = event.name.content,
