@@ -1,18 +1,17 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import com.google.cloud.Timestamp
+import com.google.cloud.firestore.GeoPoint
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.model.event.Position
 import no.stunor.origo.eventorapi.model.event.EntryBreak
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
-import java.util.UUID
 import kotlin.collections.ArrayList
 
 @Component
@@ -244,8 +243,8 @@ class EventConverter {
         return Timestamp.parseTimestamp(timeString)
     }
 
-    fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): Position {
-        return Position(eventCenterPosition.x.toDouble(), eventCenterPosition.y.toDouble())
+    fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): GeoPoint {
+        return GeoPoint(eventCenterPosition.y.toDouble(), eventCenterPosition.x.toDouble())
     }
 
     private fun convertEntryBreak(entryBreak: org.iof.eventor.EntryBreak): EntryBreak {
