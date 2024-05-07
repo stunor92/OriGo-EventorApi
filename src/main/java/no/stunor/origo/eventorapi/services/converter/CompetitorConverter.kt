@@ -4,6 +4,7 @@ import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
+import no.stunor.origo.eventorapi.model.event.PunchingUnitType
 import no.stunor.origo.eventorapi.model.event.competitor.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Person
@@ -394,7 +395,18 @@ class CompetitorConverter {
     }
 
     fun convertCCard(cCard: org.iof.eventor.CCard): PunchingUnit {
-        return PunchingUnit(cCard.cCardId.content, cCard.punchingUnitType.value)
+        return PunchingUnit(cCard.cCardId.content, convertPunchingUnitType(cCard.punchingUnitType.value))
+    }
+
+    private fun convertPunchingUnitType(value: String): PunchingUnitType {
+        return when (value) {
+            "manual" -> PunchingUnitType.Manual
+            "Emit" -> PunchingUnitType.Emit
+            "SI" -> PunchingUnitType.SI
+            "emiTag" -> PunchingUnitType.emiTag
+            else -> PunchingUnitType.Other
+        }
+
     }
 
     private fun convertOrganisations(organisationList: List<Any>, eventor: Eventor): List<Organisation>{

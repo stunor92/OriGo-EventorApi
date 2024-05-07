@@ -1,9 +1,9 @@
 package no.stunor.origo.eventorapi.services.converter
 
+import no.stunor.origo.eventorapi.model.event.ClassGender
 import no.stunor.origo.eventorapi.model.event.EventClass
 import no.stunor.origo.eventorapi.model.event.EventClassTypeEnum
 import org.iof.eventor.ClassEntryFee
-import org.iof.eventor.EntryClass
 import org.iof.eventor.EventClassList
 import org.iof.eventor.HashTableEntry
 import org.springframework.stereotype.Component
@@ -30,13 +30,21 @@ class EventClassConverter {
                 type = getClassTypeFromId(if (eventClass.classType != null) eventClass.classType.classTypeId.content else eventClass.classTypeId.content),
                 minAge = if (eventClass.lowAge != null) eventClass.lowAge.toInt() else null,
                 maxAge = if (eventClass.highAge != null) eventClass.highAge.toInt() else null,
-                gender = eventClass.sex,
+                gender = convertGender(eventClass.sex),
                 presentTime = getTimePresentation(eventClass.hashTableEntry),
                 orderedResult = getResultListMode(eventClass.hashTableEntry),
                 legs = (if (eventClass.numberOfLegs != null) eventClass.numberOfLegs.toInt() else null)!!,
                 minAverageAge = if (eventClass.minAverageAge != null) eventClass.minAverageAge.toInt() else null,
                 maxAverageAge =  if (eventClass.maxAverageAge != null) eventClass.maxAverageAge.toInt() else null,
                 entryFees = convertEntryFees(eventClass.classEntryFee))
+    }
+
+    private fun convertGender(sex: String): ClassGender {
+        return when (sex) {
+            "M" -> ClassGender.Men
+            "F" -> ClassGender.Women
+            else -> ClassGender.Both
+        }
     }
 
     private fun getClassTypeFromId(classTypeId: String): EventClassTypeEnum {
@@ -75,23 +83,6 @@ class EventClassConverter {
             }
         }
         return true
-    }
-
-    fun convertEventClassIds(entryClasses: List<EntryClass>): List<String> {
-        val eventClassIds: MutableList<String> = ArrayList()
-        for (entryClass in entryClasses) {
-            if (entryClass.eventClassId != null) {
-                eventClassIds.add(entryClass.eventClassId.content)
-            }
-        }
-        return eventClassIds
-    }
-
-    fun convertEventClassId(entryClass: EntryClass): String? {
-        if (entryClass.eventClassId != null) {
-            return entryClass.eventClassId.content
-        }
-        return null
     }
 
     fun getEventClassFromId(eventClassList: EventClassList, entryClassId: String): EventClass? {

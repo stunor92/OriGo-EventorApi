@@ -10,7 +10,7 @@ data class EventClass (
         var type: EventClassTypeEnum = EventClassTypeEnum.Normal,
         var minAge: Int? = 0,
         var maxAge: Int? = 99,
-        var gender: String = "B",
+        var gender: ClassGender = ClassGender.Both,
         var presentTime: Boolean = true,
         var orderedResult: Boolean = true,
         var legs: Int = 1,
