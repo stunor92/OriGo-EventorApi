@@ -6,6 +6,7 @@ import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 
 data class TeamCompetitor(
+        @JsonIgnore
         @DocumentId
         override var id: String = "",
         override var eventorId: String = "",
