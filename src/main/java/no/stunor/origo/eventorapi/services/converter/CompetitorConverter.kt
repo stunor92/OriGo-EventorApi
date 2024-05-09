@@ -8,7 +8,6 @@ import no.stunor.origo.eventorapi.model.event.PunchingUnitType
 import no.stunor.origo.eventorapi.model.event.competitor.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Person
-import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.DateFormat
@@ -35,7 +34,6 @@ class CompetitorConverter {
                         if (result is org.iof.eventor.PersonResult && result.person.personId.content == person.personId) {
                             competitors.add(
                                     PersonCompetitor(
-                                            id = RandomStringUtils.random(20, true, true),
                                             eventorId =  eventor.eventorId,
                                             eventId = resultList.event.eventId.content,
                                             raceId = race.eventRaceId.content,
@@ -92,7 +90,6 @@ class CompetitorConverter {
                             for (raceResult in result.raceResult){
                                 competitors.add(
                                         PersonCompetitor(
-                                                id = RandomStringUtils.random(20, true, true),
                                                 eventorId =  eventor.eventorId,
                                                 eventId = resultList.event.eventId.content,
                                                 raceId = raceResult.eventRaceId.content,
@@ -171,7 +168,6 @@ class CompetitorConverter {
                         if (start is org.iof.eventor.PersonStart && start.person.personId.content == person.personId) {
                             competitors.add(
                                     PersonCompetitor(
-                                            id = RandomStringUtils.random(20, true, true),
                                             eventorId =  eventor.eventorId,
                                             eventId = startList.event.eventId.content,
                                             raceId = race.eventRaceId.content,
@@ -194,7 +190,6 @@ class CompetitorConverter {
                         } else if (start is org.iof.eventor.TeamStart) {
                             competitors.add(
                                     TeamCompetitor(
-                                            id = RandomStringUtils.random(20, true, true),
                                             eventorId =  eventor.eventorId,
                                             eventId = startList.event.eventId.content,
                                             raceId = race.eventRaceId.content,
@@ -219,7 +214,6 @@ class CompetitorConverter {
                             for (raceStart in start.raceStart){
                                 competitors.add(
                                         PersonCompetitor(
-                                                id = RandomStringUtils.random(20, true, true),
                                                 eventorId =  eventor.eventorId,
                                                 eventId = startList.event.eventId.content,
                                                 raceId = raceStart.eventRaceId.content,
@@ -280,7 +274,6 @@ class CompetitorConverter {
                 for (eventRaceId in entry.eventRaceId) {
                     competitors.add(
                             PersonCompetitor(
-                                    id = RandomStringUtils.random(20, true, true),
                                     eventorId =  eventor.eventorId,
                                     eventId = if(entry.eventId != null) entry.eventId.content else entry.event.eventId.content,
                                     raceId = eventRaceId.content,
@@ -308,7 +301,6 @@ class CompetitorConverter {
                     if (teamCompetitor.person.personId.content == person.personId){
                         for(race in entry.eventRaceId) {
                             TeamCompetitor(
-                                    id = RandomStringUtils.random(20, true, true),
                                     eventorId = eventor.eventorId,
                                     eventId = entry.event.eventId.content,
                                     raceId = race.content,
@@ -324,7 +316,6 @@ class CompetitorConverter {
                         }
                     }
                 }
-
             }
         }
         return competitors

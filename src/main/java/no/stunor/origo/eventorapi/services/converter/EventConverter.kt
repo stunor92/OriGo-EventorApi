@@ -7,12 +7,9 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.model.event.EntryBreak
-import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
-import kotlin.collections.ArrayList
 
 @Component
 class EventConverter {
@@ -110,7 +107,6 @@ class EventConverter {
             regions: List<Region>,
             eventor: Eventor): Event {
         return Event(
-                id = RandomStringUtils.random(20, true, true),
                 eventorId = eventor.eventorId,
                 eventId = event.eventId.content,
                 name = event.name.content,
@@ -285,13 +281,13 @@ class EventConverter {
     }
 
 
-    private fun convertEventDocument(documentList: org.iof.eventor.DocumentList?): List<Document> {
-        val result: MutableList<Document> = ArrayList()
+    private fun convertEventDocument(documentList: org.iof.eventor.DocumentList?): List<EventorDocument> {
+        val result: MutableList<EventorDocument> = ArrayList()
         if(documentList == null){
             return listOf()
         }
         for (document in documentList.document) {
-            result.add(Document(document.name, document.url, document.type))
+            result.add(EventorDocument(document.name, document.url, document.type))
         }
         return result
     }

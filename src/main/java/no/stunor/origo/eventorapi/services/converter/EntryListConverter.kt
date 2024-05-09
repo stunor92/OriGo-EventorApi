@@ -6,7 +6,6 @@ import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import kotlin.collections.ArrayList
@@ -41,7 +40,6 @@ class EntryListConverter {
         for(raceId in entry.eventRaceId) {
             result.add(
                     PersonCompetitor(
-                            id = RandomStringUtils.random(20, true, true),
                             eventorId = eventor.eventorId,
                             eventId = entry.eventId.content,
                             raceId = raceId.content,
@@ -72,7 +70,6 @@ class EntryListConverter {
         for(race in entry.teamCompetitor[0].entryEntryFee) {
             result.add(
                     TeamCompetitor(
-                            id = RandomStringUtils.random(20, true, true),
                             eventorId = eventor.eventorId,
                             eventId = entry.eventId.content,
                             raceId = race.eventRaceId,

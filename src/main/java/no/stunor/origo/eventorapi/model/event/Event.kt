@@ -2,16 +2,18 @@ package no.stunor.origo.eventorapi.model.event
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
+import com.google.cloud.spring.data.firestore.Document
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import java.io.Serializable
 import java.util.*
 
+@Document(collectionName = "events")
 data class Event (
         @JsonIgnore
         @DocumentId
-        var id: String = "",
+        var id: String? = null,
         var eventorId: String? = null,
         var eventId: String = "",
         var name: String = "",
@@ -24,7 +26,7 @@ data class Event (
         var organisers: List<Organisation> = ArrayList(),
         var regions: List<Region> = ArrayList(),
         var eventClasses: List<EventClass> = ArrayList(),
-        var documents: List<Document> = ArrayList(),
+        var documents: List<EventorDocument> = ArrayList(),
         var entryBreaks: List<EntryBreak> = ArrayList(),
         var races: List<Race> = ArrayList(),
         var punchingUnitTypes: List<PunchingUnitType> = ArrayList(),

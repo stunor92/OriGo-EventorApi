@@ -2,13 +2,12 @@ package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
 import no.stunor.origo.eventorapi.api.exception.*
-import no.stunor.origo.eventorapi.data.EventorRepository
-import no.stunor.origo.eventorapi.data.OrganisationRepository
-import no.stunor.origo.eventorapi.data.PersonRepository
-import no.stunor.origo.eventorapi.data.RegionRepository
+import no.stunor.origo.eventorapi.data.*
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
+import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
@@ -39,6 +38,14 @@ class EventService {
     private lateinit var organisationService: OrganisationService
     @Autowired
     private lateinit var personRepository: PersonRepository
+    @Autowired
+    private lateinit var competitorsRepository: CompetitorRepository
+    @Autowired
+    private lateinit var personCompetitorsRepository: PersonCompetitorRepository
+    @Autowired
+    private lateinit var teamCompetitorsRepository: TeamCompetitorRepository
+    @Autowired
+    private lateinit var eventRepository: EventRepository
     @Autowired
     private lateinit var entryListConverter: EntryListConverter
     @Autowired
@@ -119,7 +126,33 @@ class EventService {
             throw OrganisationApiKeyException()
         val event = getEvent(eventorId = eventorId, eventId = eventId)
         authenticateEventOrganiser(event = event, organisation = organisation)
+        val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).block()
+        if(existingEvent != null) {
+            event.id = existingEvent.id
+        }
+        eventRepository.save(event).block()
+        val competitors = getEntryList(eventorId = eventorId, eventId = eventId)
+        val existingCompetitors: MutableList<Competitor> = mutableListOf()
+        try {
+            existingCompetitors.addAll(personCompetitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).collectList().block() ?: listOf())
+            existingCompetitors.addAll(teamCompetitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).collectList().block() ?: listOf())
+        } catch (_: Exception){
 
+        }finally {
+            val result: MutableList<Competitor> = mutableListOf()
+            for (competitor in competitors){
+                if(competitor is PersonCompetitor) {
+                    if (!existingCompetitors.contains(competitor)) {
+                        result.add(competitor)
+                    }
+                } else if(competitor is TeamCompetitor){
+                    if(!existingCompetitors.contains(competitor)){
+                        result.add(competitor)
+                    }
+                }
+            }
+            competitorsRepository.saveAll(result).blockLast()
+        }
     }
 
     private fun authenticateOrganiserMembership(organisation: Organisation, persons: List<Person>) {
