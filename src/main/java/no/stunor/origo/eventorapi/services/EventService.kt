@@ -35,8 +35,6 @@ class EventService {
     @Autowired
     private lateinit var organisationRepository: OrganisationRepository
     @Autowired
-    private lateinit var organisationService: OrganisationService
-    @Autowired
     private lateinit var personRepository: PersonRepository
     @Autowired
     private lateinit var competitorsRepository: CompetitorRepository
@@ -122,8 +120,6 @@ class EventService {
         val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId = organisationId, eventorId = eventorId).block() ?: throw OrganisationNotFoundException()
         val persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventorId).collectList().block() ?: listOf()
         authenticateOrganiserMembership(organisation, persons)
-        if(!organisationService.validateApiKey(eventorId, organisationId))
-            throw OrganisationApiKeyException()
         val event = getEvent(eventorId = eventorId, eventId = eventId)
         authenticateEventOrganiser(event = event, organisation = organisation)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).block()

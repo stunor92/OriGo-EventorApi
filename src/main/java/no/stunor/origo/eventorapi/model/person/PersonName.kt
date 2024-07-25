@@ -1,4 +1,4 @@
-package no.stunor.origo.eventorapi.model.person;
+package no.stunor.origo.eventorapi.model.person
 
 import java.io.Serializable
 

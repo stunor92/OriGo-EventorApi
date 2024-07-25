@@ -6,7 +6,6 @@ import no.stunor.origo.eventorapi.model.calendar.*
 import no.stunor.origo.eventorapi.model.event.competitor.Result
 import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
 import no.stunor.origo.eventorapi.model.person.Person
-import org.iof.eventor.CompetitorCountList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

@@ -394,7 +394,7 @@ class CompetitorConverter {
             "manual" -> PunchingUnitType.Manual
             "Emit" -> PunchingUnitType.Emit
             "SI" -> PunchingUnitType.SI
-            "emiTag" -> PunchingUnitType.emiTag
+            "emiTag" -> PunchingUnitType.EmiTag
             else -> PunchingUnitType.Other
         }
 

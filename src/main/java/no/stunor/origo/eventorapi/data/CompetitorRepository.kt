@@ -5,5 +5,4 @@ import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import org.springframework.stereotype.Repository
 
 @Repository
-interface CompetitorRepository : FirestoreReactiveRepository<Competitor> {
-}
+interface CompetitorRepository : FirestoreReactiveRepository<Competitor>
