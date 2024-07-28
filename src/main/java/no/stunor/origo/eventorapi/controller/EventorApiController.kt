@@ -32,9 +32,6 @@ internal class EventorApiController {
     @Autowired
     private lateinit var organisationService: OrganisationService
 
-    @Autowired
-    private lateinit var organiserService: OrganiserService
-
     @GetMapping("/authenticate/{eventorId}")
     fun authenticate(@PathVariable(value = "eventorId") eventorId: String, @RequestHeader(value = "username") username: String, @RequestHeader(value = "password") password: String, @RequestHeader(value = "userId") userId: String): ResponseEntity<Person> {
         log.info("Start authenticating user {}.", username)
@@ -160,7 +157,7 @@ internal class EventorApiController {
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/download")
-    fun getOrganiserEventList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String, @RequestHeader(value = "organisationId") organisationId: String, @RequestHeader(value = "userId") userId: String) {
-        eventService.download(eventorId, eventId, organisationId, userId)
+    fun downloadEvent(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String, @RequestHeader(value = "userId") userId: String) {
+        eventService.download(eventorId, eventId, userId)
     }
 }

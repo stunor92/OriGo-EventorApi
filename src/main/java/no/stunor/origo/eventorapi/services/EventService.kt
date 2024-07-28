@@ -116,12 +116,10 @@ class EventService {
         }
     }
 
-    fun download(eventorId: String, eventId: String, organisationId: String, userId: String) {
-        val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId = organisationId, eventorId = eventorId).block() ?: throw OrganisationNotFoundException()
+    fun download(eventorId: String, eventId: String, userId: String) {
         val persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventorId).collectList().block() ?: listOf()
-        authenticateOrganiserMembership(organisation, persons)
         val event = getEvent(eventorId = eventorId, eventId = eventId)
-        authenticateEventOrganiser(event = event, organisation = organisation)
+        authenticateEventOrganiser(event = event, persons = persons)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).block()
         if(existingEvent != null) {
             event.id = existingEvent.id
@@ -151,20 +149,13 @@ class EventService {
         }
     }
 
-    private fun authenticateOrganiserMembership(organisation: Organisation, persons: List<Person>) {
-        for(person in persons){
-            if(person.memberships[organisation.organisationId] != null
-                    && (person.memberships[organisation.organisationId] == MembershipType.Admin
-                            || person.memberships[organisation.organisationId] == MembershipType.Organiser))
-                return
-        }
-        throw UserNotOrganiserException()
-    }
-
-    private fun authenticateEventOrganiser(event: Event, organisation: Organisation) {
+    private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {
         for(organiser in event.organisers){
-            if(organiser.organisationId ==  organisation.organisationId)
-                return
+            for(person in persons) {
+                if (person.memberships.containsKey(organiser.organisationId))
+                    if (person.memberships[organiser.organisationId] == MembershipType.Organiser || person.memberships[organiser.organisationId] == MembershipType.Admin)
+                        return
+            }
         }
         throw OrganisationNotOrganiserException()
     }
