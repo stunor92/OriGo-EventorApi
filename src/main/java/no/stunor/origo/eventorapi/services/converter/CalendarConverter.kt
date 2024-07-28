@@ -107,7 +107,7 @@ class CalendarConverter {
         return result
     }
 
-    private fun isSignedUp(eventId: String, competitorCountList: CompetitorCountList?): Boolean {
+    private fun isSignedUp(eventId: String, competitorCountList: org.iof.eventor.CompetitorCountList?): Boolean {
         if (competitorCountList != null) {
             for (competitorCount in competitorCountList.competitorCount) {
                 if (competitorCount.eventId == eventId && competitorCount.classCompetitorCount != null && competitorCount.classCompetitorCount.isNotEmpty()) {
