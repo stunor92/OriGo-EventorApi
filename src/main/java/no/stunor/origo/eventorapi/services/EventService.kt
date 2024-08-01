@@ -145,7 +145,12 @@ class EventService {
                     }
                 }
             }
-            competitorsRepository.saveAll(result).blockLast()
+
+            val eventCollection = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).block()
+
+            if (eventCollection != null) {
+                competitorsRepository.saveAll(eventCollection, result)
+            }
         }
     }
 
