@@ -1,0 +1,20 @@
+meta {
+  name: Event Resultlist
+  type: http
+  seq: 12
+}
+
+get {
+  url: https://eventor.orientering.no/api/results/event?eventId=17469
+  body: none
+  auth: none
+}
+
+params:query {
+  eventId: 17469
+  ~eventId: 17363
+}
+
+headers {
+  ApiKey: xxxxx
+}

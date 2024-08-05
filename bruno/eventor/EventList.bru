@@ -1,0 +1,20 @@
+meta {
+  name: EventList
+  type: http
+  seq: 10
+}
+
+get {
+  url: https://eventor.orientering.no/api/eventclasses?includeEntryFees=true&eventId=17469
+  body: none
+  auth: none
+}
+
+params:query {
+  includeEntryFees: true
+  eventId: 17469
+}
+
+headers {
+  ApiKey: xxxxx
+}

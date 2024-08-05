@@ -1,0 +1,24 @@
+meta {
+  name: Event EntryList
+  type: http
+  seq: 13
+}
+
+get {
+  url: https://eventor.orientering.no/api/entries?includePersonElement=true&eventIds=17363&=17469
+  body: none
+  auth: none
+}
+
+params:query {
+  includePersonElement: true
+  eventIds: 17363
+  null: 17469
+  ~eventIds: 19024
+  ~includeOrganisationElement: true
+  ~eventIds: 17363
+}
+
+headers {
+  ApiKey: xxxxx
+}
