@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Eventor-API",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

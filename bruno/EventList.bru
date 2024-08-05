@@ -1,0 +1,22 @@
+meta {
+  name: EventList
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/rest/eventList?classifications=CHAMPIONSHIP%2C%20NATIONAL%2C%20REGIONAL%2C%20LOCAL&from=2024-03-31&to=2024-04-08
+  body: none
+  auth: none
+}
+
+params:query {
+  classifications: CHAMPIONSHIP%2C%20NATIONAL%2C%20REGIONAL%2C%20LOCAL
+  from: 2024-03-31
+  to: 2024-04-08
+  ~classifications: LOCAL
+}
+
+headers {
+  userId: 2K2W5yZNc3SaNZz3u9EalXotzol1
+}
