@@ -114,7 +114,7 @@ class EventService {
 
     fun download(eventorId: String, eventId: String, userId: String) {
         val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
-        val event = getEvent(eventorId = eventorId, eventId = eventId)
+        var event = getEvent(eventorId = eventorId, eventId = eventId)
         authenticateEventOrganiser(event = event, persons = persons)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
         if(existingEvent != null) {
@@ -123,32 +123,26 @@ class EventService {
         eventRepository.save(event)
         val competitors = getEntryList(eventorId = eventorId, eventId = eventId)
         val existingCompetitors: MutableList<Competitor> = mutableListOf()
-        try {
-            //TODO
-            //existingCompetitors.addAll(personCompetitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).collectList().block() ?: listOf())
-            //existingCompetitors.addAll(teamCompetitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).collectList().block() ?: listOf())
-        } catch (_: Exception){
+        existingCompetitors.addAll(competitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId))
 
-        }finally {
-            val result: MutableList<Competitor> = mutableListOf()
-            for (competitor in competitors){
-                if(competitor is PersonCompetitor) {
-                    if (!existingCompetitors.contains(competitor)) {
-                        result.add(competitor)
-                    }
-                } else if(competitor is TeamCompetitor){
-                    if(!existingCompetitors.contains(competitor)){
-                        result.add(competitor)
-                    }
+        val result: MutableList<Competitor> = mutableListOf()
+        for (competitor in competitors){
+            if(competitor is PersonCompetitor) {
+                if (!existingCompetitors.contains(competitor)) {
+                    result.add(competitor)
+                }
+            } else if(competitor is TeamCompetitor){
+                if(!existingCompetitors.contains(competitor)){
+                    result.add(competitor)
                 }
             }
-
-            val eventCollection = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
-
-            if (eventCollection != null) {
-                competitorsRepository.saveAll(eventCollection, result)
-            }
         }
+        if (event.id == null){
+            event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: event
+        }
+
+        event.id?.let { competitorsRepository.saveAll(it, result) }
+
     }
 
     private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {
