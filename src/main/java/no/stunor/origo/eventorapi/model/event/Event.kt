@@ -2,14 +2,12 @@ package no.stunor.origo.eventorapi.model.event
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
-import com.google.cloud.spring.data.firestore.Document
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import java.io.Serializable
 import java.util.*
 
-@Document(collectionName = "events")
 data class Event (
         @JsonIgnore
         @DocumentId

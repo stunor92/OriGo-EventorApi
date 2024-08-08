@@ -3,10 +3,8 @@ package no.stunor.origo.eventorapi.model.event.competitor
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
-import com.google.cloud.spring.data.firestore.Document
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 
-@Document(collectionName = "competitors")
 data class TeamCompetitor(
         @JsonIgnore
         @DocumentId

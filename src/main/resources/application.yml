@@ -15,7 +15,6 @@ spring:
   mvc:
     format:
       date: yyyy-MM-dd
-
 management:
   endpoints:
     web:

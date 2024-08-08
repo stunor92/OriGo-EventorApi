@@ -39,10 +39,6 @@ class EventService {
     @Autowired
     private lateinit var competitorsRepository: CompetitorRepository
     @Autowired
-    private lateinit var personCompetitorsRepository: PersonCompetitorRepository
-    @Autowired
-    private lateinit var teamCompetitorsRepository: TeamCompetitorRepository
-    @Autowired
     private lateinit var eventRepository: EventRepository
     @Autowired
     private lateinit var entryListConverter: EntryListConverter
@@ -52,7 +48,7 @@ class EventService {
     private lateinit var resultListConverter: ResultListConverter
 
     fun getEvent(eventorId: String, eventId: String): Event {
-        val eventor = eventorRepository.findByEventorId(eventorId).block()?: throw EventorNotFoundException()
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val event = eventorService.getEvent(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EventNotFoundException()
         val eventClassList = eventorService.getEventClasses(eventor, eventId)
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.apiKey, eventId)
@@ -62,16 +58,16 @@ class EventService {
 
         for (o in event.organiser.organisationIdOrOrganisation) {
             val org = o as org.iof.eventor.Organisation
-            organisationRepository.findByOrganisationIdAndEventorId(organisationId = org.organisationId.content, eventorId = eventor.eventorId).block()?.let { organisers.add(it) }
+            organisationRepository.findByOrganisationIdAndEventorId(organisationId = org.organisationId.content, eventorId = eventor.eventorId)?.let { organisers.add(it) }
             var region: Region? = null
             if (org.parentOrganisation.organisationId != null) {
-                region = regionRepository.findByRegionIdAndEventorId(org.parentOrganisation.organisationId.content, eventorId).block()
+                region = regionRepository.findByRegionIdAndEventorId(org.parentOrganisation.organisationId.content, eventorId)
             }
             if (region == null) {
                 log.info("{} does not have a region. check if {} is a region.", org.name.content, org.name.content)
 
                 try {
-                    region = regionRepository.findByRegionIdAndEventorId(org.organisationId.content, eventorId).block()
+                    region = regionRepository.findByRegionIdAndEventorId(org.organisationId.content, eventorId)
                 } catch (e1: Exception) {
                     log.info("Region {} does not exist.", org.organisationId.content)
                 }
@@ -91,19 +87,19 @@ class EventService {
     }
 
     fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
-        val eventor = eventorRepository.findByEventorId(eventorId).block()!!
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val entryList = eventorService.getEventEntryList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EntryListNotFoundException()
         return entryListConverter.convertEventEntryList(entryList, eventor)
     }
 
     fun getStartList(eventorId: String, eventId: String): List<Competitor> {
-        val eventor = eventorRepository.findByEventorId(eventorId).block()!!
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val startList = eventorService.getEventStartList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw StartListNotFoundException()
         return startListConverter.convertEventStartList(startList, eventor)
     }
 
     fun getResultList(eventorId: String, eventId: String): List<Competitor> {
-        val eventor = eventorRepository.findByEventorId(eventorId).block()!!
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val resultList = eventorService.getEventResultList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw ResultListNotFoundException()
         try {
             return resultListConverter.convertEventResultList(resultList, eventor)
@@ -117,19 +113,20 @@ class EventService {
     }
 
     fun download(eventorId: String, eventId: String, userId: String) {
-        val persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventorId).collectList().block() ?: listOf()
+        val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
         val event = getEvent(eventorId = eventorId, eventId = eventId)
         authenticateEventOrganiser(event = event, persons = persons)
-        val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).block()
+        val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
         if(existingEvent != null) {
             event.id = existingEvent.id
         }
-        eventRepository.save(event).block()
+        eventRepository.save(event)
         val competitors = getEntryList(eventorId = eventorId, eventId = eventId)
         val existingCompetitors: MutableList<Competitor> = mutableListOf()
         try {
-            existingCompetitors.addAll(personCompetitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).collectList().block() ?: listOf())
-            existingCompetitors.addAll(teamCompetitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).collectList().block() ?: listOf())
+            //TODO
+            //existingCompetitors.addAll(personCompetitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).collectList().block() ?: listOf())
+            //existingCompetitors.addAll(teamCompetitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).collectList().block() ?: listOf())
         } catch (_: Exception){
 
         }finally {
@@ -146,7 +143,7 @@ class EventService {
                 }
             }
 
-            val eventCollection = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId).block()
+            val eventCollection = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
 
             if (eventCollection != null) {
                 competitorsRepository.saveAll(eventCollection, result)

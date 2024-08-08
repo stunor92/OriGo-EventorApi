@@ -2,10 +2,8 @@ package no.stunor.origo.eventorapi.model.organisation
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.firestore.annotation.DocumentId
-import com.google.cloud.spring.data.firestore.Document
 import java.io.Serializable
 
-@Document(collectionName = "organisations")
 data class Organisation (
         @JsonIgnore
         @DocumentId

@@ -21,8 +21,8 @@ class OrganisationService {
 
 
     fun validateApiKey(eventorId: String, organisationId: String): Boolean {
-        val eventor = eventorRepository.findByEventorId(eventorId).block() ?: throw EventorNotFoundException()
-        val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId).block() ?: throw OrganisationNotFoundException()
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId) ?: throw OrganisationNotFoundException()
         if (organisation.apiKey == null) {
             return false
         }
@@ -35,8 +35,8 @@ class OrganisationService {
     }
 
     fun updateApiKey(eventorId: String, organisationId: String, apiKey: String): Boolean {
-        val eventor = eventorRepository.findByEventorId(eventorId).block() ?: throw EventorNotFoundException()
-        val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId).block() ?: throw OrganisationNotFoundException()
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        val organisation = organisationRepository.findByOrganisationIdAndEventorId(organisationId, eventorId) ?: throw OrganisationNotFoundException()
 
         val eventorOrganisation = eventorService.getOrganisationFromApiKey(eventor.baseUrl, apiKey)
         if (eventorOrganisation == null || eventorOrganisation.organisationId.content != organisationId) {
@@ -44,7 +44,7 @@ class OrganisationService {
         }
 
         organisation.apiKey = apiKey
-        organisationRepository.save(organisation).block()
+        organisationRepository.save(organisation)
         return true
     }
 }

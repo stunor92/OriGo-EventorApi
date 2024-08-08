@@ -3,6 +3,7 @@ package no.stunor.origo.eventorapi.services
 import no.stunor.origo.eventorapi.api.EventorService
 import no.stunor.origo.eventorapi.api.exception.EventorAuthException
 import no.stunor.origo.eventorapi.api.exception.EventorConnectionException
+import no.stunor.origo.eventorapi.api.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.PersonRepository
 import no.stunor.origo.eventorapi.model.person.Person
@@ -30,7 +31,7 @@ class AuthService {
 
     fun authenticate(eventorId: String, username: String, password: String, userId: String): Person {
         try {
-            val eventor = eventorRepository.findByEventorId(eventorId).block()!!
+            val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
 
             log.info("Start authenticating user {} on {}.", username, eventor.name)
 
@@ -38,11 +39,11 @@ class AuthService {
 
             val person = personConverter.convertPerson(eventorPerson, eventor)
 
-            val existingPerson = personRepository.findByPersonIdAndEventorId(person.personId, eventor.eventorId).block()
+            val existingPerson = personRepository.findByPersonIdAndEventorId(person.personId, eventor.eventorId)
 
             if (existingPerson == null) {
                 person.users.add(userId)
-                personRepository.save(person).block()
+                personRepository.save(person)
             } else {
                 person.id = existingPerson.id
 
@@ -52,7 +53,7 @@ class AuthService {
                     person.users.add(userId)
                 }
 
-                personRepository.save(person).block()
+                personRepository.save(person)
             }
             return person
         } catch (e: HttpClientErrorException) {

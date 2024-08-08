@@ -52,10 +52,10 @@ class EventConverter {
         val result: MutableList<Organisation> = ArrayList()
         for (organiser in organisers) {
             if(organiser is org.iof.eventor.Organisation){
-                val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.organisationId.content, eventor.eventorId).block()
+                val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.organisationId.content, eventor.eventorId)
                 if (o != null) result.add(o)
             } else if(organiser is org.iof.eventor.OrganisationId){
-                val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.content, eventor.eventorId).block()
+                val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.content, eventor.eventorId)
                 if (o != null) result.add(o)
             }
         }

@@ -1,11 +1,25 @@
 package no.stunor.origo.eventorapi.data
 
-import com.google.cloud.spring.data.firestore.FirestoreReactiveRepository
+import com.google.api.core.ApiFuture
+import com.google.cloud.firestore.QuerySnapshot
+import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.Region
 import org.springframework.stereotype.Repository
-import reactor.core.publisher.Mono
 
 @Repository
-interface RegionRepository : FirestoreReactiveRepository<Region> {
-    fun findByRegionIdAndEventorId(regionId: String, eventorId: String): Mono<Region>
+class RegionRepository {
+    private val firestore = FirestoreClient.getFirestore()
+
+    fun findByRegionIdAndEventorId(regionId: String, eventorId: String): Region? {
+        val future: ApiFuture<QuerySnapshot> = firestore.collection("organisations")
+            .whereEqualTo("regionId", regionId)
+            .whereEqualTo("eventorId", eventorId)
+            .get()
+
+        return if(future.get().isEmpty){
+            null
+        } else {
+            future.get().documents.first().toObject(Region::class.java)
+        }
+    }
 }

@@ -1,13 +1,31 @@
-package no.stunor.origo.eventorapi;
+package no.stunor.origo.eventorapi
 
-import com.google.firebase.FirebaseApp;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 
 @SpringBootApplication
-public class Application {
-	public static void main(String[] args) {
-		FirebaseApp.initializeApp();
-		SpringApplication.run(Application.class, args);
-	}
+open class Application
+fun main(args: Array<String>) {
+
+    var credentials: GoogleCredentials
+    try {
+        val serviceAccount =
+            FileInputStream("serviceAccountKey.json")
+        credentials = GoogleCredentials.fromStream(serviceAccount)
+    } catch (e: FileNotFoundException) {
+        credentials =  GoogleCredentials.getApplicationDefault()
+    }
+    val options = FirebaseOptions.builder()
+        .setCredentials(credentials)
+        .build()
+
+    FirebaseApp.initializeApp(options)
+
+    runApplication<Application>(*args)
 }
+

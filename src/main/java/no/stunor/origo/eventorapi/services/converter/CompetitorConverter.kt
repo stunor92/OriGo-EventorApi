@@ -40,7 +40,7 @@ class CompetitorConverter {
                                             eventClassId = classResult.eventClass.eventClassId.content,
                                             personId = person.personId,
                                             name = personConverter.convertPersonName(result.person.personName),
-                                            organisation = if(result.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(result.organisation.organisationId.content, eventor.eventorId).block() else null,
+                                            organisation = if(result.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(result.organisation.organisationId.content, eventor.eventorId) else null,
                                             birthYear = personConverter.convertBirthYear(result.person.birthDate),
                                             nationality = result.person.nationality.country.alpha3.value,
                                             gender = personConverter.convertGender(result.person.sex),
@@ -96,7 +96,7 @@ class CompetitorConverter {
                                                 eventClassId = classResult.eventClass.eventClassId.content,
                                                 personId = person.personId,
                                                 name = personConverter.convertPersonName(result.person.personName),
-                                                organisation = if(result.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(result.organisation.organisationId.content, eventor.eventorId).block() else null,
+                                                organisation = if(result.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(result.organisation.organisationId.content, eventor.eventorId) else null,
                                                 birthYear = personConverter.convertBirthYear(result.person.birthDate),
                                                 nationality = result.person.nationality.country.alpha3.value,
                                                 gender = personConverter.convertGender(result.person.sex),
@@ -174,7 +174,7 @@ class CompetitorConverter {
                                             eventClassId = classStart.eventClass.eventClassId.content,
                                             personId = person.personId,
                                             name = personConverter.convertPersonName(start.person.personName),
-                                            organisation = if(start.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(start.organisation.organisationId.content, eventor.eventorId).block() else null,
+                                            organisation = if(start.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(start.organisation.organisationId.content, eventor.eventorId) else null,
                                             birthYear = personConverter.convertBirthYear(start.person.birthDate),
                                             nationality = start.person.nationality.country.alpha3.value,
                                             gender = personConverter.convertGender(start.person.sex),
@@ -220,7 +220,7 @@ class CompetitorConverter {
                                                 eventClassId = classStart.eventClass.eventClassId.content,
                                                 personId = person.personId,
                                                 name = personConverter.convertPersonName(start.person.personName),
-                                                organisation = if(start.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(start.organisation.organisationId.content, eventor.eventorId).block() else null,
+                                                organisation = if(start.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(start.organisation.organisationId.content, eventor.eventorId) else null,
                                                 birthYear = personConverter.convertBirthYear(start.person.birthDate),
                                                 nationality = start.person.nationality.country.alpha3.value,
                                                 gender = personConverter.convertGender(start.person.sex),
@@ -280,7 +280,7 @@ class CompetitorConverter {
                                     eventClassId = entry.entryClass[0].eventClassId.content,
                                     personId = person.personId,
                                     name = person.name,
-                                    organisation = if(!entry.organisationId.isNullOrEmpty()) organisationRepository.findByOrganisationIdAndEventorId(entry.organisationId[0].content, eventor.eventorId).block() else null,
+                                    organisation = if(!entry.organisationId.isNullOrEmpty()) organisationRepository.findByOrganisationIdAndEventorId(entry.organisationId[0].content, eventor.eventorId) else null,
                                     birthYear = person.birthYear,
                                     nationality = person.nationality,
                                     gender = person.gender,
@@ -349,7 +349,7 @@ class CompetitorConverter {
         val organisations: MutableList<Organisation> = ArrayList()
 
         for (o in organisationIds) {
-            organisationRepository.findByOrganisationIdAndEventorId(organisationId = o.content, eventorId = eventor.eventorId).block()?.let { organisations.add(it) }
+            organisationRepository.findByOrganisationIdAndEventorId(organisationId = o.content, eventorId = eventor.eventorId)?.let { organisations.add(it) }
         }
         return organisations
 
@@ -405,7 +405,7 @@ class CompetitorConverter {
 
         for (o in organisationList) {
             if(o is org.iof.eventor.Organisation){
-                organisationRepository.findByOrganisationIdAndEventorId(organisationId = o.organisationId.content, eventorId = eventor.eventorId).block()?.let { organisations.add(it) }
+                organisationRepository.findByOrganisationIdAndEventorId(organisationId = o.organisationId.content, eventorId = eventor.eventorId)?.let { organisations.add(it) }
             }
 
         }

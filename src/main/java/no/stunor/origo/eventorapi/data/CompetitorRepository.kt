@@ -3,10 +3,10 @@ package no.stunor.origo.eventorapi.data
 import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Repository
 
 
-@Service
+@Repository
 class CompetitorRepository {
     private val firestore = FirestoreClient.getFirestore()
 
@@ -20,5 +20,4 @@ class CompetitorRepository {
             }
         }
     }
-
 }

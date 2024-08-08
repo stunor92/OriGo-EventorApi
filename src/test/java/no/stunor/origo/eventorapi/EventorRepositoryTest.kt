@@ -13,6 +13,6 @@ class EventorRepositoryTest {
 
     @Test
     fun testGetEventorNorway() {
-        Assertions.assertEquals("Eventor Norge", eventorRepository.findByEventorId("NOR").block()!!.name)
+        Assertions.assertEquals("Eventor Norge", eventorRepository.findByEventorId("NOR")!!.name)
     }
 }

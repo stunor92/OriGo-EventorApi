@@ -21,7 +21,6 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import reactor.core.publisher.Mono
 import java.io.File
 import java.text.ParseException
 import java.util.concurrent.ExecutionException
@@ -45,9 +44,9 @@ class EventServiceTest {
 
     @BeforeEach
     fun setUp() {
-        whenever(organisationRepository.findByOrganisationIdAndEventorId(any(), any())).thenReturn(Mono.just(generateOrganisation()))
-        whenever(regionRepository.findByRegionIdAndEventorId(any(), any())).thenReturn(Mono.just(generateRegion()))
-        whenever(eventorRepository.findByEventorId(any())).thenReturn(Mono.just(generateEventor()))
+        whenever(organisationRepository.findByOrganisationIdAndEventorId(any(), any())).thenReturn(generateOrganisation())
+        whenever(regionRepository.findByRegionIdAndEventorId(any(), any())).thenReturn(generateRegion())
+        whenever(eventorRepository.findByEventorId(any())).thenReturn(generateEventor())
     }
 
     @Test

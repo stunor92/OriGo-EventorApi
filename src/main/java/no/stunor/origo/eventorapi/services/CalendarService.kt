@@ -52,10 +52,10 @@ class CalendarService {
 
     fun getEventList(userId: String): List<CalendarRace> {
         val raceList: MutableList<CalendarRace> = mutableListOf()
-        val persons = personRepository.findAllByUsersContains(userId).collectList().block() ?: listOf()
+        val persons = personRepository.findAllByUserId(userId)
 
         for (person in persons) {
-            val eventor = eventorRepository.findByEventorId(person.eventorId).block()
+            val eventor = eventorRepository.findByEventorId(person.eventorId)
             val organisationIds = person.memberships.keys.toList()
 
             if (eventor != null) {
@@ -117,25 +117,21 @@ class CalendarService {
     }
 
     fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
-        val eventorList: List<Eventor?> = eventorRepository.findAll().collectList().block()?.toList() ?: listOf()
+        val eventorList: List<Eventor> = eventorRepository.findAll()
 
         val result: MutableList<CalendarRace> = ArrayList()
 
         for (eventor in eventorList) {
-            if (eventor != null) {
-                val persons: List<Person> = personRepository.findAllByUsersContainsAndEventorId(user = userId, eventorId = eventor.eventorId).collectList().block()?.toList()
-                        ?: listOf()
-                result.addAll(getEventList(eventor = eventor, from = from, to = to, organisations = null, classifications = classifications, persons = persons))
-            }
+            val persons: List<Person> = personRepository.findAllByUserIdAndEventorId(userId = userId, eventorId = eventor.eventorId)
+            result.addAll(getEventList(eventor = eventor, from = from, to = to, organisations = null, classifications = classifications, persons = persons))
+
         }
         return result
     }
 
     fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
-        val eventor = eventorRepository.findByEventorId(eventorId).block() ?: throw EventorNotFoundException()
-        val persons: List<Person> = personRepository.findAllByUsersContainsAndEventorId(userId, eventor.eventorId).collectList().block()?.toList()
-                ?: listOf()
-
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        val persons: List<Person> = personRepository.findAllByUserIdAndEventorId(userId = userId, eventorId = eventor.eventorId)
         return getEventList(eventor = eventor, from = from, to = to, organisations = organisations, classifications = classifications, persons = persons )
     }
 

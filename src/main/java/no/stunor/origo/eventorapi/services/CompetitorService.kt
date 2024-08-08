@@ -27,8 +27,8 @@ class CompetitorService{
     private lateinit var eventorService: EventorService
 
     fun getCompetitors(eventorId: String, eventId: String, userId: String): List<Competitor> {
-        val eventor = eventorRepository.findByEventorId(eventorId).block()?: throw EventorNotFoundException()
-        val persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventor.eventorId).collectList().block()?: listOf()
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        val persons = personRepository.findAllByUserIdAndEventorId(userId = userId, eventorId = eventor.eventorId)
         val competitorList: MutableList<Competitor> = mutableListOf()
 
         for (person in persons) {
