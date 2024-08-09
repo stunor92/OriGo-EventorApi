@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.Region
-import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import java.io.Serializable
 import java.util.*
 
@@ -21,7 +21,7 @@ data class Event (
         var disciplines: List<DisciplineEnum> = ArrayList(),
         var startDate: Timestamp? = null,
         var finishDate: Timestamp? = null,
-        var organisers: List<Organisation> = ArrayList(),
+        var organisers: List<SimpleOrganisation> = ArrayList(),
         var regions: List<Region> = ArrayList(),
         var eventClasses: List<EventClass> = ArrayList(),
         var documents: List<EventorDocument> = ArrayList(),

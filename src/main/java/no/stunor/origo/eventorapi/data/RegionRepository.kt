@@ -11,7 +11,7 @@ class RegionRepository {
     private val firestore = FirestoreClient.getFirestore()
 
     fun findByRegionIdAndEventorId(regionId: String, eventorId: String): Region? {
-        val future: ApiFuture<QuerySnapshot> = firestore.collection("organisations")
+        val future: ApiFuture<QuerySnapshot> = firestore.collection("regions")
             .whereEqualTo("regionId", regionId)
             .whereEqualTo("eventorId", eventorId)
             .get()

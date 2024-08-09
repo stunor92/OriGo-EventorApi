@@ -2,6 +2,7 @@ package no.stunor.origo.eventorapi.api
 
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
+import no.stunor.origo.eventorapi.model.person.Person
 import org.iof.eventor.*
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -30,18 +31,18 @@ class EventorService {
         restTemplate.messageConverters = converters
     }
 
-    fun authenticatePerson(eventor: Eventor, username: String?, password: String?): Person? {
+    fun authenticatePerson(eventor: Eventor, username: String?, password: String?): org.iof.eventor.Person? {
         val headers = HttpHeaders()
         headers["Username"] = username
         headers["Password"] = password
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl + "api/authenticatePerson",
-                HttpMethod.GET,
-                request,
-                Person::class.java,
-                1
+            eventor.baseUrl + "api/authenticatePerson",
+            HttpMethod.GET,
+            request,
+            org.iof.eventor.Person::class.java,
+            1
         )
         return response.body
     }

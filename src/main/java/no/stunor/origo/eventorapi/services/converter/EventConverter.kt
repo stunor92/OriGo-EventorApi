@@ -6,7 +6,7 @@ import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.*
-import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
@@ -48,8 +48,8 @@ class EventConverter {
         }
     }
 
-    fun convertOrganisers(eventor: Eventor, organisers: List<Any>): List<Organisation> {
-        val result: MutableList<Organisation> = ArrayList()
+    fun convertOrganisers(eventor: Eventor, organisers: List<Any>): List<SimpleOrganisation> {
+        val result: MutableList<SimpleOrganisation> = ArrayList()
         for (organiser in organisers) {
             if(organiser is org.iof.eventor.Organisation){
                 val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.organisationId.content, eventor.eventorId)
@@ -103,7 +103,7 @@ class EventConverter {
             event: org.iof.eventor.Event,
             eventCLassList: org.iof.eventor.EventClassList?,
             documentList: org.iof.eventor.DocumentList?,
-            organisations: List<Organisation>,
+            organisations: List<SimpleOrganisation>,
             regions: List<Region>,
             eventor: Eventor): Event {
         return Event(

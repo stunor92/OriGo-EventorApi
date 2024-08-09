@@ -5,7 +5,7 @@ import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
-import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import kotlin.collections.ArrayList
@@ -88,8 +88,8 @@ class EntryListConverter {
         return result
     }
 
-    private fun convertTeamOrganisations(teamCompetitors: List<org.iof.eventor.TeamCompetitor>, eventor: Eventor): List<Organisation> {
-        val result: MutableList<Organisation> = mutableListOf()
+    private fun convertTeamOrganisations(teamCompetitors: List<org.iof.eventor.TeamCompetitor>, eventor: Eventor): List<SimpleOrganisation> {
+        val result: MutableList<SimpleOrganisation> = mutableListOf()
         for (teamCompetitor in teamCompetitors) {
             if (teamCompetitor.organisationId != null) {
                 var organisationExist = false

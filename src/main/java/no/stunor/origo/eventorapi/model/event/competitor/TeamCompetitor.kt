@@ -3,7 +3,7 @@ package no.stunor.origo.eventorapi.model.event.competitor
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
-import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 
 data class TeamCompetitor(
         @JsonIgnore
@@ -13,7 +13,7 @@ data class TeamCompetitor(
         override var eventId: String = "",
         override var raceId: String = "",
         override var eventClassId: String = "",
-        var organisations: List<Organisation> = listOf(),
+        var organisations: List<SimpleOrganisation> = listOf(),
         var teamMembers: List<TeamMemberCompetitor> = listOf(),
         var name: String = "",
         override var bib: String? = null,

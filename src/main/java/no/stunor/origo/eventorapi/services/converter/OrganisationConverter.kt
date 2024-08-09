@@ -1,27 +1,23 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.organisation.OrganisationType
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import org.springframework.stereotype.Component
 
 @Component
 class OrganisationConverter {
 
-    fun convertOrganisation(organisation: org.iof.eventor.Organisation?, eventor: Eventor): Organisation? {
+    fun convertOrganisation(organisation: org.iof.eventor.Organisation?, eventor: Eventor): SimpleOrganisation? {
 
         if(organisation == null)
             return null
-        return Organisation(
+        return SimpleOrganisation(
             organisationId = if(organisation.organisationId != null) organisation.organisationId.content else null,
             eventorId = eventor.eventorId,
             name = organisation.name.content,
             type = convertOrganisationType(organisation),
-            country = if (organisation.country != null) organisation.country.alpha3.value else null,
-            email = null,
-            apiKey = null,
-            regionId = null,
-            contactPerson = null
+            country = if (organisation.country != null) organisation.country.alpha3.value else null
         )
     }
 

@@ -29,8 +29,6 @@ internal class EventorApiController {
     @Autowired
     private lateinit var eventService: EventService
 
-    @Autowired
-    private lateinit var organisationService: OrganisationService
 
     @GetMapping("/authenticate/{eventorId}")
     fun authenticate(@PathVariable(value = "eventorId") eventorId: String, @RequestHeader(value = "username") username: String, @RequestHeader(value = "password") password: String, @RequestHeader(value = "userId") userId: String): ResponseEntity<Person> {
@@ -142,18 +140,6 @@ internal class EventorApiController {
                 ),
                 HttpStatus.OK
         )
-    }
-
-
-    @GetMapping("/organisation/apiKey/{eventorId}/{organisationId}/validate")
-    fun validateApiKey(@PathVariable("eventorId") eventorId: String, @PathVariable("organisationId") organisationId: String): ResponseEntity<Boolean> {
-        return ResponseEntity(organisationService.validateApiKey(eventorId, organisationId), HttpStatus.OK)
-    }
-
-
-    @PostMapping("/organisation/apiKey/{eventorId}/{organisationId}/{apiKey}")
-    fun updateApiKey(@PathVariable("eventorId") eventorId: String, @PathVariable("organisationId") organisationId: String, @PathVariable("apiKey") apiKey: String):  ResponseEntity<Boolean> {
-        return ResponseEntity(organisationService.updateApiKey(eventorId, organisationId, apiKey), HttpStatus.OK)
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/download")

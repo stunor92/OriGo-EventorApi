@@ -8,7 +8,7 @@ import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
-import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
@@ -53,7 +53,7 @@ class EventService {
         val eventClassList = eventorService.getEventClasses(eventor, eventId)
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.apiKey, eventId)
 
-        val organisers: MutableList<Organisation> = ArrayList()
+        val organisers: MutableList<SimpleOrganisation> = ArrayList()
         val regions: MutableList<Region> = ArrayList()
 
         for (o in event.organiser.organisationIdOrOrganisation) {

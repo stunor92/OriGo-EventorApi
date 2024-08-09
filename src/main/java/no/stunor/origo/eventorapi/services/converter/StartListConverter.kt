@@ -6,7 +6,7 @@ import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
-import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import kotlin.collections.ArrayList
@@ -86,7 +86,7 @@ class StartListConverter {
     }
 
     private fun convertTeamStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, teamStart: org.iof.eventor.TeamStart, eventor: Eventor): TeamCompetitor {
-        val organisations: MutableList<Organisation> = ArrayList()
+        val organisations: MutableList<SimpleOrganisation> = ArrayList()
         for (organisation in teamStart.organisationIdOrOrganisationOrCountryId) {
             if (organisation is org.iof.eventor.Organisation) {
                 organisationConverter.convertOrganisation(organisation, eventor)?.let { organisations.add(it) }

@@ -5,9 +5,9 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.competitor.*
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.Result
-import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.event.competitor.SplitTime
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import org.iof.eventor.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -109,7 +109,7 @@ class ResultListConverter {
 
     @Throws(NumberFormatException::class, ParseException::class)
     private fun convertTeamResult(event: Event, classResult: ClassResult, teamResult: TeamResult, eventor: Eventor): Competitor {
-        val organisations: MutableList<Organisation> = ArrayList()
+        val organisations: MutableList<SimpleOrganisation> = ArrayList()
         for (organisation  in teamResult.organisationIdOrOrganisationOrCountryId) {
             if(organisation is org.iof.eventor.Organisation) {
                 organisationConverter.convertOrganisation(organisation, eventor)?.let { organisations.add(it) }
