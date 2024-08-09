@@ -8,8 +8,8 @@ import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.data.RegionRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.Region
-import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.organisation.OrganisationType
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import no.stunor.origo.eventorapi.services.EventService
 import org.iof.eventor.DocumentList
 import org.iof.eventor.Event
@@ -106,8 +106,8 @@ class EventServiceTest {
         return jaxbUnmarshalled.unmarshal(file) as DocumentList
     }
 
-    private fun generateOrganisation(): Organisation {
-        return Organisation(organisationId = "141", eventorId = "NOR", name = "O Club", type = OrganisationType.Club, country = "NOR", email = "mail@club.org", apiKey = null, regionId = null, contactPerson = null)
+    private fun generateOrganisation(): SimpleOrganisation {
+        return SimpleOrganisation(organisationId = "141", eventorId = "NOR", name = "O Club", type = OrganisationType.Club, country = "NOR")
     }
 
     private fun generateRegion(): Region {
