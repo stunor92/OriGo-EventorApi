@@ -40,8 +40,6 @@ class EntryListConverter {
         for(raceId in entry.eventRaceId) {
             result.add(
                     PersonCompetitor(
-                            eventorId = eventor.eventorId,
-                            eventId = entry.eventId.content,
                             raceId = raceId.content,
                             eventClassId = entry.entryClass[0].eventClassId.content,
                             personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
@@ -70,8 +68,6 @@ class EntryListConverter {
         for(race in entry.teamCompetitor[0].entryEntryFee) {
             result.add(
                     TeamCompetitor(
-                            eventorId = eventor.eventorId,
-                            eventId = entry.eventId.content,
                             raceId = race.eventRaceId,
                             eventClassId = entry.entryClass[0].eventClassId.content,
                             name = entry.teamName.content,

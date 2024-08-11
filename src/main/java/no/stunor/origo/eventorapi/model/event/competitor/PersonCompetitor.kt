@@ -12,8 +12,6 @@ data class PersonCompetitor(
         @JsonIgnore
         @DocumentId
         override var id: String? = null,
-        override var eventorId: String = "",
-        override var eventId: String = "",
         override var raceId: String = "",
         override var eventClassId: String = "",
         var personId: String? = null,
@@ -33,7 +31,7 @@ data class PersonCompetitor(
 ) : Competitor {
         override fun equals(other: Any?): Boolean {
                 return if(other is PersonCompetitor){
-                        eventId == other.eventId && raceId == other.raceId && personId == other.personId
+                        raceId == other.raceId && personId == other.personId
                 } else{
                         false
                 }
@@ -41,8 +39,6 @@ data class PersonCompetitor(
 
         override fun hashCode(): Int {
                 var result = id?.hashCode() ?: 0
-                result = 31 * result + eventorId.hashCode()
-                result = 31 * result + eventId.hashCode()
                 result = 31 * result + raceId.hashCode()
                 result = 31 * result + eventClassId.hashCode()
                 result = 31 * result + (personId?.hashCode() ?: 0)

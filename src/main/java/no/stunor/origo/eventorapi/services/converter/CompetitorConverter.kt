@@ -34,8 +34,6 @@ class CompetitorConverter {
                         if (result is org.iof.eventor.PersonResult && result.person.personId.content == person.personId) {
                             competitors.add(
                                     PersonCompetitor(
-                                            eventorId =  eventor.eventorId,
-                                            eventId = resultList.event.eventId.content,
                                             raceId = race.eventRaceId.content,
                                             eventClassId = classResult.eventClass.eventClassId.content,
                                             personId = person.personId,
@@ -61,8 +59,6 @@ class CompetitorConverter {
                         } else if (result is org.iof.eventor.TeamResult) {
                             competitors.add(
                                     TeamCompetitor(
-                                            eventorId =  eventor.eventorId,
-                                            eventId = resultList.event.eventId.content,
                                             raceId = race.eventRaceId.content,
                                             eventClassId = classResult.eventClass.eventClassId.content,
                                             name = result.teamName.content,
@@ -90,8 +86,6 @@ class CompetitorConverter {
                             for (raceResult in result.raceResult){
                                 competitors.add(
                                         PersonCompetitor(
-                                                eventorId =  eventor.eventorId,
-                                                eventId = resultList.event.eventId.content,
                                                 raceId = raceResult.eventRaceId.content,
                                                 eventClassId = classResult.eventClass.eventClassId.content,
                                                 personId = person.personId,
@@ -168,8 +162,6 @@ class CompetitorConverter {
                         if (start is org.iof.eventor.PersonStart && start.person.personId.content == person.personId) {
                             competitors.add(
                                     PersonCompetitor(
-                                            eventorId =  eventor.eventorId,
-                                            eventId = startList.event.eventId.content,
                                             raceId = race.eventRaceId.content,
                                             eventClassId = classStart.eventClass.eventClassId.content,
                                             personId = person.personId,
@@ -190,8 +182,6 @@ class CompetitorConverter {
                         } else if (start is org.iof.eventor.TeamStart) {
                             competitors.add(
                                     TeamCompetitor(
-                                            eventorId =  eventor.eventorId,
-                                            eventId = startList.event.eventId.content,
                                             raceId = race.eventRaceId.content,
                                             eventClassId = classStart.eventClass.eventClassId.content,
                                             name = start.teamName.content,
@@ -214,8 +204,6 @@ class CompetitorConverter {
                             for (raceStart in start.raceStart){
                                 competitors.add(
                                         PersonCompetitor(
-                                                eventorId =  eventor.eventorId,
-                                                eventId = startList.event.eventId.content,
                                                 raceId = raceStart.eventRaceId.content,
                                                 eventClassId = classStart.eventClass.eventClassId.content,
                                                 personId = person.personId,
@@ -274,8 +262,6 @@ class CompetitorConverter {
                 for (eventRaceId in entry.eventRaceId) {
                     competitors.add(
                             PersonCompetitor(
-                                    eventorId =  eventor.eventorId,
-                                    eventId = if(entry.eventId != null) entry.eventId.content else entry.event.eventId.content,
                                     raceId = eventRaceId.content,
                                     eventClassId = entry.entryClass[0].eventClassId.content,
                                     personId = person.personId,
@@ -301,8 +287,6 @@ class CompetitorConverter {
                     if (teamCompetitor.person.personId.content == person.personId){
                         for(race in entry.eventRaceId) {
                             TeamCompetitor(
-                                    eventorId = eventor.eventorId,
-                                    eventId = entry.event.eventId.content,
                                     raceId = race.content,
                                     eventClassId = entry.entryClass[0].eventClassId.content,
                                     name = entry.teamName.content,

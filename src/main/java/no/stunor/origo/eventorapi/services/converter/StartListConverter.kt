@@ -27,7 +27,12 @@ class StartListConverter {
                 if (personOrTeamStart is org.iof.eventor.PersonStart) {
                     if (personOrTeamStart.raceStart != null && personOrTeamStart.raceStart.isNotEmpty()) {
                         for (raceStart in personOrTeamStart.raceStart) {
-                            competitorList.add(convertMultiDayPersonStart(startList.event, classStart, personOrTeamStart, raceStart, eventor))
+                            competitorList.add(convertMultiDayPersonStart(
+                                classStart,
+                                personOrTeamStart,
+                                raceStart,
+                                eventor
+                            ))
                         }
                     } else {
                         competitorList.add(convertOneDayPersonStart(startList.event, classStart, personOrTeamStart, eventor))
@@ -41,10 +46,13 @@ class StartListConverter {
         return competitorList
     }
 
-    private fun convertMultiDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, raceStart: org.iof.eventor.RaceStart, eventor: Eventor): Competitor {
+    private fun convertMultiDayPersonStart(
+        classStart: org.iof.eventor.ClassStart,
+        personStart: org.iof.eventor.PersonStart,
+        raceStart: org.iof.eventor.RaceStart,
+        eventor: Eventor
+    ): Competitor {
         return PersonCompetitor(
-                eventorId = eventor.eventorId,
-                eventId = event.eventId.content,
                 raceId = raceStart.eventRaceId.content,
                 eventClassId = classStart.eventClass.eventClassId.content,
                 personId = if(personStart.person.personId != null) personStart.person.personId.content else null,
@@ -65,8 +73,6 @@ class StartListConverter {
 
     private fun convertOneDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, eventor: Eventor): Competitor {
         return PersonCompetitor(
-                eventorId = eventor.eventorId,
-                eventId = event.eventId.content,
                 raceId = event.eventRace[0].eventRaceId.content,
                 eventClassId = classStart.eventClass.eventClassId.content,
                 personId = if(personStart.person.personId != null) personStart.person.personId.content else null,
@@ -93,8 +99,6 @@ class StartListConverter {
             }
         }
         return TeamCompetitor(
-                eventorId = eventor.eventorId,
-                eventId = event.eventId.content,
                 raceId = event.eventRace[0].eventRaceId.content,
                 eventClassId = classStart.eventClass.eventClassId.content,
                 name = teamStart.teamName.content,
