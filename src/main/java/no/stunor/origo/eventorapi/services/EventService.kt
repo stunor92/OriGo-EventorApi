@@ -112,13 +112,22 @@ class EventService {
         }
     }
 
-    fun download(eventorId: String, eventId: String, userId: String) {
+    fun downloadEvent(eventorId: String, eventId: String) {
+        val event = getEvent(eventorId = eventorId, eventId = eventId)
+        val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
+        if(existingEvent != null) {
+            event.id = existingEvent.id
+        }
+        eventRepository.save(event)
+    }
+
+    fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {
         val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
         var event = getEvent(eventorId = eventorId, eventId = eventId)
         authenticateEventOrganiser(event = event, persons = persons)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
         if(existingEvent != null) {
-            event.origoId = existingEvent.origoId
+            event.id = existingEvent.id
         }
         eventRepository.save(event)
         val competitors = getEntryList(eventorId = eventorId, eventId = eventId)
@@ -137,11 +146,11 @@ class EventService {
                 }
             }
         }
-        if (event.origoId == null){
+        if (event.id == null){
             event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: event
         }
 
-        event.origoId?.let { competitorsRepository.saveAll(it, result) }
+        event.id?.let { competitorsRepository.saveAll(it, result) }
 
     }
 
