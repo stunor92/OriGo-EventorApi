@@ -118,7 +118,7 @@ class EventService {
         authenticateEventOrganiser(event = event, persons = persons)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
         if(existingEvent != null) {
-            event.id = existingEvent.id
+            event.origoId = existingEvent.origoId
         }
         eventRepository.save(event)
         val competitors = getEntryList(eventorId = eventorId, eventId = eventId)
@@ -137,11 +137,11 @@ class EventService {
                 }
             }
         }
-        if (event.id == null){
+        if (event.origoId == null){
             event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: event
         }
 
-        event.id?.let { competitorsRepository.saveAll(it, result) }
+        event.origoId?.let { competitorsRepository.saveAll(it, result) }
 
     }
 

@@ -9,9 +9,8 @@ import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
 
 data class PersonCompetitor(
-        @JsonIgnore
         @DocumentId
-        override var id: String? = null,
+        override var origoId: String? = null,
         override var raceId: String = "",
         override var eventClassId: String = "",
         var personId: String? = null,
@@ -38,7 +37,7 @@ data class PersonCompetitor(
         }
 
         override fun hashCode(): Int {
-                var result = id?.hashCode() ?: 0
+                var result = origoId?.hashCode() ?: 0
                 result = 31 * result + raceId.hashCode()
                 result = 31 * result + eventClassId.hashCode()
                 result = 31 * result + (personId?.hashCode() ?: 0)

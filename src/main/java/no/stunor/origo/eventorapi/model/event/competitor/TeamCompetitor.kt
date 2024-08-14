@@ -6,9 +6,8 @@ import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 
 data class TeamCompetitor(
-        @JsonIgnore
         @DocumentId
-        override var id: String? = null,
+        override var origoId: String? = null,
         override var raceId: String = "",
         override var eventClassId: String = "",
         var organisations: List<SimpleOrganisation> = listOf(),
@@ -28,7 +27,7 @@ data class TeamCompetitor(
         }
 
         override fun hashCode(): Int {
-                var result = id?.hashCode() ?: 0
+                var result = origoId?.hashCode() ?: 0
                 result = 31 * result + raceId.hashCode()
                 result = 31 * result + eventClassId.hashCode()
                 result = 31 * result + organisations.hashCode()

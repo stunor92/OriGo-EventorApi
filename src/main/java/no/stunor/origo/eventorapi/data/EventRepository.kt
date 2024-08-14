@@ -25,10 +25,10 @@ class EventRepository {
     }
 
     fun save(event: Event) {
-        if(event.id == null) {
+        if(event.origoId == null) {
             firestore.collection("events").add(event)
         } else {
-            firestore.collection("events").document(event.id!!).set(event)
+            firestore.collection("events").document(event.origoId!!).set(event)
         }
     }
 }
