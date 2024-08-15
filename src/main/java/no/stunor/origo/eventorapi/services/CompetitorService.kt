@@ -6,14 +6,11 @@ import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.PersonRepository
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.services.converter.CompetitorConverter
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class CompetitorService{
-    private val log = LoggerFactory.getLogger(this.javaClass)
-
     @Autowired
     private lateinit var eventorRepository: EventorRepository
 

@@ -1,13 +1,13 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import com.google.cloud.Timestamp
-import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.competitor.*
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.Result
 import no.stunor.origo.eventorapi.model.event.competitor.SplitTime
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
-import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
+import no.stunor.origo.eventorapi.model.organisation.Organisation
+import org.iof.eventor.ResultList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.DateFormat
@@ -26,7 +26,7 @@ class ResultListConverter {
     private lateinit var organisationConverter: OrganisationConverter
 
     @Throws(NumberFormatException::class, ParseException::class)
-    fun convertEventResultList(resultList: org.iof.eventor.ResultList, eventor: Eventor): List<Competitor> {
+    fun convertEventResultList(resultList: ResultList): List<Competitor> {
         val competitorList: MutableList<Competitor> = mutableListOf()
 
 
@@ -38,15 +38,14 @@ class ResultListConverter {
                             competitorList.add(convertMultiDayPersonResult(
                                 classResult,
                                 personOrTeamResult,
-                                raceResult,
-                                eventor
+                                raceResult
                             ))
                         }
                     } else {
-                        competitorList.add(convertOneDayPersonResult(resultList.event,classResult, personOrTeamResult, eventor))
+                        competitorList.add(convertOneDayPersonResult(resultList.event,classResult, personOrTeamResult))
                     }
                 } else if (personOrTeamResult is org.iof.eventor.TeamResult) {
-                    competitorList.add(convertTeamResult(resultList.event, classResult, personOrTeamResult, eventor))
+                    competitorList.add(convertTeamResult(resultList.event, classResult, personOrTeamResult))
                 }
             }
         }
@@ -55,13 +54,13 @@ class ResultListConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertOneDayPersonResult(event: org.iof.eventor.Event, classResult: org.iof.eventor.ClassResult, personResult: org.iof.eventor.PersonResult, eventor: Eventor): PersonCompetitor {
+    private fun convertOneDayPersonResult(event: org.iof.eventor.Event, classResult: org.iof.eventor.ClassResult, personResult: org.iof.eventor.PersonResult): PersonCompetitor {
         return PersonCompetitor(
                 raceId = event.eventRace[0].eventRaceId.content,
                 eventClassId = classResult.eventClass.eventClassId.content,
                 personId = if(personResult.person.personId != null) personResult.person.personId.content else null,
                 name = personConverter.convertPersonName(personResult.person.personName),
-                organisation = organisationConverter.convertOrganisation(personResult.organisation, eventor),
+                organisation = organisationConverter.convertOrganisation(personResult.organisation),
                 birthYear = if(personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(0, 4).toInt() else null,
                 nationality = if(personResult.person.nationality != null) personResult.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personResult.person.sex),
@@ -79,15 +78,13 @@ class ResultListConverter {
     private fun convertMultiDayPersonResult(
         classResult: org.iof.eventor.ClassResult,
         personResult: org.iof.eventor.PersonResult,
-        raceResult: org.iof.eventor.RaceResult,
-        eventor: Eventor
-    ): Competitor {
+        raceResult: org.iof.eventor.RaceResult): Competitor {
         return PersonCompetitor(
                 raceId = raceResult.eventRaceId.content,
                 eventClassId = classResult.eventClass.eventClassId.content,
                 personId = if(personResult.person.personId != null) personResult.person.personId.content else null,
                 name = personConverter.convertPersonName(personResult.person.personName),
-                organisation = organisationConverter.convertOrganisation(personResult.organisation, eventor),
+                organisation = organisationConverter.convertOrganisation(personResult.organisation),
                 birthYear = if(personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(0, 4).toInt() else null,
                 nationality = if(personResult.person.nationality != null) personResult.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personResult.person.sex),
@@ -113,11 +110,15 @@ class ResultListConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertTeamResult(event: org.iof.eventor.Event, classResult: org.iof.eventor.ClassResult, teamResult: org.iof.eventor.TeamResult, eventor: Eventor): Competitor {
-        val organisations: MutableList<SimpleOrganisation> = ArrayList()
+    private fun convertTeamResult(
+        event: org.iof.eventor.Event,
+        classResult: org.iof.eventor.ClassResult,
+        teamResult: org.iof.eventor.TeamResult
+    ): Competitor {
+        val organisations: MutableList<Organisation> = ArrayList()
         for (organisation  in teamResult.organisationIdOrOrganisationOrCountryId) {
             if(organisation is org.iof.eventor.Organisation) {
-                organisationConverter.convertOrganisation(organisation, eventor)?.let { organisations.add(it) }
+                organisationConverter.convertOrganisation(organisation)?.let { organisations.add(it) }
             }
         }
         return TeamCompetitor(

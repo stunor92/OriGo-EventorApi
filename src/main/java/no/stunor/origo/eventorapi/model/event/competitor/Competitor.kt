@@ -5,7 +5,8 @@ import java.io.Serializable
 
 
 interface Competitor : Serializable {
-    var origoId: String?
+    var id: String?
+    var name: Any
     var raceId: String
     var eventClassId: String
     var bib: String?

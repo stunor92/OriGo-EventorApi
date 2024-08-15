@@ -1,12 +1,11 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import com.google.cloud.Timestamp
-import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
-import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import kotlin.collections.ArrayList
@@ -19,7 +18,7 @@ class StartListConverter {
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
 
-    fun convertEventStartList(startList: org.iof.eventor.StartList, eventor: Eventor): List<Competitor> {
+    fun convertEventStartList(startList: org.iof.eventor.StartList): List<Competitor> {
         val competitorList: MutableList<Competitor> = mutableListOf()
 
         for (classStart in startList.classStart) {
@@ -30,15 +29,14 @@ class StartListConverter {
                             competitorList.add(convertMultiDayPersonStart(
                                 classStart,
                                 personOrTeamStart,
-                                raceStart,
-                                eventor
+                                raceStart
                             ))
                         }
                     } else {
-                        competitorList.add(convertOneDayPersonStart(startList.event, classStart, personOrTeamStart, eventor))
+                        competitorList.add(convertOneDayPersonStart(startList.event, classStart, personOrTeamStart))
                     }
                 } else if (personOrTeamStart is org.iof.eventor.TeamStart) {
-                    competitorList.add(convertTeamStart(startList.event, classStart, personOrTeamStart, eventor))
+                    competitorList.add(convertTeamStart(startList.event, classStart, personOrTeamStart))
                 }
             }
         }
@@ -49,15 +47,14 @@ class StartListConverter {
     private fun convertMultiDayPersonStart(
         classStart: org.iof.eventor.ClassStart,
         personStart: org.iof.eventor.PersonStart,
-        raceStart: org.iof.eventor.RaceStart,
-        eventor: Eventor
+        raceStart: org.iof.eventor.RaceStart
     ): Competitor {
         return PersonCompetitor(
                 raceId = raceStart.eventRaceId.content,
                 eventClassId = classStart.eventClass.eventClassId.content,
                 personId = if(personStart.person.personId != null) personStart.person.personId.content else null,
                 name = personConverter.convertPersonName(personStart.person.personName),
-                organisation = organisationConverter.convertOrganisation(personStart.organisation, eventor),
+                organisation = organisationConverter.convertOrganisation(personStart.organisation),
                 birthYear = if(personStart.person.birthDate != null) personStart.person.birthDate.date.content.substring(0, 4).toInt() else null,
                 nationality = if(personStart.person.nationality != null) personStart.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personStart.person.sex),
@@ -71,13 +68,16 @@ class StartListConverter {
         )
     }
 
-    private fun convertOneDayPersonStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, personStart: org.iof.eventor.PersonStart, eventor: Eventor): Competitor {
+    private fun convertOneDayPersonStart(
+        event: org.iof.eventor.Event,
+        classStart: org.iof.eventor.ClassStart,
+        personStart: org.iof.eventor.PersonStart): Competitor {
         return PersonCompetitor(
                 raceId = event.eventRace[0].eventRaceId.content,
                 eventClassId = classStart.eventClass.eventClassId.content,
                 personId = if(personStart.person.personId != null) personStart.person.personId.content else null,
                 name = personConverter.convertPersonName(personStart.person.personName),
-                organisation = organisationConverter.convertOrganisation(personStart.organisation, eventor),
+                organisation = organisationConverter.convertOrganisation(personStart.organisation),
                 birthYear = if(personStart.person.birthDate != null) personStart.person.birthDate.date.content.substring(0, 4).toInt() else null,
                 nationality = if(personStart.person.nationality != null) personStart.person.nationality .country.alpha3.value else null,
                 gender = personConverter.convertGender(personStart.person.sex),
@@ -91,11 +91,11 @@ class StartListConverter {
         )
     }
 
-    private fun convertTeamStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, teamStart: org.iof.eventor.TeamStart, eventor: Eventor): TeamCompetitor {
-        val organisations: MutableList<SimpleOrganisation> = ArrayList()
+    private fun convertTeamStart(event: org.iof.eventor.Event, classStart: org.iof.eventor.ClassStart, teamStart: org.iof.eventor.TeamStart): TeamCompetitor {
+        val organisations: MutableList<Organisation> = ArrayList()
         for (organisation in teamStart.organisationIdOrOrganisationOrCountryId) {
             if (organisation is org.iof.eventor.Organisation) {
-                organisationConverter.convertOrganisation(organisation, eventor)?.let { organisations.add(it) }
+                organisationConverter.convertOrganisation(organisation)?.let { organisations.add(it) }
             }
         }
         return TeamCompetitor(

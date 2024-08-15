@@ -1403,7 +1403,7 @@
         <xs:element name="TimeBehind" minOccurs="0" maxOccurs="unbounded">
           <xs:annotation>
             <xs:documentation>
-              The time, in seconds, that the the team member is behind the winner. Fractions of seconds (e.g. 258.7) may be used if the time resolution is higher than one second.
+              The time, in seconds, that the team member is behind the winner. Fractions of seconds (e.g. 258.7) may be used if the time resolution is higher than one second.
             </xs:documentation>
           </xs:annotation>
           <xs:complexType mixed="false">

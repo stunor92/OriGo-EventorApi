@@ -13,10 +13,10 @@ class CompetitorRepository {
 
     fun saveAll(documentId: String, competitors: List<Competitor>) {
         for (competitor in competitors) {
-            if(competitor.origoId == null) {
+            if(competitor.id == null) {
                 firestore.collection("events").document(documentId).collection("competitors").add(competitor)
             } else {
-                firestore.collection("events").document(documentId).collection("competitors").document(competitor.origoId!!).set(competitor)
+                firestore.collection("events").document(documentId).collection("competitors").document(competitor.id!!).set(competitor)
             }
         }
     }

@@ -4,18 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
-import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
 
 data class PersonCompetitor(
+        @JsonIgnore
         @DocumentId
-        override var origoId: String? = null,
+        override var id: String? = null,
         override var raceId: String = "",
         override var eventClassId: String = "",
         var personId: String? = null,
-        var name: PersonName = PersonName(),
-        var organisation: SimpleOrganisation? = null,
+        override var name: Any = PersonName(),
+        var organisation: Organisation? = null,
         var birthYear: Int? = null,
         var nationality: String? = null,
         var gender: Gender = Gender.Other,
@@ -37,7 +38,7 @@ data class PersonCompetitor(
         }
 
         override fun hashCode(): Int {
-                var result = origoId?.hashCode() ?: 0
+                var result = id?.hashCode() ?: 0
                 result = 31 * result + raceId.hashCode()
                 result = 31 * result + eventClassId.hashCode()
                 result = 31 * result + (personId?.hashCode() ?: 0)

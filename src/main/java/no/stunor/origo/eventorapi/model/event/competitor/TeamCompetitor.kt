@@ -1,18 +1,17 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
-import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 
 data class TeamCompetitor(
         @DocumentId
-        override var origoId: String? = null,
+        override var id: String? = null,
         override var raceId: String = "",
         override var eventClassId: String = "",
-        var organisations: List<SimpleOrganisation> = listOf(),
+        var organisations: List<Organisation> = listOf(),
         var teamMembers: List<TeamMemberCompetitor> = listOf(),
-        var name: String = "",
+        override var name: Any = "",
         override var bib: String? = null,
         override var startTime: Timestamp? = null,
         override var finishTime: Timestamp? = null,
@@ -27,7 +26,7 @@ data class TeamCompetitor(
         }
 
         override fun hashCode(): Int {
-                var result = origoId?.hashCode() ?: 0
+                var result = id?.hashCode() ?: 0
                 result = 31 * result + raceId.hashCode()
                 result = 31 * result + eventClassId.hashCode()
                 result = 31 * result + organisations.hashCode()
