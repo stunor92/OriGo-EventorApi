@@ -141,7 +141,7 @@ class CalendarConverter {
                         }
 
                         if (entry.competitor.personId.content == person.personId) {
-                            raceMap[raceId]!!.userEntries.add(generateCompetitor(person = person, entry = entry, classStart = null, start = null, classResult = null, result = null, eventClassList = eventClassMap[raceId]))
+                            raceMap[raceId]!!.userEntries.add(generateCompetitor(eventor = eventor, person = person, entry = entry, classStart = null, start = null, classResult = null, result = null, eventClassList = eventClassMap[raceId]))
                         }
                         if(raceMap[raceId]!!.userEntries.isNotEmpty()){
                             raceMap[raceId]!!.signedUp = true
@@ -170,11 +170,11 @@ class CalendarConverter {
                 for (classStart in startList.classStart) {
                     for (start in classStart.personStartOrTeamStart) {
                         if (raceMap[raceId]!!.userEntries.isEmpty()) {
-                            raceMap[raceId]!!.userEntries.add(generateCompetitor(person, null, classStart, start, null, null, null))
+                            raceMap[raceId]!!.userEntries.add(generateCompetitor(eventor, person, null, classStart, start, null, null, null))
                         } else {
                             val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
                             raceMap[raceId]!!.userEntries.removeAt(0)
-                            raceMap[raceId]!!.userEntries.add(updateUserStart(person, userEntry, classStart, start))
+                            raceMap[raceId]!!.userEntries.add(updateUserStart(eventor, person, userEntry, classStart, start))
                         }
                     }
                 }
@@ -192,11 +192,11 @@ class CalendarConverter {
                                         raceMap[raceId] = generateRace(eventor = eventor, event = startList.event, eventRace = race, competitorCountList = null)
                                     }
                                     if (raceMap[raceId]!!.userEntries.isEmpty()) {
-                                        raceMap[raceId]!!.userEntries.add(generateCompetitor(person, null, classStart, start, null, null, null))
+                                        raceMap[raceId]!!.userEntries.add(generateCompetitor(eventor, person, null, classStart, start, null, null, null))
                                     } else {
                                         val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
                                         raceMap[raceId]!!.userEntries.removeAt(0)
-                                        raceMap[raceId]!!.userEntries.add(updateUserStart(person, userEntry, classStart, start))
+                                        raceMap[raceId]!!.userEntries.add(updateUserStart(eventor, person, userEntry, classStart, start))
                                     }
                                     if(raceMap[raceId]!!.userEntries.isNotEmpty()){
                                         raceMap[raceId]!!.signedUp = true
@@ -227,7 +227,7 @@ class CalendarConverter {
                 for (classResult in resultList.classResult) {
                     for (result in classResult.personResultOrTeamResult) {
                         if (raceMap[raceId]!!.userEntries.isEmpty()) {
-                            raceMap[raceId]!!.userEntries.add(generateCompetitor(person, null, null, null, classResult, result, null))
+                            raceMap[raceId]!!.userEntries.add(generateCompetitor(eventor, person, null, null, null, classResult, result, null))
                         } else {
                             val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
                             val personStart = raceMap[raceId]!!.userEntries[0].personStart
@@ -252,7 +252,7 @@ class CalendarConverter {
                                         raceMap[raceId] = generateRace(eventor = eventor, event = resultList.event, eventRace = race, competitorCountList = null)
                                     }
                                     if (raceMap[raceId]!!.userEntries.isEmpty()) {
-                                        raceMap[raceId]!!.userEntries.add(generateCompetitor(person, null, null, null, classResult, result, null))
+                                        raceMap[raceId]!!.userEntries.add(generateCompetitor(eventor, person, null, null, null, classResult, result, null))
                                     } else {
                                         val userEntry = raceMap[raceId]!!.userEntries[0].personEntry
                                         val personStart = raceMap[raceId]!!.userEntries[0].personStart
@@ -274,25 +274,25 @@ class CalendarConverter {
         return raceMap
     }
 
-    private fun generateCompetitor(person: Person, entry: org.iof.eventor.Entry?, classStart: org.iof.eventor.ClassStart?, start: Any?, classResult: org.iof.eventor.ClassResult?, result: Any?, eventClassList: org.iof.eventor.EventClassList?): CalendarCompetitor {
+    private fun generateCompetitor(eventor: Eventor, person: Person, entry: org.iof.eventor.Entry?, classStart: org.iof.eventor.ClassStart?, start: Any?, classResult: org.iof.eventor.ClassResult?, result: Any?, eventClassList: org.iof.eventor.EventClassList?): CalendarCompetitor {
         return CalendarCompetitor(
                 person.personId,
                 person.name,
                 if (entry != null) createUserEntry(entry, eventClassList) else null,
-                if (start != null && start is org.iof.eventor.PersonStart && classStart != null) createPersonStart(start, classStart) else null,
-                if (start != null && start is org.iof.eventor.TeamStart && classStart != null) createTeamStart(start, classStart) else null,
+                if (start != null && start is org.iof.eventor.PersonStart && classStart != null) createPersonStart(eventor, start, classStart) else null,
+                if (start != null && start is org.iof.eventor.TeamStart && classStart != null) createTeamStart(eventor, start, classStart) else null,
                 if (result != null && result is org.iof.eventor.PersonResult && classResult != null) createPersonResult(result, classResult) else null,
                 if (result != null && result is org.iof.eventor.TeamResult && classResult != null) createTeamResult(result, classResult) else null
         )
     }
 
-    private fun updateUserStart(person: Person, userEntry: CalendarEntry?, classStart: org.iof.eventor.ClassStart, start: Any?): CalendarCompetitor {
+    private fun updateUserStart(eventor: Eventor, person: Person, userEntry: CalendarEntry?, classStart: org.iof.eventor.ClassStart, start: Any?): CalendarCompetitor {
         return CalendarCompetitor(
                 person.personId,
                 person.name,
                 userEntry,
-                if (start != null && start is org.iof.eventor.PersonStart) createPersonStart(start, classStart) else null,
-                if (start != null && start is org.iof.eventor.TeamStart) createTeamStart(start, classStart) else null,
+                if (start != null && start is org.iof.eventor.PersonStart) createPersonStart(eventor, start, classStart) else null,
+                if (start != null && start is org.iof.eventor.TeamStart) createTeamStart(eventor, start, classStart) else null,
                 null,
                 null)
     }
@@ -315,7 +315,7 @@ class CalendarConverter {
                 if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(entry.competitor.cCard[0]) else null)
     }
 
-    private fun createPersonStart(personStart: org.iof.eventor.PersonStart, classStart: org.iof.eventor.ClassStart): CalendarPersonStart {
+    private fun createPersonStart(eventor: Eventor, personStart: org.iof.eventor.PersonStart, classStart: org.iof.eventor.ClassStart): CalendarPersonStart {
         val start: org.iof.eventor.Start = if (personStart.start != null) {
             personStart.start
         } else {
@@ -323,16 +323,16 @@ class CalendarConverter {
         }
 
         return CalendarPersonStart(
-                if (start.startTime != null) competitorConverter.convertStartTime(start.startTime) else null,
+                if (start.startTime != null) competitorConverter.convertStartTime(start.startTime, eventor) else null,
                 if (start.bibNumber != null) start.bibNumber.content else null,
                 eventClassConverter.convertEventClass(classStart.eventClass)
         )
     }
 
-    private fun createTeamStart(teamStart: org.iof.eventor.TeamStart, classStart: org.iof.eventor.ClassStart): CalendarTeamStart {
+    private fun createTeamStart(eventor: Eventor, teamStart: org.iof.eventor.TeamStart, classStart: org.iof.eventor.ClassStart): CalendarTeamStart {
         return CalendarTeamStart(
                 teamStart.teamName.content,
-                if (teamStart.startTime != null) competitorConverter.convertStartTime(teamStart.startTime) else null,
+                if (teamStart.startTime != null) competitorConverter.convertStartTime(teamStart.startTime, eventor) else null,
                 if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
                 teamStart.teamMemberStart[0].leg.toInt(),
                 eventClassConverter.convertEventClass(classStart.eventClass)
