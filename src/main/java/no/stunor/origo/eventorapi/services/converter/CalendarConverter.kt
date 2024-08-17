@@ -342,7 +342,7 @@ class CalendarConverter {
     private fun createPersonResult(personResult: org.iof.eventor.PersonResult, classResult: org.iof.eventor.ClassResult): CalendarPersonResult? {
         val result: org.iof.eventor.Result? = if (personResult.result != null && personResult.result.competitorStatus.value != "Inactive") {
             personResult.result
-        } else if (personResult.raceResult[0] != null && personResult.raceResult[0].result.competitorStatus.value != "Inactive") {
+        } else if (!personResult.raceResult.isNullOrEmpty() && personResult.raceResult[0].result.competitorStatus.value != "Inactive") {
             personResult.raceResult[0].result
         } else{
             null
