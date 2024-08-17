@@ -339,23 +339,28 @@ class CalendarConverter {
         )
     }
 
-    private fun createPersonResult(personResult: org.iof.eventor.PersonResult, classResult: org.iof.eventor.ClassResult): CalendarPersonResult {
-        val result: org.iof.eventor.Result = if (personResult.result != null) {
+    private fun createPersonResult(personResult: org.iof.eventor.PersonResult, classResult: org.iof.eventor.ClassResult): CalendarPersonResult? {
+        val result: org.iof.eventor.Result? = if (personResult.result != null && personResult.result.competitorStatus.value != "Inactive") {
             personResult.result
-        } else {
+        } else if (personResult.raceResult[0] != null && personResult.raceResult[0].result.competitorStatus.value != "Inactive") {
             personResult.raceResult[0].result
+        } else{
+            null
         }
 
-        return CalendarPersonResult(
+        if (result != null) {
+            return CalendarPersonResult(
                 result = Result(
-                        time = if (result.time != null) competitorConverter.convertTimeSec(result.time.content) else null,
-                        timeBehind = if (result.timeDiff != null) competitorConverter.convertTimeSec(result.timeDiff.content) else null,
-                        position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
-                        status = ResultStatus.valueOf(result.competitorStatus.value),
+                    time = if (result.time != null) competitorConverter.convertTimeSec(result.time.content) else null,
+                    timeBehind = if (result.timeDiff != null) competitorConverter.convertTimeSec(result.timeDiff.content) else null,
+                    position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
+                    status = ResultStatus.valueOf(result.competitorStatus.value),
                 ),
                 bib = if (result.bibNumber != null) result.bibNumber.content else null,
                 eventClass = eventClassConverter.convertEventClass(classResult.eventClass)
-        )
+            )
+        }
+        return null
     }
 
     private fun createTeamResult(teamResult: org.iof.eventor.TeamResult, classResult: org.iof.eventor.ClassResult): CalendarTeamResult {
