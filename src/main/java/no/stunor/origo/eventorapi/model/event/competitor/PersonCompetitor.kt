@@ -22,6 +22,7 @@ data class PersonCompetitor(
         var gender: Gender = Gender.Other,
         var punchingUnit: PunchingUnit? = null,
         override var bib: String? = null,
+        override var status: CompetitorStatus,
         override var startTime: Timestamp? = null,
         override var finishTime: Timestamp? = null,
         var result: Result? = null,

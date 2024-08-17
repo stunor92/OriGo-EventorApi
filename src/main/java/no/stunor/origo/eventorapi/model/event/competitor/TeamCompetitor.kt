@@ -13,6 +13,7 @@ data class TeamCompetitor(
         var teamMembers: List<TeamMemberCompetitor> = listOf(),
         override var name: Any = "",
         override var bib: String? = null,
+        override var status: CompetitorStatus,
         override var startTime: Timestamp? = null,
         override var finishTime: Timestamp? = null,
         var result: Result? = null,

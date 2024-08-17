@@ -10,6 +10,7 @@ interface Competitor : Serializable {
     var raceId: String
     var eventClassId: String
     var bib: String?
+    var status: CompetitorStatus
     var startTime: Timestamp?
     var finishTime: Timestamp?
 }

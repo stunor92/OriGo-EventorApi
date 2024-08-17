@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.services.converter
 
-import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.competitor.*
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
@@ -72,6 +71,7 @@ class ResultListConverter {
                 gender = personConverter.convertGender(personResult.person.sex),
                 punchingUnit = null,
                 bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
+                status = CompetitorStatus.Finished,
                 startTime = if (personResult.result.startTime != null) competitorConverter.convertStartTime(personResult.result.startTime, eventor) else null,
                 finishTime = if (personResult.result.finishTime != null) competitorConverter.convertFinishTime(personResult.result.finishTime, eventor) else null,
                 result = convertPersonResult(personResult.result),
@@ -97,6 +97,7 @@ class ResultListConverter {
                 gender = personConverter.convertGender(personResult.person.sex),
                 punchingUnit = null,
                 bib = if (personResult.result?.bibNumber != null) personResult.result.bibNumber.content else null,
+                status = CompetitorStatus.Finished,
                 startTime = if (personResult.result?.startTime != null) competitorConverter.convertStartTime(raceResult.result.startTime, eventor) else null,
                 finishTime = if (raceResult.result?.finishTime != null) competitorConverter.convertFinishTime(raceResult.result.finishTime, eventor) else null,
                 result = convertPersonResult(raceResult.result),
@@ -107,7 +108,7 @@ class ResultListConverter {
 
     @Throws(NumberFormatException::class, ParseException::class)
     fun convertPersonResult(result: org.iof.eventor.Result?): Result? {
-        if(result == null)
+        if(result == null || result.competitorStatus.value == "Inactive")
             return null
         return Result(
                 if (result.time != null) convertTimeSec(result.time.content) else null,
@@ -136,6 +137,7 @@ class ResultListConverter {
                 organisations = organisations,
                 teamMembers = convertTeamMembers(eventor, teamResult.teamMemberResult),
                 bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
+                status = CompetitorStatus.Finished,
                 startTime = if (teamResult.startTime != null) competitorConverter.convertStartTime(teamResult.startTime, eventor) else null,
                 finishTime = if (teamResult.finishTime != null) competitorConverter.convertFinishTime(teamResult.finishTime, eventor) else null,
                 result = convertTeamResult(teamResult),
@@ -190,7 +192,9 @@ class ResultListConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    fun convertTeamResult(teamResult: org.iof.eventor.TeamResult): Result {
+    fun convertTeamResult(teamResult: org.iof.eventor.TeamResult): Result? {
+        if(teamResult.teamStatus == null ||  teamResult.teamStatus.value == "Inactive")
+            return null
         return Result(
                 if (teamResult.time != null) convertTimeSec(teamResult.time.content) else null,
                 if (teamResult.timeDiff != null) convertTimeSec(teamResult.timeDiff.content) else null,
