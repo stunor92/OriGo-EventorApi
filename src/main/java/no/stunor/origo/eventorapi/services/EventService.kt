@@ -6,8 +6,12 @@ import no.stunor.origo.eventorapi.data.*
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
+import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
+import no.stunor.origo.eventorapi.model.event.entrylist.CompetitorEntry
+import no.stunor.origo.eventorapi.model.event.resultlist.CompetitorResult
+import no.stunor.origo.eventorapi.model.event.startlist.CompetitorStart
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
@@ -86,19 +90,19 @@ class EventService {
         return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor)
     }
 
-    fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
+    fun getEntryList(eventorId: String, eventId: String): List<CompetitorEntry> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val entryList = eventorService.getEventEntryList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EntryListNotFoundException()
         return entryListConverter.convertEventEntryList(entryList)
     }
 
-    fun getStartList(eventorId: String, eventId: String): List<Competitor> {
+    fun getStartList(eventorId: String, eventId: String): List<CompetitorStart> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val startList = eventorService.getEventStartList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw StartListNotFoundException()
         return startListConverter.convertEventStartList(eventor, startList)
     }
 
-    fun getResultList(eventorId: String, eventId: String): List<Competitor> {
+    fun getResultList(eventorId: String, eventId: String): List<CompetitorResult> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val resultList = eventorService.getEventResultList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw ResultListNotFoundException()
         try {
@@ -130,7 +134,7 @@ class EventService {
         existingCompetitors.addAll(competitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId))
 
         val result: MutableList<Competitor> = mutableListOf()
-        for (competitor in competitors){
+        /*for (competitor in competitors){
             if(competitor is PersonCompetitor) {
                 if (!existingCompetitors.contains(competitor)) {
                     result.add(competitor)
@@ -141,6 +145,7 @@ class EventService {
                 }
             }
         }
+        */
         if (event.id == null){
             event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: event
         }

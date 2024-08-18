@@ -4,8 +4,12 @@ import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
+import no.stunor.origo.eventorapi.model.event.entrylist.CompetitorEntry
+import no.stunor.origo.eventorapi.model.event.resultlist.CompetitorResult
+import no.stunor.origo.eventorapi.model.event.startlist.CompetitorStart
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.*
+import org.iof.eventor.Start
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -110,7 +114,7 @@ internal class EventorApiController {
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/entrylist")
-    fun getEventEntryList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<Competitor>> {
+    fun getEventEntryList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<CompetitorEntry>> {
         return ResponseEntity(
                 eventService.getEntryList(
                         eventorId = eventorId,
@@ -121,7 +125,7 @@ internal class EventorApiController {
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/startlist")
-    fun getEventStartList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<Competitor>> {
+    fun getEventStartList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<CompetitorStart>> {
         return ResponseEntity(
                 eventService.getStartList(
                         eventorId = eventorId,
@@ -132,7 +136,7 @@ internal class EventorApiController {
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/resultlist")
-    fun getEventResultList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<Competitor>> {
+    fun getEventResultList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<CompetitorResult>> {
         return ResponseEntity(
                 eventService.getResultList(
                         eventorId = eventorId,

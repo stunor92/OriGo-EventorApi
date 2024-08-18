@@ -1,14 +1,12 @@
 package no.stunor.origo.eventorapi.services.converter
 
-import no.stunor.origo.eventorapi.model.event.competitor.Competitor
-import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
-import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
-import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
-import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
+import no.stunor.origo.eventorapi.model.event.entrylist.CompetitorEntry
+import no.stunor.origo.eventorapi.model.event.entrylist.PersonEntry
+import no.stunor.origo.eventorapi.model.event.entrylist.TeamEntry
+import no.stunor.origo.eventorapi.model.event.entrylist.TeamMemberEntry
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import kotlin.collections.ArrayList
 
 @Component
 class EntryListConverter {
@@ -21,8 +19,8 @@ class EntryListConverter {
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
 
-    fun convertEventEntryList(entryList: org.iof.eventor.EntryList): List<Competitor> {
-        val result: MutableList<Competitor> = mutableListOf()
+    fun convertEventEntryList(entryList: org.iof.eventor.EntryList): List<CompetitorEntry> {
+        val result: MutableList<CompetitorEntry> = mutableListOf()
 
         for (entry in entryList.entry) {
             if (entry.competitor != null) {
@@ -34,12 +32,12 @@ class EntryListConverter {
         return result
     }
 
-    private fun convertPersonEventEntries(entry: org.iof.eventor.Entry): List<Competitor> {
-        val result: MutableList<Competitor> = mutableListOf()
+    private fun convertPersonEventEntries(entry: org.iof.eventor.Entry): List<CompetitorEntry> {
+        val result: MutableList<CompetitorEntry> = mutableListOf()
 
         for (raceId in entry.eventRaceId) {
             result.add(
-                PersonCompetitor(
+                PersonEntry(
                     raceId = raceId.content,
                     eventClassId = entry.entryClass[0].eventClassId.content,
                     personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
@@ -54,12 +52,6 @@ class EntryListConverter {
                     punchingUnit = if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(
                         entry.competitor.cCard[0]
                     ) else null,
-                    bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
-                    status = CompetitorStatus.SignedUp,
-                    startTime = null,
-                    finishTime = null,
-                    result = null,
-                    splitTimes = listOf(),
                     entryFeeIds = if (entry.entryEntryFee != null) convertEntryFees(
                         entry.entryEntryFee,
                         null
@@ -71,22 +63,17 @@ class EntryListConverter {
     }
 
 
-    private fun convertTeamEventEntries(entry: org.iof.eventor.Entry): List<Competitor> {
-        val result: MutableList<Competitor> = mutableListOf()
+    private fun convertTeamEventEntries(entry: org.iof.eventor.Entry): List<CompetitorEntry> {
+        val result: MutableList<CompetitorEntry> = mutableListOf()
 
         for (race in entry.teamCompetitor[0].entryEntryFee) {
             result.add(
-                TeamCompetitor(
+                TeamEntry(
                     raceId = race.eventRaceId,
                     eventClassId = entry.entryClass[0].eventClassId.content,
                     name = entry.teamName.content,
                     organisations = convertTeamOrganisations(entry.teamCompetitor),
-                    bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
-                    status = CompetitorStatus.SignedUp,
-                    teamMembers = convertTeamMembers(entry.teamCompetitor, race.eventRaceId),
-                    startTime = null,
-                    finishTime = null,
-                    result = null,
+                    teamMembers = convertTeamMembers(entry.teamCompetitor, race.eventRaceId)
                 )
             )
 
@@ -115,8 +102,8 @@ class EntryListConverter {
     private fun convertTeamMembers(
         teamMembers: List<org.iof.eventor.TeamCompetitor>,
         raceId: String
-    ): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = ArrayList()
+    ): List<TeamMemberEntry> {
+        val result: MutableList<TeamMemberEntry> = ArrayList()
         for (teamMember in teamMembers) {
             result.add(convertTeamMember(teamMember, raceId))
         }
@@ -132,8 +119,8 @@ class EntryListConverter {
         return result
     }
 
-    private fun convertTeamMember(teamMember: org.iof.eventor.TeamCompetitor, raceId: String): TeamMemberCompetitor {
-        return TeamMemberCompetitor(
+    private fun convertTeamMember(teamMember: org.iof.eventor.TeamCompetitor, raceId: String): TeamMemberEntry {
+        return TeamMemberEntry(
             personId = if (teamMember.person != null && teamMember.person.personId != null) teamMember.person.personId.content else null,
             name = if (teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
             birthYear = if (teamMember.person != null && teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(
@@ -146,16 +133,10 @@ class EntryListConverter {
                 teamMember.cCard[0]
             ) else null,
             leg = teamMember.teamSequence.content.toInt(),
-            startTime = null,
-            finishTime = null,
-            legResult = null,
-            overallResult = null,
-            splitTimes = listOf(),
             entryFeeIds = if (teamMember.entryEntryFee != null) convertEntryFees(
                 teamMember.entryEntryFee,
                 raceId
             ) else listOf()
-
         )
     }
 }
