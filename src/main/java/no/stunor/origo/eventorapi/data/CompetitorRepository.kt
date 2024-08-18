@@ -22,7 +22,7 @@ class CompetitorRepository {
         }
     }
 
-    fun findAllByEventIdAndEventorId(eventId: String, eventorId: String): List<EventorCompetitor> {
+    fun findAllByEventIdAndEventorId(eventId: String, eventorId: String): List<Competitor> {
         val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
             .document(eventId)
             .collection("competitors")
@@ -32,10 +32,10 @@ class CompetitorRepository {
 
         val documents = future.get().documents
 
-        val result: MutableList<EventorCompetitor> = mutableListOf()
+        val result: MutableList<Competitor> = mutableListOf()
 
         for (document in documents) {
-            result.add(document.toObject(EventorCompetitor::class.java))
+            result.add(document.toObject(Competitor::class.java))
         }
         return result.toList()
     }

@@ -149,6 +149,7 @@ internal class EventorApiController {
 
     @GetMapping("/event/{eventorId}/{eventId}/competitors/download")
     fun downloadCompetitors(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String, @RequestHeader(value = "userId") userId: String) {
+        eventService.downloadEvent(eventorId, eventId)
         eventService.downloadCompetitors(eventorId, eventId, userId)
     }
 }
