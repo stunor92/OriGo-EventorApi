@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture
 import com.google.cloud.firestore.QuerySnapshot
 import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorCompetitor
 import org.springframework.stereotype.Repository
 
 
@@ -21,7 +22,7 @@ class CompetitorRepository {
         }
     }
 
-    fun findAllByEventIdAndEventorId(eventId: String, eventorId: String): List<Competitor> {
+    fun findAllByEventIdAndEventorId(eventId: String, eventorId: String): List<EventorCompetitor> {
         val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
             .document(eventId)
             .collection("competitors")
@@ -31,10 +32,10 @@ class CompetitorRepository {
 
         val documents = future.get().documents
 
-        val result: MutableList<Competitor> = mutableListOf()
+        val result: MutableList<EventorCompetitor> = mutableListOf()
 
         for (document in documents) {
-            result.add(document.toObject(Competitor::class.java))
+            result.add(document.toObject(EventorCompetitor::class.java))
         }
         return result.toList()
     }

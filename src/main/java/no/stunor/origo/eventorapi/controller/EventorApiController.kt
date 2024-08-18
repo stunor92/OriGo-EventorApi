@@ -3,13 +3,9 @@ package no.stunor.origo.eventorapi.controller
 import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
-import no.stunor.origo.eventorapi.model.event.competitor.Competitor
-import no.stunor.origo.eventorapi.model.event.entrylist.CompetitorEntry
-import no.stunor.origo.eventorapi.model.event.resultlist.CompetitorResult
-import no.stunor.origo.eventorapi.model.event.startlist.CompetitorStart
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorCompetitor
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.*
-import org.iof.eventor.Start
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -38,13 +34,13 @@ internal class EventorApiController {
     fun authenticate(@PathVariable(value = "eventorId") eventorId: String, @RequestHeader(value = "username") username: String, @RequestHeader(value = "password") password: String, @RequestHeader(value = "userId") userId: String): ResponseEntity<Person> {
         log.info("Start authenticating user {}.", username)
         return ResponseEntity(
-                authService.authenticate(
-                        eventorId =eventorId,
-                        username = username,
-                        password = password,
-                        userId = userId
-                )
-                , HttpStatus.OK
+            authService.authenticate(
+                eventorId =eventorId,
+                username = username,
+                password = password,
+                userId = userId
+            )
+            , HttpStatus.OK
         )
     }
 
@@ -52,15 +48,15 @@ internal class EventorApiController {
     fun getEventList(@PathVariable("eventorId") eventorId: String, @RequestParam("from") from: LocalDate, @RequestParam("to") to: LocalDate, @RequestParam(value = "organisations", required = false) organisations: List<String>?, @RequestParam(value = "classifications", required = false) classifications: List<EventClassificationEnum>?, @RequestHeader("userId") userId: String): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from eventor-{}.", eventorId)
         return ResponseEntity(
-                calendarService.getEventList(
-                        eventorId = eventorId,
-                        from = from,
-                        to = to,
-                        organisations = organisations,
-                        classifications = classifications,
-                        userId = userId
-                ),
-                HttpStatus.OK
+            calendarService.getEventList(
+                eventorId = eventorId,
+                from = from,
+                to = to,
+                organisations = organisations,
+                classifications = classifications,
+                userId = userId
+            ),
+            HttpStatus.OK
         )
     }
 
@@ -68,13 +64,13 @@ internal class EventorApiController {
     fun getEventList(@RequestParam("from") from: LocalDate, @RequestParam("to") to: LocalDate, @RequestParam(value = "classifications", required = false) classifications: List<EventClassificationEnum>?, @RequestHeader("userId") userId: String): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from all eventors.")
         return ResponseEntity(
-                calendarService.getEventList(
-                        from = from,
-                        to = to,
-                        classifications = classifications,
-                        userId = userId
-                ),
-                HttpStatus.OK
+            calendarService.getEventList(
+                from = from,
+                to = to,
+                classifications = classifications,
+                userId = userId
+            ),
+            HttpStatus.OK
         )
     }
 
@@ -82,10 +78,10 @@ internal class EventorApiController {
     fun getUserEntries(@RequestHeader("userId") userId: String): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get personal events for user {}.", userId)
         return ResponseEntity(
-                calendarService.getEventList(
-                        userId = userId
-                ),
-                HttpStatus.OK
+            calendarService.getEventList(
+                userId = userId
+            ),
+            HttpStatus.OK
         )
     }
 
@@ -93,56 +89,56 @@ internal class EventorApiController {
     @GetMapping("/event/{eventorId}/{eventId}")
     fun getEvent(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<Event> {
         return ResponseEntity(
-                eventService.getEvent(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
+            eventService.getEvent(
+                eventorId = eventorId,
+                eventId = eventId
+            ),
+            HttpStatus.OK
         )
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/competitors/{userId}")
-    fun getEvent(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String, @PathVariable("userId") userId: String): ResponseEntity<List<Competitor>> {
+    fun getEvent(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String, @PathVariable("userId") userId: String): ResponseEntity<List<EventorCompetitor>> {
         return ResponseEntity(
-                competitorService.getCompetitors(
-                        eventorId = eventorId,
-                        eventId = eventId,
-                        userId = userId
-                ),
-                HttpStatus.OK
+            competitorService.getCompetitors(
+                eventorId = eventorId,
+                eventId = eventId,
+                userId = userId
+            ),
+            HttpStatus.OK
         )
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/entrylist")
-    fun getEventEntryList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<CompetitorEntry>> {
+    fun getEventEntryList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<EventorCompetitor>> {
         return ResponseEntity(
-                eventService.getEntryList(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
+            eventService.getEntryList(
+                eventorId = eventorId,
+                eventId = eventId
+            ),
+            HttpStatus.OK
         )
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/startlist")
-    fun getEventStartList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<CompetitorStart>> {
+    fun getEventStartList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<EventorCompetitor>> {
         return ResponseEntity(
-                eventService.getStartList(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
+            eventService.getStartList(
+                eventorId = eventorId,
+                eventId = eventId
+            ),
+            HttpStatus.OK
         )
     }
 
     @GetMapping("/event/{eventorId}/{eventId}/resultlist")
-    fun getEventResultList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<CompetitorResult>> {
+    fun getEventResultList(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String): ResponseEntity<List<EventorCompetitor>> {
         return ResponseEntity(
-                eventService.getResultList(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
+            eventService.getResultList(
+                eventorId = eventorId,
+                eventId = eventId
+            ),
+            HttpStatus.OK
         )
     }
 

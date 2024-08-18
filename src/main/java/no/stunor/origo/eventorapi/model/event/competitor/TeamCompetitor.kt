@@ -2,6 +2,9 @@ package no.stunor.origo.eventorapi.model.event.competitor
 
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorTeamCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorTeamMemberCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 
 data class TeamCompetitor(
@@ -10,7 +13,7 @@ data class TeamCompetitor(
         override var raceId: String = "",
         override var eventClassId: String = "",
         var organisations: List<Organisation> = listOf(),
-        var teamMembers: List<TeamMemberCompetitor> = listOf(),
+        var teamMembers: List<EventorTeamMemberCompetitor> = listOf(),
         override var name: Any = "",
         override var bib: String? = null,
         override var status: CompetitorStatus,
@@ -19,7 +22,7 @@ data class TeamCompetitor(
         var result: Result? = null,
 ) : Competitor {
         override fun equals(other: Any?): Boolean {
-                return if(other is TeamCompetitor){
+                return if(other is EventorTeamCompetitor){
                         raceId == other.raceId && name == other.name
                 } else{
                         false

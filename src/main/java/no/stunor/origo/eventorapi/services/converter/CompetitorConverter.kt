@@ -6,6 +6,10 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.event.PunchingUnitType
 import no.stunor.origo.eventorapi.model.event.competitor.*
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorPersonCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorTeamCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorTeamMemberCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Person
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,8 +35,8 @@ class CompetitorConverter {
         eventor: Eventor,
         resultListList: org.iof.eventor.ResultListList,
         person: Person
-    ): List<Competitor> {
-        val competitors: MutableList<Competitor> = mutableListOf()
+    ): List<EventorCompetitor> {
+        val competitors: MutableList<EventorCompetitor> = mutableListOf()
         for (resultList in resultListList.resultList) {
             if (resultList.event.eventRace.size == 1) {
                 val race = resultList.event.eventRace[0]
@@ -40,7 +44,7 @@ class CompetitorConverter {
                     for (result in classResult.personResultOrTeamResult) {
                         if (result is org.iof.eventor.PersonResult && result.person.personId.content == person.personId) {
                             competitors.add(
-                                PersonCompetitor(
+                                EventorPersonCompetitor(
                                     raceId = race.eventRaceId.content,
                                     eventClassId = classResult.eventClass.eventClassId.content,
                                     personId = person.personId,
@@ -54,7 +58,6 @@ class CompetitorConverter {
                                     gender = personConverter.convertGender(result.person.sex),
                                     punchingUnit = null,
                                     bib = null,
-                                    status = CompetitorStatus.Finished,
                                     startTime = if (result.result.startTime != null) convertStartTime(
                                         result.result.startTime,
                                         eventor
@@ -69,13 +72,12 @@ class CompetitorConverter {
                                         time = if (result.result.time != null) convertTimeSec(result.result.time.content) else null,
                                         timeBehind = if (result.result.timeDiff != null) convertTimeSec(result.result.timeDiff.content) else null
                                     ),
-                                    splitTimes = listOf(),
-                                    entryFeeIds = listOf()
+                                    splitTimes = listOf()
                                 )
                             )
                         } else if (result is org.iof.eventor.TeamResult) {
                             competitors.add(
-                                TeamCompetitor(
+                                EventorTeamCompetitor(
                                     raceId = race.eventRaceId.content,
                                     eventClassId = classResult.eventClass.eventClassId.content,
                                     name = result.teamName.content,
@@ -84,7 +86,6 @@ class CompetitorConverter {
                                         eventor
                                     ),
                                     bib = null,
-                                    status = CompetitorStatus.Finished,
                                     startTime = if (result.startTime != null) convertStartTime(
                                         result.startTime,
                                         eventor
@@ -112,7 +113,7 @@ class CompetitorConverter {
                         if (result is org.iof.eventor.PersonResult && result.person.personId.content == person.personId) {
                             for (raceResult in result.raceResult) {
                                 competitors.add(
-                                    PersonCompetitor(
+                                    EventorPersonCompetitor(
                                         raceId = raceResult.eventRaceId.content,
                                         eventClassId = classResult.eventClass.eventClassId.content,
                                         personId = person.personId,
@@ -126,7 +127,6 @@ class CompetitorConverter {
                                         gender = personConverter.convertGender(result.person.sex),
                                         punchingUnit = null,
                                         bib = null,
-                                        status = CompetitorStatus.Finished,
                                         startTime = if (raceResult.result?.startTime != null) convertStartTime(
                                             raceResult.result.startTime,
                                             eventor
@@ -143,8 +143,7 @@ class CompetitorConverter {
                                                 raceResult.result.timeDiff.content
                                             ) else null
                                         ),
-                                        splitTimes = listOf(),
-                                        entryFeeIds = listOf()
+                                        splitTimes = listOf()
                                     )
                                 )
                             }
@@ -160,11 +159,11 @@ class CompetitorConverter {
     private fun convertTeamMemberResults(
         eventor: Eventor,
         teamMembers: List<org.iof.eventor.TeamMemberResult>
-    ): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = mutableListOf()
+    ): List<EventorTeamMemberCompetitor> {
+        val result: MutableList<EventorTeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
             result.add(
-                TeamMemberCompetitor(
+                EventorTeamMemberCompetitor(
                     personId = teamMember.person.personId.content,
                     name = personConverter.convertPersonName(teamMember.person.personName),
                     birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
@@ -192,8 +191,7 @@ class CompetitorConverter {
                         time = if (teamMember.overallResult.time != null) convertTimeSec(teamMember.overallResult.time.content) else null,
                         timeBehind = if (teamMember.overallResult.timeDiff != null) convertTimeSec(teamMember.overallResult.timeDiff.content) else null
                     ),
-                    splitTimes = listOf(),
-                    entryFeeIds = listOf()
+                    splitTimes = listOf()
                 )
             )
         }
@@ -204,8 +202,8 @@ class CompetitorConverter {
         eventor: Eventor,
         startListList: org.iof.eventor.StartListList,
         person: Person
-    ): List<Competitor> {
-        val competitors: MutableList<Competitor> = mutableListOf()
+    ): List<EventorCompetitor> {
+        val competitors: MutableList<EventorCompetitor> = mutableListOf()
         for (startList in startListList.startList) {
             if (startList.event.eventRace.size == 1) {
                 val race = startList.event.eventRace[0]
@@ -213,7 +211,7 @@ class CompetitorConverter {
                     for (start in classStart.personStartOrTeamStart) {
                         if (start is org.iof.eventor.PersonStart && start.person.personId.content == person.personId) {
                             competitors.add(
-                                PersonCompetitor(
+                                EventorPersonCompetitor(
                                     raceId = race.eventRaceId.content,
                                     eventClassId = classStart.eventClass.eventClassId.content,
                                     personId = person.personId,
@@ -227,20 +225,18 @@ class CompetitorConverter {
                                     gender = personConverter.convertGender(start.person.sex),
                                     punchingUnit = null,
                                     bib = null,
-                                    status = CompetitorStatus.SignedUp,
                                     startTime = if (start.start.startTime != null) convertStartTime(
                                         start.start.startTime,
                                         eventor
                                     ) else null,
                                     finishTime = null,
                                     result = null,
-                                    splitTimes = listOf(),
-                                    entryFeeIds = listOf()
+                                    splitTimes = listOf()
                                 )
                             )
                         } else if (start is org.iof.eventor.TeamStart) {
                             competitors.add(
-                                TeamCompetitor(
+                                EventorTeamCompetitor(
                                     raceId = race.eventRaceId.content,
                                     eventClassId = classStart.eventClass.eventClassId.content,
                                     name = start.teamName.content,
@@ -249,7 +245,6 @@ class CompetitorConverter {
                                         eventor
                                     ),
                                     bib = null,
-                                    status = CompetitorStatus.SignedUp,
                                     startTime = if (start.startTime != null) convertStartTime(
                                         start.startTime,
                                         eventor
@@ -269,7 +264,7 @@ class CompetitorConverter {
                         if (start is org.iof.eventor.PersonStart && start.person.personId.content == person.personId) {
                             for (raceStart in start.raceStart) {
                                 competitors.add(
-                                    PersonCompetitor(
+                                    EventorPersonCompetitor(
                                         raceId = raceStart.eventRaceId.content,
                                         eventClassId = classStart.eventClass.eventClassId.content,
                                         personId = person.personId,
@@ -283,15 +278,13 @@ class CompetitorConverter {
                                         gender = personConverter.convertGender(start.person.sex),
                                         punchingUnit = null,
                                         bib = null,
-                                        status = CompetitorStatus.SignedUp,
                                         startTime = if (start.start.startTime != null) convertStartTime(
                                             start.start.startTime,
                                             eventor
                                         ) else null,
                                         finishTime = null,
                                         result = null,
-                                        splitTimes = listOf(),
-                                        entryFeeIds = listOf()
+                                        splitTimes = listOf()
                                     )
                                 )
                             }
@@ -307,11 +300,11 @@ class CompetitorConverter {
     private fun convertTeamMemberStarts(
         eventor: Eventor,
         teamMembers: List<org.iof.eventor.TeamMemberStart>
-    ): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = mutableListOf()
+    ): List<EventorTeamMemberCompetitor> {
+        val result: MutableList<EventorTeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
             result.add(
-                TeamMemberCompetitor(
+                EventorTeamMemberCompetitor(
                     personId = teamMember.person.personId.content,
                     name = personConverter.convertPersonName(teamMember.person.personName),
                     birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
@@ -337,14 +330,14 @@ class CompetitorConverter {
         eventor: Eventor,
         entryList: org.iof.eventor.EntryList,
         person: Person
-    ): Collection<Competitor> {
-        val competitors: MutableList<Competitor> = mutableListOf()
+    ): Collection<EventorCompetitor> {
+        val competitors: MutableList<EventorCompetitor> = mutableListOf()
 
         for (entry in entryList.entry) {
             if (entry.competitor?.person?.personId?.content == person.personId || entry.competitor?.personId?.content == person.personId) {
                 for (eventRaceId in entry.eventRaceId) {
                     competitors.add(
-                        PersonCompetitor(
+                        EventorPersonCompetitor(
                             raceId = eventRaceId.content,
                             eventClassId = entry.entryClass[0].eventClassId.content,
                             personId = person.personId,
@@ -358,12 +351,10 @@ class CompetitorConverter {
                             gender = person.gender,
                             punchingUnit = if (!entry.competitor.cCard.isNullOrEmpty()) convertCCard(entry.competitor.cCard[0]) else null,
                             bib = if (entry.bibNumber != null) entry.bibNumber?.content else null,
-                            status = CompetitorStatus.SignedUp,
                             startTime = null,
                             finishTime = null,
                             result = null,
-                            splitTimes = listOf(),
-                            entryFeeIds = listOf()
+                            splitTimes = listOf()
                         )
                     )
 
@@ -373,13 +364,12 @@ class CompetitorConverter {
                 for (teamCompetitor in entry.teamCompetitor) {
                     if (teamCompetitor.person.personId.content == person.personId) {
                         for (race in entry.eventRaceId) {
-                            TeamCompetitor(
+                            EventorTeamCompetitor(
                                 raceId = race.content,
                                 eventClassId = entry.entryClass[0].eventClassId.content,
                                 name = entry.teamName.content,
                                 organisations = convertOrganisationIds(entry.organisationId, eventor),
                                 bib = entry.bibNumber.content,
-                                status = CompetitorStatus.SignedUp,
                                 startTime = null,
                                 finishTime = null,
                                 result = null,
@@ -393,11 +383,11 @@ class CompetitorConverter {
         return competitors
     }
 
-    private fun convertTeamMemberEntries(teamMembers: List<org.iof.eventor.TeamCompetitor>): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = mutableListOf()
+    private fun convertTeamMemberEntries(teamMembers: List<org.iof.eventor.TeamCompetitor>): List<EventorTeamMemberCompetitor> {
+        val result: MutableList<EventorTeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
             result.add(
-                TeamMemberCompetitor(
+                EventorTeamMemberCompetitor(
                     personId = teamMember.person.personId.content,
                     name = personConverter.convertPersonName(teamMember.person.personName),
                     birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
@@ -405,7 +395,6 @@ class CompetitorConverter {
                     gender = personConverter.convertGender(teamMember.person.sex),
                     punchingUnit = if (!teamMember.cCard.isNullOrEmpty()) convertCCard(teamMember.cCard[0]) else null,
                     leg = teamMember.teamSequence.content.toInt(),
-                    entryFeeIds = listOf(),
                     startTime = null,
                     finishTime = null,
                     legResult = null,

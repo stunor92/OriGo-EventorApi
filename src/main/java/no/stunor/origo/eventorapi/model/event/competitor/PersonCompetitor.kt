@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorPersonCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
@@ -31,7 +32,7 @@ data class PersonCompetitor(
 
 ) : Competitor {
         override fun equals(other: Any?): Boolean {
-                return if(other is PersonCompetitor){
+                return if(other is EventorPersonCompetitor){
                         raceId == other.raceId && personId == other.personId
                 } else{
                         false

@@ -1,10 +1,10 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.event.startlist.CompetitorStart
-import no.stunor.origo.eventorapi.model.event.startlist.PersonStart
-import no.stunor.origo.eventorapi.model.event.startlist.TeamMemberStart
-import no.stunor.origo.eventorapi.model.event.startlist.TeamStart
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorPersonCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorTeamCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorTeamMemberCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -20,8 +20,8 @@ class StartListConverter {
     @Autowired
     private lateinit var competitorConverter: CompetitorConverter
 
-    fun convertEventStartList(eventor: Eventor, startList: org.iof.eventor.StartList): List<CompetitorStart> {
-        val competitorList: MutableList<CompetitorStart> = mutableListOf()
+    fun convertEventStartList(eventor: Eventor, startList: org.iof.eventor.StartList): List<EventorCompetitor> {
+        val competitorList: MutableList<EventorCompetitor> = mutableListOf()
 
         for (classStart in startList.classStart) {
             for (personOrTeamStart in classStart.personStartOrTeamStart) {
@@ -61,8 +61,8 @@ class StartListConverter {
         classStart: org.iof.eventor.ClassStart,
         personStart: org.iof.eventor.PersonStart,
         raceStart: org.iof.eventor.RaceStart
-    ): CompetitorStart {
-        return PersonStart(
+    ): EventorCompetitor {
+        return EventorPersonCompetitor(
             raceId = raceStart.eventRaceId.content,
             eventClassId = classStart.eventClass.eventClassId.content,
             personId = if (personStart.person.personId != null) personStart.person.personId.content else null,
@@ -80,6 +80,9 @@ class StartListConverter {
                 raceStart.start.startTime,
                 eventor
             ) else null,
+            finishTime = null,
+            result = null,
+            splitTimes = listOf()
         )
     }
 
@@ -88,8 +91,8 @@ class StartListConverter {
         event: org.iof.eventor.Event,
         classStart: org.iof.eventor.ClassStart,
         personStart: org.iof.eventor.PersonStart
-    ): CompetitorStart {
-        return PersonStart(
+    ): EventorCompetitor {
+        return EventorPersonCompetitor(
             raceId = event.eventRace[0].eventRaceId.content,
             eventClassId = classStart.eventClass.eventClassId.content,
             personId = if (personStart.person.personId != null) personStart.person.personId.content else null,
@@ -106,7 +109,10 @@ class StartListConverter {
             startTime = if (personStart.start.startTime != null) competitorConverter.convertStartTime(
                 personStart.start.startTime,
                 eventor
-            ) else null
+            ) else null,
+            finishTime = null,
+            result = null,
+            splitTimes = listOf()
         )
     }
 
@@ -115,14 +121,14 @@ class StartListConverter {
         event: org.iof.eventor.Event,
         classStart: org.iof.eventor.ClassStart,
         teamStart: org.iof.eventor.TeamStart
-    ): CompetitorStart {
+    ): EventorCompetitor {
         val organisations: MutableList<Organisation> = ArrayList()
         for (organisation in teamStart.organisationIdOrOrganisationOrCountryId) {
             if (organisation is org.iof.eventor.Organisation) {
                 organisationConverter.convertOrganisation(organisation)?.let { organisations.add(it) }
             }
         }
-        return TeamStart(
+        return EventorTeamCompetitor(
             raceId = event.eventRace[0].eventRaceId.content,
             eventClassId = classStart.eventClass.eventClassId.content,
             name = teamStart.teamName.content,
@@ -132,7 +138,9 @@ class StartListConverter {
             startTime = if (teamStart.startTime != null) competitorConverter.convertStartTime(
                 teamStart.startTime,
                 eventor
-            ) else null
+            ) else null,
+            finishTime = null,
+            result = null,
         )
 
     }
@@ -140,16 +148,16 @@ class StartListConverter {
     private fun convertTeamMembers(
         eventor: Eventor,
         teamMembers: List<org.iof.eventor.TeamMemberStart>
-    ): List<TeamMemberStart> {
-        val result: MutableList<TeamMemberStart> = mutableListOf()
+    ): List<EventorTeamMemberCompetitor> {
+        val result: MutableList<EventorTeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
             result.add(convertTeamMember(eventor, teamMember))
         }
         return result
     }
 
-    private fun convertTeamMember(eventor: Eventor, teamMember: org.iof.eventor.TeamMemberStart): TeamMemberStart {
-        return TeamMemberStart(
+    private fun convertTeamMember(eventor: Eventor, teamMember: org.iof.eventor.TeamMemberStart): EventorTeamMemberCompetitor {
+        return EventorTeamMemberCompetitor(
             personId = if (teamMember.person != null && teamMember.person.personId != null) teamMember.person.personId.content else null,
             name = if (teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
             birthYear = if (teamMember.person != null && teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(
@@ -164,6 +172,10 @@ class StartListConverter {
                 teamMember.startTime,
                 eventor
             ) else null,
+            finishTime = null,
+            legResult = null,
+            overallResult = null,
+            splitTimes = listOf()
         )
     }
 }
