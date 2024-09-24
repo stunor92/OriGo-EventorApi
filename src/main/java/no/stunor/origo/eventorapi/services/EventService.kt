@@ -7,14 +7,16 @@ import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
-import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
-import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
+import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorCompetitor
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
+import no.stunor.origo.eventorapi.services.converter.CompetitorsConverter
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
 import no.stunor.origo.eventorapi.services.converter.EventConverter
 import no.stunor.origo.eventorapi.services.converter.ResultListConverter
 import no.stunor.origo.eventorapi.services.converter.StartListConverter
+import org.iof.eventor.TeamCompetitor
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -43,6 +45,8 @@ class EventService {
     @Autowired
     private lateinit var entryListConverter: EntryListConverter
     @Autowired
+    private lateinit var competitorsConverter: CompetitorsConverter
+    @Autowired
     private lateinit var startListConverter: StartListConverter
     @Autowired
     private lateinit var resultListConverter: ResultListConverter
@@ -53,7 +57,7 @@ class EventService {
         val eventClassList = eventorService.getEventClasses(eventor, eventId)
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.apiKey, eventId)
 
-        val organisers: MutableList<SimpleOrganisation> = ArrayList()
+        val organisers: MutableList<Organisation> = ArrayList()
         val regions: MutableList<Region> = ArrayList()
 
         for (o in event.organiser.organisationIdOrOrganisation) {
@@ -86,23 +90,29 @@ class EventService {
         return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor)
     }
 
-    fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
+    private fun getCompetitorList(eventorId: String, eventId: String): List<Competitor> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val entryList = eventorService.getEventEntryList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EntryListNotFoundException()
-        return entryListConverter.convertEventEntryList(entryList, eventor)
+        return competitorsConverter.convertCompetitors(entryList)
     }
 
-    fun getStartList(eventorId: String, eventId: String): List<Competitor> {
+    fun getEntryList(eventorId: String, eventId: String): List<EventorCompetitor> {
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        val entryList = eventorService.getEventEntryList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EntryListNotFoundException()
+        return entryListConverter.convertEventEntryList(entryList)
+    }
+
+    fun getStartList(eventorId: String, eventId: String): List<EventorCompetitor> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val startList = eventorService.getEventStartList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw StartListNotFoundException()
-        return startListConverter.convertEventStartList(startList, eventor)
+        return startListConverter.convertEventStartList(eventor, startList)
     }
 
-    fun getResultList(eventorId: String, eventId: String): List<Competitor> {
+    fun getResultList(eventorId: String, eventId: String): List<EventorCompetitor> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val resultList = eventorService.getEventResultList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw ResultListNotFoundException()
         try {
-            return resultListConverter.convertEventResultList(resultList, eventor)
+            return resultListConverter.convertEventResultList(eventor, resultList)
         } catch (e: NumberFormatException) {
             log.warn(e.message)
             throw EventorParsingException()
@@ -112,16 +122,20 @@ class EventService {
         }
     }
 
-    fun download(eventorId: String, eventId: String, userId: String) {
-        val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
-        var event = getEvent(eventorId = eventorId, eventId = eventId)
-        authenticateEventOrganiser(event = event, persons = persons)
+    fun downloadEvent(eventorId: String, eventId: String) {
+        val event = getEvent(eventorId = eventorId, eventId = eventId)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
         if(existingEvent != null) {
             event.id = existingEvent.id
         }
         eventRepository.save(event)
-        val competitors = getEntryList(eventorId = eventorId, eventId = eventId)
+    }
+
+    fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {
+        val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
+        var event = getEvent(eventorId = eventorId, eventId = eventId)
+        authenticateEventOrganiser(event = event, persons = persons)
+        val competitors = getCompetitorList(eventorId = eventorId, eventId = eventId)
         val existingCompetitors: MutableList<Competitor> = mutableListOf()
         existingCompetitors.addAll(competitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId))
 
@@ -142,7 +156,6 @@ class EventService {
         }
 
         event.id?.let { competitorsRepository.saveAll(it, result) }
-
     }
 
     private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {

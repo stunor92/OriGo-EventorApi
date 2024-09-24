@@ -4,4 +4,4 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-class EntryListNotFoundException : RuntimeException("Entrylist is not found")
+class EntryListNotFoundException : RuntimeException("Entry-list is not found")

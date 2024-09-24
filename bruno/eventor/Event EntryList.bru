@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: https://eventor.orientering.no/api/entries?includePersonElement=true&eventIds=17363&=17469
+  url: https://eventor.orientering.no/api/entries?includePersonElement=true&eventIds=17363&includeOrganisationElement=true
   body: none
   auth: none
 }
@@ -13,12 +13,12 @@ get {
 params:query {
   includePersonElement: true
   eventIds: 17363
-  null: 17469
+  includeOrganisationElement: true
+  ~null: 17469
   ~eventIds: 19024
-  ~includeOrganisationElement: true
   ~eventIds: 17363
 }
 
 headers {
-  ApiKey: xxxxx
+  ApiKey: d46d6dbf50e64b85b6751c3770710732
 }
