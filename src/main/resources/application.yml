@@ -1,11 +1,6 @@
 logging:
   level:
     root: INFO
-    com:
-      google:
-        cloud:
-          firestore:
-            CustomClassMapper: ERROR
 server:
   error:
     include-message: always

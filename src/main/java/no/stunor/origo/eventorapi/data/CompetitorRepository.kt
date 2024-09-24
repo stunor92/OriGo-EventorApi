@@ -4,7 +4,6 @@ import com.google.api.core.ApiFuture
 import com.google.cloud.firestore.QuerySnapshot
 import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
-import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorCompetitor
 import org.springframework.stereotype.Repository
 
 

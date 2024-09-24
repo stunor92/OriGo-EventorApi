@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
-import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorPersonCompetitor
-import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
 
@@ -13,17 +12,18 @@ data class PersonCompetitor(
         @JsonIgnore
         @DocumentId
         override var id: String? = null,
+        override var eventorId: String = "",
+        override var eventId: String = "",
         override var raceId: String = "",
         override var eventClassId: String = "",
         var personId: String? = null,
-        override var name: Any = PersonName(),
-        var organisation: Organisation? = null,
+        var name: PersonName = PersonName(),
+        var organisation: SimpleOrganisation? = null,
         var birthYear: Int? = null,
         var nationality: String? = null,
         var gender: Gender = Gender.Other,
         var punchingUnit: PunchingUnit? = null,
         override var bib: String? = null,
-        override var status: CompetitorStatus,
         override var startTime: Timestamp? = null,
         override var finishTime: Timestamp? = null,
         var result: Result? = null,
@@ -32,8 +32,8 @@ data class PersonCompetitor(
 
 ) : Competitor {
         override fun equals(other: Any?): Boolean {
-                return if(other is EventorPersonCompetitor){
-                        raceId == other.raceId && personId == other.personId
+                return if(other is PersonCompetitor){
+                        eventId == other.eventId && raceId == other.raceId && personId == other.personId
                 } else{
                         false
                 }
@@ -41,6 +41,8 @@ data class PersonCompetitor(
 
         override fun hashCode(): Int {
                 var result = id?.hashCode() ?: 0
+                result = 31 * result + eventorId.hashCode()
+                result = 31 * result + eventId.hashCode()
                 result = 31 * result + raceId.hashCode()
                 result = 31 * result + eventClassId.hashCode()
                 result = 31 * result + (personId?.hashCode() ?: 0)

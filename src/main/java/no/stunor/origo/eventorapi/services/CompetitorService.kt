@@ -4,13 +4,16 @@ import no.stunor.origo.eventorapi.api.EventorService
 import no.stunor.origo.eventorapi.api.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.PersonRepository
-import no.stunor.origo.eventorapi.model.event.competitor.eventor.EventorCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.services.converter.CompetitorConverter
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class CompetitorService{
+    private val log = LoggerFactory.getLogger(this.javaClass)
+
     @Autowired
     private lateinit var eventorRepository: EventorRepository
 
@@ -23,32 +26,32 @@ class CompetitorService{
     @Autowired
     private lateinit var eventorService: EventorService
 
-    fun getCompetitors(eventorId: String, eventId: String, userId: String): List<EventorCompetitor> {
+    fun getCompetitors(eventorId: String, eventId: String, userId: String): List<Competitor> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val persons = personRepository.findAllByUserIdAndEventorId(userId = userId, eventorId = eventor.eventorId)
-        val competitorList: MutableList<EventorCompetitor> = mutableListOf()
+        val competitorList: MutableList<Competitor> = mutableListOf()
 
         for (person in persons) {
             val resultListList = eventorService.getGetPersonalResults(
-                eventor = eventor,
-                personId = person.personId,
-                eventId = eventId,
-                fromDate = null,
-                toDate = null
+                    eventor = eventor,
+                    personId = person.personId,
+                    eventId = eventId,
+                    fromDate = null,
+                    toDate = null
             )
             val startListList = eventorService.getGetPersonalStarts(
-                eventor = eventor,
-                personId = person.personId,
-                eventId = eventId,
-                fromDate = null,
-                toDate = null
+                    eventor = eventor,
+                    personId = person.personId,
+                    eventId = eventId,
+                    fromDate = null,
+                    toDate = null
             )
             val entryList = eventorService.getGetOrganisationEntries(
-                eventor = eventor,
-                organisations = person.memberships.keys.toList(),
-                eventId = eventId,
-                fromDate = null,
-                toDate = null
+                    eventor = eventor,
+                    organisations = person.memberships.keys.toList(),
+                    eventId = eventId,
+                    fromDate = null,
+                    toDate = null
             )
 
             if(resultListList != null && !resultListList.resultList.isNullOrEmpty()) {
@@ -144,76 +147,76 @@ class CompetitorService{
   }
   */
 
-    /*
-        fun userEntriesForCalendar(userId: String, eventor: Eventor, fromDate: LocalDate, toDate: LocalDate): List<CalendarRace> {
-            val raceList: MutableList<CalendarRace> = ArrayList()
+/*
+    fun userEntriesForCalendar(userId: String, eventor: Eventor, fromDate: LocalDate, toDate: LocalDate): List<CalendarRace> {
+        val raceList: MutableList<CalendarRace> = ArrayList()
 
-            val persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventor.eventorId).collectList().block()?: listOf()
+        val persons = personRepository.findAllByUsersContainsAndEventorId(userId, eventor.eventorId).collectList().block()?: listOf()
 
-            for (person in persons) {
-                val organisationIds = person.memberships.keys.toList()
+        for (person in persons) {
+            val organisationIds = person.memberships.keys.toList()
 
-                var entryList: EntryList?
-                try {
-                    entryList = eventorService.getGetOrganisationEntries(eventor = eventor, organisations = organisationIds, eventId = null, fromDate = fromDate, toDate = toDate)
-                    val eventClassMap: MutableMap<String, EventClassList> = HashMap()
-                    for (entry in entryList!!.entry) {
-                        for (raceId in entry.eventRaceId) {
-                            if (!eventClassMap.containsKey(raceId.content)) {
-                                val eventClassList = eventorService.getEventClasses(eventor = eventor, eventId = entry.event.eventId.content)
-                                if(eventClassList !=  null) {
-                                    eventClassMap[raceId.content] = eventClassList
-                                }
+            var entryList: EntryList?
+            try {
+                entryList = eventorService.getGetOrganisationEntries(eventor = eventor, organisations = organisationIds, eventId = null, fromDate = fromDate, toDate = toDate)
+                val eventClassMap: MutableMap<String, EventClassList> = HashMap()
+                for (entry in entryList!!.entry) {
+                    for (raceId in entry.eventRaceId) {
+                        if (!eventClassMap.containsKey(raceId.content)) {
+                            val eventClassList = eventorService.getEventClasses(eventor = eventor, eventId = entry.event.eventId.content)
+                            if(eventClassList !=  null) {
+                                eventClassMap[raceId.content] = eventClassList
                             }
                         }
                     }
-                    val startListList = eventorService.getGetPersonalStarts(
-                            eventor = eventor,
-                            personId = person.personId,
-                            eventId = null,
-                            fromDate = fromDate,
-                            toDate = toDate
-                    )
-                    val resultListList = eventorService.getGetPersonalResults(
-                            eventor = eventor,
-                            personId = person.personId,
-                            eventId = null,
-                            fromDate = fromDate,
-                            toDate = toDate
-                    )
-                    val personRaces = personEntriesConverter.convertPersonEntries(
-                            eventor = eventor,
-                            person = person,
-                            entryList = entryList,
-                            startListList = startListList!!,
-                            resultListList = resultListList!!,
-                            eventClassMap = eventClassMap
-                    )
-
-                    for (race in personRaces) {
-                        var raceExist = false
-                        for (r in raceList) {
-                            if (race.eventor.eventorId == r.eventor.eventorId && race.raceId == r.raceId) {
-                                raceExist = true
-                                r.userEntries.addAll(race.userEntries)
-                                r.organisationEntries.putAll(race.organisationEntries)
-                            }
-                        }
-                        if (!raceExist) {
-                            raceList.add(race)
-                        }
-                    }
-                } catch (e: NumberFormatException) {
-                    log.warn(e.message)
-                    throw EventorParsingException()
-                } catch (e: ParseException) {
-                    log.warn(e.message)
-                    throw EventorParsingException()
                 }
-            }
+                val startListList = eventorService.getGetPersonalStarts(
+                        eventor = eventor,
+                        personId = person.personId,
+                        eventId = null,
+                        fromDate = fromDate,
+                        toDate = toDate
+                )
+                val resultListList = eventorService.getGetPersonalResults(
+                        eventor = eventor,
+                        personId = person.personId,
+                        eventId = null,
+                        fromDate = fromDate,
+                        toDate = toDate
+                )
+                val personRaces = personEntriesConverter.convertPersonEntries(
+                        eventor = eventor,
+                        person = person,
+                        entryList = entryList,
+                        startListList = startListList!!,
+                        resultListList = resultListList!!,
+                        eventClassMap = eventClassMap
+                )
 
-            return raceList
+                for (race in personRaces) {
+                    var raceExist = false
+                    for (r in raceList) {
+                        if (race.eventor.eventorId == r.eventor.eventorId && race.raceId == r.raceId) {
+                            raceExist = true
+                            r.userEntries.addAll(race.userEntries)
+                            r.organisationEntries.putAll(race.organisationEntries)
+                        }
+                    }
+                    if (!raceExist) {
+                        raceList.add(race)
+                    }
+                }
+            } catch (e: NumberFormatException) {
+                log.warn(e.message)
+                throw EventorParsingException()
+            } catch (e: ParseException) {
+                log.warn(e.message)
+                throw EventorParsingException()
+            }
         }
-    */
+
+        return raceList
+    }
+*/
 
 }

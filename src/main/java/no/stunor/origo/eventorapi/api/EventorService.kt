@@ -2,16 +2,8 @@ package no.stunor.origo.eventorapi.api
 
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
-import org.iof.eventor.CompetitorCountList
-import org.iof.eventor.DocumentList
-import org.iof.eventor.EntryList
-import org.iof.eventor.Event
-import org.iof.eventor.EventClassList
-import org.iof.eventor.EventList
-import org.iof.eventor.ResultList
-import org.iof.eventor.ResultListList
-import org.iof.eventor.StartList
-import org.iof.eventor.StartListList
+import no.stunor.origo.eventorapi.model.person.Person
+import org.iof.eventor.*
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -19,9 +11,11 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class EventorService {
@@ -252,4 +246,22 @@ class EventorService {
         return response.body
     }
 
+    fun getOrganisationFromApiKey(baseUrl: String, apiKey: String?): Organisation? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = apiKey
+
+        val request = HttpEntity<String>(headers)
+        try {
+            val response = restTemplate.exchange(
+                    baseUrl + "api/organisation/apiKey",
+                    HttpMethod.GET,
+                    request,
+                    Organisation::class.java,
+                    1
+            )
+            return response.body
+        } catch (e: HttpClientErrorException){
+            return null
+        }
+    }
 }
