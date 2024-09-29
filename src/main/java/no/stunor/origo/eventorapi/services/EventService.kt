@@ -112,15 +112,19 @@ class EventService {
         }
     }
 
-    fun download(eventorId: String, eventId: String, userId: String) {
-        val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
-        var event = getEvent(eventorId = eventorId, eventId = eventId)
-        authenticateEventOrganiser(event = event, persons = persons)
+    fun downloadEvent(eventorId: String, eventId: String) {
+        val event = getEvent(eventorId = eventorId, eventId = eventId)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
         if(existingEvent != null) {
             event.id = existingEvent.id
         }
         eventRepository.save(event)
+    }
+
+    fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {
+        val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
+        var event = getEvent(eventorId = eventorId, eventId = eventId)
+        authenticateEventOrganiser(event = event, persons = persons)
         val competitors = getEntryList(eventorId = eventorId, eventId = eventId)
         val existingCompetitors: MutableList<Competitor> = mutableListOf()
         existingCompetitors.addAll(competitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId))
