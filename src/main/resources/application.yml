@@ -1,7 +1,13 @@
 logging:
   level:
     root: INFO
+    com:
+      google:
+        cloud:
+          firestore:
+            CustomClassMapper: ERROR
 server:
+  port: 8080
   error:
     include-message: always
   servlet:
