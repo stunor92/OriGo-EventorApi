@@ -24,7 +24,11 @@ class CompetitorConverter {
     private lateinit var organisationRepository: OrganisationRepository
 
 
-    fun generateCompetitors(eventor: Eventor, resultListList: org.iof.eventor.ResultListList, person: Person): List<Competitor> {
+    fun generateCompetitors(
+        eventor: Eventor,
+        resultListList: org.iof.eventor.ResultListList,
+        person: Person
+    ): List<Competitor> {
         val competitors: MutableList<Competitor> = mutableListOf()
         for (resultList in resultListList.resultList) {
             if (resultList.event.eventRace.size == 1) {
@@ -33,51 +37,56 @@ class CompetitorConverter {
                     for (result in classResult.personResultOrTeamResult) {
                         if (result is org.iof.eventor.PersonResult && result.person.personId.content == person.personId) {
                             competitors.add(
-                                    PersonCompetitor(
-                                            eventorId =  eventor.eventorId,
-                                            eventId = resultList.event.eventId.content,
-                                            raceId = race.eventRaceId.content,
-                                            eventClassId = classResult.eventClass.eventClassId.content,
-                                            personId = person.personId,
-                                            name = personConverter.convertPersonName(result.person.personName),
-                                            organisation = if(result.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(result.organisation.organisationId.content, eventor.eventorId) else null,
-                                            birthYear = personConverter.convertBirthYear(result.person.birthDate),
-                                            nationality = result.person.nationality.country.alpha3.value,
-                                            gender = personConverter.convertGender(result.person.sex),
-                                            punchingUnit = null,
-                                            bib = null,
-                                            startTime =  if (result.result.startTime != null) convertStartTime(result.result.startTime) else null,
-                                            finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime) else null,
-                                            result = Result(
-                                                status = ResultStatus.valueOf(result.result.competitorStatus.value),
-                                                position =  if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
-                                                time = if (result.result.time != null) convertTimeSec(result.result.time.content) else null,
-                                                timeBehind = if (result.result.timeDiff != null) convertTimeSec(result.result.timeDiff.content) else null
-                                            ),
-                                            splitTimes = listOf(),
-                                            entryFeeIds = listOf()
-                                    )
+                                PersonCompetitor(
+                                    raceId = race.eventRaceId.content,
+                                    eventClassId = classResult.eventClass.eventClassId.content,
+                                    personId = person.personId,
+                                    name = personConverter.convertPersonName(result.person.personName),
+                                    organisation = if (result.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(
+                                        result.organisation.organisationId.content,
+                                        eventor.eventorId
+                                    ) else null,
+                                    birthYear = personConverter.convertBirthYear(result.person.birthDate),
+                                    nationality = result.person.nationality.country.alpha3.value,
+                                    gender = personConverter.convertGender(result.person.sex),
+                                    punchingUnit = null,
+                                    bib = null,
+                                    startTime = if (result.result.startTime != null) convertStartTime(result.result.startTime) else null,
+                                    finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime) else null,
+                                    result = Result(
+                                        status = ResultStatus.valueOf(result.result.competitorStatus.value),
+                                        position = if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
+                                        time = if (result.result.time != null) convertTimeSec(result.result.time.content) else null,
+                                        timeBehind = if (result.result.timeDiff != null) convertTimeSec(result.result.timeDiff.content) else null
+                                    ),
+                                    splitTimes = listOf(),
+                                    entryFeeIds = listOf(),
+                                    status = CompetitorStatus.Finished
+
+                                )
                             )
                         } else if (result is org.iof.eventor.TeamResult) {
                             competitors.add(
-                                    TeamCompetitor(
-                                            eventorId =  eventor.eventorId,
-                                            eventId = resultList.event.eventId.content,
-                                            raceId = race.eventRaceId.content,
-                                            eventClassId = classResult.eventClass.eventClassId.content,
-                                            name = result.teamName.content,
-                                            organisations = convertOrganisations(result.organisationIdOrOrganisationOrCountryId, eventor),
-                                            bib = null,
-                                            startTime =  if (result.startTime != null) convertStartTime(result.startTime) else null,
-                                            finishTime = if (result.finishTime != null) convertFinishTime(result.finishTime) else null,
-                                            result = Result(
-                                                    status = ResultStatus.valueOf(result.teamStatus.value),
-                                                    position =  if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
-                                                    time = if (result.time != null) convertTimeSec(result.time.content) else null,
-                                                    timeBehind = if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null
-                                            ),
-                                            teamMembers = convertTeamMemberResults(result.teamMemberResult)
-                                    )
+                                TeamCompetitor(
+                                    raceId = race.eventRaceId.content,
+                                    eventClassId = classResult.eventClass.eventClassId.content,
+                                    name = result.teamName.content,
+                                    organisations = convertOrganisations(
+                                        result.organisationIdOrOrganisationOrCountryId,
+                                        eventor
+                                    ),
+                                    bib = null,
+                                    startTime = if (result.startTime != null) convertStartTime(result.startTime) else null,
+                                    finishTime = if (result.finishTime != null) convertFinishTime(result.finishTime) else null,
+                                    result = Result(
+                                        status = ResultStatus.valueOf(result.teamStatus.value),
+                                        position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
+                                        time = if (result.time != null) convertTimeSec(result.time.content) else null,
+                                        timeBehind = if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null
+                                    ),
+                                    teamMembers = convertTeamMemberResults(result.teamMemberResult),
+                                    status = CompetitorStatus.Finished
+                                )
                             )
                         }
 
@@ -87,32 +96,40 @@ class CompetitorConverter {
                 for (classResult in resultList.classResult) {
                     for (result in classResult.personResultOrTeamResult) {
                         if (result is org.iof.eventor.PersonResult && result.person.personId.content == person.personId) {
-                            for (raceResult in result.raceResult){
+                            for (raceResult in result.raceResult) {
                                 competitors.add(
-                                        PersonCompetitor(
-                                                eventorId =  eventor.eventorId,
-                                                eventId = resultList.event.eventId.content,
-                                                raceId = raceResult.eventRaceId.content,
-                                                eventClassId = classResult.eventClass.eventClassId.content,
-                                                personId = person.personId,
-                                                name = personConverter.convertPersonName(result.person.personName),
-                                                organisation = if(result.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(result.organisation.organisationId.content, eventor.eventorId) else null,
-                                                birthYear = personConverter.convertBirthYear(result.person.birthDate),
-                                                nationality = result.person.nationality.country.alpha3.value,
-                                                gender = personConverter.convertGender(result.person.sex),
-                                                punchingUnit = null,
-                                                bib = null,
-                                                startTime =  if (raceResult.result?.startTime != null) convertStartTime(raceResult.result.startTime) else null,
-                                                finishTime = if (raceResult.result?.finishTime != null) convertFinishTime(raceResult.result.finishTime) else null,
-                                                result = Result(
-                                                    status = ResultStatus.valueOf(raceResult.result.competitorStatus.value),
-                                                    position =  if (raceResult.result.resultPosition != null && raceResult.result.resultPosition.content != "0") raceResult.result.resultPosition.content.toInt() else null,
-                                                    time = if (raceResult.result.time != null) convertTimeSec(raceResult.result.time.content) else null,
-                                                    timeBehind = if (raceResult.result.timeDiff != null) convertTimeSec(raceResult.result.timeDiff.content) else null
-                                                ),
-                                                splitTimes = listOf(),
-                                                entryFeeIds = listOf()
-                                        )
+                                    PersonCompetitor(
+                                        raceId = raceResult.eventRaceId.content,
+                                        eventClassId = classResult.eventClass.eventClassId.content,
+                                        personId = person.personId,
+                                        name = personConverter.convertPersonName(result.person.personName),
+                                        organisation = if (result.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(
+                                            result.organisation.organisationId.content,
+                                            eventor.eventorId
+                                        ) else null,
+                                        birthYear = personConverter.convertBirthYear(result.person.birthDate),
+                                        nationality = result.person.nationality.country.alpha3.value,
+                                        gender = personConverter.convertGender(result.person.sex),
+                                        punchingUnit = null,
+                                        bib = null,
+                                        startTime = if (raceResult.result?.startTime != null) convertStartTime(
+                                            raceResult.result.startTime
+                                        ) else null,
+                                        finishTime = if (raceResult.result?.finishTime != null) convertFinishTime(
+                                            raceResult.result.finishTime
+                                        ) else null,
+                                        result = Result(
+                                            status = ResultStatus.valueOf(raceResult.result.competitorStatus.value),
+                                            position = if (raceResult.result.resultPosition != null && raceResult.result.resultPosition.content != "0") raceResult.result.resultPosition.content.toInt() else null,
+                                            time = if (raceResult.result.time != null) convertTimeSec(raceResult.result.time.content) else null,
+                                            timeBehind = if (raceResult.result.timeDiff != null) convertTimeSec(
+                                                raceResult.result.timeDiff.content
+                                            ) else null
+                                        ),
+                                        splitTimes = listOf(),
+                                        entryFeeIds = listOf(),
+                                        status = CompetitorStatus.Finished
+                                    )
                                 )
                             }
                         }
@@ -126,39 +143,43 @@ class CompetitorConverter {
 
     private fun convertTeamMemberResults(teamMembers: List<org.iof.eventor.TeamMemberResult>): List<TeamMemberCompetitor> {
         val result: MutableList<TeamMemberCompetitor> = mutableListOf()
-        for(teamMember in teamMembers){
+        for (teamMember in teamMembers) {
             result.add(
-                    TeamMemberCompetitor(
-                            personId = teamMember.person.personId.content,
-                            name = personConverter.convertPersonName(teamMember.person.personName),
-                            birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
-                            nationality = teamMember.person.nationality.country.alpha3.value,
-                            gender = personConverter.convertGender(teamMember.person.sex),
-                            punchingUnit = null,
-                            leg = teamMember.leg.toInt(),
-                            startTime =  if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
-                            finishTime = if (teamMember.finishTime != null) convertFinishTime(teamMember.finishTime) else null,
-                            legResult = Result(
-                                    status = ResultStatus.valueOf(teamMember.competitorStatus.value),
-                                    position =  if (teamMember.position != null && teamMember.position[0].value.toInt() != 0) teamMember.position[0].value.toInt() else null,
-                                    time = if (teamMember.time != null) convertTimeSec(teamMember.time.content) else null,
-                                    timeBehind = if (teamMember.timeBehind != null) teamMember.timeBehind[0].value.toInt() else null
-                            ),
-                            overallResult = Result(
-                                    status = ResultStatus.valueOf(teamMember.overallResult.teamStatus.value),
-                                    position =  if (teamMember.overallResult?.resultPosition != null && teamMember.overallResult.resultPosition.content != "0") teamMember.overallResult.resultPosition.content.toInt() else null,
-                                    time = if (teamMember.overallResult.time != null) convertTimeSec(teamMember.overallResult.time.content) else null,
-                                    timeBehind = if (teamMember.overallResult.timeDiff != null) convertTimeSec(teamMember.overallResult.timeDiff.content) else null
-                            ),
-                            splitTimes = listOf(),
-                            entryFeeIds = listOf()
-                    )
+                TeamMemberCompetitor(
+                    personId = teamMember.person.personId.content,
+                    name = personConverter.convertPersonName(teamMember.person.personName),
+                    birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
+                    nationality = teamMember.person.nationality.country.alpha3.value,
+                    gender = personConverter.convertGender(teamMember.person.sex),
+                    punchingUnit = null,
+                    leg = teamMember.leg.toInt(),
+                    startTime = if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
+                    finishTime = if (teamMember.finishTime != null) convertFinishTime(teamMember.finishTime) else null,
+                    legResult = Result(
+                        status = ResultStatus.valueOf(teamMember.competitorStatus.value),
+                        position = if (teamMember.position != null && teamMember.position[0].value.toInt() != 0) teamMember.position[0].value.toInt() else null,
+                        time = if (teamMember.time != null) convertTimeSec(teamMember.time.content) else null,
+                        timeBehind = if (teamMember.timeBehind != null) teamMember.timeBehind[0].value.toInt() else null
+                    ),
+                    overallResult = Result(
+                        status = ResultStatus.valueOf(teamMember.overallResult.teamStatus.value),
+                        position = if (teamMember.overallResult?.resultPosition != null && teamMember.overallResult.resultPosition.content != "0") teamMember.overallResult.resultPosition.content.toInt() else null,
+                        time = if (teamMember.overallResult.time != null) convertTimeSec(teamMember.overallResult.time.content) else null,
+                        timeBehind = if (teamMember.overallResult.timeDiff != null) convertTimeSec(teamMember.overallResult.timeDiff.content) else null
+                    ),
+                    splitTimes = listOf(),
+                    entryFeeIds = listOf()
+                )
             )
         }
         return result
     }
 
-    fun generateCompetitors(eventor: Eventor, startListList: org.iof.eventor.StartListList, person: Person): List<Competitor> {
+    fun generateCompetitors(
+        eventor: Eventor,
+        startListList: org.iof.eventor.StartListList,
+        person: Person
+    ): List<Competitor> {
         val competitors: MutableList<Competitor> = mutableListOf()
         for (startList in startListList.startList) {
             if (startList.event.eventRace.size == 1) {
@@ -167,41 +188,45 @@ class CompetitorConverter {
                     for (start in classStart.personStartOrTeamStart) {
                         if (start is org.iof.eventor.PersonStart && start.person.personId.content == person.personId) {
                             competitors.add(
-                                    PersonCompetitor(
-                                            eventorId =  eventor.eventorId,
-                                            eventId = startList.event.eventId.content,
-                                            raceId = race.eventRaceId.content,
-                                            eventClassId = classStart.eventClass.eventClassId.content,
-                                            personId = person.personId,
-                                            name = personConverter.convertPersonName(start.person.personName),
-                                            organisation = if(start.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(start.organisation.organisationId.content, eventor.eventorId) else null,
-                                            birthYear = personConverter.convertBirthYear(start.person.birthDate),
-                                            nationality = start.person.nationality.country.alpha3.value,
-                                            gender = personConverter.convertGender(start.person.sex),
-                                            punchingUnit = null,
-                                            bib = null,
-                                            startTime =  if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
-                                            finishTime = null,
-                                            result = null,
-                                            splitTimes = listOf(),
-                                            entryFeeIds = listOf()
-                                    )
+                                PersonCompetitor(
+                                    raceId = race.eventRaceId.content,
+                                    eventClassId = classStart.eventClass.eventClassId.content,
+                                    personId = person.personId,
+                                    name = personConverter.convertPersonName(start.person.personName),
+                                    organisation = if (start.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(
+                                        start.organisation.organisationId.content,
+                                        eventor.eventorId
+                                    ) else null,
+                                    birthYear = personConverter.convertBirthYear(start.person.birthDate),
+                                    nationality = start.person.nationality.country.alpha3.value,
+                                    gender = personConverter.convertGender(start.person.sex),
+                                    punchingUnit = null,
+                                    bib = null,
+                                    startTime = if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
+                                    finishTime = null,
+                                    result = null,
+                                    splitTimes = listOf(),
+                                    entryFeeIds = listOf(),
+                                    status = CompetitorStatus.SignedUp
+                                )
                             )
                         } else if (start is org.iof.eventor.TeamStart) {
                             competitors.add(
-                                    TeamCompetitor(
-                                            eventorId =  eventor.eventorId,
-                                            eventId = startList.event.eventId.content,
-                                            raceId = race.eventRaceId.content,
-                                            eventClassId = classStart.eventClass.eventClassId.content,
-                                            name = start.teamName.content,
-                                            organisations = convertOrganisations(start.organisationIdOrOrganisationOrCountryId, eventor),
-                                            bib = null,
-                                            startTime =  if (start.startTime != null) convertStartTime(start.startTime) else null,
-                                            finishTime =  null,
-                                            result = null,
-                                            teamMembers = convertTeamMemberStarts(start.teamMemberStart)
-                                    )
+                                TeamCompetitor(
+                                    raceId = race.eventRaceId.content,
+                                    eventClassId = classStart.eventClass.eventClassId.content,
+                                    name = start.teamName.content,
+                                    organisations = convertOrganisations(
+                                        start.organisationIdOrOrganisationOrCountryId,
+                                        eventor
+                                    ),
+                                    bib = null,
+                                    startTime = if (start.startTime != null) convertStartTime(start.startTime) else null,
+                                    finishTime = null,
+                                    result = null,
+                                    teamMembers = convertTeamMemberStarts(start.teamMemberStart),
+                                    status = CompetitorStatus.SignedUp
+                                )
                             )
                         }
 
@@ -211,27 +236,29 @@ class CompetitorConverter {
                 for (classStart in startList.classStart) {
                     for (start in classStart.personStartOrTeamStart) {
                         if (start is org.iof.eventor.PersonStart && start.person.personId.content == person.personId) {
-                            for (raceStart in start.raceStart){
+                            for (raceStart in start.raceStart) {
                                 competitors.add(
-                                        PersonCompetitor(
-                                                eventorId =  eventor.eventorId,
-                                                eventId = startList.event.eventId.content,
-                                                raceId = raceStart.eventRaceId.content,
-                                                eventClassId = classStart.eventClass.eventClassId.content,
-                                                personId = person.personId,
-                                                name = personConverter.convertPersonName(start.person.personName),
-                                                organisation = if(start.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(start.organisation.organisationId.content, eventor.eventorId) else null,
-                                                birthYear = personConverter.convertBirthYear(start.person.birthDate),
-                                                nationality = start.person.nationality.country.alpha3.value,
-                                                gender = personConverter.convertGender(start.person.sex),
-                                                punchingUnit = null,
-                                                bib = null,
-                                                startTime =  if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
-                                                finishTime = null,
-                                                result = null,
-                                                splitTimes = listOf(),
-                                                entryFeeIds = listOf()
-                                        )
+                                    PersonCompetitor(
+                                        raceId = raceStart.eventRaceId.content,
+                                        eventClassId = classStart.eventClass.eventClassId.content,
+                                        personId = person.personId,
+                                        name = personConverter.convertPersonName(start.person.personName),
+                                        organisation = if (start.organisation != null) organisationRepository.findByOrganisationIdAndEventorId(
+                                            start.organisation.organisationId.content,
+                                            eventor.eventorId
+                                        ) else null,
+                                        birthYear = personConverter.convertBirthYear(start.person.birthDate),
+                                        nationality = start.person.nationality.country.alpha3.value,
+                                        gender = personConverter.convertGender(start.person.sex),
+                                        punchingUnit = null,
+                                        bib = null,
+                                        startTime = if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
+                                        finishTime = null,
+                                        result = null,
+                                        splitTimes = listOf(),
+                                        entryFeeIds = listOf(),
+                                        status = CompetitorStatus.SignedUp
+                                    )
                                 )
                             }
                         }
@@ -245,73 +272,78 @@ class CompetitorConverter {
 
     private fun convertTeamMemberStarts(teamMembers: List<org.iof.eventor.TeamMemberStart>): List<TeamMemberCompetitor> {
         val result: MutableList<TeamMemberCompetitor> = mutableListOf()
-        for(teamMember in teamMembers){
+        for (teamMember in teamMembers) {
             result.add(
-                    TeamMemberCompetitor(
-                            personId = teamMember.person.personId.content,
-                            name = personConverter.convertPersonName(teamMember.person.personName),
-                            birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
-                            nationality = teamMember.person.nationality.country.alpha3.value,
-                            gender = personConverter.convertGender(teamMember.person.sex),
-                            punchingUnit = null,
-                            leg = teamMember.leg.toInt(),
-                            startTime =  if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
-                            finishTime = null,
-                            legResult = null,
-                            overallResult = null,
-                            splitTimes = listOf()
-                    )
+                TeamMemberCompetitor(
+                    personId = teamMember.person.personId.content,
+                    name = personConverter.convertPersonName(teamMember.person.personName),
+                    birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
+                    nationality = teamMember.person.nationality.country.alpha3.value,
+                    gender = personConverter.convertGender(teamMember.person.sex),
+                    punchingUnit = null,
+                    leg = teamMember.leg.toInt(),
+                    startTime = if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
+                    finishTime = null,
+                    legResult = null,
+                    overallResult = null,
+                    splitTimes = listOf()
+                )
             )
         }
         return result
     }
 
-    fun generateCompetitors(eventor: Eventor, entryList: org.iof.eventor.EntryList, person: Person): Collection<Competitor> {
+    fun generateCompetitors(
+        eventor: Eventor,
+        entryList: org.iof.eventor.EntryList,
+        person: Person
+    ): Collection<Competitor> {
         val competitors: MutableList<Competitor> = mutableListOf()
 
         for (entry in entryList.entry) {
             if (entry.competitor?.person?.personId?.content == person.personId || entry.competitor?.personId?.content == person.personId) {
                 for (eventRaceId in entry.eventRaceId) {
                     competitors.add(
-                            PersonCompetitor(
-                                    eventorId =  eventor.eventorId,
-                                    eventId = if(entry.eventId != null) entry.eventId.content else entry.event.eventId.content,
-                                    raceId = eventRaceId.content,
-                                    eventClassId = entry.entryClass[0].eventClassId.content,
-                                    personId = person.personId,
-                                    name = person.name,
-                                    organisation = if(!entry.organisationId.isNullOrEmpty()) organisationRepository.findByOrganisationIdAndEventorId(entry.organisationId[0].content, eventor.eventorId) else null,
-                                    birthYear = person.birthYear,
-                                    nationality = person.nationality,
-                                    gender = person.gender,
-                                    punchingUnit = if(!entry.competitor.cCard.isNullOrEmpty()) convertCCard(entry.competitor.cCard[0]) else null,
-                                    bib = if (entry.bibNumber != null) entry.bibNumber?.content else null,
-                                    startTime =  null,
-                                    finishTime = null,
-                                    result = null,
-                                    splitTimes = listOf(),
-                                    entryFeeIds = listOf()
-                            )
+                        PersonCompetitor(
+                            raceId = eventRaceId.content,
+                            eventClassId = entry.entryClass[0].eventClassId.content,
+                            personId = person.personId,
+                            name = person.name,
+                            organisation = if (!entry.organisationId.isNullOrEmpty()) organisationRepository.findByOrganisationIdAndEventorId(
+                                entry.organisationId[0].content,
+                                eventor.eventorId
+                            ) else null,
+                            birthYear = person.birthYear,
+                            nationality = person.nationality,
+                            gender = person.gender,
+                            punchingUnit = if (!entry.competitor.cCard.isNullOrEmpty()) convertCCard(entry.competitor.cCard[0]) else null,
+                            bib = if (entry.bibNumber != null) entry.bibNumber?.content else null,
+                            startTime = null,
+                            finishTime = null,
+                            result = null,
+                            splitTimes = listOf(),
+                            entryFeeIds = listOf(),
+                            status = CompetitorStatus.SignedUp
+                        )
                     )
 
 
                 }
             } else if (entry.teamCompetitor != null) {
-                for(teamCompetitor in entry.teamCompetitor){
-                    if (teamCompetitor.person.personId.content == person.personId){
-                        for(race in entry.eventRaceId) {
+                for (teamCompetitor in entry.teamCompetitor) {
+                    if (teamCompetitor.person.personId.content == person.personId) {
+                        for (race in entry.eventRaceId) {
                             TeamCompetitor(
-                                    eventorId = eventor.eventorId,
-                                    eventId = entry.event.eventId.content,
-                                    raceId = race.content,
-                                    eventClassId = entry.entryClass[0].eventClassId.content,
-                                    name = entry.teamName.content,
-                                    organisations = convertOrganisationIds(entry.organisationId, eventor),
-                                    bib = entry.bibNumber.content,
-                                    startTime = null,
-                                    finishTime = null,
-                                    result = null,
-                                    teamMembers = convertTeamMemberEntries(entry.teamCompetitor)
+                                raceId = race.content,
+                                eventClassId = entry.entryClass[0].eventClassId.content,
+                                name = entry.teamName.content,
+                                organisations = convertOrganisationIds(entry.organisationId, eventor),
+                                bib = entry.bibNumber.content,
+                                startTime = null,
+                                finishTime = null,
+                                result = null,
+                                teamMembers = convertTeamMemberEntries(entry.teamCompetitor),
+                                status = CompetitorStatus.SignedUp
                             )
                         }
                     }
@@ -323,33 +355,39 @@ class CompetitorConverter {
 
     private fun convertTeamMemberEntries(teamMembers: List<org.iof.eventor.TeamCompetitor>): List<TeamMemberCompetitor> {
         val result: MutableList<TeamMemberCompetitor> = mutableListOf()
-        for(teamMember in teamMembers){
+        for (teamMember in teamMembers) {
             result.add(
-                    TeamMemberCompetitor(
-                            personId = teamMember.person.personId.content,
-                            name = personConverter.convertPersonName(teamMember.person.personName),
-                            birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
-                            nationality = teamMember.person.nationality.country.alpha3.value,
-                            gender = personConverter.convertGender(teamMember.person.sex),
-                            punchingUnit = if(!teamMember.cCard.isNullOrEmpty()) convertCCard(teamMember.cCard[0]) else null,
-                            leg = teamMember.teamSequence.content.toInt(),
-                            entryFeeIds = listOf(),
-                            startTime = null,
-                            finishTime = null,
-                            legResult = null,
-                            overallResult = null,
-                            splitTimes = listOf()
-                    )
+                TeamMemberCompetitor(
+                    personId = teamMember.person.personId.content,
+                    name = personConverter.convertPersonName(teamMember.person.personName),
+                    birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
+                    nationality = teamMember.person.nationality.country.alpha3.value,
+                    gender = personConverter.convertGender(teamMember.person.sex),
+                    punchingUnit = if (!teamMember.cCard.isNullOrEmpty()) convertCCard(teamMember.cCard[0]) else null,
+                    leg = teamMember.teamSequence.content.toInt(),
+                    entryFeeIds = listOf(),
+                    startTime = null,
+                    finishTime = null,
+                    legResult = null,
+                    overallResult = null,
+                    splitTimes = listOf()
+                )
             )
         }
         return result
     }
 
-    private fun convertOrganisationIds(organisationIds: List<org.iof.eventor.OrganisationId>, eventor: Eventor): List<SimpleOrganisation> {
+    private fun convertOrganisationIds(
+        organisationIds: List<org.iof.eventor.OrganisationId>,
+        eventor: Eventor
+    ): List<SimpleOrganisation> {
         val organisations: MutableList<SimpleOrganisation> = ArrayList()
 
         for (o in organisationIds) {
-            organisationRepository.findByOrganisationIdAndEventorId(organisationId = o.content, eventorId = eventor.eventorId)?.let { organisations.add(it) }
+            organisationRepository.findByOrganisationIdAndEventorId(
+                organisationId = o.content,
+                eventorId = eventor.eventorId
+            )?.let { organisations.add(it) }
         }
         return organisations
 
@@ -400,12 +438,15 @@ class CompetitorConverter {
 
     }
 
-    private fun convertOrganisations(organisationList: List<Any>, eventor: Eventor): List<SimpleOrganisation>{
+    private fun convertOrganisations(organisationList: List<Any>, eventor: Eventor): List<SimpleOrganisation> {
         val organisations: MutableList<SimpleOrganisation> = ArrayList()
 
         for (o in organisationList) {
-            if(o is org.iof.eventor.Organisation){
-                organisationRepository.findByOrganisationIdAndEventorId(organisationId = o.organisationId.content, eventorId = eventor.eventorId)?.let { organisations.add(it) }
+            if (o is org.iof.eventor.Organisation) {
+                organisationRepository.findByOrganisationIdAndEventorId(
+                    organisationId = o.organisationId.content,
+                    eventorId = eventor.eventorId
+                )?.let { organisations.add(it) }
             }
 
         }

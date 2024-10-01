@@ -6,11 +6,11 @@ import java.io.Serializable
 
 interface Competitor : Serializable {
     var id: String?
-    var eventorId: String
-    var eventId: String
+    var name: Any
     var raceId: String
     var eventClassId: String
     var bib: String?
+    var status: CompetitorStatus
     var startTime: Timestamp?
     var finishTime: Timestamp?
 }
