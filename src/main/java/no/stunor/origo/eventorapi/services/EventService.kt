@@ -89,20 +89,20 @@ class EventService {
     fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val entryList = eventorService.getEventEntryList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EntryListNotFoundException()
-        return entryListConverter.convertEventEntryList(entryList, eventor)
+        return entryListConverter.convertEventEntryList(entryList)
     }
 
     fun getStartList(eventorId: String, eventId: String): List<Competitor> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val startList = eventorService.getEventStartList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw StartListNotFoundException()
-        return startListConverter.convertEventStartList(startList, eventor)
+        return startListConverter.convertEventStartList(eventor, startList)
     }
 
     fun getResultList(eventorId: String, eventId: String): List<Competitor> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val resultList = eventorService.getEventResultList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw ResultListNotFoundException()
         try {
-            return resultListConverter.convertEventResultList(resultList, eventor)
+            return resultListConverter.convertEventResultList(eventor, resultList)
         } catch (e: NumberFormatException) {
             log.warn(e.message)
             throw EventorParsingException()
