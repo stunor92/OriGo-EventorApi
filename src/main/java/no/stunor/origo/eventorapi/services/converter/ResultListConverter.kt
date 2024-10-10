@@ -9,7 +9,7 @@ import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
 import no.stunor.origo.eventorapi.model.event.competitor.SplitTime
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
-import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.iof.eventor.Event
 import org.iof.eventor.ResultList
 import org.springframework.beans.factory.annotation.Autowired
@@ -158,7 +158,7 @@ class ResultListConverter {
         classResult: org.iof.eventor.ClassResult,
         teamResult: org.iof.eventor.TeamResult
     ): Competitor {
-        val organisations: MutableList<SimpleOrganisation> = ArrayList()
+        val organisations: MutableList<Organisation> = ArrayList()
         for (organisation in teamResult.organisationIdOrOrganisationOrCountryId) {
             if (organisation is org.iof.eventor.Organisation) {
                 organisationConverter.convertOrganisation(organisation)?.let { organisations.add(it) }

@@ -1,17 +1,17 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.organisation.OrganisationType
-import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.springframework.stereotype.Component
 
 @Component
 class OrganisationConverter {
 
-    fun convertOrganisation(organisation: org.iof.eventor.Organisation?): SimpleOrganisation? {
+    fun convertOrganisation(organisation: org.iof.eventor.Organisation?): Organisation? {
 
         if(organisation == null)
             return null
-        return SimpleOrganisation(
+        return Organisation(
             organisationId = if(organisation.organisationId != null) organisation.organisationId.content else null,
             name = organisation.name.content,
             type = convertOrganisationType(organisation),

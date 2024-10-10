@@ -6,7 +6,7 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.event.PunchingUnitType
 import no.stunor.origo.eventorapi.model.event.competitor.*
-import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -403,8 +403,8 @@ class CompetitorConverter {
     private fun convertOrganisationIds(
         organisationIds: List<org.iof.eventor.OrganisationId>,
         eventor: Eventor
-    ): List<SimpleOrganisation> {
-        val organisations: MutableList<SimpleOrganisation> = ArrayList()
+    ): List<Organisation> {
+        val organisations: MutableList<Organisation> = ArrayList()
 
         for (o in organisationIds) {
             organisationRepository.findByOrganisationIdAndEventorId(
@@ -476,8 +476,8 @@ class CompetitorConverter {
 
     }
 
-    private fun convertOrganisations(organisationList: List<Any>, eventor: Eventor): List<SimpleOrganisation> {
-        val organisations: MutableList<SimpleOrganisation> = ArrayList()
+    private fun convertOrganisations(organisationList: List<Any>, eventor: Eventor): List<Organisation> {
+        val organisations: MutableList<Organisation> = ArrayList()
 
         for (o in organisationList) {
             if (o is org.iof.eventor.Organisation) {
