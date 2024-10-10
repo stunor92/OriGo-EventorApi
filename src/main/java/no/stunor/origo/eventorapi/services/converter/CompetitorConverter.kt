@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Component
@@ -51,8 +54,8 @@ class CompetitorConverter {
                                     gender = personConverter.convertGender(result.person.sex),
                                     punchingUnit = null,
                                     bib = null,
-                                    startTime = if (result.result.startTime != null) convertStartTime(result.result.startTime) else null,
-                                    finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime) else null,
+                                    startTime = if (result.result.startTime != null) convertStartTime(result.result.startTime, eventor) else null,
+                                    finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime, eventor) else null,
                                     result = Result(
                                         status = ResultStatus.valueOf(result.result.competitorStatus.value),
                                         position = if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
@@ -76,15 +79,15 @@ class CompetitorConverter {
                                         eventor
                                     ),
                                     bib = null,
-                                    startTime = if (result.startTime != null) convertStartTime(result.startTime) else null,
-                                    finishTime = if (result.finishTime != null) convertFinishTime(result.finishTime) else null,
+                                    startTime = if (result.startTime != null) convertStartTime(result.startTime, eventor) else null,
+                                    finishTime = if (result.finishTime != null) convertFinishTime(result.finishTime, eventor) else null,
                                     result = Result(
                                         status = ResultStatus.valueOf(result.teamStatus.value),
                                         position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
                                         time = if (result.time != null) convertTimeSec(result.time.content) else null,
                                         timeBehind = if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null
                                     ),
-                                    teamMembers = convertTeamMemberResults(result.teamMemberResult),
+                                    teamMembers = convertTeamMemberResults(eventor, result.teamMemberResult),
                                     status = CompetitorStatus.Finished
                                 )
                             )
@@ -113,10 +116,12 @@ class CompetitorConverter {
                                         punchingUnit = null,
                                         bib = null,
                                         startTime = if (raceResult.result?.startTime != null) convertStartTime(
-                                            raceResult.result.startTime
+                                            raceResult.result.startTime,
+                                            eventor
                                         ) else null,
                                         finishTime = if (raceResult.result?.finishTime != null) convertFinishTime(
-                                            raceResult.result.finishTime
+                                            raceResult.result.finishTime,
+                                            eventor
                                         ) else null,
                                         result = Result(
                                             status = ResultStatus.valueOf(raceResult.result.competitorStatus.value),
@@ -127,7 +132,6 @@ class CompetitorConverter {
                                             ) else null
                                         ),
                                         splitTimes = listOf(),
-                                        entryFeeIds = listOf(),
                                         status = CompetitorStatus.Finished
                                     )
                                 )
@@ -141,7 +145,10 @@ class CompetitorConverter {
         return competitors
     }
 
-    private fun convertTeamMemberResults(teamMembers: List<org.iof.eventor.TeamMemberResult>): List<TeamMemberCompetitor> {
+    private fun convertTeamMemberResults(
+        eventor: Eventor,
+        teamMembers: List<org.iof.eventor.TeamMemberResult>
+    ): List<TeamMemberCompetitor> {
         val result: MutableList<TeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
             result.add(
@@ -153,8 +160,14 @@ class CompetitorConverter {
                     gender = personConverter.convertGender(teamMember.person.sex),
                     punchingUnit = null,
                     leg = teamMember.leg.toInt(),
-                    startTime = if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
-                    finishTime = if (teamMember.finishTime != null) convertFinishTime(teamMember.finishTime) else null,
+                    startTime = if (teamMember.startTime != null) convertStartTime(
+                        teamMember.startTime,
+                        eventor
+                    ) else null,
+                    finishTime = if (teamMember.finishTime != null) convertFinishTime(
+                        teamMember.finishTime,
+                        eventor
+                    ) else null,
                     legResult = Result(
                         status = ResultStatus.valueOf(teamMember.competitorStatus.value),
                         position = if (teamMember.position != null && teamMember.position[0].value.toInt() != 0) teamMember.position[0].value.toInt() else null,
@@ -167,8 +180,7 @@ class CompetitorConverter {
                         time = if (teamMember.overallResult.time != null) convertTimeSec(teamMember.overallResult.time.content) else null,
                         timeBehind = if (teamMember.overallResult.timeDiff != null) convertTimeSec(teamMember.overallResult.timeDiff.content) else null
                     ),
-                    splitTimes = listOf(),
-                    entryFeeIds = listOf()
+                    splitTimes = listOf()
                 )
             )
         }
@@ -202,11 +214,13 @@ class CompetitorConverter {
                                     gender = personConverter.convertGender(start.person.sex),
                                     punchingUnit = null,
                                     bib = null,
-                                    startTime = if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
+                                    startTime = if (start.start.startTime != null) convertStartTime(
+                                        start.start.startTime,
+                                        eventor
+                                    ) else null,
                                     finishTime = null,
                                     result = null,
                                     splitTimes = listOf(),
-                                    entryFeeIds = listOf(),
                                     status = CompetitorStatus.SignedUp
                                 )
                             )
@@ -221,10 +235,13 @@ class CompetitorConverter {
                                         eventor
                                     ),
                                     bib = null,
-                                    startTime = if (start.startTime != null) convertStartTime(start.startTime) else null,
+                                    startTime = if (start.startTime != null) convertStartTime(
+                                        start.startTime,
+                                        eventor
+                                    ) else null,
                                     finishTime = null,
                                     result = null,
-                                    teamMembers = convertTeamMemberStarts(start.teamMemberStart),
+                                    teamMembers = convertTeamMemberStarts(eventor, start.teamMemberStart),
                                     status = CompetitorStatus.SignedUp
                                 )
                             )
@@ -252,11 +269,13 @@ class CompetitorConverter {
                                         gender = personConverter.convertGender(start.person.sex),
                                         punchingUnit = null,
                                         bib = null,
-                                        startTime = if (start.start.startTime != null) convertStartTime(start.start.startTime) else null,
+                                        startTime = if (start.start.startTime != null) convertStartTime(
+                                            start.start.startTime,
+                                            eventor
+                                        ) else null,
                                         finishTime = null,
                                         result = null,
                                         splitTimes = listOf(),
-                                        entryFeeIds = listOf(),
                                         status = CompetitorStatus.SignedUp
                                     )
                                 )
@@ -270,7 +289,10 @@ class CompetitorConverter {
         return competitors
     }
 
-    private fun convertTeamMemberStarts(teamMembers: List<org.iof.eventor.TeamMemberStart>): List<TeamMemberCompetitor> {
+    private fun convertTeamMemberStarts(
+        eventor: Eventor,
+        teamMembers: List<org.iof.eventor.TeamMemberStart>
+    ): List<TeamMemberCompetitor> {
         val result: MutableList<TeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
             result.add(
@@ -282,7 +304,10 @@ class CompetitorConverter {
                     gender = personConverter.convertGender(teamMember.person.sex),
                     punchingUnit = null,
                     leg = teamMember.leg.toInt(),
-                    startTime = if (teamMember.startTime != null) convertStartTime(teamMember.startTime) else null,
+                    startTime = if (teamMember.startTime != null) convertStartTime(
+                        teamMember.startTime,
+                        eventor
+                    ) else null,
                     finishTime = null,
                     legResult = null,
                     overallResult = null,
@@ -322,7 +347,6 @@ class CompetitorConverter {
                             finishTime = null,
                             result = null,
                             splitTimes = listOf(),
-                            entryFeeIds = listOf(),
                             status = CompetitorStatus.SignedUp
                         )
                     )
@@ -365,7 +389,6 @@ class CompetitorConverter {
                     gender = personConverter.convertGender(teamMember.person.sex),
                     punchingUnit = if (!teamMember.cCard.isNullOrEmpty()) convertCCard(teamMember.cCard[0]) else null,
                     leg = teamMember.teamSequence.content.toInt(),
-                    entryFeeIds = listOf(),
                     startTime = null,
                     finishTime = null,
                     legResult = null,
@@ -412,16 +435,31 @@ class CompetitorConverter {
 
     }
 
-    fun convertStartTime(time: org.iof.eventor.StartTime): Timestamp {
-        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
-        return Timestamp.parseTimestamp(timeString)
+    fun convertStartTime(time: org.iof.eventor.StartTime, eventor: Eventor): Timestamp {
+        val timeString = time.date.content + " " + time.clock.content
+        val zdt = parseTimestamp(timeString, eventor)
+        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
     }
 
-
-    private fun convertFinishTime(time: org.iof.eventor.FinishTime): Timestamp {
-        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
-        return Timestamp.parseTimestamp(timeString)
+    fun convertFinishTime(time: org.iof.eventor.FinishTime, eventor: Eventor): Timestamp {
+        val timeString = time.date.content + " " + time.clock.content
+        val zdt = parseTimestamp(timeString, eventor)
+        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
     }
+
+    private fun parseTimestamp(time: String, eventor: Eventor): ZonedDateTime {
+        val sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return ZonedDateTime.parse(time, sdf.withZone(getTimeZone(eventor)))
+
+    }
+
+    private fun getTimeZone(eventor: Eventor): ZoneId {
+        if (eventor.eventorId == "AUS") {
+            return ZoneId.of("Australia/Sydney")
+        }
+        return ZoneId.of("Europe/Paris")
+    }
+
 
     fun convertCCard(cCard: org.iof.eventor.CCard): PunchingUnit {
         return PunchingUnit(cCard.cCardId.content, convertPunchingUnitType(cCard.punchingUnitType.value))

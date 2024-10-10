@@ -1,10 +1,12 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 
 data class TeamCompetitor(
+        @JsonIgnore
         @DocumentId
         override var id: String? = null,
         override var raceId: String = "",

@@ -10,6 +10,9 @@ import no.stunor.origo.eventorapi.model.organisation.SimpleOrganisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @Component
 class EventConverter {
@@ -51,10 +54,13 @@ class EventConverter {
     fun convertOrganisers(eventor: Eventor, organisers: List<Any>): List<SimpleOrganisation> {
         val result: MutableList<SimpleOrganisation> = ArrayList()
         for (organiser in organisers) {
-            if(organiser is org.iof.eventor.Organisation){
-                val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.organisationId.content, eventor.eventorId)
+            if (organiser is org.iof.eventor.Organisation) {
+                val o = organisationRepository.findByOrganisationIdAndEventorId(
+                    organiser.organisationId.content,
+                    eventor.eventorId
+                )
                 if (o != null) result.add(o)
-            } else if(organiser is org.iof.eventor.OrganisationId){
+            } else if (organiser is org.iof.eventor.OrganisationId) {
                 val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.content, eventor.eventorId)
                 if (o != null) result.add(o)
             }
@@ -100,56 +106,65 @@ class EventConverter {
 
     @Throws(ParseException::class)
     fun convertEvent(
-            event: org.iof.eventor.Event,
-            eventCLassList: org.iof.eventor.EventClassList?,
-            documentList: org.iof.eventor.DocumentList?,
-            organisations: List<SimpleOrganisation>,
-            regions: List<Region>,
-            eventor: Eventor): Event {
+        event: org.iof.eventor.Event,
+        eventCLassList: org.iof.eventor.EventClassList?,
+        documentList: org.iof.eventor.DocumentList?,
+        organisations: List<SimpleOrganisation>,
+        regions: List<Region>,
+        eventor: Eventor
+    ): Event {
         return Event(
-                eventorId = eventor.eventorId,
-                eventId = event.eventId.content,
-                name = event.name.content,
-                type = convertEventForm(event.eventForm),
-                classification = convertEventClassification(event.eventClassificationId.content),
-                status = convertEventStatus(event.eventStatusId.content),
-                disciplines = convertEventDisciplines(event.disciplineIdOrDiscipline),
-                startDate = convertStartDate(event.startDate),
-                finishDate = convertFinishDate(event.finishDate),
-                organisers = organisations,
-                regions = regions,
-                eventClasses = eventClassConverter.convertEventClasses(eventCLassList),
-                documents = convertEventDocument(documentList),
-                entryBreaks = convertEntryBreaks(event.entryBreak),
-                races = convertRaces(event, event.eventRace),
-                punchingUnitTypes = convertPunchingUnitTypes(event.punchingUnitType),
-                webUrls = null,
-                message = convertHostMessage(event.hashTableEntry),
-                email = null,
-                phone = null
+            eventorId = eventor.eventorId,
+            eventId = event.eventId.content,
+            name = event.name.content,
+            type = convertEventForm(event.eventForm),
+            classification = convertEventClassification(event.eventClassificationId.content),
+            status = convertEventStatus(event.eventStatusId.content),
+            disciplines = convertEventDisciplines(event.disciplineIdOrDiscipline),
+            startDate = convertStartDate(event.startDate, eventor),
+            finishDate = convertFinishDate(event.finishDate, eventor),
+            organisers = organisations,
+            regions = regions,
+            eventClasses = eventClassConverter.convertEventClasses(eventCLassList),
+            documents = convertEventDocument(documentList),
+            entryBreaks = convertEntryBreaks(event.entryBreak),
+            races = convertRaces(event, event.eventRace, eventor),
+            punchingUnitTypes = convertPunchingUnitTypes(event.punchingUnitType),
+            webUrls = null,
+            message = convertHostMessage(event.hashTableEntry),
+            email = null,
+            phone = null
         )
     }
 
-    private fun convertRaces(event: org.iof.eventor.Event, eventRaces: List<org.iof.eventor.EventRace>): List<Race> {
+    private fun convertRaces(
+        event: org.iof.eventor.Event,
+        eventRaces: List<org.iof.eventor.EventRace>,
+        eventor: Eventor
+    ): List<Race> {
         val result: MutableList<Race> = ArrayList()
 
         for (eventRace in eventRaces) {
-            result.add(convertRace(event, eventRace))
+            result.add(convertRace(event, eventRace, eventor))
         }
         return result
     }
 
-    private fun convertRace(event: org.iof.eventor.Event, eventRace: org.iof.eventor.EventRace): Race {
+    private fun convertRace(
+        event: org.iof.eventor.Event,
+        eventRace: org.iof.eventor.EventRace,
+        eventor: Eventor
+    ): Race {
         return Race(
-                raceId = eventRace.eventRaceId.content,
-                name = eventRace.name.content,
-                lightCondition = convertLightCondition(eventRace.raceLightCondition),
-                distance = convertRaceDistance(eventRace.raceDistance),
-                date = if (eventRace.raceDate != null) convertRaceDate(eventRace.raceDate) else null,
-                position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
-                startList = hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
-                resultList = hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
-                livelox = hasLivelox(event.hashTableEntry)
+            raceId = eventRace.eventRaceId.content,
+            name = eventRace.name.content,
+            lightCondition = convertLightCondition(eventRace.raceLightCondition),
+            distance = convertRaceDistance(eventRace.raceDistance),
+            date = if (eventRace.raceDate != null) convertRaceDate(eventRace.raceDate, eventor) else null,
+            position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
+            startList = hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
+            resultList = hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
+            livelox = hasLivelox(event.hashTableEntry)
         )
     }
 
@@ -207,39 +222,36 @@ class EventConverter {
         return false
     }
 
+    private fun convertRaceDate(time: org.iof.eventor.RaceDate, eventor: Eventor): Timestamp {
+        val timeString = time.date.content + " " + time.clock.content
+        val zdt = parseTimestamp(timeString, eventor)
+        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+    }
 
-    fun convertEvents(eventList: org.iof.eventor.EventList?, eventor: Eventor): List<Event> {
-        val result: MutableList<Event> = ArrayList()
-        if (eventList != null) {
-            for (event in eventList.event) {
-                result.add(
-                        convertEvent(
-                            event = event,
-                            eventCLassList = null,
-                            documentList = null,
-                            organisations = listOf(),
-                            regions = listOf(),
-                            eventor = eventor
-                    )
-                )
-            }
+    private fun convertStartDate(time: org.iof.eventor.StartDate, eventor: Eventor): Timestamp {
+        val timeString = time.date.content + " " + time.clock.content
+        val zdt = parseTimestamp(timeString, eventor)
+        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+    }
+
+    private fun convertFinishDate(time: org.iof.eventor.FinishDate, eventor: Eventor): Timestamp {
+        val timeString = time.date.content + " " + time.clock.content
+        val zdt = parseTimestamp(timeString, eventor)
+        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+    }
+
+
+    private fun parseTimestamp(time: String, eventor: Eventor): ZonedDateTime {
+        val sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return ZonedDateTime.parse(time, sdf.withZone(getTimeZone(eventor)))
+
+    }
+
+    private fun getTimeZone(eventor: Eventor): ZoneId {
+        if (eventor.eventorId == "AUS") {
+            return ZoneId.of("Australia/Sydney")
         }
-        return result
-    }
-    fun convertRaceDate(time: org.iof.eventor.RaceDate): Timestamp {
-        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
-        return Timestamp.parseTimestamp(timeString)
-    }
-
-    private fun convertStartDate(time: org.iof.eventor.StartDate): Timestamp {
-        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
-        return Timestamp.parseTimestamp(timeString)
-    }
-
-
-    private fun convertFinishDate(time: org.iof.eventor.FinishDate): Timestamp {
-        val timeString = time.date.content + "T" + time.clock.content + ".000Z"
-        return Timestamp.parseTimestamp(timeString)
+        return ZoneId.of("Europe/Paris")
     }
 
     fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): GeoPoint {
@@ -248,8 +260,9 @@ class EventConverter {
 
     private fun convertEntryBreak(entryBreak: org.iof.eventor.EntryBreak): EntryBreak {
         return EntryBreak(
-                if (entryBreak.validFromDate != null) convertValidFromDate(entryBreak.validFromDate) else null,
-                if (entryBreak.validToDate != null) convertValidToDate(entryBreak.validToDate) else null)
+            if (entryBreak.validFromDate != null) convertValidFromDate(entryBreak.validFromDate) else null,
+            if (entryBreak.validToDate != null) convertValidToDate(entryBreak.validToDate) else null
+        )
     }
 
     private fun convertValidFromDate(time: org.iof.eventor.ValidFromDate): Timestamp? {
@@ -283,7 +296,7 @@ class EventConverter {
 
     private fun convertEventDocument(documentList: org.iof.eventor.DocumentList?): List<EventorDocument> {
         val result: MutableList<EventorDocument> = ArrayList()
-        if(documentList == null){
+        if (documentList == null) {
             return listOf()
         }
         for (document in documentList.document) {

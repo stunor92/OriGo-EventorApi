@@ -9,6 +9,7 @@ import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
 
 data class PersonCompetitor(
+        @JsonIgnore
         @DocumentId
         override var id: String? = null,
         override var raceId: String = "",
