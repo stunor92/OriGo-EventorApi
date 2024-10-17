@@ -1,5 +1,6 @@
 package no.stunor.origo.eventorapi.controller
 
+import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
@@ -30,23 +31,25 @@ internal class EventorApiController {
     private lateinit var eventService: EventService
 
 
-    @GetMapping("/authenticate/{eventorId}")
-    fun authenticate(@PathVariable(value = "eventorId") eventorId: String, @RequestHeader(value = "username") username: String, @RequestHeader(value = "password") password: String, @RequestHeader(value = "userId") userId: String): ResponseEntity<Person> {
+    @GetMapping("/person/{eventorId}/download")
+    fun authenticate(@PathVariable(value = "eventorId") eventorId: String, @RequestHeader(value = "username") username: String, @RequestHeader(value = "password") password: String, request: HttpServletRequest): ResponseEntity<Person> {
         log.info("Start authenticating user {}.", username)
+        val uid = request.getAttribute("uid") as String
         return ResponseEntity(
                 authService.authenticate(
                         eventorId =eventorId,
                         username = username,
                         password = password,
-                        userId = userId
+                        userId = uid
                 )
                 , HttpStatus.OK
         )
     }
 
     @GetMapping("/eventList/{eventorId}")
-    fun getEventList(@PathVariable("eventorId") eventorId: String, @RequestParam("from") from: LocalDate, @RequestParam("to") to: LocalDate, @RequestParam(value = "organisations", required = false) organisations: List<String>?, @RequestParam(value = "classifications", required = false) classifications: List<EventClassificationEnum>?, @RequestHeader("userId") userId: String): ResponseEntity<List<CalendarRace>> {
+    fun getEventList(@PathVariable("eventorId") eventorId: String, @RequestParam("from") from: LocalDate, @RequestParam("to") to: LocalDate, @RequestParam(value = "organisations", required = false) organisations: List<String>?, @RequestParam(value = "classifications", required = false) classifications: List<EventClassificationEnum>?, request: HttpServletRequest): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from eventor-{}.", eventorId)
+        val uid = request.getAttribute("uid") as String
         return ResponseEntity(
                 calendarService.getEventList(
                         eventorId = eventorId,
@@ -54,21 +57,22 @@ internal class EventorApiController {
                         to = to,
                         organisations = organisations,
                         classifications = classifications,
-                        userId = userId
+                        userId = uid
                 ),
                 HttpStatus.OK
         )
     }
 
     @GetMapping("/eventList")
-    fun getEventList(@RequestParam("from") from: LocalDate, @RequestParam("to") to: LocalDate, @RequestParam(value = "classifications", required = false) classifications: List<EventClassificationEnum>?, @RequestHeader("userId") userId: String): ResponseEntity<List<CalendarRace>> {
+    fun getEventList(@RequestParam("from") from: LocalDate, @RequestParam("to") to: LocalDate, @RequestParam(value = "classifications", required = false) classifications: List<EventClassificationEnum>?, request: HttpServletRequest): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from all eventors.")
+        val uid = request.getAttribute("uid") as String
         return ResponseEntity(
                 calendarService.getEventList(
                         from = from,
                         to = to,
                         classifications = classifications,
-                        userId = userId
+                        userId = uid
                 ),
                 HttpStatus.OK
         )
@@ -97,13 +101,14 @@ internal class EventorApiController {
         )
     }
 
-    @GetMapping("/event/{eventorId}/{eventId}/competitors/{userId}")
-    fun getEvent(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String, @PathVariable("userId") userId: String): ResponseEntity<List<Competitor>> {
+    @GetMapping("/event/{eventorId}/{eventId}/me")
+    fun getEvent(@PathVariable("eventorId") eventorId: String, @PathVariable("eventId") eventId: String, request: HttpServletRequest): ResponseEntity<List<Competitor>> {
+        val uid = request.getAttribute("uid") as String
         return ResponseEntity(
                 competitorService.getCompetitors(
                         eventorId = eventorId,
                         eventId = eventId,
-                        userId = userId
+                        userId = uid
                 ),
                 HttpStatus.OK
         )

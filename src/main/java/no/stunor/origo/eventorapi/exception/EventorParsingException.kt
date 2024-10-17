@@ -1,4 +1,4 @@
-package no.stunor.origo.eventorapi.api.exception
+package no.stunor.origo.eventorapi.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus

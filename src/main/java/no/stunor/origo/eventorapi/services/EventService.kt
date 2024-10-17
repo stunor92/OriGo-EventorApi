@@ -1,8 +1,14 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.api.exception.*
 import no.stunor.origo.eventorapi.data.*
+import no.stunor.origo.eventorapi.exception.EntryListNotFoundException
+import no.stunor.origo.eventorapi.exception.EventNotFoundException
+import no.stunor.origo.eventorapi.exception.EventorNotFoundException
+import no.stunor.origo.eventorapi.exception.EventorParsingException
+import no.stunor.origo.eventorapi.exception.OrganisationNotOrganiserException
+import no.stunor.origo.eventorapi.exception.ResultListNotFoundException
+import no.stunor.origo.eventorapi.exception.StartListNotFoundException
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor

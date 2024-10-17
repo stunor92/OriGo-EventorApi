@@ -1,9 +1,9 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.api.exception.EventorAuthException
-import no.stunor.origo.eventorapi.api.exception.EventorConnectionException
-import no.stunor.origo.eventorapi.api.exception.EventorNotFoundException
+import no.stunor.origo.eventorapi.exception.EventorAuthException
+import no.stunor.origo.eventorapi.exception.EventorConnectionException
+import no.stunor.origo.eventorapi.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.PersonRepository
 import no.stunor.origo.eventorapi.model.person.Person
