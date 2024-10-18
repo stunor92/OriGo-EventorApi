@@ -57,7 +57,7 @@ internal class EventorApiController {
         )
     }
 
-    @GetMapping("/eventList/{eventorId}")
+    @GetMapping("/eventlist/{eventorId}")
     fun HttpServletRequest.getEventList(
         @PathVariable("eventorId") eventorId: String,
         @RequestParam("from") from: LocalDate,
@@ -80,7 +80,7 @@ internal class EventorApiController {
         )
     }
 
-    @GetMapping("/eventList")
+    @GetMapping("/eventlist")
     fun HttpServletRequest.getEventList(
         @RequestParam("from") from: LocalDate,
         @RequestParam("to") to: LocalDate,
@@ -99,7 +99,7 @@ internal class EventorApiController {
         )
     }
 
-    @GetMapping("/eventList/me")
+    @GetMapping("/eventlist/me")
     fun HttpServletRequest.getUserEntries(): ResponseEntity<List<CalendarRace>> {
         val uid = getAttribute("uid") as String
         log.info("Start to get personal events for user {}.", uid)

@@ -1,3 +1,5 @@
+package no.stunor.origo.eventorapi.config
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseToken
@@ -12,12 +14,17 @@ import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
 
 @Component
-class FirebaseTokenFilter : OncePerRequestFilter() {
+open class FirebaseTokenFilter : OncePerRequestFilter() {
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         try {
-            val token = request.getHeader("Authorization") ?: throw UnauthorizedException("Missing token!")
+            val authorizationHeader = request.getHeader("Authorization")
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                throw UnauthorizedException("Missing or invalid Authorization header!")
+            }
+
+            val token = authorizationHeader.removePrefix("Bearer ")
 
             val decodedToken: FirebaseToken = try {
                 FirebaseAuth.getInstance().verifyIdToken(token)
