@@ -19,8 +19,7 @@ open class SecurityConfig(
             .csrf { it.disable() } // Disable CSRF for non-browser clients
             .authorizeHttpRequests { authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/token").permitAll() // Public endpoints
-                    .anyRequest().authenticated() // All other endpoints
+                    .anyRequest().permitAll() // All other endpoints
             }
             .addFilterBefore(firebaseTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .httpBasic {} // Basic authentication
