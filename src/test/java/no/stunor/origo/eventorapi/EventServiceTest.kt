@@ -25,9 +25,8 @@ import java.io.File
 import java.text.ParseException
 import java.util.concurrent.ExecutionException
 
-@SpringBootTest
+
 class EventServiceTest {
-    @Autowired
     private lateinit var eventService: EventService
 
     @MockBean

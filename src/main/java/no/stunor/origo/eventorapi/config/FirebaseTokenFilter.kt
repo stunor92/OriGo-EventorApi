@@ -1,5 +1,3 @@
-package no.stunor.origo.eventorapi.config
-
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseToken
@@ -15,6 +13,7 @@ import java.io.IOException
 
 @Component
 class FirebaseTokenFilter : OncePerRequestFilter() {
+
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         try {
@@ -33,9 +32,6 @@ class FirebaseTokenFilter : OncePerRequestFilter() {
         } catch (ex: UnauthorizedException) {
             response.status = HttpStatus.UNAUTHORIZED.value()
             response.writer.write(ex.message ?: "Unauthorized")
-        } catch (ex: Exception) {
-            response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
-            response.writer.write("Internal Server Error")
         }
     }
 }

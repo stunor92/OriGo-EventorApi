@@ -10,21 +10,21 @@ import java.io.FileNotFoundException
 
 @SpringBootApplication
 open class Application
+
 fun main(args: Array<String>) {
-
-    var credentials: GoogleCredentials
-    try {
-        val serviceAccount =
-            FileInputStream("serviceAccountKey.json")
-        credentials = GoogleCredentials.fromStream(serviceAccount)
-    } catch (e: FileNotFoundException) {
-        credentials =  GoogleCredentials.getApplicationDefault()
-    }
-    val options = FirebaseOptions.builder()
-        .setCredentials(credentials)
-        .build()
-
-    FirebaseApp.initializeApp(options)
-
+    initializeFirebase()
     runApplication<Application>(*args)
+}
+
+fun initializeFirebase() {
+    try {
+        val serviceAccount = FileInputStream("serviceAccountKey.json")
+        val credentials = GoogleCredentials.fromStream(serviceAccount)
+        val options = FirebaseOptions.builder()
+            .setCredentials(credentials)
+            .build()
+        FirebaseApp.initializeApp(options)
+    } catch (e: FileNotFoundException) {
+        throw RuntimeException("serviceAccountKey.json file not found", e)
+    }
 }
