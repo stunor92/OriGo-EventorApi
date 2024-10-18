@@ -17,14 +17,17 @@ fun main(args: Array<String>) {
 }
 
 fun initializeFirebase() {
+    var credentials: GoogleCredentials
     try {
-        val serviceAccount = FileInputStream("serviceAccountKey.json")
-        val credentials = GoogleCredentials.fromStream(serviceAccount)
-        val options = FirebaseOptions.builder()
-            .setCredentials(credentials)
-            .build()
-        FirebaseApp.initializeApp(options)
+        val serviceAccount =
+            FileInputStream("serviceAccountKey.json")
+        credentials = GoogleCredentials.fromStream(serviceAccount)
     } catch (e: FileNotFoundException) {
-        throw RuntimeException("serviceAccountKey.json file not found", e)
+        credentials =  GoogleCredentials.getApplicationDefault()
     }
+    val options = FirebaseOptions.builder()
+        .setCredentials(credentials)
+        .build()
+
+    FirebaseApp.initializeApp(options)
 }
