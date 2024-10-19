@@ -21,6 +21,7 @@ open class FirebaseTokenFilter : OncePerRequestFilter() {
         try {
             val authorizationHeader = request.getHeader("Authorization")
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                logger.warn("Missing or invalid Authorization header!")
                 throw UnauthorizedException("Missing or invalid Authorization header!")
             }
 
@@ -29,6 +30,7 @@ open class FirebaseTokenFilter : OncePerRequestFilter() {
             val decodedToken: FirebaseToken = try {
                 FirebaseAuth.getInstance().verifyIdToken(token)
             } catch (e: FirebaseAuthException) {
+                logger.warn("Error! $e")
                 throw UnauthorizedException("Error! $e")
             }
 
@@ -37,6 +39,7 @@ open class FirebaseTokenFilter : OncePerRequestFilter() {
 
             chain.doFilter(request, response)
         } catch (ex: UnauthorizedException) {
+            logger.warn("Unauthorized request: ${ex.message}")
             response.status = HttpStatus.UNAUTHORIZED.value()
             response.writer.write(ex.message ?: "Unauthorized")
         }
