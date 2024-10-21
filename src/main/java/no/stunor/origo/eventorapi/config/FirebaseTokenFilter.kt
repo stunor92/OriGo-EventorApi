@@ -18,6 +18,12 @@ open class FirebaseTokenFilter : OncePerRequestFilter() {
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
+        val path = request.requestURI
+        if (path.startsWith("/rest/api-docs") || path.startsWith("/rest/webjars/") ||
+            path.startsWith("/rest/swagger-ui/")) {
+            chain.doFilter(request, response)
+            return
+        }
         try {
             val authorizationHeader = request.getHeader("Authorization")
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
