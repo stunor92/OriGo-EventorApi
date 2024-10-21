@@ -7,7 +7,7 @@ on:
 
 env:
   SERVICE_GROUP: origo
-  SERVICE: eventorapi
+  SERVICE: eventor-api
   REGION: europe-north1
 
 jobs:
