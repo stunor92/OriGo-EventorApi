@@ -131,21 +131,21 @@ class EventService {
     }
 
     fun downloadEvent(eventorId: String, eventId: String) {
-        var event = getEvent(eventorId = eventorId, eventId = eventId)
+        val event = getEvent(eventorId = eventorId, eventId = eventId)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
         if(existingEvent != null) {
             event.id = existingEvent.id
         }
         eventRepository.save(event)
-        if(event.id == null) {
-            event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: event
-        }
+    }
 
+    fun downloadEventClasses(eventorId: String, eventId: String) {
+        val event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: throw EventNotFoundException()
         val eventClasses = getEventClasses(eventorId = eventorId, eventId = eventId)
-        val existingClasses = eventClassRepository.findAllByEventorIdAndEventId(event)
-        for (eventClass in eventClasses) {
-            if(existingClasses.find { it.eventClassId == eventClass.eventClassId } != null) {
-                eventClass.id = existingClasses.find { it.eventClassId == eventClass.eventClassId }!!.id
+        val existingEventClasses = eventClassRepository.findAllByEvent(event)
+        for (eventClass in eventClasses){
+            if(existingEventClasses.find { it.eventClassId == eventClass.eventClassId } != null){
+                eventClass.id = existingEventClasses.find { it.eventClassId == eventClass.eventClassId }!!.id
             }
             eventClassRepository.save(event, eventClass)
         }

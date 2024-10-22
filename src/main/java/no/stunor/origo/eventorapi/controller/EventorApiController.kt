@@ -31,12 +31,6 @@ internal class EventorApiController {
     @Autowired
     private lateinit var calendarService: CalendarService
 
-    @Autowired
-    private lateinit var competitorService: CompetitorService
-
-    @Autowired
-    private lateinit var eventService: EventService
-
     @GetMapping("/person/download")
     fun HttpServletRequest.authenticate(
         @RequestHeader(value = "eventorId") eventorId: String,
@@ -108,95 +102,5 @@ internal class EventorApiController {
                 ),
                 HttpStatus.OK
         )
-    }
-
-
-    @GetMapping("/event/{eventorId}/{eventId}")
-    fun getEvent(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ): ResponseEntity<Event> {
-        return ResponseEntity(
-                eventService.getEvent(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
-        )
-    }
-
-    @GetMapping("/event/{eventorId}/{eventId}/me")
-    fun HttpServletRequest.getEvent(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ): ResponseEntity<List<Competitor>> {
-        val uid = getAttribute("uid") as String
-        return ResponseEntity(
-                competitorService.getCompetitors(
-                        eventorId = eventorId,
-                        eventId = eventId,
-                        userId = uid
-                ),
-                HttpStatus.OK
-        )
-    }
-
-    @GetMapping("/event/{eventorId}/{eventId}/entrylist")
-    fun getEventEntryList(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ): ResponseEntity<List<Competitor>> {
-        return ResponseEntity(
-                eventService.getEntryList(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
-        )
-    }
-
-    @GetMapping("/event/{eventorId}/{eventId}/startlist")
-    fun getEventStartList(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ): ResponseEntity<List<Competitor>> {
-        return ResponseEntity(
-                eventService.getStartList(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
-        )
-    }
-
-    @GetMapping("/event/{eventorId}/{eventId}/resultlist")
-    fun getEventResultList(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ): ResponseEntity<List<Competitor>> {
-        return ResponseEntity(
-                eventService.getResultList(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
-        )
-    }
-
-    @GetMapping("/event/{eventorId}/{eventId}/download")
-    fun downloadEvent(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ) {
-        eventService.downloadEvent(eventorId, eventId)
-    }
-
-    @GetMapping("/event/{eventorId}/{eventId}/competitors/download")
-    fun HttpServletRequest.downloadCompetitors(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ) {
-        val uid = getAttribute("uid") as String
-        eventService.downloadCompetitors(eventorId, eventId, uid)
     }
 }

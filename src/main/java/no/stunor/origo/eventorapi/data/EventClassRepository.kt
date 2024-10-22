@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository
 class EventClassRepository{
     private val firestore = FirestoreClient.getFirestore()
 
-    fun findAllByEventorIdAndEventId(event: Event): List<EventClass> {
+    fun findAllByEvent(event: Event): List<EventClass> {
         val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
             .document(event.id!!)
             .collection("classes")
