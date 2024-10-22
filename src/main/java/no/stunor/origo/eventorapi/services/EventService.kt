@@ -11,6 +11,7 @@ import no.stunor.origo.eventorapi.exception.ResultListNotFoundException
 import no.stunor.origo.eventorapi.exception.StartListNotFoundException
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
+import no.stunor.origo.eventorapi.model.event.EventClass
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
@@ -18,6 +19,7 @@ import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
+import no.stunor.origo.eventorapi.services.converter.EventClassConverter
 import no.stunor.origo.eventorapi.services.converter.EventConverter
 import no.stunor.origo.eventorapi.services.converter.ResultListConverter
 import no.stunor.origo.eventorapi.services.converter.StartListConverter
@@ -28,6 +30,7 @@ import java.text.ParseException
 
 @Service
 class EventService {
+
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     @Autowired
@@ -47,16 +50,19 @@ class EventService {
     @Autowired
     private lateinit var eventRepository: EventRepository
     @Autowired
+    private lateinit var eventClassRepository: EventClassRepository
+    @Autowired
     private lateinit var entryListConverter: EntryListConverter
     @Autowired
     private lateinit var startListConverter: StartListConverter
     @Autowired
     private lateinit var resultListConverter: ResultListConverter
+    @Autowired
+    private lateinit var eventClassConverter: EventClassConverter
 
     fun getEvent(eventorId: String, eventId: String): Event {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val event = eventorService.getEvent(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EventNotFoundException()
-        val eventClassList = eventorService.getEventClasses(eventor, eventId)
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.apiKey, eventId)
 
         val organisers: MutableList<Organisation> = ArrayList()
@@ -89,7 +95,7 @@ class EventService {
                 regions.add(region)
             }
         }
-        return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor)
+        return eventConverter.convertEvent(event, documentList, organisers, regions, eventor)
     }
 
     fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
@@ -118,13 +124,31 @@ class EventService {
         }
     }
 
+    private fun getEventClasses(eventorId: String, eventId: String): List<EventClass> {
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        val eventClassList = eventorService.getEventClasses(eventor = eventor, eventId = eventId)
+        return eventClassConverter.convertEventClasses(eventClassList)
+    }
+
     fun downloadEvent(eventorId: String, eventId: String) {
-        val event = getEvent(eventorId = eventorId, eventId = eventId)
+        var event = getEvent(eventorId = eventorId, eventId = eventId)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
         if(existingEvent != null) {
             event.id = existingEvent.id
         }
         eventRepository.save(event)
+        if(event.id == null) {
+            event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: event
+        }
+
+        val eventClasses = getEventClasses(eventorId = eventorId, eventId = eventId)
+        val existingClasses = eventClassRepository.findAllByEventorIdAndEventId(event)
+        for (eventClass in eventClasses) {
+            if(existingClasses.find { it.eventClassId == eventClass.eventClassId } != null) {
+                eventClass.id = existingClasses.find { it.eventClassId == eventClass.eventClassId }!!.id
+            }
+            eventClassRepository.save(event, eventClass)
+        }
     }
 
     fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {
@@ -152,7 +176,6 @@ class EventService {
         }
 
         event.id?.let { competitorsRepository.saveAll(it, result) }
-
     }
 
     private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {
