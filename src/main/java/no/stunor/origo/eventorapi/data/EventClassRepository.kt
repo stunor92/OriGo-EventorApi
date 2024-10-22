@@ -33,13 +33,13 @@ class EventClassRepository{
             firestore.collection("events")
                 .document(event.id!!)
                 .collection("classes")
-                .add(event)
+                .add(eventClass)
         } else {
             firestore.collection("events")
                 .document(event.id!!)
                 .collection("classes")
                 .document(eventClass.id!!)
-                .set(event)
+                .set(eventClass)
         }
     }
 

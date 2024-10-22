@@ -2,41 +2,41 @@
   {
     "name": "management.endpoint.health.show-detals",
     "type": "java.lang.String",
-    "description": "A description for 'management.endpoint.health.show-detals'"
+    "description": "A description for 'management.endpoint.health.show-details'."
   },
   {
     "name": "firestore.credentials.path",
     "type": "java.lang.String",
-    "description": "A description for 'firestore.credentials.path'"
+    "description": "A description for 'firestore.credentials.path'."
   },
   {
     "name": "config.personal-entries.start",
     "type": "java.lang.String",
-    "description": "A description for 'config.personal-entries.start'"
+    "description": "A description for 'config.personal-entries.start'."
   },
   {
     "name": "config.personal-entries.end",
     "type": "java.lang.String",
-    "description": "A description for 'config.personal-entries.end'"
+    "description": "A description for 'config.personal-entries.end'."
   },
   {
     "name": "config.personalStarts.start",
     "type": "java.lang.String",
-    "description": "A description for 'config.personalStarts.start'"
+    "description": "A description for 'config.personalStarts.start'."
   },
   {
     "name": "config.personalStarts.end",
     "type": "java.lang.String",
-    "description": "A description for 'config.personalStarts.end'"
+    "description": "A description for 'config.personalStarts.end'."
   },
   {
     "name": "config.personalResults.start",
     "type": "java.lang.String",
-    "description": "A description for 'config.personalResults.start'"
+    "description": "A description for 'config.personalResults.start'."
   },
   {
     "name": "config.personalResults.end",
     "type": "java.lang.String",
-    "description": "A description for 'config.personalResults.end'"
+    "description": "A description for 'config.personalResults.end'."
   }
 ]}

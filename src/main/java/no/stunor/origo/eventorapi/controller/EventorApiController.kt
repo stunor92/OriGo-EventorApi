@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.controller
 
-import com.google.firebase.auth.FirebaseAuth
 import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.event.Event
