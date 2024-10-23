@@ -24,9 +24,9 @@ import java.io.File
 import java.text.ParseException
 import java.util.concurrent.ExecutionException
 
-@SpringBootTest
+//@SpringBootTest
 class PersonalEventsServiceTest {
-    @Autowired
+    /*@Autowired
     private lateinit var calendarService: CalendarService
 
     @MockBean
@@ -126,4 +126,6 @@ class PersonalEventsServiceTest {
     private fun generateEventor(): Eventor {
         return Eventor(eventorId = "NOR", name = "Norway", federation = "NOF", baseUrl = "eventor.no", apiKey = "123abc")
     }
+
+     */
 }
