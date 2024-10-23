@@ -23,6 +23,7 @@ data class Event (
         var finishDate: Timestamp? = null,
         var organisers: List<Organisation> = ArrayList(),
         var regions: List<Region> = ArrayList(),
+        var eventClasses: List<EventClass> = ArrayList(),
         var documents: List<EventorDocument> = ArrayList(),
         var entryBreaks: List<EntryBreak> = ArrayList(),
         var races: List<Race> = ArrayList(),

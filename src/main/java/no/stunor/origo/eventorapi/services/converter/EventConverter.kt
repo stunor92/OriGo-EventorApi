@@ -107,6 +107,7 @@ class EventConverter {
     @Throws(ParseException::class)
     fun convertEvent(
         event: org.iof.eventor.Event,
+        eventCLassList: org.iof.eventor.EventClassList?,
         documentList: org.iof.eventor.DocumentList?,
         organisations: List<Organisation>,
         regions: List<Region>,
@@ -124,6 +125,7 @@ class EventConverter {
             finishDate = convertFinishDate(event.finishDate, eventor),
             organisers = organisations,
             regions = regions,
+            eventClasses = eventClassConverter.convertEventClasses(eventCLassList),
             documents = convertEventDocument(documentList),
             entryBreaks = convertEntryBreaks(event.entryBreak),
             races = convertRaces(event, event.eventRace, eventor),

@@ -1,12 +1,9 @@
 package no.stunor.origo.eventorapi.model.event
 
-import com.google.cloud.firestore.annotation.DocumentId
 import java.io.Serializable
 
 
 data class EventClass (
-        @DocumentId
-        var id: String? = null,
         var eventClassId: String = "",
         var name: String = "",
         var shortName: String = "",

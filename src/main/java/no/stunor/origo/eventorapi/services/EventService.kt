@@ -1,7 +1,12 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.data.*
+import no.stunor.origo.eventorapi.data.CompetitorRepository
+import no.stunor.origo.eventorapi.data.EventRepository
+import no.stunor.origo.eventorapi.data.EventorRepository
+import no.stunor.origo.eventorapi.data.OrganisationRepository
+import no.stunor.origo.eventorapi.data.PersonRepository
+import no.stunor.origo.eventorapi.data.RegionRepository
 import no.stunor.origo.eventorapi.exception.EntryListNotFoundException
 import no.stunor.origo.eventorapi.exception.EventNotFoundException
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
@@ -11,7 +16,6 @@ import no.stunor.origo.eventorapi.exception.ResultListNotFoundException
 import no.stunor.origo.eventorapi.exception.StartListNotFoundException
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
-import no.stunor.origo.eventorapi.model.event.EventClass
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
@@ -19,7 +23,6 @@ import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
-import no.stunor.origo.eventorapi.services.converter.EventClassConverter
 import no.stunor.origo.eventorapi.services.converter.EventConverter
 import no.stunor.origo.eventorapi.services.converter.ResultListConverter
 import no.stunor.origo.eventorapi.services.converter.StartListConverter
@@ -50,19 +53,17 @@ class EventService {
     @Autowired
     private lateinit var eventRepository: EventRepository
     @Autowired
-    private lateinit var eventClassRepository: EventClassRepository
-    @Autowired
     private lateinit var entryListConverter: EntryListConverter
     @Autowired
     private lateinit var startListConverter: StartListConverter
     @Autowired
     private lateinit var resultListConverter: ResultListConverter
-    @Autowired
-    private lateinit var eventClassConverter: EventClassConverter
 
     fun getEvent(eventorId: String, eventId: String): Event {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val event = eventorService.getEvent(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EventNotFoundException()
+        val eventClassList = eventorService.getEventClasses(eventor, eventId)
+
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.apiKey, eventId)
 
         val organisers: MutableList<Organisation> = ArrayList()
@@ -95,7 +96,7 @@ class EventService {
                 regions.add(region)
             }
         }
-        return eventConverter.convertEvent(event, documentList, organisers, regions, eventor)
+        return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor)
     }
 
     fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
@@ -124,12 +125,6 @@ class EventService {
         }
     }
 
-    private fun getEventClasses(eventorId: String, eventId: String): List<EventClass> {
-        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val eventClassList = eventorService.getEventClasses(eventor = eventor, eventId = eventId)
-        return eventClassConverter.convertEventClasses(eventClassList)
-    }
-
     fun downloadEvent(eventorId: String, eventId: String) {
         val event = getEvent(eventorId = eventorId, eventId = eventId)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
@@ -137,18 +132,6 @@ class EventService {
             event.id = existingEvent.id
         }
         eventRepository.save(event)
-    }
-
-    fun downloadEventClasses(eventorId: String, eventId: String) {
-        val event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: throw EventNotFoundException()
-        val eventClasses = getEventClasses(eventorId = eventorId, eventId = eventId)
-        val existingEventClasses = eventClassRepository.findAllByEvent(event)
-        for (eventClass in eventClasses){
-            if(existingEventClasses.find { it.eventClassId == eventClass.eventClassId } != null){
-                eventClass.id = existingEventClasses.find { it.eventClassId == eventClass.eventClassId }!!.id
-            }
-            eventClassRepository.save(event, eventClass)
-        }
     }
 
     fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {
