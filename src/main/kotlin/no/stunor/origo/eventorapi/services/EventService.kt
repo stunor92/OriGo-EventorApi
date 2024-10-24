@@ -135,7 +135,7 @@ class EventService {
     private fun getEntryFees(eventorId: String, event: Event): List<EntryFee> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val entryFees = eventorService.getEventEntryFees(eventor.baseUrl, eventor.apiKey, event.eventId) ?: throw EntryListNotFoundException()
-        return entryFeeConverter.convertEventEntryFees(entryFees, event)
+        return entryFeeConverter.convertEventEntryFees(entryFees, event, eventor)
     }
 
     fun downloadEvent(eventorId: String, eventId: String) {

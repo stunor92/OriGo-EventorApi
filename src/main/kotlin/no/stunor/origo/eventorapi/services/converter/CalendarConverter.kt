@@ -53,7 +53,7 @@ class CalendarConverter {
             status = eventConverter.convertEventStatus(event.eventStatusId.content),
             disciplines = eventConverter.convertEventDisciplines(event.disciplineIdOrDiscipline),
             organisers = if(event.organiser != null) eventConverter.convertOrganisers(eventor, event.organiser.organisationIdOrOrganisation) else listOf(),
-            entryBreaks = eventConverter.convertEntryBreaks(event.entryBreak),
+            entryBreaks = eventConverter.convertEntryBreaks(event.entryBreak, eventor),
             entries = getEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
             userEntries = mutableListOf(),
             organisationEntries = getOrganisationEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
