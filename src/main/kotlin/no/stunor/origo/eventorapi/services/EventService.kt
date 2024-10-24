@@ -154,7 +154,7 @@ class EventService {
         existingFees.addAll(entryFeesRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId))
 
         for (entryFee in entryFees){
-            if (!existingFees.any { it.entryFeeId == entryFee.entryFeeId }) {
+            if (existingFees.any { it.entryFeeId == entryFee.entryFeeId }) {
                 entryFee.id = existingFees.first{ it.entryFeeId == entryFee.entryFeeId }.id
             }
         }
