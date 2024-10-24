@@ -2,55 +2,28 @@ package no.stunor.origo.eventorapi.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.calendar.CalendarRace
-import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
-import no.stunor.origo.eventorapi.model.event.competitor.Competitor
-import no.stunor.origo.eventorapi.model.person.Person
-import no.stunor.origo.eventorapi.services.AuthService
 import no.stunor.origo.eventorapi.services.CalendarService
-import no.stunor.origo.eventorapi.services.CompetitorService
-import no.stunor.origo.eventorapi.services.EventService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.PathVariable
 import java.time.LocalDate
 
 @RestController
-internal class EventorApiController {
+@RequestMapping("eventlist")
+internal class EventListController {
     private val log = LoggerFactory.getLogger(this.javaClass)
-
-    @Autowired
-    private lateinit var authService: AuthService
-
     @Autowired
     private lateinit var calendarService: CalendarService
 
-    @GetMapping("/person/download")
-    fun HttpServletRequest.authenticate(
-        @RequestHeader(value = "eventorId") eventorId: String,
-        @RequestHeader(value = "username") username: String,
-        @RequestHeader(value = "password") password: String
-    ): ResponseEntity<Person> {
-        log.info("Start authenticating user {}.", username)
-        val uid = getAttribute("uid") as String
-        return ResponseEntity(
-                authService.authenticate(
-                        eventorId =eventorId,
-                        username = username,
-                        password = password,
-                        userId = uid
-                )
-                , HttpStatus.OK
-        )
-    }
 
-    @GetMapping("/eventlist/{eventorId}")
+    @GetMapping("/{eventorId}")
     fun HttpServletRequest.getEventList(
         @PathVariable("eventorId") eventorId: String,
         @RequestParam("from") from: LocalDate,
@@ -73,7 +46,7 @@ internal class EventorApiController {
         )
     }
 
-    @GetMapping("/eventlist")
+    @GetMapping
     fun HttpServletRequest.getEventList(
         @RequestParam("from") from: LocalDate,
         @RequestParam("to") to: LocalDate,
@@ -92,7 +65,7 @@ internal class EventorApiController {
         )
     }
 
-    @GetMapping("/eventlist/me")
+    @GetMapping("/me")
     fun HttpServletRequest.getUserEntries(): ResponseEntity<List<CalendarRace>> {
         val uid = getAttribute("uid") as String
         log.info("Start to get personal events for user {}.", uid)

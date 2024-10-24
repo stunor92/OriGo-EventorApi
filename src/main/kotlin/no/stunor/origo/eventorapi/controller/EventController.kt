@@ -1,5 +1,6 @@
 package no.stunor.origo.eventorapi.controller
 
+import io.swagger.annotations.Api
 import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
