@@ -148,7 +148,7 @@ class EventService {
     }
 
     fun downloadEntryFees(eventorId: String, eventId: String) {
-        val event = getEvent(eventorId = eventorId, eventId = eventId)
+        val event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: throw EventNotFoundException()
         val entryFees = getEntryFees(eventorId = eventorId, event = event)
         val existingFees: MutableList<EntryFee> = mutableListOf()
         existingFees.addAll(entryFeesRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId))

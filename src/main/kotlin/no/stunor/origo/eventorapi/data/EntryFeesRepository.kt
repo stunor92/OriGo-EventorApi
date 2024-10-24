@@ -11,12 +11,12 @@ import org.springframework.stereotype.Repository
 class EntryFeesRepository {
     private val firestore = FirestoreClient.getFirestore()
 
-    fun saveAll(documentId: String, entryFees: List<EntryFee>) {
+    fun saveAll(eventDocument: String, entryFees: List<EntryFee>) {
         for (entryFee in entryFees) {
             if(entryFee.id == null) {
-                firestore.collection("events").document(documentId).collection("fees").add(entryFee)
+                firestore.collection("events").document(eventDocument).collection("fees").add(entryFee)
             } else {
-                firestore.collection("events").document(documentId).collection("fees").document(entryFee.id!!).set(entryFee)
+                firestore.collection("events").document(eventDocument).collection("fees").document(entryFee.id!!).set(entryFee)
             }
         }
     }
