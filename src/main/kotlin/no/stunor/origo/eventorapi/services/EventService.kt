@@ -2,6 +2,7 @@ package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
 import no.stunor.origo.eventorapi.data.CompetitorRepository
+import no.stunor.origo.eventorapi.data.EntryFeesRepository
 import no.stunor.origo.eventorapi.data.EventRepository
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.OrganisationRepository
@@ -15,6 +16,7 @@ import no.stunor.origo.eventorapi.exception.OrganisationNotOrganiserException
 import no.stunor.origo.eventorapi.exception.ResultListNotFoundException
 import no.stunor.origo.eventorapi.exception.StartListNotFoundException
 import no.stunor.origo.eventorapi.model.Region
+import no.stunor.origo.eventorapi.model.event.EntryFee
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
@@ -22,6 +24,7 @@ import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
+import no.stunor.origo.eventorapi.services.converter.EntryFeeConverter
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
 import no.stunor.origo.eventorapi.services.converter.EventConverter
 import no.stunor.origo.eventorapi.services.converter.ResultListConverter
@@ -53,11 +56,15 @@ class EventService {
     @Autowired
     private lateinit var eventRepository: EventRepository
     @Autowired
+    private lateinit var entryFeesRepository: EntryFeesRepository
+    @Autowired
     private lateinit var entryListConverter: EntryListConverter
     @Autowired
     private lateinit var startListConverter: StartListConverter
     @Autowired
     private lateinit var resultListConverter: ResultListConverter
+    @Autowired
+    private lateinit var entryFeeConverter: EntryFeeConverter
 
     fun getEvent(eventorId: String, eventId: String): Event {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
@@ -125,6 +132,12 @@ class EventService {
         }
     }
 
+    private fun getEntryFees(eventorId: String, event: Event): List<EntryFee> {
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        val entryFees = eventorService.getEventEntryFees(eventor.baseUrl, eventor.apiKey, event.eventId) ?: throw EntryListNotFoundException()
+        return entryFeeConverter.convertEventEntryFees(entryFees, event)
+    }
+
     fun downloadEvent(eventorId: String, eventId: String) {
         val event = getEvent(eventorId = eventorId, eventId = eventId)
         val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
@@ -132,6 +145,21 @@ class EventService {
             event.id = existingEvent.id
         }
         eventRepository.save(event)
+    }
+
+    fun downloadEntryFees(eventorId: String, eventId: String) {
+        val event = getEvent(eventorId = eventorId, eventId = eventId)
+        val entryFees = getEntryFees(eventorId = eventorId, event = event)
+        val existingFees: MutableList<EntryFee> = mutableListOf()
+        existingFees.addAll(entryFeesRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId))
+
+        for (entryFee in entryFees){
+            if (!existingFees.any { it.entryFeeId == entryFee.entryFeeId }) {
+                entryFee.id = existingFees.first{ it.entryFeeId == entryFee.entryFeeId }.id
+            }
+        }
+
+        event.id?.let { entryFeesRepository.saveAll(it, entryFees) }
     }
 
     fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {

@@ -246,6 +246,21 @@ class EventorService {
         return response.body
     }
 
+    fun getEventEntryFees(baseUrl: String, apiKey: String?, eventId: String): EntryFeeList? {
+        val headers = HttpHeaders()
+        headers["ApiKey"] = apiKey
+
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+            baseUrl + "api/entryfees/events/" + eventId,
+            HttpMethod.GET,
+            request,
+            EntryFeeList::class.java,
+            1
+        )
+        return response.body
+    }
+
     fun getOrganisationFromApiKey(baseUrl: String, apiKey: String?): Organisation? {
         val headers = HttpHeaders()
         headers["ApiKey"] = apiKey
