@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture
 import com.google.cloud.firestore.QuerySnapshot
 import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.event.EntryFee
+import no.stunor.origo.eventorapi.model.event.Event
 import org.springframework.stereotype.Repository
 
 
@@ -21,12 +22,11 @@ class EntryFeesRepository {
         }
     }
 
-    fun findAllByEventIdAndEventorId(eventId: String, eventorId: String): List<EntryFee> {
+    fun findAllForEvent(event: Event): List<EntryFee> {
         val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
-            .document(eventId)
+            .document(event.id?:"")
             .collection("fees")
-            .whereEqualTo("eventId", eventId)
-            .whereEqualTo("eventorId", eventorId)
+
             .get()
 
         val documents = future.get().documents
