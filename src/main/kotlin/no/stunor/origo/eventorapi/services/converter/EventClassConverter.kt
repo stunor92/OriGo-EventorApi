@@ -3,7 +3,6 @@ package no.stunor.origo.eventorapi.services.converter
 import no.stunor.origo.eventorapi.model.event.ClassGender
 import no.stunor.origo.eventorapi.model.event.EventClass
 import no.stunor.origo.eventorapi.model.event.EventClassTypeEnum
-import org.iof.eventor.ClassEntryFee
 import org.iof.eventor.EventClassList
 import org.iof.eventor.HashTableEntry
 import org.springframework.stereotype.Component
@@ -35,8 +34,7 @@ class EventClassConverter {
                 orderedResult = getResultListMode(eventClass.hashTableEntry),
                 legs = (if (eventClass.numberOfLegs != null) eventClass.numberOfLegs.toInt() else null)!!,
                 minAverageAge = if (eventClass.minAverageAge != null) eventClass.minAverageAge.toInt() else null,
-                maxAverageAge =  if (eventClass.maxAverageAge != null) eventClass.maxAverageAge.toInt() else null,
-                entryFees = convertEntryFees(eventClass.classEntryFee))
+                maxAverageAge =  if (eventClass.maxAverageAge != null) eventClass.maxAverageAge.toInt() else null)
     }
 
     private fun convertGender(sex: String): ClassGender {
@@ -53,14 +51,6 @@ class EventClassConverter {
             "3" -> EventClassTypeEnum.Open
             else -> EventClassTypeEnum.Normal
         }
-    }
-
-    private fun convertEntryFees(classEntryFees: List<ClassEntryFee>): List<String> {
-        val result: MutableList<String> = ArrayList()
-        for (entryFee in classEntryFees) {
-            result.add(entryFee.entryFeeId.content)
-        }
-        return result
     }
 
     private fun getResultListMode(hashTableEntryList: List<HashTableEntry>): Boolean {

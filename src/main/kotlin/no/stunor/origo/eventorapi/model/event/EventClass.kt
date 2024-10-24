@@ -16,5 +16,4 @@ data class EventClass (
         var legs: Int = 1,
         var minAverageAge: Int? = 0,
         var maxAverageAge: Int? = 99,
-        var entryFees: List<String> = listOf()
 ) : Serializable
