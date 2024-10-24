@@ -1,6 +1,6 @@
 package no.stunor.origo.eventorapi.controller
 
-import io.swagger.annotations.Api
+
 import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.AuthService
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("person")
-@Api("Person Controller")
 internal class PersonController {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
