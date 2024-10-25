@@ -152,13 +152,20 @@ class EventService {
         val entryFees = getEntryFees(eventorId = eventorId, event = event)
         val existingFees = entryFeesRepository.findAllForEvent(event)
 
+        val providedFeeIds = entryFees.mapNotNull { it.entryFeeId }.toList()
+
         for (entryFee in entryFees){
             if (existingFees.any { it.entryFeeId == entryFee.entryFeeId }) {
                 entryFee.id = existingFees.first{ it.entryFeeId == entryFee.entryFeeId }.id
             }
         }
-
         event.id?.let { entryFeesRepository.saveAll(it, entryFees) }
+        // Delete fees that are not in the provided list
+        for (fee in existingFees) {
+            if (!providedFeeIds.contains(fee.entryFeeId)) {
+                entryFeesRepository.delete(event.id!!, fee)
+            }
+        }
     }
 
     fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {

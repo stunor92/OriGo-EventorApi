@@ -22,11 +22,20 @@ class EntryFeesRepository {
         }
     }
 
+    fun delete(eventDocument: String, fee: EntryFee) {
+        fee.id?.let {
+            firestore.collection("events")
+                .document(eventDocument)
+                .collection("fees")
+                .document(it)
+                .delete()
+        }
+    }
+
     fun findAllForEvent(event: Event): List<EntryFee> {
         val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
             .document(event.id?:"")
             .collection("fees")
-
             .get()
 
         val documents = future.get().documents
