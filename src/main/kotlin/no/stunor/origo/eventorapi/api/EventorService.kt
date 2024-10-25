@@ -2,8 +2,18 @@ package no.stunor.origo.eventorapi.api
 
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
-import no.stunor.origo.eventorapi.model.person.Person
-import org.iof.eventor.*
+import org.iof.eventor.CompetitorCountList
+import org.iof.eventor.DocumentList
+import org.iof.eventor.EntryFeeList
+import org.iof.eventor.EntryList
+import org.iof.eventor.Event
+import org.iof.eventor.EventClassList
+import org.iof.eventor.EventList
+import org.iof.eventor.Organisation
+import org.iof.eventor.ResultList
+import org.iof.eventor.ResultListList
+import org.iof.eventor.StartList
+import org.iof.eventor.StartListList
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -15,7 +25,6 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Service
 class EventorService {

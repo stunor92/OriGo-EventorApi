@@ -1,30 +1,5 @@
 package no.stunor.origo.eventorapi
 
-import jakarta.xml.bind.JAXBContext
-import jakarta.xml.bind.JAXBException
-import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.data.EventorRepository
-import no.stunor.origo.eventorapi.data.OrganisationRepository
-import no.stunor.origo.eventorapi.data.RegionRepository
-import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.Region
-import no.stunor.origo.eventorapi.model.organisation.OrganisationType
-import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.services.EventService
-import org.iof.eventor.DocumentList
-import org.iof.eventor.Event
-import org.iof.eventor.EventClassList
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.whenever
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import java.io.File
-import java.text.ParseException
-import java.util.concurrent.ExecutionException
-
 
 class EventServiceTest {
   /*  private lateinit var eventService: EventService

@@ -1,29 +1,5 @@
 package no.stunor.origo.eventorapi
 
-import jakarta.xml.bind.JAXBContext
-import jakarta.xml.bind.JAXBException
-import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.data.EventorRepository
-import no.stunor.origo.eventorapi.data.PersonRepository
-import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.person.Gender
-import no.stunor.origo.eventorapi.model.person.Person
-import no.stunor.origo.eventorapi.model.person.PersonName
-import no.stunor.origo.eventorapi.services.CalendarService
-import org.iof.eventor.EntryList
-import org.iof.eventor.ResultListList
-import org.iof.eventor.StartListList
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.whenever
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import java.io.File
-import java.text.ParseException
-import java.util.concurrent.ExecutionException
-
 //@SpringBootTest
 class PersonalEventsServiceTest {
     /*@Autowired

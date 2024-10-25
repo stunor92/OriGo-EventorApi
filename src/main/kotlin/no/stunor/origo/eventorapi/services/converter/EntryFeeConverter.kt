@@ -34,7 +34,7 @@ class EntryFeeConverter {
             validTo = if (entryFee.validToDate != null) convertValidToDate(entryFee.validToDate, eventor) else null,
             fromBirthYear = if(entryFee.fromDateOfBirth != null) entryFee.fromDateOfBirth.date.content.substring(0,4).toInt() else null,
             toBirthYear = if(entryFee.toDateOfBirth != null) entryFee.toDateOfBirth.date.content.substring(0,4).toInt() else null,
-            taxIncluded = if (entryFee.taxIncluded == "Y") true else false,
+            taxIncluded = entryFee.taxIncluded == "Y",
             eventClasses = getEventClasses(event)
         )
 

@@ -7,7 +7,6 @@ import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.model.person.PersonName
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import kotlin.streams.toList
 
 @Component
 class PersonConverter {
