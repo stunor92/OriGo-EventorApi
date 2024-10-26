@@ -36,9 +36,21 @@ class EntryFeeConverter {
             fromBirthYear = if(entryFee.fromDateOfBirth != null) entryFee.fromDateOfBirth.date.content.substring(0,4).toInt() else null,
             toBirthYear = if(entryFee.toDateOfBirth != null) entryFee.toDateOfBirth.date.content.substring(0,4).toInt() else null,
             taxIncluded = entryFee.taxIncluded == "Y",
-            eventClasses = eventClasses.eventClass.filter { it.classEntryFee == entryFee.entryFeeId }.map { it.eventClassId.content }
+            eventClasses = findEventClasses(eventClasses, entryFee.entryFeeId.content)
         )
 
+    }
+
+    private fun findEventClasses(eventClasses: EventClassList, entryFeeId: String): List<String> {
+        val result: ArrayList<String> = ArrayList()
+        for(eventClass in eventClasses.eventClass) {
+            for (entryFee in eventClass.classEntryFee) {
+                if (entryFee.entryFeeId.content == entryFeeId) {
+                    result.add(eventClass.eventClassId.content)
+                }
+            }
+        }
+        return result
     }
 
     private fun convertPrice(amount: org.iof.eventor.Amount): Price {
