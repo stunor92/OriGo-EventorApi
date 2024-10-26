@@ -6,6 +6,7 @@ import no.stunor.origo.eventorapi.model.event.EntryFee
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.Price
 import org.iof.eventor.EntryFeeList
+import org.iof.eventor.EventClassList
 import org.springframework.stereotype.Component
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -14,16 +15,16 @@ import java.time.format.DateTimeFormatter
 @Component
 class EntryFeeConverter {
 
-    fun convertEventEntryFees(entryFees: EntryFeeList, event: Event, eventor: Eventor): List<EntryFee> {
+    fun convertEventEntryFees(entryFees: EntryFeeList, event: Event, eventor: Eventor, eventClasses: EventClassList): List<EntryFee> {
         val result: MutableList<EntryFee> = mutableListOf()
 
         for (entryFee in entryFees.entryFee) {
-            result.add(convertEntryFee(entryFee, event, eventor))
+            result.add(convertEntryFee(entryFee, eventor, eventClasses))
         }
         return result
     }
 
-    private fun convertEntryFee(entryFee: org.iof.eventor.EntryFee, event: Event, eventor: Eventor): EntryFee {
+    private fun convertEntryFee(entryFee: org.iof.eventor.EntryFee, eventor: Eventor, eventClasses: EventClassList): EntryFee {
         return EntryFee(
             entryFeeId = entryFee.entryFeeId.content,
             name = entryFee.name.content,
@@ -35,7 +36,7 @@ class EntryFeeConverter {
             fromBirthYear = if(entryFee.fromDateOfBirth != null) entryFee.fromDateOfBirth.date.content.substring(0,4).toInt() else null,
             toBirthYear = if(entryFee.toDateOfBirth != null) entryFee.toDateOfBirth.date.content.substring(0,4).toInt() else null,
             taxIncluded = entryFee.taxIncluded == "Y",
-            eventClasses = getEventClasses(event)
+            eventClasses = eventClasses.eventClass.filter { it.classEntryFee == entryFee.entryFeeId }.map { it.eventClassId.content }
         )
 
     }
@@ -52,14 +53,6 @@ class EntryFeeConverter {
             amount = amount.content.toInt(),
             currency = amount.currency
         )
-    }
-
-    private fun getEventClasses(event: Event): List<String> {
-        val result: MutableList<String> = mutableListOf()
-        for (eventClass in event.eventClasses) {
-            result.add(eventClass.eventClassId)
-        }
-        return result
     }
 
     private fun convertValidFromDate(time: org.iof.eventor.ValidFromDate, eventor: Eventor): Timestamp {
