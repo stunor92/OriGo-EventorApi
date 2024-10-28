@@ -1,19 +1,20 @@
-FROM maven:3-eclipse-temurin-17-alpine as builder
-
-# Copy local code to the container image.
+# Use Maven to build the application
+FROM maven:3.9.9-eclipse-temurin-21 as builder
+# Set the working directory
 WORKDIR /app
+
+# Copy the pom.xml and source code
 COPY pom.xml .
 COPY src ./src
 
-# Build a release artifact.
+# Build the application
 RUN mvn package -DskipTests
 
-# Use Eclipse Temurin for base image.
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM eclipse-temurin:17.0.9_9-jre-alpine
+# Use a lightweight JDK base image for the runtime
+FROM eclipse-temurin:21-jre
 
-# Copy the jar to the production image from the builder stage.
+# Copy the built jar from the builder stage
 COPY --from=builder /app/target/*.jar /app.jar
 
-# Run the web service on container startup.
+# Run the application
 CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
