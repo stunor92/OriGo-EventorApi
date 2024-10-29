@@ -16,7 +16,7 @@ open class SecurityConfig(
     @Bean
     open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf { it.disable() } // Disable CSRF for non-browser clients
+            .csrf {} // Enable CSRF protection
             .authorizeHttpRequests { authorizeRequests ->
                 authorizeRequests
                     .anyRequest().permitAll() // All other endpoints
