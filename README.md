@@ -12,7 +12,7 @@ The application provides endpoints to convert Eventor IOF-XML files to JSON. You
 
 ## Prerequisites
 
-- Java 11 or higher
+- Java 21 or higher
 - Maven 3.6.0 or higher
 
 ## Build the project
