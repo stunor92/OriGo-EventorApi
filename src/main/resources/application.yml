@@ -31,11 +31,11 @@ management:
           - metrics
   endpoint:
     loggers:
-      enabled: true
+      access: read_only
     health:
-      enabled: true
+      access: read_only
     metrics:
-      enabled: true
+      access: read_only
 config:
   personalEntries:
     start: 1
