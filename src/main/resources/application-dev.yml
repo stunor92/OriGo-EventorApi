@@ -1,0 +1,10 @@
+config:
+  personalEntries:
+    start: 180
+    end: 180
+  personalStarts:
+    start: 180
+    end: 180
+  personalResults:
+    start: 180
+    end: 180
