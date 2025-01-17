@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v2.0.0...v2.1.0) (2025-01-17)
+
+
+### Features
+
+* testing release ([939ae57](https://github.com/stunor92/OriGo-EventorApi/commit/939ae57a7a6bd181fb63044ad4358cf9105f86d9))
+
 ## [2.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v2.0.0...v2.0.0) (2025-01-17)
 
 
