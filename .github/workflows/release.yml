@@ -20,11 +20,7 @@ jobs:
           release-type: "maven"
       - name: Print release-please outputs
         run: |
-          echo "Release created: ${{ steps.release.outputs.release_created }}"
-          echo "Major version: ${{ steps.release.outputs.major }}"
-          echo "Minor version: ${{ steps.release.outputs.minor }}"
-          echo "All outputs: ${{ steps.release.outputs }}"
-
+          echo "All outputs:" $(jq -n env | jq '.steps.release.outputs')
       - uses: actions/checkout@v4
       - name: tag major and minor versions
         if: ${{ steps.release.outputs.release_created}}
