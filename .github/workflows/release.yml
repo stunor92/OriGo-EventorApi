@@ -17,11 +17,12 @@ jobs:
         id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: "maven"
+          release-type: simple
       - name: Print release-please outputs
         run: |
-          echo "All outputs:" $(jq -n env | jq '.steps.release.outputs')
-      - uses: actions/checkout@v4
+          echo "Release created: ${{ steps.release.outputs.release_created }}"
+          echo "Major version: ${{ steps.release.outputs.major }}"
+          echo "Minor version: ${{ steps.release.outputs.minor }}"      - uses: actions/checkout@v4
       - name: tag major and minor versions
         if: ${{ steps.release.outputs.release_created}}
         run: |
