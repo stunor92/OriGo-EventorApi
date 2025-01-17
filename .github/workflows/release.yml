@@ -20,7 +20,7 @@ jobs:
           release-type: maven
       - name: Print release-please outputs
         run: |
-          echo "Release created: ${{ steps.release.outputs.release_created }}"
+          echo "Release created: ${{ steps.release.outputs.paths_released }}"
           echo "Major version: ${{ steps.release.outputs.major }}"
           echo "Minor version: ${{ steps.release.outputs.minor }}"
       - name: tag major and minor versions
