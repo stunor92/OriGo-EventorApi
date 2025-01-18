@@ -1,8 +1,14 @@
 {
-  "release-type": "maven",
   "packages": {
     ".": {
-      "package-name": "eventor-api"
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "maven",
+      "bump-minor-pre-major": false,
+      "bump-patch-for-minor-pre-major": false,
+      "draft": false,
+      "prerelease": false,
+      "release-as": "2.1.0"
     }
-  }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }
