@@ -19,6 +19,7 @@ jobs:
         with:
           release-type: maven
           target-branch: ${{ github.ref_name }}
+      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
