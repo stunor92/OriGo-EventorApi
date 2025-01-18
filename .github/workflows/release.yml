@@ -12,32 +12,23 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      major: ${{ steps.release.outputs.major }}
-      minor: ${{ steps.release.outputs.minor }}
-      patch: ${{ steps.release.outputs.patch }}
+
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: maven
           target-branch: ${{ github.ref_name }}
-  print:
-    needs: release-please
-    runs-on: ubuntu-latest
-    steps:
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
       - name: Print release-please outputs
         run: |
-          echo "Release created: ${{ needs.release-please.outputs.release_created }}"
-          echo "Major version: ${{ needs.release-please.outputs.major }}"
-          echo "Minor version: ${{ needs.release-please.outputs.minor }}"
-          echo "Patch version: ${{ needs.release-please.outputs.patch }}"
-  release:
-    needs: release-please
-    if: ${{ needs.release-please.outputs.release_created }}
-    runs-on: ubuntu-latest
-    steps:
+          echo "Release created: ${{ steps.releas.outputs.release_created }}"
+          echo "Major version: ${{ steps.release.outputs.major }}"
+          echo "Minor version: ${{ steps.release.outputs.minor }}"
       - name: tag major and minor versions
         if: ${{ needs.release-please.outputs.release_created }}
         run: |
