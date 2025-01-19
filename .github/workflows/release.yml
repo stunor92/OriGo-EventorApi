@@ -20,7 +20,7 @@ jobs:
           release-type: maven
           target-branch: main
           token: ${{ secrets.GITHUB_TOKEN }}
-          manifest-file: release-please-manifest.json
+          manifest-file: .release-please-manifest.json
           config-file: release-please-config.json
       - uses: actions/checkout@v4
       - name: Print release-please outputs
