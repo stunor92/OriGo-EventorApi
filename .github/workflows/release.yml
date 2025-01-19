@@ -18,7 +18,7 @@ jobs:
         id: release
         with:
           release-type: maven
-          target-branch: ${{ github.ref_name }}
+          target-branch: main
           token: ${{ secrets.GITHUB_TOKEN }}
           manifest-file: release-please-manifest.yml
           config-file: release-please-config.yml
