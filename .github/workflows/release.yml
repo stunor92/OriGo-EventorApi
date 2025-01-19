@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Print release-please outputs
         run: |
+          echo "${{ toJson(steps.release.outputs) }}"
           echo "Release created: ${{ steps.releas.outputs.release_created }}"
           echo "Major version: ${{ steps.release.outputs.major }}"
           echo "Minor version: ${{ steps.release.outputs.minor }}"
