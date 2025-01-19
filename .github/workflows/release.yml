@@ -17,11 +17,8 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          release-type: maven
-          target-branch: main
+          release-type: simple
           token: ${{ secrets.GITHUB_TOKEN }}
-          manifest-file: .release-please-manifest.json
-          config-file: release-please-config.json
       - uses: actions/checkout@v4
       - name: Print release-please outputs
         run: |
