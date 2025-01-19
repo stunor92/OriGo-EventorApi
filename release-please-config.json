@@ -3,6 +3,7 @@
     ".": {
       "changelog-path": "CHANGELOG.md",
       "release-type": "maven",
+      "path": ".",
       "include-v-in-tag": true,
       "tag-separator": "@",
       "bump-minor-pre-major": false,
