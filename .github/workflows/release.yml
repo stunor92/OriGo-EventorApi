@@ -14,19 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: maven
           target-branch: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          manifest-file: release-please-manifest.yml
+          config-file: release-please-config.yml
+      - uses: actions/checkout@v4
       - name: Print release-please outputs
         run: |
           echo "Release created: ${{ steps.releas.outputs.release_created }}"
           echo "Major version: ${{ steps.release.outputs.major }}"
           echo "Minor version: ${{ steps.release.outputs.minor }}"
       - name: tag major and minor versions
-        if: ${{ needs.release-please.outputs.release_created }}
+        if: ${{ steps.releas.outputs.release_created }}
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
