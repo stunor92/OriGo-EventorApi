@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v2.0.0...v2.1.0) (2025-01-19)
+
+
+### Features
+
+* add release-please json files ([02193d8](https://github.com/stunor92/OriGo-EventorApi/commit/02193d81b9f04214ad35d024c6c9eacafaee0b53))
+* checkout code after release-please ([57bc13b](https://github.com/stunor92/OriGo-EventorApi/commit/57bc13b5651481342bbcd09936a5676a8676e970))
+* checkout code before release-please ([6a5bd42](https://github.com/stunor92/OriGo-EventorApi/commit/6a5bd42c117d262f5704778a24ea2df3f0e88b58))
+* fix release-please-config.json with package-name ([a8b7e8e](https://github.com/stunor92/OriGo-EventorApi/commit/a8b7e8e92c0bf91ec6f4c09fa2d911c9dd31efad))
+* modify release.yml ([f2b0545](https://github.com/stunor92/OriGo-EventorApi/commit/f2b05457c7ded757dbebc53545281d49f05b5f4c))
+* more pipeline stuff ([b0e2e50](https://github.com/stunor92/OriGo-EventorApi/commit/b0e2e50d2d7ea19a64b6c1e50da67a994607b257))
+* testing release ([939ae57](https://github.com/stunor92/OriGo-EventorApi/commit/939ae57a7a6bd181fb63044ad4358cf9105f86d9))
+* update release-please-config.json ([650f7b7](https://github.com/stunor92/OriGo-EventorApi/commit/650f7b798b60fe6e17e8c054f1b7bc0d918aff28))
+
+
+### Bug Fixes
+
+* more release-please debuging ([fa2f96b](https://github.com/stunor92/OriGo-EventorApi/commit/fa2f96b4a2c2f36672e6d9a8504de32b7d06e21c))
+* print output ([502ebf3](https://github.com/stunor92/OriGo-EventorApi/commit/502ebf38d32df40ae4252ddead8e7e7044d67ffd))
+
 ## [2.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v2.1.0...v2.0.0) (2025-01-19)
 
 
