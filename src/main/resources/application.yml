@@ -6,6 +6,8 @@ logging:
         cloud:
           firestore:
             CustomClassMapper: ERROR
+            encoding:
+              PojoBeanMapper: ERROR
 server:
   port: 8080
   error:
