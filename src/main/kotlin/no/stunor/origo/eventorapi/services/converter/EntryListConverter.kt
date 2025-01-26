@@ -47,6 +47,7 @@ class EntryListConverter {
                     personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
                     name = personConverter.convertPersonName(entry.competitor.person.personName),
                     organisation = organisationConverter.convertOrganisation(entry.competitor.organisation),
+                    organisationId = if(entry.competitor.organisation != null) entry.competitor.organisation.organisationId.content else null,
                     birthYear = if (entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(
                         0,
                         4
@@ -83,6 +84,7 @@ class EntryListConverter {
                     eventClassId = entry.entryClass[0].eventClassId.content,
                     name = entry.teamName.content,
                     organisations = convertTeamOrganisations(entry.teamCompetitor),
+                    organisationIds = entry.teamCompetitor.map { it.organisationId.content },
                     bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
                     teamMembers = convertTeamMembers(entry.teamCompetitor, race.eventRaceId),
                     startTime = null,
@@ -111,6 +113,25 @@ class EntryListConverter {
                 if (!organisationExist) {
                     organisationConverter.convertOrganisation(teamCompetitor.organisation)
                         ?.let { result.add(it) }
+                }
+            }
+        }
+        return result
+    }
+    private fun convertTeamOrganisationIds(
+        teamCompetitors: List<org.iof.eventor.TeamCompetitor>
+    ): List<String> {
+        val result: MutableList<String> = mutableListOf()
+        for (teamCompetitor in teamCompetitors) {
+            if (teamCompetitor.organisationId != null) {
+                var organisationExist = false
+                for (organisationId in result) {
+                    if (organisationId == teamCompetitor.organisationId.content) {
+                        organisationExist = true
+                    }
+                }
+                if (!organisationExist) {
+                    result.add(teamCompetitor.organisation.organisationId.content)
                 }
             }
         }

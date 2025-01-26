@@ -69,6 +69,7 @@ class StartListConverter {
             personId = if (personStart.person.personId != null) personStart.person.personId.content else null,
             name = personConverter.convertPersonName(personStart.person.personName),
             organisation = organisationConverter.convertOrganisation(personStart.organisation),
+            organisationId = if(personStart.organisation != null) personStart.organisation.organisationId.content else null,
             birthYear = if (personStart.person.birthDate != null) personStart.person.birthDate.date.content.substring(
                 0,
                 4
@@ -100,6 +101,7 @@ class StartListConverter {
             personId = if (personStart.person.personId != null) personStart.person.personId.content else null,
             name = personConverter.convertPersonName(personStart.person.personName),
             organisation = organisationConverter.convertOrganisation(personStart.organisation),
+            organisationId = if(personStart.organisation != null) personStart.organisation.organisationId.content else null,
             birthYear = if (personStart.person.birthDate != null) personStart.person.birthDate.date.content.substring(
                 0,
                 4
@@ -131,11 +133,18 @@ class StartListConverter {
                 organisationConverter.convertOrganisation(organisation)?.let { organisations.add(it) }
             }
         }
+        val organisationIds: MutableList<String> = ArrayList()
+        for (organisation in teamStart.organisationIdOrOrganisationOrCountryId) {
+            if (organisation is org.iof.eventor.Organisation) {
+                organisationIds.add(organisation.organisationId.content)
+            }
+        }
         return TeamCompetitor(
             raceId = event.eventRace[0].eventRaceId.content,
             eventClassId = classStart.eventClass.eventClassId.content,
             name = teamStart.teamName.content,
             organisations = organisations,
+            organisationIds = organisationIds,
             teamMembers = convertTeamMembers(eventor, teamStart.teamMemberStart),
             bib = if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
             startTime = if (teamStart.startTime != null) competitorConverter.convertStartTime(
