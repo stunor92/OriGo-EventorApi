@@ -81,7 +81,6 @@ class ResultListConverter {
             eventClassId = classResult.eventClass.eventClassId.content,
             personId = if (personResult.person.personId != null) personResult.person.personId.content else null,
             name = personConverter.convertPersonName(personResult.person.personName),
-            organisation = organisationConverter.convertOrganisation(personResult.organisation),
             organisationId = if(personResult.organisation != null) personResult.organisation.organisationId.content else null,
             birthYear = if (personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(
                 0,
@@ -117,7 +116,6 @@ class ResultListConverter {
             eventClassId = classResult.eventClass.eventClassId.content,
             personId = if (personResult.person.personId != null) personResult.person.personId.content else null,
             name = personConverter.convertPersonName(personResult.person.personName),
-            organisation = organisationConverter.convertOrganisation(personResult.organisation),
             organisationId = if(personResult.organisation != null) personResult.organisation.organisationId.content else null,
             birthYear = if (personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(
                 0,
@@ -176,7 +174,6 @@ class ResultListConverter {
             raceId = event.eventRace[0].eventRaceId.content,
             eventClassId = classResult.eventClass.eventClassId.content,
             name = teamResult.teamName.content,
-            organisations = organisations,
             organisationIds = organisationIds,
             teamMembers = convertTeamMembers(eventor, teamResult.teamMemberResult),
             bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
