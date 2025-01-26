@@ -49,6 +49,7 @@ class CompetitorConverter {
                                         result.organisation.organisationId.content,
                                         eventor.eventorId
                                     ) else null,
+                                    organisationId = if (result.organisation != null) result.organisation.organisationId.content else null,
                                     birthYear = personConverter.convertBirthYear(result.person.birthDate),
                                     nationality = result.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(result.person.sex),
@@ -78,6 +79,7 @@ class CompetitorConverter {
                                         result.organisationIdOrOrganisationOrCountryId,
                                         eventor
                                     ),
+                                    organisationIds = convertOrganisationIds(result.organisationIdOrOrganisationOrCountryId),
                                     bib = null,
                                     startTime = if (result.startTime != null) convertStartTime(result.startTime, eventor) else null,
                                     finishTime = if (result.finishTime != null) convertFinishTime(result.finishTime, eventor) else null,
@@ -110,6 +112,7 @@ class CompetitorConverter {
                                             result.organisation.organisationId.content,
                                             eventor.eventorId
                                         ) else null,
+                                        organisationId = if (result.organisation != null)  result.organisation.organisationId.content else null,
                                         birthYear = personConverter.convertBirthYear(result.person.birthDate),
                                         nationality = result.person.nationality.country.alpha3.value,
                                         gender = personConverter.convertGender(result.person.sex),
@@ -209,6 +212,7 @@ class CompetitorConverter {
                                         start.organisation.organisationId.content,
                                         eventor.eventorId
                                     ) else null,
+                                    organisationId = if (start.organisation != null) start.organisation.organisationId.content else null,
                                     birthYear = personConverter.convertBirthYear(start.person.birthDate),
                                     nationality = start.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(start.person.sex),
@@ -264,6 +268,7 @@ class CompetitorConverter {
                                             start.organisation.organisationId.content,
                                             eventor.eventorId
                                         ) else null,
+                                        organisationId = if (start.organisation != null) start.organisation.organisationId.content else null,
                                         birthYear = personConverter.convertBirthYear(start.person.birthDate),
                                         nationality = start.person.nationality.country.alpha3.value,
                                         gender = personConverter.convertGender(start.person.sex),
@@ -338,6 +343,7 @@ class CompetitorConverter {
                                 entry.organisationId[0].content,
                                 eventor.eventorId
                             ) else null,
+                            organisationId = if (!entry.organisationId.isNullOrEmpty()) entry.organisationId[0].content else null,
                             birthYear = person.birthYear,
                             nationality = person.nationality,
                             gender = person.gender,
@@ -361,7 +367,8 @@ class CompetitorConverter {
                                 raceId = race.content,
                                 eventClassId = entry.entryClass[0].eventClassId.content,
                                 name = entry.teamName.content,
-                                organisations = convertOrganisationIds(entry.organisationId, eventor),
+                                organisations = convertOrganisationIdsToOrganisations(entry.organisationId, eventor),
+                                organisationIds = convertOrganisationIds(entry.organisationId),
                                 bib = entry.bibNumber.content,
                                 startTime = null,
                                 finishTime = null,
@@ -400,7 +407,7 @@ class CompetitorConverter {
         return result
     }
 
-    private fun convertOrganisationIds(
+    private fun convertOrganisationIdsToOrganisations(
         organisationIds: List<org.iof.eventor.OrganisationId>,
         eventor: Eventor
     ): List<Organisation> {
@@ -411,6 +418,19 @@ class CompetitorConverter {
                 organisationId = o.content,
                 eventorId = eventor.eventorId
             )?.let { organisations.add(it) }
+        }
+        return organisations
+
+    }
+
+    private fun convertOrganisationIds(organisationList: List<Any>): List<String> {
+        val organisations: MutableList<String> = ArrayList()
+
+        for (o in organisationList) {
+            if (o is org.iof.eventor.OrganisationId) {
+                organisations.add(o.content)
+            }
+
         }
         return organisations
 

@@ -203,8 +203,8 @@ class EventService {
     private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {
         for(organiser in event.organisers){
             for(person in persons) {
-                if (person.memberships.containsKey(organiser.organisationId))
-                    if (person.memberships[organiser.organisationId] == MembershipType.Organiser || person.memberships[organiser.organisationId] == MembershipType.Admin)
+                if (person.memberships.containsKey(organiser))
+                    if (person.memberships[organiser] == MembershipType.Organiser || person.memberships[organiser] == MembershipType.Admin)
                         return
             }
         }

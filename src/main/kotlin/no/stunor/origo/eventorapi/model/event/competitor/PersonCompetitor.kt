@@ -17,6 +17,7 @@ data class PersonCompetitor(
         var personId: String? = null,
         override var name: Any = PersonName(),
         var organisation: Organisation? = null,
+        var organisationId: String? = null,
         var birthYear: Int? = null,
         var nationality: String? = null,
         var gender: Gender = Gender.Other,
@@ -44,7 +45,7 @@ data class PersonCompetitor(
                 result = 31 * result + eventClassId.hashCode()
                 result = 31 * result + (personId?.hashCode() ?: 0)
                 result = 31 * result + name.hashCode()
-                result = 31 * result + (organisation?.hashCode() ?: 0)
+                result = 31 * result + (organisationId?.hashCode() ?: 0)
                 result = 31 * result + (birthYear ?: 0)
                 result = 31 * result + (nationality?.hashCode() ?: 0)
                 result = 31 * result + gender.hashCode()

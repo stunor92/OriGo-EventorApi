@@ -12,6 +12,7 @@ data class TeamCompetitor(
         override var raceId: String = "",
         override var eventClassId: String = "",
         var organisations: List<Organisation> = listOf(),
+        var organisationIds: List<String> = listOf(),
         var teamMembers: List<TeamMemberCompetitor> = listOf(),
         override var name: Any = "",
         override var bib: String? = null,
@@ -32,7 +33,7 @@ data class TeamCompetitor(
                 var result = id?.hashCode() ?: 0
                 result = 31 * result + raceId.hashCode()
                 result = 31 * result + eventClassId.hashCode()
-                result = 31 * result + organisations.hashCode()
+                result = 31 * result + organisationIds.hashCode()
                 result = 31 * result + teamMembers.hashCode()
                 result = 31 * result + name.hashCode()
                 result = 31 * result + (bib?.hashCode() ?: 0)

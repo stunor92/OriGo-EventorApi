@@ -21,7 +21,7 @@ data class CalendarRace(
     var position: GeoPoint? = null,
     var status: EventStatusEnum = EventStatusEnum.Applied,
     var disciplines: List<DisciplineEnum> = listOf(),
-    var organisers: List<Organisation> = listOf(),
+    var organisers: List<String> = listOf(),
     var entryBreaks: List<EntryBreak> = listOf(),
     var entries: Int = 0,
     var userEntries: MutableList<CalendarCompetitor> = mutableListOf(),
