@@ -84,7 +84,7 @@ class EntryListConverter {
                     eventClassId = entry.entryClass[0].eventClassId.content,
                     name = entry.teamName.content,
                     organisations = convertTeamOrganisations(entry.teamCompetitor),
-                    organisationIds = entry.teamCompetitor.map { it.organisationId.content },
+                    organisationIds =  convertTeamOrganisationIds(entry.teamCompetitor),
                     bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
                     teamMembers = convertTeamMembers(entry.teamCompetitor, race.eventRaceId),
                     startTime = null,
