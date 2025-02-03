@@ -45,7 +45,7 @@ class EntryListConverter {
                     eventClassId = entry.entryClass[0].eventClassId.content,
                     personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
                     name = personConverter.convertPersonName(entry.competitor.person.personName),
-                    organisationId = if(entry.competitor.organisationId != null) entry.competitor.organisationId.content else null,
+                    organisationId = if(entry.competitor.organisation != null) organisationConverter.convertOrganisationId(entry.competitor.organisation) else organisationConverter.convertOrganisationId(entry.competitor.organisationId),
                     birthYear = if (entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(
                         0,
                         4
