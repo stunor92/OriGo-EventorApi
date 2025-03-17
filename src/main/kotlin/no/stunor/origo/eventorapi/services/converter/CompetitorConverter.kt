@@ -341,7 +341,8 @@ class CompetitorConverter {
                             birthYear = person.birthYear,
                             nationality = person.nationality,
                             gender = person.gender,
-                            punchingUnit = if (!entry.competitor.cCard.isNullOrEmpty()) convertCCard(entry.competitor.cCard[0]) else null,
+                            punchingUnits = convertPunchingUnits(entry.competitor.cCard),
+                            punchingUnit = if (!entry.competitor.cCard.isNullOrEmpty()) convertPunchingUnit(entry.competitor.cCard[0]) else null,
                             bib = if (entry.bibNumber != null) entry.bibNumber?.content else null,
                             startTime = null,
                             finishTime = null,
@@ -387,7 +388,8 @@ class CompetitorConverter {
                     birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
                     nationality = teamMember.person.nationality.country.alpha3.value,
                     gender = personConverter.convertGender(teamMember.person.sex),
-                    punchingUnit = if (!teamMember.cCard.isNullOrEmpty()) convertCCard(teamMember.cCard[0]) else null,
+                    punchingUnits = convertPunchingUnits(teamMember.cCard),
+                    punchingUnit = if (!teamMember.cCard.isNullOrEmpty()) convertPunchingUnit(teamMember.cCard[0]) else null,
                     leg = teamMember.teamSequence.content.toInt(),
                     startTime = null,
                     finishTime = null,
@@ -461,7 +463,15 @@ class CompetitorConverter {
     }
 
 
-    fun convertCCard(cCard: org.iof.eventor.CCard): PunchingUnit {
+    private fun convertPunchingUnits(cCards: List<org.iof.eventor.CCard>): List<PunchingUnit> {
+        val punchingUnits: MutableList<PunchingUnit> = ArrayList()
+        for (c in cCards) {
+            punchingUnits.add(convertPunchingUnit(c))
+        }
+        return punchingUnits
+    }
+
+    private fun convertPunchingUnit(cCard: org.iof.eventor.CCard): PunchingUnit {
         return PunchingUnit(cCard.cCardId.content, convertPunchingUnitType(cCard.punchingUnitType.value))
     }
 

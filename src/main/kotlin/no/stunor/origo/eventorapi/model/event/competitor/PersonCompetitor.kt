@@ -20,6 +20,7 @@ data class PersonCompetitor(
         var birthYear: Int? = null,
         var nationality: String? = null,
         var gender: Gender = Gender.Other,
+        var punchingUnits: List<PunchingUnit> = listOf(),
         var punchingUnit: PunchingUnit? = null,
         override var bib: String? = null,
         override var status: CompetitorStatus,

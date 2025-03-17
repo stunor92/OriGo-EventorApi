@@ -12,6 +12,7 @@ data class TeamMemberCompetitor(
         var birthYear: Int? = null,
         var nationality: String? = null,
         var gender: Gender? = null,
+        var punchingUnits: List<PunchingUnit> = listOf(),
         var punchingUnit: PunchingUnit? = null,
         var leg: Int = 1,
         var startTime: Timestamp? = null,
