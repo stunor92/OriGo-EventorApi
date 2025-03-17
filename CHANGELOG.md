@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.4](https://github.com/stunor92/OriGo-EventorApi/compare/v4.0.3...v4.0.4) (2025-03-17)
+
+
+### Bug Fixes
+
+* run deploy when release is created ([735b9f7](https://github.com/stunor92/OriGo-EventorApi/commit/735b9f72f4e31d611d7efe622b13ced5dea51a8d))
+
 ## [4.0.3](https://github.com/stunor92/OriGo-EventorApi/compare/v4.0.2...v4.0.3) (2025-03-17)
 
 
