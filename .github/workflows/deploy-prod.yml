@@ -1,8 +1,9 @@
 name: Deploy to Cloud Run Production
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*.*.*'
 env:
   SERVICE_GROUP: origo
   SERVICE: eventor-api
