@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter
 @Service
 class EventorService {
     private var restTemplate: RestTemplate = RestTemplate()
+    private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     init {
         val rf = restTemplate.requestFactory as SimpleClientHttpRequestFactory
@@ -76,8 +77,8 @@ class EventorService {
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
                 eventor.baseUrl
-                        + "api/events?fromDate=" + (if(fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate))
-                        + "&toDate=" + (if(toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate))
+                        + "api/events?fromDate=" + (if(fromDate == null) "" else dateFormat.format(fromDate))
+                        + "&toDate=" + (if(toDate == null) "" else dateFormat.format(toDate))
                         + (if (organisationIds != null) ("&organisationIds=" + java.lang.String.join(",", organisationIds)) else "")
                         + "&classificationIds=" + java.lang.String.join(",", classificationIds)
                         + "&includeEntryBreaks=true",
@@ -114,8 +115,8 @@ class EventorService {
         val response = restTemplate.exchange(
                 eventor.baseUrl
                         + "api/starts/person?personId=" + personId
-                        + "&fromDate=" + (if(fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate))
-                        + "&toDate=" + (if(toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate))
+                        + "&fromDate=" + (if(fromDate == null) "" else dateFormat.format(fromDate))
+                        + "&toDate=" + (if(toDate == null) "" else dateFormat.format(toDate))
                         + "&eventIds=" + (eventId?: ""),
                 HttpMethod.GET,
                 request,
@@ -133,8 +134,8 @@ class EventorService {
         val response = restTemplate.exchange(
                 eventor.baseUrl
                         + "api/results/person?personId=" + personId
-                        + "&fromDate=" + (if(fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate))
-                        + "&toDate=" + (if(toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate))
+                        + "&fromDate=" + (if(fromDate == null) "" else dateFormat.format(fromDate))
+                        + "&toDate=" + (if(toDate == null) "" else dateFormat.format(toDate))
                         + "&eventIds=" + (eventId?: ""),
                 HttpMethod.GET,
                 request,
@@ -152,8 +153,8 @@ class EventorService {
         val response = restTemplate.exchange(
                 eventor.baseUrl
                         + "api/entries?organisationIds=" + java.lang.String.join(",", organisations)
-                        + "&fromEventDate=" + (if(fromDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(fromDate))
-                        + "&toEventDate=" + (if(toDate == null) "" else DateTimeFormatter.ofPattern("yyyy-MM-dd").format(toDate))
+                        + "&fromEventDate=" + (if(fromDate == null) "" else dateFormat.format(fromDate))
+                        + "&toEventDate=" + (if(toDate == null) "" else dateFormat.format(toDate))
                         + "&includeEventElement=true&eventIds=" + (eventId ?: ""),
                 HttpMethod.GET,
                 request,
