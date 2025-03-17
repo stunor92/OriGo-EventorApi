@@ -6,5 +6,6 @@ import java.io.Serializable
 
 data class CalendarEntry(
         var eventClass: EventClass? = null,
+        var punchingUnits: List<PunchingUnit> = listOf(),
         var punchingUnit: PunchingUnit? = null
 ) : Serializable

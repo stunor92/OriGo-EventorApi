@@ -312,7 +312,8 @@ class CalendarConverter {
     private fun createUserEntry(entry: org.iof.eventor.Entry, eventClassList: org.iof.eventor.EventClassList?): CalendarEntry {
         return CalendarEntry(
             if (entry.entryClass != null && entry.entryClass.isNotEmpty()) eventClassConverter.getEventClassFromId(eventClassList!!, entry.entryClass[0].eventClassId.content) else null,
-            if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(entry.competitor.cCard[0]) else null)
+            competitorConverter.convertPunchingUnits(entry.competitor.cCard),
+            if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertPunchingUnit(entry.competitor.cCard[0]) else null)
     }
 
     private fun createPersonStart(eventor: Eventor, personStart: org.iof.eventor.PersonStart, classStart: org.iof.eventor.ClassStart): CalendarPersonStart {

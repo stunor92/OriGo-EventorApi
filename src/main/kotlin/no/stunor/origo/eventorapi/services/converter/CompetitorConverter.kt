@@ -1,7 +1,6 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import com.google.cloud.Timestamp
-import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.event.PunchingUnitType
@@ -22,9 +21,6 @@ import java.util.*
 class CompetitorConverter {
     @Autowired
     private lateinit var personConverter: PersonConverter
-
-    @Autowired
-    private lateinit var organisationRepository: OrganisationRepository
 
 
     fun generateCompetitors(
@@ -438,7 +434,7 @@ class CompetitorConverter {
     }
 
 
-    private fun convertPunchingUnits(cCards: List<org.iof.eventor.CCard>): List<PunchingUnit> {
+    fun convertPunchingUnits(cCards: List<org.iof.eventor.CCard>): List<PunchingUnit> {
         val punchingUnits: MutableList<PunchingUnit> = ArrayList()
         for (c in cCards) {
             punchingUnits.add(convertPunchingUnit(c))
@@ -446,7 +442,7 @@ class CompetitorConverter {
         return punchingUnits
     }
 
-    private fun convertPunchingUnit(cCard: org.iof.eventor.CCard): PunchingUnit {
+    fun convertPunchingUnit(cCard: org.iof.eventor.CCard): PunchingUnit {
         return PunchingUnit(cCard.cCardId.content, convertPunchingUnitType(cCard.punchingUnitType.value))
     }
 

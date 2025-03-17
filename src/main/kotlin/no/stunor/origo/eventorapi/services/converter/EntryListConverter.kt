@@ -52,7 +52,8 @@ class EntryListConverter {
                     ).toInt() else null,
                     nationality = if (entry.competitor.person.nationality?.country != null) entry.competitor.person.nationality.country.alpha3.value else null,
                     gender = personConverter.convertGender(entry.competitor.person.sex),
-                    punchingUnit = if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertCCard(
+                    punchingUnits = competitorConverter.convertPunchingUnits(entry.competitor.cCard),
+                    punchingUnit = if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertPunchingUnit(
                         entry.competitor.cCard[0]
                     ) else null,
                     bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
@@ -145,7 +146,8 @@ class EntryListConverter {
             ).toInt() else null,
             nationality = if (teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality.country.alpha3.value else null,
             gender = if (teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
-            punchingUnit = if (teamMember.cCard != null && teamMember.cCard.isNotEmpty()) competitorConverter.convertCCard(
+            punchingUnits = competitorConverter.convertPunchingUnits(teamMember.cCard),
+            punchingUnit = if (teamMember.cCard != null && teamMember.cCard.isNotEmpty()) competitorConverter.convertPunchingUnit(
                 teamMember.cCard[0]
             ) else null,
             leg = teamMember.teamSequence.content.toInt(),
