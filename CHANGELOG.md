@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v3.0.1...v3.0.2) (2025-03-17)
+
+
+### Bug Fixes
+
+* deploy on all tags ([9a9efe5](https://github.com/stunor92/OriGo-EventorApi/commit/9a9efe5ca59b0272f29e1b4388a756b42ef21f0c))
+
 ## [3.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v3.0.0...v3.0.1) (2025-03-17)
 
 
