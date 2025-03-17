@@ -3,7 +3,7 @@ name: Deploy to Cloud Run Production
 on:
   push:
     tags:
-      - '*'
+      - 'v*.*.*'
 env:
   SERVICE_GROUP: origo
   SERVICE: eventor-api
