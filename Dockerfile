@@ -1,5 +1,5 @@
 # Use Maven to build the application
-FROM maven:3.9.9-bellsoft-liberica-23 as builder
+FROM maven:3.9.9-eclipse-temurin-23-alpine as builder
 # Set the working directory
 WORKDIR /app
 
