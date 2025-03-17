@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v4.0.0...v4.0.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* try again ([5af581f](https://github.com/stunor92/OriGo-EventorApi/commit/5af581f869b193a93d6f8502d2267fbbdb2376a2))
+
 ## [4.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v3.0.2...v4.0.0) (2025-03-17)
 
 
