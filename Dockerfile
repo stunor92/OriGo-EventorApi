@@ -1,5 +1,5 @@
 # Use Maven to build the application
-FROM maven:3.9.9-eclipse-temurin-21 as builder
+FROM maven:3.9.9-bellsoft-liberica-23 as builder
 # Set the working directory
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Use a lightweight JDK base image for the runtime
-FROM eclipse-temurin:21-jre
+FROM bellsoft/liberica-openjre-alpine:23
 
 # Copy the built jar from the builder stage
 COPY --from=builder /app/target/*.jar /app.jar
