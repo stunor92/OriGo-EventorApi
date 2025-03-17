@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v3.0.2...v4.0.0) (2025-03-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* try to fix the prod deploy pipeline
+
+### Bug Fixes
+
+* try to fix the prod deploy pipeline ([f11ef7f](https://github.com/stunor92/OriGo-EventorApi/commit/f11ef7f70d4a6d8c67781019620d9fbcb5de3f4e))
+
 ## [3.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v3.0.1...v3.0.2) (2025-03-17)
 
 
