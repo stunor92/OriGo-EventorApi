@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v2.1.0...v3.0.0) (2025-03-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to java 23
+
+### Features
+
+* upgrade to java 23 ([cedccf7](https://github.com/stunor92/OriGo-EventorApi/commit/cedccf73e393ef6d3a8222e63a9345336f592ac1))
+* upgrade to java 23 also in dockerfile ([6bfaf6d](https://github.com/stunor92/OriGo-EventorApi/commit/6bfaf6d5ebe7e47440c6df6ff052f529537776ad))
+* upgrade to java 23 also in dockerfile ([13431e5](https://github.com/stunor92/OriGo-EventorApi/commit/13431e507746c1bc627dce152f50860ca24cc1e2))
+
+
+### Bug Fixes
+
+* remove debugging print in release.yml ([5d84f47](https://github.com/stunor92/OriGo-EventorApi/commit/5d84f4740ca0c41bc822e062f8f59444228d3f4b))
+
 ## [2.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v2.0.0...v2.1.0) (2025-03-17)
 
 
