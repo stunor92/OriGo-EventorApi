@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.0.3](https://github.com/stunor92/OriGo-EventorApi/compare/v4.0.2...v4.0.3) (2025-03-17)
+
+
+### Bug Fixes
+
+* remove duplicated eventor date-format ([4c2610a](https://github.com/stunor92/OriGo-EventorApi/commit/4c2610af26e672862d63e6821832f533050d3322))
+* remove whitespace ([f4f0eb0](https://github.com/stunor92/OriGo-EventorApi/commit/f4f0eb0301ae140238c143dfde2757cfced5576e))
+* use jdk23 on codeql ([e8c6797](https://github.com/stunor92/OriGo-EventorApi/commit/e8c679701ca423465d4df2d704c8096efaf1d4af))
+
 ## [4.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v4.0.1...v4.0.2) (2025-03-17)
 
 
