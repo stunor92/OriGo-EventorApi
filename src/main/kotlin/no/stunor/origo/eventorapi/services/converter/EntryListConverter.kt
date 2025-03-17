@@ -5,7 +5,6 @@ import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
-import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.iof.eventor.Entry
 import org.iof.eventor.EntryList
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,7 +45,7 @@ class EntryListConverter {
                     eventClassId = entry.entryClass[0].eventClassId.content,
                     personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
                     name = personConverter.convertPersonName(entry.competitor.person.personName),
-                    organisation = organisationConverter.convertOrganisation(entry.competitor.organisation),
+                    organisationId = if(entry.competitor.organisation != null) organisationConverter.convertOrganisationId(entry.competitor.organisation) else organisationConverter.convertOrganisationId(entry.competitor.organisationId),
                     birthYear = if (entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(
                         0,
                         4
@@ -82,7 +81,7 @@ class EntryListConverter {
                     raceId = race.eventRaceId,
                     eventClassId = entry.entryClass[0].eventClassId.content,
                     name = entry.teamName.content,
-                    organisations = convertTeamOrganisations(entry.teamCompetitor),
+                    organisationIds =  convertTeamOrganisationIds(entry.teamCompetitor),
                     bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
                     teamMembers = convertTeamMembers(entry.teamCompetitor, race.eventRaceId),
                     startTime = null,
@@ -96,21 +95,20 @@ class EntryListConverter {
         return result
     }
 
-    private fun convertTeamOrganisations(
+    private fun convertTeamOrganisationIds(
         teamCompetitors: List<org.iof.eventor.TeamCompetitor>
-    ): List<Organisation> {
-        val result: MutableList<Organisation> = mutableListOf()
+    ): List<String> {
+        val result: MutableList<String> = mutableListOf()
         for (teamCompetitor in teamCompetitors) {
             if (teamCompetitor.organisationId != null) {
                 var organisationExist = false
-                for ((organisationId) in result) {
+                for (organisationId in result) {
                     if (organisationId == teamCompetitor.organisationId.content) {
                         organisationExist = true
                     }
                 }
                 if (!organisationExist) {
-                    organisationConverter.convertOrganisation(teamCompetitor.organisation)
-                        ?.let { result.add(it) }
+                    result.add(teamCompetitor.organisationId.content)
                 }
             }
         }

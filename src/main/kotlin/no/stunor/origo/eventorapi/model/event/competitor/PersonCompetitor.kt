@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
-import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
 
@@ -16,7 +15,7 @@ data class PersonCompetitor(
         override var eventClassId: String = "",
         var personId: String? = null,
         override var name: Any = PersonName(),
-        var organisation: Organisation? = null,
+        var organisationId: String? = null,
         var birthYear: Int? = null,
         var nationality: String? = null,
         var gender: Gender = Gender.Other,
@@ -45,7 +44,7 @@ data class PersonCompetitor(
                 result = 31 * result + eventClassId.hashCode()
                 result = 31 * result + (personId?.hashCode() ?: 0)
                 result = 31 * result + name.hashCode()
-                result = 31 * result + (organisation?.hashCode() ?: 0)
+                result = 31 * result + (organisationId?.hashCode() ?: 0)
                 result = 31 * result + (birthYear ?: 0)
                 result = 31 * result + (nationality?.hashCode() ?: 0)
                 result = 31 * result + gender.hashCode()

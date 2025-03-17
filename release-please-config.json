@@ -1,0 +1,10 @@
+{
+  "release-type": "maven",
+  "include-v-in-tag": true,
+
+  "packages": {
+    ".": {
+      "packageName": "eventor-api"
+    }
+  }
+}

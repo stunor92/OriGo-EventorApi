@@ -1,15 +1,7 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.event.competitor.Competitor
-import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
-import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
-import no.stunor.origo.eventorapi.model.event.competitor.Result
-import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
-import no.stunor.origo.eventorapi.model.event.competitor.SplitTime
-import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
-import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
-import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.event.competitor.*
 import org.iof.eventor.Event
 import org.iof.eventor.ResultList
 import org.springframework.beans.factory.annotation.Autowired
@@ -81,7 +73,7 @@ class ResultListConverter {
             eventClassId = classResult.eventClass.eventClassId.content,
             personId = if (personResult.person.personId != null) personResult.person.personId.content else null,
             name = personConverter.convertPersonName(personResult.person.personName),
-            organisation = organisationConverter.convertOrganisation(personResult.organisation),
+            organisationId = if(personResult.organisation != null) organisationConverter.convertOrganisationId(personResult.organisation) else organisationConverter.convertOrganisationId(personResult.organisationId),
             birthYear = if (personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(
                 0,
                 4
@@ -116,7 +108,7 @@ class ResultListConverter {
             eventClassId = classResult.eventClass.eventClassId.content,
             personId = if (personResult.person.personId != null) personResult.person.personId.content else null,
             name = personConverter.convertPersonName(personResult.person.personName),
-            organisation = organisationConverter.convertOrganisation(personResult.organisation),
+            organisationId = if(personResult.organisation != null) organisationConverter.convertOrganisationId(personResult.organisation) else organisationConverter.convertOrganisationId(personResult.organisationId),
             birthYear = if (personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(
                 0,
                 4
@@ -158,17 +150,19 @@ class ResultListConverter {
         classResult: org.iof.eventor.ClassResult,
         teamResult: org.iof.eventor.TeamResult
     ): Competitor {
-        val organisations: MutableList<Organisation> = ArrayList()
+        val organisationIds: MutableList<String> = ArrayList()
         for (organisation in teamResult.organisationIdOrOrganisationOrCountryId) {
             if (organisation is org.iof.eventor.Organisation) {
-                organisationConverter.convertOrganisation(organisation)?.let { organisations.add(it) }
+                organisationConverter.convertOrganisationId(organisation)?.let { organisationIds.add(it) }
+            }  else if (organisation is org.iof.eventor.OrganisationId) {
+                organisationConverter.convertOrganisationId(organisation)?.let { organisationIds.add(it) }
             }
         }
         return TeamCompetitor(
             raceId = event.eventRace[0].eventRaceId.content,
             eventClassId = classResult.eventClass.eventClassId.content,
             name = teamResult.teamName.content,
-            organisations = organisations,
+            organisationIds = organisationIds,
             teamMembers = convertTeamMembers(eventor, teamResult.teamMemberResult),
             bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
             startTime = if (teamResult.startTime != null) competitorConverter.convertStartTime(

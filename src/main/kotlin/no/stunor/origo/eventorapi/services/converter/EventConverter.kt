@@ -2,7 +2,6 @@ package no.stunor.origo.eventorapi.services.converter
 
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.GeoPoint
-import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.*
@@ -16,9 +15,6 @@ import java.time.format.DateTimeFormatter
 
 @Component
 class EventConverter {
-    @Autowired
-    private lateinit var organisationRepository: OrganisationRepository
-
     @Autowired
     private lateinit var eventClassConverter: EventClassConverter
 
@@ -51,18 +47,13 @@ class EventConverter {
         }
     }
 
-    fun convertOrganisers(eventor: Eventor, organisers: List<Any>): List<Organisation> {
-        val result: MutableList<Organisation> = ArrayList()
+    fun convertOrganisers(organisers: List<Any>): List<String> {
+        val result: MutableList<String> = ArrayList()
         for (organiser in organisers) {
             if (organiser is org.iof.eventor.Organisation) {
-                val o = organisationRepository.findByOrganisationIdAndEventorId(
-                    organiser.organisationId.content,
-                    eventor.eventorId
-                )
-                if (o != null) result.add(o)
+                if (organiser.organisationId != null) result.add(organiser.organisationId.content)
             } else if (organiser is org.iof.eventor.OrganisationId) {
-                val o = organisationRepository.findByOrganisationIdAndEventorId(organiser.content, eventor.eventorId)
-                if (o != null) result.add(o)
+                result.add(organiser.content)
             }
         }
         return result
@@ -123,8 +114,8 @@ class EventConverter {
             disciplines = convertEventDisciplines(event.disciplineIdOrDiscipline),
             startDate = convertStartDate(event.startDate, eventor),
             finishDate = convertFinishDate(event.finishDate, eventor),
-            organisers = organisations,
-            regions = regions,
+            organisers = organisations.map { it.organisationId.toString() },
+            regions = regions.map { it.regionId },
             eventClasses = eventClassConverter.convertEventClasses(eventCLassList),
             documents = convertEventDocument(documentList),
             entryBreaks = convertEntryBreaks(event.entryBreak, eventor),

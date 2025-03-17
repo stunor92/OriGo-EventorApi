@@ -3,8 +3,6 @@ package no.stunor.origo.eventorapi.model.calendar
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.GeoPoint
 import no.stunor.origo.eventorapi.model.event.*
-import no.stunor.origo.eventorapi.model.event.EntryBreak
-import no.stunor.origo.eventorapi.model.organisation.Organisation
 import java.io.Serializable
 
 data class CalendarRace(
@@ -21,7 +19,7 @@ data class CalendarRace(
     var position: GeoPoint? = null,
     var status: EventStatusEnum = EventStatusEnum.Applied,
     var disciplines: List<DisciplineEnum> = listOf(),
-    var organisers: List<Organisation> = listOf(),
+    var organisers: List<String> = listOf(),
     var entryBreaks: List<EntryBreak> = listOf(),
     var entries: Int = 0,
     var userEntries: MutableList<CalendarCompetitor> = mutableListOf(),
