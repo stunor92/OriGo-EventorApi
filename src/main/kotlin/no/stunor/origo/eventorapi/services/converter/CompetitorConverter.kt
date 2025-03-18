@@ -454,7 +454,7 @@ class CompetitorConverter {
         return punchingUnits
     }
 
-    fun convertPunchingUnit(cCard: org.iof.eventor.CCard): PunchingUnit {
+    private fun convertPunchingUnit(cCard: org.iof.eventor.CCard): PunchingUnit {
         return PunchingUnit(cCard.cCardId.content, convertPunchingUnitType(cCard.punchingUnitType.value))
     }
 

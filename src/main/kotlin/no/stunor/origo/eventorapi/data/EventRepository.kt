@@ -6,7 +6,6 @@ import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.event.Event
 import org.springframework.stereotype.Repository
 
-
 @Repository
 class EventRepository {
     private val firestore = FirestoreClient.getFirestore()

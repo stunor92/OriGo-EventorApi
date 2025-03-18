@@ -6,7 +6,6 @@ import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import org.springframework.stereotype.Repository
 
-
 @Repository
 class CompetitorRepository {
     private val firestore = FirestoreClient.getFirestore()
@@ -14,9 +13,18 @@ class CompetitorRepository {
     fun saveAll(documentId: String, competitors: List<Competitor>) {
         for (competitor in competitors) {
             if(competitor.id == null) {
-                firestore.collection("events").document(documentId).collection("competitors").add(competitor)
+                firestore
+                    .collection("events")
+                    .document(documentId)
+                    .collection("competitors")
+                    .add(competitor)
             } else {
-                firestore.collection("events").document(documentId).collection("competitors").document(competitor.id!!).set(competitor)
+                firestore
+                    .collection("events")
+                    .document(documentId)
+                    .collection("competitors")
+                    .document(competitor.id!!)
+                    .set(competitor)
             }
         }
     }

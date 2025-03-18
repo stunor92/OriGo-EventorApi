@@ -6,8 +6,6 @@ import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
-import org.iof.eventor.ResultList
-import org.iof.eventor.StartList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -22,7 +20,7 @@ class StartListConverter {
     @Autowired
     private lateinit var competitorConverter: CompetitorConverter
 
-    fun convertEventStartList(eventor: Eventor, startList: StartList): List<Competitor> {
+    fun convertEventStartList(eventor: Eventor, startList: org.iof.eventor.StartList): List<Competitor> {
         val competitorList: MutableList<Competitor> = mutableListOf()
 
         for (classStart in startList.classStart) {
@@ -56,49 +54,6 @@ class StartListConverter {
         }
 
         return competitorList
-    }
-
-    private fun processClassStart(
-        eventor: Eventor,
-        startList: org.iof.eventor.StartList,
-        classStart: org.iof.eventor.ClassStart,
-        competitorList: MutableList<Competitor>
-    ) {
-        for (personOrTeamStart in classStart.personStartOrTeamStart) {
-            when (personOrTeamStart) {
-                is org.iof.eventor.PersonStart -> processPersonStart(
-                    eventor = eventor,
-                    startList = startList,
-                    classStart = classStart,
-                    personStart = personOrTeamStart,
-                    competitorList = competitorList
-                )
-                is org.iof.eventor.TeamStart -> competitorList.add(
-                    convertTeamStart(
-                        eventor = eventor,
-                        event = startList.event,
-                        classStart = classStart,
-                        teamStart = personOrTeamStart
-                    )
-                )
-            }
-        }
-    }
-
-    private fun processPersonStart(
-        eventor: Eventor,
-        startList: org.iof.eventor.StartList,
-        classStart: org.iof.eventor.ClassStart,
-        personStart: org.iof.eventor.PersonStart,
-        competitorList: MutableList<Competitor>
-    ) {
-        if (!personStart.raceStart.isNullOrEmpty()) {
-            for (raceStart in personStart.raceStart) {
-                competitorList.add(convertMultiDayPersonStart(eventor, classStart, personStart, raceStart))
-            }
-        } else {
-            competitorList.add(convertOneDayPersonStart(eventor, startList.event, classStart, personStart))
-        }
     }
 
     private fun convertMultiDayPersonStart(

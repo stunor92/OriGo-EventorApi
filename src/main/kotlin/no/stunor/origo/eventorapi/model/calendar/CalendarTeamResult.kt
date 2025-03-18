@@ -3,7 +3,6 @@ package no.stunor.origo.eventorapi.model.calendar
 import no.stunor.origo.eventorapi.model.event.EventClass
 import no.stunor.origo.eventorapi.model.event.competitor.Result
 
-
 data class CalendarTeamResult(
         var teamName: String = "",
         var leg: Int = 0,

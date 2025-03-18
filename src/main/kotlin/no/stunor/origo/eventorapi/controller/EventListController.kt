@@ -28,8 +28,15 @@ internal class EventListController {
         @PathVariable("eventorId") eventorId: String,
         @RequestParam("from") from: LocalDate,
         @RequestParam("to") to: LocalDate,
-        @RequestParam(value = "organisations", required = false) organisations: List<String>?,
-        @RequestParam(value = "classifications", required = false, defaultValue = "Championship, National, Regional, Local") classifications: List<EventClassificationEnum>?
+        @RequestParam(
+            value = "organisations",
+            required = false
+        ) organisations: List<String>?,
+        @RequestParam(
+            value = "classifications",
+            required = false,
+            defaultValue = "Championship, National, Regional, Local"
+        ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from eventor-{}.", eventorId)
         val uid = getAttribute("uid") as String
@@ -50,7 +57,11 @@ internal class EventListController {
     fun HttpServletRequest.getEventList(
         @RequestParam("from") from: LocalDate,
         @RequestParam("to") to: LocalDate,
-        @RequestParam(value = "classifications", required = false, defaultValue = "Championship, National, Regional, Local") classifications: List<EventClassificationEnum>?
+        @RequestParam(
+            value = "classifications",
+            required = false,
+            defaultValue = "Championship, National, Regional, Local"
+        ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from all eventors.")
         val uid = getAttribute("uid") as String
