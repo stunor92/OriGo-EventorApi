@@ -2,7 +2,13 @@ package no.stunor.origo.eventorapi.model.calendar
 
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.GeoPoint
-import no.stunor.origo.eventorapi.model.event.*
+import no.stunor.origo.eventorapi.model.event.DisciplineEnum
+import no.stunor.origo.eventorapi.model.event.DistanceEnum
+import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
+import no.stunor.origo.eventorapi.model.event.EventFormEnum
+import no.stunor.origo.eventorapi.model.event.EventStatusEnum
+import no.stunor.origo.eventorapi.model.event.LightConditionEnum
+import org.iof.eventor.EntryBreak
 import java.io.Serializable
 
 data class CalendarRace(
@@ -28,4 +34,8 @@ data class CalendarRace(
     var startList: Boolean = false,
     var resultList: Boolean = false,
     var livelox: Boolean = false
-) : Serializable
+) : Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
+}

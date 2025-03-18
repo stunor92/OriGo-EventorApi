@@ -7,12 +7,9 @@ import org.springframework.stereotype.Component
 
 class ContactConverter {
     fun convertEmail(teleList: List<Tele>?): String? {
-        if (teleList == null) {
-            return null
-        }
-        for (tele in teleList) {
-            if (tele.teleType.value == "official") {
-                if (tele.mailAddress != null) {
+        if (teleList != null) {
+            for (tele in teleList) {
+                if (tele.teleType.value == "official" && tele.mailAddress != null) {
                     return tele.mailAddress
                 }
             }
@@ -21,12 +18,9 @@ class ContactConverter {
     }
 
     fun convertPhone(teleList: List<Tele>?): String? {
-        if (teleList == null) {
-            return null
-        }
-        for (tele in teleList) {
-            if (tele.teleType.value == "official") {
-                if (tele.mobilePhoneNumber != null) {
+        if (teleList != null) {
+            for (tele in teleList) {
+                if (tele.teleType.value == "official" && tele.mobilePhoneNumber != null) {
                     return tele.mobilePhoneNumber
                 }
             }
