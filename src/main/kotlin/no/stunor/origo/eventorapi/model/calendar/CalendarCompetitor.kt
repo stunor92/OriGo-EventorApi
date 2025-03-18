@@ -1,7 +1,6 @@
 package no.stunor.origo.eventorapi.model.calendar
 
 import no.stunor.origo.eventorapi.model.person.PersonName
-import java.io.Serializable
 
 data class CalendarCompetitor(
         var personId: String = "",
@@ -11,4 +10,4 @@ data class CalendarCompetitor(
         var teamStart: CalendarTeamStart? = null,
         var personResult: CalendarPersonResult? = null,
         var teamResult: CalendarTeamResult? = null
-) : Serializable
+)

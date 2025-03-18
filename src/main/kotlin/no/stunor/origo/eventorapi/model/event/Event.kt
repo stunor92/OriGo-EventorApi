@@ -3,7 +3,7 @@ package no.stunor.origo.eventorapi.model.event
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
-import java.io.Serializable
+
 
 data class Event (
         @JsonIgnore
@@ -29,4 +29,4 @@ data class Event (
         var message: String? = null,
         var email: String? = null,
         var phone: String? = null
-) : Serializable
+)

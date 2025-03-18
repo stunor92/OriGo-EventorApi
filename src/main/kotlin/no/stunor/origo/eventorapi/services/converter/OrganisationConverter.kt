@@ -5,17 +5,19 @@ import org.springframework.stereotype.Component
 @Component
 class OrganisationConverter {
 
-
-    fun convertOrganisationId(organisation: org.iof.eventor.Organisation?): String? {
-        if(organisation == null || organisation.organisationId == null)
-            return null
-        return  organisation.organisationId.content
+    fun convertOrganisationIds(organisations: List<Any>): List<String> {
+        val organisationIds: MutableList<String> = ArrayList()
+        for (organisation in organisations) {
+            convertOrganisationId(organisation)?.let { organisationIds.add(it) }
+        }
+        return organisationIds
     }
 
-    fun convertOrganisationId(organisationId: org.iof.eventor.OrganisationId?): String? {
-        if(organisationId == null)
-            return null
-        return  organisationId.content
+    fun convertOrganisationId(organisation: Any): String? {
+        return when (organisation) {
+            is org.iof.eventor.Organisation -> organisation.organisationId?.content
+            is org.iof.eventor.OrganisationId -> organisation.content
+            else -> null
+        }
     }
-
 }

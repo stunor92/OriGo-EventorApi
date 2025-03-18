@@ -2,7 +2,7 @@ package no.stunor.origo.eventorapi.model.event
 
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.GeoPoint
-import java.io.Serializable
+
 
 data class Race (
         var raceId: String = "",
@@ -14,4 +14,4 @@ data class Race (
         var startList: Boolean = false,
         var resultList: Boolean = false,
         var livelox: Boolean = false,
-) : Serializable
+)
