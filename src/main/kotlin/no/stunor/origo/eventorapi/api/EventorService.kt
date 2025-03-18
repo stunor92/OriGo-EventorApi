@@ -29,10 +29,14 @@ class EventorService {
     private var restTemplate: RestTemplate = RestTemplate()
     private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
+    companion object {
+        private const val TIMEOUT = 6000
+    }
+
     init {
         val rf = restTemplate.requestFactory as SimpleClientHttpRequestFactory
-        rf.setReadTimeout(6000)
-        rf.setConnectTimeout(6000)
+        rf.setReadTimeout(TIMEOUT)
+        rf.setConnectTimeout(TIMEOUT)
 
         val converters: MutableList<HttpMessageConverter<*>> = ArrayList()
         converters.add(Jaxb2RootElementHttpMessageConverter())
@@ -55,7 +59,13 @@ class EventorService {
         return response.body
     }
 
-    fun getEventList(eventor: Eventor, fromDate: LocalDate?, toDate: LocalDate?, organisationIds: List<String?>?, classifications: List<EventClassificationEnum?>?): EventList? {
+    fun getEventList(
+        eventor: Eventor,
+        fromDate: LocalDate?,
+        toDate: LocalDate?,
+        organisationIds: List<String?>?,
+        classifications: List<EventClassificationEnum?>?
+    ): EventList? {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
@@ -76,90 +86,116 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl
-                        + "api/events?fromDate=" + (if(fromDate == null) "" else dateFormat.format(fromDate))
-                        + "&toDate=" + (if(toDate == null) "" else dateFormat.format(toDate))
-                        + (if (organisationIds != null) ("&organisationIds=" + java.lang.String.join(",", organisationIds)) else "")
-                        + "&classificationIds=" + java.lang.String.join(",", classificationIds)
-                        + "&includeEntryBreaks=true",
-                HttpMethod.GET,
-                request,
-                EventList::class.java,
-                1
+            eventor.baseUrl
+                    + "api/events?fromDate=" + (if (fromDate == null) "" else dateFormat.format(fromDate))
+                    + "&toDate=" + (if (toDate == null) "" else dateFormat.format(toDate))
+                    + (if (organisationIds != null) ("&organisationIds=" + java.lang.String.join(
+                ",",
+                organisationIds
+            )) else "")
+                    + "&classificationIds=" + java.lang.String.join(",", classificationIds)
+                    + "&includeEntryBreaks=true",
+            HttpMethod.GET,
+            request,
+            EventList::class.java,
+            1
         )
         return response.body
     }
 
-    fun getCompetitorCounts(eventor: Eventor, events: List<String?>?, organisations: List<String?>?, persons: List<String?>?): CompetitorCountList? {
+    fun getCompetitorCounts(
+        eventor: Eventor,
+        events: List<String?>?,
+        organisations: List<String?>?,
+        persons: List<String?>?
+    ): CompetitorCountList? {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl + "api/competitorcount?eventIds=" + java.lang.String.join(",", events) +
-                        ",&organisationIds=" + java.lang.String.join(",", organisations) +
-                        "&personIds=" + java.lang.String.join(",", persons),
-                HttpMethod.GET,
-                request,
-                CompetitorCountList::class.java,
-                1
+            eventor.baseUrl + "api/competitorcount?eventIds=" + java.lang.String.join(",", events) +
+                    ",&organisationIds=" + java.lang.String.join(",", organisations) +
+                    "&personIds=" + java.lang.String.join(",", persons),
+            HttpMethod.GET,
+            request,
+            CompetitorCountList::class.java,
+            1
         )
         return response.body
     }
 
-    fun getGetPersonalStarts(eventor: Eventor, personId: String, eventId: String?, fromDate: LocalDate?, toDate: LocalDate?): StartListList? {
+    fun getGetPersonalStarts(
+        eventor: Eventor,
+        personId: String,
+        eventId: String?,
+        fromDate: LocalDate?,
+        toDate: LocalDate?
+    ): StartListList? {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl
-                        + "api/starts/person?personId=" + personId
-                        + "&fromDate=" + (if(fromDate == null) "" else dateFormat.format(fromDate))
-                        + "&toDate=" + (if(toDate == null) "" else dateFormat.format(toDate))
-                        + "&eventIds=" + (eventId?: ""),
-                HttpMethod.GET,
-                request,
-                StartListList::class.java,
-                1
+            eventor.baseUrl
+                    + "api/starts/person?personId=" + personId
+                    + "&fromDate=" + (if (fromDate == null) "" else dateFormat.format(fromDate))
+                    + "&toDate=" + (if (toDate == null) "" else dateFormat.format(toDate))
+                    + "&eventIds=" + (eventId ?: ""),
+            HttpMethod.GET,
+            request,
+            StartListList::class.java,
+            1
         )
         return response.body
     }
 
-    fun getGetPersonalResults(eventor: Eventor, personId: String, eventId: String?, fromDate: LocalDate?, toDate: LocalDate?): ResultListList? {
+    fun getGetPersonalResults(
+        eventor: Eventor,
+        personId: String,
+        eventId: String?,
+        fromDate: LocalDate?,
+        toDate: LocalDate?
+    ): ResultListList? {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl
-                        + "api/results/person?personId=" + personId
-                        + "&fromDate=" + (if(fromDate == null) "" else dateFormat.format(fromDate))
-                        + "&toDate=" + (if(toDate == null) "" else dateFormat.format(toDate))
-                        + "&eventIds=" + (eventId?: ""),
-                HttpMethod.GET,
-                request,
-                ResultListList::class.java,
-                1
+            eventor.baseUrl
+                    + "api/results/person?personId=" + personId
+                    + "&fromDate=" + (if (fromDate == null) "" else dateFormat.format(fromDate))
+                    + "&toDate=" + (if (toDate == null) "" else dateFormat.format(toDate))
+                    + "&eventIds=" + (eventId ?: ""),
+            HttpMethod.GET,
+            request,
+            ResultListList::class.java,
+            1
         )
         return response.body
     }
 
-    fun getGetOrganisationEntries(eventor: Eventor, organisations: List<String>, eventId: String?, fromDate: LocalDate?, toDate: LocalDate?): EntryList? {
+    fun getGetOrganisationEntries(
+        eventor: Eventor,
+        organisations: List<String>,
+        eventId: String?,
+        fromDate: LocalDate?,
+        toDate: LocalDate?
+    ): EntryList? {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl
-                        + "api/entries?organisationIds=" + java.lang.String.join(",", organisations)
-                        + "&fromEventDate=" + (if(fromDate == null) "" else dateFormat.format(fromDate))
-                        + "&toEventDate=" + (if(toDate == null) "" else dateFormat.format(toDate))
-                        + "&includeEventElement=true&eventIds=" + (eventId ?: ""),
-                HttpMethod.GET,
-                request,
-                EntryList::class.java,
-                1
+            eventor.baseUrl
+                    + "api/entries?organisationIds=" + java.lang.String.join(",", organisations)
+                    + "&fromEventDate=" + (if (fromDate == null) "" else dateFormat.format(fromDate))
+                    + "&toEventDate=" + (if (toDate == null) "" else dateFormat.format(toDate))
+                    + "&includeEventElement=true&eventIds=" + (eventId ?: ""),
+            HttpMethod.GET,
+            request,
+            EntryList::class.java,
+            1
         )
         return response.body
     }
@@ -170,11 +206,11 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                baseUrl + "api/event/" + eventId,
-                HttpMethod.GET,
-                request,
-                Event::class.java,
-                1
+            baseUrl + "api/event/" + eventId,
+            HttpMethod.GET,
+            request,
+            Event::class.java,
+            1
         )
         return response.body
     }
@@ -185,11 +221,11 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                eventor.baseUrl + "api/eventclasses?includeEntryFees=true&eventId=" + eventId,
-                HttpMethod.GET,
-                request,
-                EventClassList::class.java,
-                1
+            eventor.baseUrl + "api/eventclasses?includeEntryFees=true&eventId=" + eventId,
+            HttpMethod.GET,
+            request,
+            EventClassList::class.java,
+            1
         )
         return response.body
     }
@@ -200,11 +236,11 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                baseUrl + "api/events/documents?eventIds=" + eventId,
-                HttpMethod.GET,
-                request,
-                DocumentList::class.java,
-                1
+            baseUrl + "api/events/documents?eventIds=" + eventId,
+            HttpMethod.GET,
+            request,
+            DocumentList::class.java,
+            1
         )
         return response.body
     }
@@ -215,11 +251,11 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                baseUrl + "api/entries?includePersonElement=true&includeEntryFees=true&eventIds=" + eventId,
-                HttpMethod.GET,
-                request,
-                EntryList::class.java,
-                1
+            baseUrl + "api/entries?includePersonElement=true&includeEntryFees=true&eventIds=" + eventId,
+            HttpMethod.GET,
+            request,
+            EntryList::class.java,
+            1
         )
         return response.body
     }
@@ -230,11 +266,11 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                baseUrl + "api/starts/event?eventId=" + eventId,
-                HttpMethod.GET,
-                request,
-                StartList::class.java,
-                1
+            baseUrl + "api/starts/event?eventId=" + eventId,
+            HttpMethod.GET,
+            request,
+            StartList::class.java,
+            1
         )
         return response.body
     }
@@ -245,11 +281,11 @@ class EventorService {
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-                baseUrl + "api/results/event?eventId=" + eventId + "&includeSplitTimes=true",
-                HttpMethod.GET,
-                request,
-                ResultList::class.java,
-                1
+            baseUrl + "api/results/event?eventId=" + eventId + "&includeSplitTimes=true",
+            HttpMethod.GET,
+            request,
+            ResultList::class.java,
+            1
         )
         return response.body
     }
