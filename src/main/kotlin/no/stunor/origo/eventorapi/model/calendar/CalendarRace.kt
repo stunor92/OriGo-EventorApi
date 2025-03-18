@@ -4,11 +4,11 @@ import com.google.cloud.Timestamp
 import com.google.cloud.firestore.GeoPoint
 import no.stunor.origo.eventorapi.model.event.DisciplineEnum
 import no.stunor.origo.eventorapi.model.event.DistanceEnum
+import no.stunor.origo.eventorapi.model.event.EntryBreak
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import no.stunor.origo.eventorapi.model.event.EventFormEnum
 import no.stunor.origo.eventorapi.model.event.EventStatusEnum
 import no.stunor.origo.eventorapi.model.event.LightConditionEnum
-import org.iof.eventor.EntryBreak
 import java.io.Serializable
 
 data class CalendarRace(
