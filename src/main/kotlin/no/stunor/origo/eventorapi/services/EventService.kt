@@ -78,10 +78,16 @@ class EventService {
 
         for (o in event.organiser.organisationIdOrOrganisation) {
             val org = o as org.iof.eventor.Organisation
-            organisationRepository.findByOrganisationIdAndEventorId(organisationId = org.organisationId.content, eventorId = eventor.eventorId)?.let { organisers.add(it) }
+            organisationRepository.findByOrganisationIdAndEventorId(
+                organisationId = org.organisationId.content,
+                eventorId = eventor.eventorId
+            )?.let { organisers.add(it) }
+
             var region: Region? = null
             if (org.parentOrganisation.organisationId != null) {
-                region = regionRepository.findByRegionIdAndEventorId(org.parentOrganisation.organisationId.content, eventorId)
+                region = regionRepository.findByRegionIdAndEventorId(
+                    org.parentOrganisation.organisationId.content, eventorId
+                )
             }
             if (region == null) {
                 log.info("{} does not have a region. check if {} is a region.", org.name.content, org.name.content)
@@ -103,24 +109,54 @@ class EventService {
                 regions.add(region)
             }
         }
-        return eventConverter.convertEvent(event, eventClassList, documentList, organisers, regions, eventor)
+        return eventConverter.convertEvent(
+            event = event,
+            eventCLassList = eventClassList,
+            documentList = documentList,
+            organisations = organisers,
+            regions = regions,
+            eventor = eventor
+        )
     }
 
     fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
-        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val entryList = eventorService.getEventEntryList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EntryListNotFoundException()
+        val eventor = eventorRepository.findByEventorId(
+            eventorId = eventorId
+        ) ?: throw EventorNotFoundException()
+
+        val entryList = eventorService.getEventEntryList(
+            baseUrl = eventor.baseUrl,
+            apiKey = eventor.apiKey,
+            eventId = eventId
+        ) ?: throw EntryListNotFoundException()
         return entryListConverter.convertEventEntryList(entryList)
     }
 
     fun getStartList(eventorId: String, eventId: String): List<Competitor> {
-        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val startList = eventorService.getEventStartList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw StartListNotFoundException()
+        val eventor = eventorRepository.findByEventorId(
+            eventorId = eventorId
+        ) ?: throw EventorNotFoundException()
+
+        val startList = eventorService.getEventStartList(
+            baseUrl = eventor.baseUrl,
+            apiKey = eventor.apiKey,
+            eventId = eventId
+        ) ?: throw StartListNotFoundException()
+
         return startListConverter.convertEventStartList(eventor, startList)
     }
 
     fun getResultList(eventorId: String, eventId: String): List<Competitor> {
-        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val resultList = eventorService.getEventResultList(eventor.baseUrl, eventor.apiKey, eventId) ?: throw ResultListNotFoundException()
+        val eventor = eventorRepository.findByEventorId(
+            eventorId = eventorId
+        ) ?: throw EventorNotFoundException()
+
+        val resultList = eventorService.getEventResultList(
+            baseUrl = eventor.baseUrl,
+            apiKey = eventor.apiKey,
+            eventId = eventId
+        ) ?: throw ResultListNotFoundException()
+
         try {
             return resultListConverter.convertEventResultList(eventor, resultList)
         } catch (e: NumberFormatException) {
@@ -133,16 +169,40 @@ class EventService {
     }
 
     private fun getEntryFees(eventorId: String, event: Event): List<EntryFee> {
-        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val eventClasses = eventorService.getEventClasses(eventor, event.eventId) ?: throw EventNotFoundException()
+        val eventor = eventorRepository.findByEventorId(
+            eventorId = eventorId
+        ) ?: throw EventorNotFoundException()
 
-        val entryFees = eventorService.getEventEntryFees(eventor.baseUrl, eventor.apiKey, event.eventId) ?: throw EntryListNotFoundException()
-        return entryFeeConverter.convertEventEntryFees(entryFees, event, eventor, eventClasses)
+        val eventClasses = eventorService.getEventClasses(
+            eventor = eventor,
+            eventId = event.eventId
+        ) ?: throw EventNotFoundException()
+
+        val entryFees = eventorService.getEventEntryFees(
+            baseUrl = eventor.baseUrl,
+            apiKey = eventor.apiKey,
+            eventId = event.eventId
+        ) ?: throw EntryListNotFoundException()
+
+        return entryFeeConverter.convertEventEntryFees(
+            entryFees = entryFees,
+            event = event,
+            eventor = eventor,
+            eventClasses = eventClasses
+        )
     }
 
     fun downloadEvent(eventorId: String, eventId: String) {
-        val event = getEvent(eventorId = eventorId, eventId = eventId)
-        val existingEvent = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId)
+        val event = getEvent(
+            eventorId = eventorId,
+            eventId = eventId
+        )
+
+        val existingEvent = eventRepository.findByEventIdAndEventorId(
+            eventId = eventId,
+            eventorId = eventorId
+        )
+
         if(existingEvent != null) {
             event.id = existingEvent.id
         }
@@ -150,8 +210,15 @@ class EventService {
     }
 
     fun downloadEntryFees(eventorId: String, eventId: String) {
-        val event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: throw EventNotFoundException()
-        val entryFees = getEntryFees(eventorId = eventorId, event = event)
+        val event = eventRepository.findByEventIdAndEventorId(
+            eventId = eventId,
+            eventorId = eventorId
+        ) ?: throw EventNotFoundException()
+
+        val entryFees = getEntryFees(
+            eventorId = eventorId,
+            event = event
+        )
         val existingFees = entryFeesRepository.findAllForEvent(event)
 
         val providedFeeIds = entryFees.mapNotNull { it.entryFeeId }.toList()
@@ -172,26 +239,43 @@ class EventService {
 
     fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {
         val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
-        var event = getEvent(eventorId = eventorId, eventId = eventId)
-        authenticateEventOrganiser(event = event, persons = persons)
-        val competitors = getEntryList(eventorId = eventorId, eventId = eventId)
+        var event = getEvent(
+            eventorId = eventorId,
+            eventId = eventId
+        )
+
+        authenticateEventOrganiser(
+            event = event,
+            persons = persons
+        )
+
+        val competitors = getEntryList(
+            eventorId = eventorId,
+            eventId = eventId
+        )
+
         val existingCompetitors: MutableList<Competitor> = mutableListOf()
-        existingCompetitors.addAll(competitorsRepository.findAllByEventIdAndEventorId(eventId = eventId, eventorId = eventorId))
+        existingCompetitors.addAll(
+            competitorsRepository.findAllByEventIdAndEventorId(
+                eventId = eventId,
+                eventorId = eventorId
+            )
+        )
 
         val result: MutableList<Competitor> = mutableListOf()
         for (competitor in competitors){
-            if(competitor is PersonCompetitor) {
-                if (!existingCompetitors.contains(competitor)) {
-                    result.add(competitor)
-                }
-            } else if(competitor is TeamCompetitor){
-                if(!existingCompetitors.contains(competitor)){
-                    result.add(competitor)
-                }
+            if (competitor is PersonCompetitor && !existingCompetitors.contains(competitor)) {
+                result.add(competitor)
+            }
+            else if(competitor is TeamCompetitor && !existingCompetitors.contains(competitor)){
+                result.add(competitor)
             }
         }
         if (event.id == null){
-            event = eventRepository.findByEventIdAndEventorId(eventId = eventId, eventorId = eventorId) ?: event
+            event = eventRepository.findByEventIdAndEventorId(
+                eventId = eventId,
+                eventorId = eventorId
+            ) ?: event
         }
 
         event.id?.let { competitorsRepository.saveAll(it, result) }
@@ -201,7 +285,8 @@ class EventService {
         for(organiser in event.organisers){
             for(person in persons) {
                 if (person.memberships.containsKey(organiser))
-                    if (person.memberships[organiser] == MembershipType.Organiser || person.memberships[organiser] == MembershipType.Admin)
+                    if (person.memberships[organiser] == MembershipType.Organiser
+                        || person.memberships[organiser] == MembershipType.Admin)
                         return
             }
         }
