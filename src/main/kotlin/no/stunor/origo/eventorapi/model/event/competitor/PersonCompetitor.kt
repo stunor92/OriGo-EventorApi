@@ -20,7 +20,6 @@ data class PersonCompetitor(
         var nationality: String? = null,
         var gender: Gender = Gender.Other,
         var punchingUnits: List<PunchingUnit> = listOf(),
-        var punchingUnit: PunchingUnit? = null,
         override var bib: String? = null,
         override var status: CompetitorStatus,
         override var startTime: Timestamp? = null,
@@ -48,7 +47,6 @@ data class PersonCompetitor(
                 result = 31 * result + (birthYear ?: 0)
                 result = 31 * result + (nationality?.hashCode() ?: 0)
                 result = 31 * result + gender.hashCode()
-                result = 31 * result + (punchingUnit?.hashCode() ?: 0)
                 result = 31 * result + (bib?.hashCode() ?: 0)
                 result = 31 * result + (startTime?.hashCode() ?: 0)
                 result = 31 * result + (finishTime?.hashCode() ?: 0)

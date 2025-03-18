@@ -530,9 +530,6 @@ class CalendarConverter {
                 entry.entryClass[0].eventClassId.content
             ) else null,
             competitorConverter.convertPunchingUnits(entry.competitor.cCard),
-            if (entry.competitor.cCard != null && entry.competitor.cCard.isNotEmpty()) competitorConverter.convertPunchingUnit(
-                entry.competitor.cCard[0]
-            ) else null
         )
     }
 

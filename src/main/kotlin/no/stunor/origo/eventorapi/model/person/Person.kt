@@ -2,7 +2,7 @@ package no.stunor.origo.eventorapi.model.person
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.firestore.annotation.DocumentId
-import java.io.Serializable
+
 
 data class Person(
         @JsonIgnore
@@ -19,4 +19,4 @@ data class Person(
         var mobilePhone: String? = null,
         var email: String? = null,
         var memberships: Map<String, MembershipType> = HashMap(),
-) : Serializable
+)

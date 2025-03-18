@@ -9,7 +9,6 @@ import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import no.stunor.origo.eventorapi.model.event.EventFormEnum
 import no.stunor.origo.eventorapi.model.event.EventStatusEnum
 import no.stunor.origo.eventorapi.model.event.LightConditionEnum
-import java.io.Serializable
 
 data class CalendarRace(
     var eventorId: String = "",
@@ -34,8 +33,4 @@ data class CalendarRace(
     var startList: Boolean = false,
     var resultList: Boolean = false,
     var livelox: Boolean = false
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 1L
-    }
-}
+)

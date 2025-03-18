@@ -4,7 +4,7 @@ import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
-import java.io.Serializable
+
 
 data class TeamMemberCompetitor(
         var personId: String? = null,
@@ -13,7 +13,6 @@ data class TeamMemberCompetitor(
         var nationality: String? = null,
         var gender: Gender? = null,
         var punchingUnits: List<PunchingUnit> = listOf(),
-        var punchingUnit: PunchingUnit? = null,
         var leg: Int = 1,
         var startTime: Timestamp? = null,
         var finishTime: Timestamp? = null,
@@ -21,4 +20,4 @@ data class TeamMemberCompetitor(
         var overallResult: Result? = null,
         var splitTimes: List<SplitTime> = listOf(),
         var entryFeeIds: List<String> = listOf()
-) : Serializable
+)

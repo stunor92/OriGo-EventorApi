@@ -1,7 +1,14 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.event.competitor.*
+import no.stunor.origo.eventorapi.model.event.competitor.Competitor
+import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
+import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.Result
+import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
+import no.stunor.origo.eventorapi.model.event.competitor.SplitTime
+import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
 import org.iof.eventor.Event
 import org.iof.eventor.ResultList
 import org.springframework.beans.factory.annotation.Autowired
@@ -80,7 +87,6 @@ class ResultListConverter {
             ).toInt() else null,
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
             gender = personConverter.convertGender(personResult.person.sex),
-            punchingUnit = null,
             bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
             startTime = if (personResult.result.startTime != null) competitorConverter.convertStartTime(
                 personResult.result.startTime,
@@ -115,7 +121,6 @@ class ResultListConverter {
             ).toInt() else null,
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
             gender = personConverter.convertGender(personResult.person.sex),
-            punchingUnit = null,
             bib = if (personResult.result?.bibNumber != null) personResult.result.bibNumber.content else null,
             startTime = if (personResult.result?.startTime != null) competitorConverter.convertStartTime(
                 raceResult.result.startTime,
@@ -150,19 +155,13 @@ class ResultListConverter {
         classResult: org.iof.eventor.ClassResult,
         teamResult: org.iof.eventor.TeamResult
     ): Competitor {
-        val organisationIds: MutableList<String> = ArrayList()
-        for (organisation in teamResult.organisationIdOrOrganisationOrCountryId) {
-            if (organisation is org.iof.eventor.Organisation) {
-                organisationConverter.convertOrganisationId(organisation)?.let { organisationIds.add(it) }
-            }  else if (organisation is org.iof.eventor.OrganisationId) {
-                organisationConverter.convertOrganisationId(organisation)?.let { organisationIds.add(it) }
-            }
-        }
         return TeamCompetitor(
             raceId = event.eventRace[0].eventRaceId.content,
             eventClassId = classResult.eventClass.eventClassId.content,
             name = teamResult.teamName.content,
-            organisationIds = organisationIds,
+            organisationIds =  organisationConverter.convertOrganisationIds(
+                organisations = teamResult.organisationIdOrOrganisationOrCountryId
+            ),
             teamMembers = convertTeamMembers(eventor, teamResult.teamMemberResult),
             bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
             startTime = if (teamResult.startTime != null) competitorConverter.convertStartTime(
@@ -224,7 +223,6 @@ class ResultListConverter {
             ).toInt() else null,
             nationality = if (teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality.country.alpha3.value else null,
             gender = if (teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
-            punchingUnit = null,
             leg = teamMember.leg.toInt(),
             startTime = if (teamMember.startTime != null) competitorConverter.convertStartTime(
                 teamMember.startTime,

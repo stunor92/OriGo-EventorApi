@@ -1,8 +1,5 @@
 package no.stunor.origo.eventorapi.model.event
 
-import java.io.Serializable
-
-
 data class EventClass (
         var eventClassId: String = "",
         var name: String = "",
@@ -16,4 +13,4 @@ data class EventClass (
         var legs: Int = 1,
         var minAverageAge: Int? = 0,
         var maxAverageAge: Int? = 99,
-) : Serializable
+)

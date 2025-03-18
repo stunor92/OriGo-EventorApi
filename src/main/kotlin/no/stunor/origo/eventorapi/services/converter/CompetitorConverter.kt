@@ -4,7 +4,13 @@ import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.event.PunchingUnitType
-import no.stunor.origo.eventorapi.model.event.competitor.*
+import no.stunor.origo.eventorapi.model.event.competitor.Competitor
+import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
+import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.Result
+import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
+import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
 import no.stunor.origo.eventorapi.model.person.Person
 import org.iof.eventor.EntryList
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,10 +51,15 @@ class CompetitorConverter {
                                     birthYear = personConverter.convertBirthYear(result.person.birthDate),
                                     nationality = result.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(result.person.sex),
-                                    punchingUnit = null,
                                     bib = null,
-                                    startTime = if (result.result.startTime != null) convertStartTime(result.result.startTime, eventor) else null,
-                                    finishTime = if (result.result.finishTime != null) convertFinishTime(result.result.finishTime, eventor) else null,
+                                    startTime = if (result.result.startTime != null) convertStartTime(
+                                        result.result.startTime,
+                                        eventor
+                                    ) else null,
+                                    finishTime = if (result.result.finishTime != null) convertFinishTime(
+                                        result.result.finishTime,
+                                        eventor
+                                    ) else null,
                                     result = Result(
                                         status = ResultStatus.valueOf(result.result.competitorStatus.value),
                                         position = if (result.result.resultPosition != null && result.result.resultPosition.content != "0") result.result.resultPosition.content.toInt() else null,
@@ -69,8 +80,14 @@ class CompetitorConverter {
                                     name = result.teamName.content,
                                     organisationIds = convertOrganisationIds(result.organisationIdOrOrganisationOrCountryId),
                                     bib = null,
-                                    startTime = if (result.startTime != null) convertStartTime(result.startTime, eventor) else null,
-                                    finishTime = if (result.finishTime != null) convertFinishTime(result.finishTime, eventor) else null,
+                                    startTime = if (result.startTime != null) convertStartTime(
+                                        result.startTime,
+                                        eventor
+                                    ) else null,
+                                    finishTime = if (result.finishTime != null) convertFinishTime(
+                                        result.finishTime,
+                                        eventor
+                                    ) else null,
                                     result = Result(
                                         status = ResultStatus.valueOf(result.teamStatus.value),
                                         position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
@@ -96,11 +113,10 @@ class CompetitorConverter {
                                         eventClassId = classResult.eventClass.eventClassId.content,
                                         personId = person.personId,
                                         name = personConverter.convertPersonName(result.person.personName),
-                                        organisationId = if (result.organisation != null)  result.organisation.organisationId.content else null,
+                                        organisationId = if (result.organisation != null) result.organisation.organisationId.content else null,
                                         birthYear = personConverter.convertBirthYear(result.person.birthDate),
                                         nationality = result.person.nationality.country.alpha3.value,
                                         gender = personConverter.convertGender(result.person.sex),
-                                        punchingUnit = null,
                                         bib = null,
                                         startTime = if (raceResult.result?.startTime != null) convertStartTime(
                                             raceResult.result.startTime,
@@ -145,7 +161,6 @@ class CompetitorConverter {
                     birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
                     nationality = teamMember.person.nationality.country.alpha3.value,
                     gender = personConverter.convertGender(teamMember.person.sex),
-                    punchingUnit = null,
                     leg = teamMember.leg.toInt(),
                     startTime = if (teamMember.startTime != null) convertStartTime(
                         teamMember.startTime,
@@ -196,7 +211,6 @@ class CompetitorConverter {
                                     birthYear = personConverter.convertBirthYear(start.person.birthDate),
                                     nationality = start.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(start.person.sex),
-                                    punchingUnit = null,
                                     bib = null,
                                     startTime = if (start.start.startTime != null) convertStartTime(
                                         start.start.startTime,
@@ -245,7 +259,6 @@ class CompetitorConverter {
                                         birthYear = personConverter.convertBirthYear(start.person.birthDate),
                                         nationality = start.person.nationality.country.alpha3.value,
                                         gender = personConverter.convertGender(start.person.sex),
-                                        punchingUnit = null,
                                         bib = null,
                                         startTime = if (start.start.startTime != null) convertStartTime(
                                             start.start.startTime,
@@ -280,7 +293,6 @@ class CompetitorConverter {
                     birthYear = personConverter.convertBirthYear(teamMember.person.birthDate),
                     nationality = teamMember.person.nationality.country.alpha3.value,
                     gender = personConverter.convertGender(teamMember.person.sex),
-                    punchingUnit = null,
                     leg = teamMember.leg.toInt(),
                     startTime = if (teamMember.startTime != null) convertStartTime(
                         teamMember.startTime,
@@ -316,7 +328,6 @@ class CompetitorConverter {
                             nationality = person.nationality,
                             gender = person.gender,
                             punchingUnits = convertPunchingUnits(entry.competitor.cCard),
-                            punchingUnit = if (!entry.competitor.cCard.isNullOrEmpty()) convertPunchingUnit(entry.competitor.cCard[0]) else null,
                             bib = if (entry.bibNumber != null) entry.bibNumber?.content else null,
                             startTime = null,
                             finishTime = null,
@@ -352,7 +363,9 @@ class CompetitorConverter {
         return competitors
     }
 
-    private fun convertTeamMemberEntries(teamMembers: List<org.iof.eventor.TeamCompetitor>): List<TeamMemberCompetitor> {
+    private fun convertTeamMemberEntries(
+        teamMembers: List<org.iof.eventor.TeamCompetitor>
+    ): List<TeamMemberCompetitor> {
         val result: MutableList<TeamMemberCompetitor> = mutableListOf()
         for (teamMember in teamMembers) {
             result.add(
@@ -363,7 +376,6 @@ class CompetitorConverter {
                     nationality = teamMember.person.nationality.country.alpha3.value,
                     gender = personConverter.convertGender(teamMember.person.sex),
                     punchingUnits = convertPunchingUnits(teamMember.cCard),
-                    punchingUnit = if (!teamMember.cCard.isNullOrEmpty()) convertPunchingUnit(teamMember.cCard[0]) else null,
                     leg = teamMember.teamSequence.content.toInt(),
                     startTime = null,
                     finishTime = null,
@@ -454,7 +466,5 @@ class CompetitorConverter {
             "emiTag" -> PunchingUnitType.EmiTag
             else -> PunchingUnitType.Other
         }
-
     }
-
 }

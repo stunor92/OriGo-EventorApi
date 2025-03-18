@@ -3,7 +3,7 @@ package no.stunor.origo.eventorapi.model.event
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.cloud.Timestamp
 import com.google.cloud.firestore.annotation.DocumentId
-import java.io.Serializable
+
 
 data class EntryFee (
         @JsonIgnore
@@ -20,4 +20,4 @@ data class EntryFee (
         var toBirthYear: Int? = null,
         var taxIncluded: Boolean = false,
         var eventClasses: List<String> = mutableListOf()
-) : Serializable
+)

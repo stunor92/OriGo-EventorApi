@@ -1,7 +1,6 @@
 package no.stunor.origo.eventorapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.io.Serializable
 
 data class Eventor (
     var eventorId: String = "",
@@ -10,4 +9,4 @@ data class Eventor (
     var baseUrl: String = "",
     @JsonIgnore
     var apiKey: String? = null
-) : Serializable
+)

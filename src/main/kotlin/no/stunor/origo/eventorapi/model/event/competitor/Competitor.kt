@@ -1,10 +1,8 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
 import com.google.cloud.Timestamp
-import java.io.Serializable
 
-
-interface Competitor : Serializable {
+interface Competitor {
     var id: String?
     var name: Any
     var raceId: String
