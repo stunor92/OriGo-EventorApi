@@ -1,9 +1,7 @@
 name: Build with Maven
 
 on:
-  push: 
-    branches-ignore:
-    - main
+  push:
   pull_request:
 
 jobs:
