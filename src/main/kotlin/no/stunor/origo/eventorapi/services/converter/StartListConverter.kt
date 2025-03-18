@@ -6,7 +6,6 @@ import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
-import org.iof.eventor.ResultList
 import org.iof.eventor.StartList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -26,33 +25,12 @@ class StartListConverter {
         val competitorList: MutableList<Competitor> = mutableListOf()
 
         for (classStart in startList.classStart) {
-            for (personOrTeamStart in classStart.personStartOrTeamStart) {
-                if (personOrTeamStart is org.iof.eventor.PersonStart) {
-                    if (personOrTeamStart.raceStart != null && personOrTeamStart.raceStart.isNotEmpty()) {
-                        for (raceStart in personOrTeamStart.raceStart) {
-                            competitorList.add(
-                                convertMultiDayPersonStart(
-                                    eventor,
-                                    classStart,
-                                    personOrTeamStart,
-                                    raceStart
-                                )
-                            )
-                        }
-                    } else {
-                        competitorList.add(
-                            convertOneDayPersonStart(
-                                eventor,
-                                startList.event,
-                                classStart,
-                                personOrTeamStart
-                            )
-                        )
-                    }
-                } else if (personOrTeamStart is org.iof.eventor.TeamStart) {
-                    competitorList.add(convertTeamStart(eventor, startList.event, classStart, personOrTeamStart))
-                }
-            }
+            processClassStart(
+                eventor = eventor,
+                startList = startList,
+                classStart = classStart,
+                competitorList = competitorList
+            )
         }
 
         return competitorList
