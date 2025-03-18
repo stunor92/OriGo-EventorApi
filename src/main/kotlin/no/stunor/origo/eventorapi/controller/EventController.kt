@@ -107,7 +107,7 @@ internal class EventController {
         @PathVariable("eventorId") eventorId: String,
         @PathVariable("eventId") eventId: String
     ) {
-        eventService.downloadEntryFees(eventorId, eventId, )
+        eventService.downloadEntryFees(eventorId, eventId)
     }
 
     @GetMapping("/{eventorId}/{eventId}/competitors/download")

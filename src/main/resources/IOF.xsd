@@ -408,7 +408,7 @@
         <xs:element ref="ModifyDate" minOccurs="0" />
         <xs:element ref="ModifiedBy" minOccurs="0" />
         <xs:element ref="HashTableEntry" minOccurs="0" maxOccurs="unbounded" />
-        <xs:element ref="ParentEvent" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="ParentEvent" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute name="eventForm" default="IndSingleDay">
         <xs:simpleType>
@@ -872,7 +872,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="type" use="optional" type="xs:anySimpleType" />
+      <xs:attribute name="type" type="xs:anySimpleType" />
     </xs:complexType>
   </xs:element>
   <xs:element name="EntryFeeId">
@@ -945,8 +945,8 @@
             <xs:element ref="TeamName" />
             <xs:element ref="TeamContact" minOccurs="0" />
             <xs:element ref="TeamCompetitor" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element ref="OrganisationId" minOccurs="1" maxOccurs="unbounded" />
-            <xs:element ref="ResponsibleOrganisationId" minOccurs="0" maxOccurs="1" />
+            <xs:element ref="OrganisationId" maxOccurs="unbounded" />
+            <xs:element ref="ResponsibleOrganisationId" minOccurs="0"/>
           </xs:sequence>
         </xs:choice>
         <xs:element ref="EntryClass" minOccurs="0" maxOccurs="unbounded" />
@@ -1403,10 +1403,10 @@
         <xs:element name="TimeBehind" minOccurs="0" maxOccurs="unbounded">
           <xs:annotation>
             <xs:documentation>
-              The time, in seconds, that the the team member is behind the winner. Fractions of seconds (e.g. 258.7) may be used if the time resolution is higher than one second.
+              The time, in seconds, that the team member is behind the winner. Fractions of seconds (e.g. 258.7) may be used if the time resolution is higher than one second.
             </xs:documentation>
           </xs:annotation>
-          <xs:complexType mixed="false">
+          <xs:complexType>
             <xs:simpleContent>
               <xs:extension base="xs:double">
                 <xs:attribute name="type" use="required">
@@ -1439,7 +1439,7 @@
               The position in the result list for the person that the result belongs to. This element should only be present when the Status element is set to OK.
             </xs:documentation>
           </xs:annotation>
-          <xs:complexType mixed="false">
+          <xs:complexType>
             <xs:simpleContent>
               <xs:extension base="xs:integer">
                 <xs:attribute name="type" use="required">
@@ -1884,7 +1884,7 @@
         </xs:choice>
         <xs:element ref="Address" minOccurs="0" maxOccurs="unbounded" />
         <xs:element ref="Tele" minOccurs="0" maxOccurs="unbounded" />
-        <xs:element ref="ParentOrganisation" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="ParentOrganisation" minOccurs="0"/>
         <xs:element ref="SubOrganisation" minOccurs="0" maxOccurs="unbounded" />
         <xs:element ref="OrganisationOfficial" minOccurs="0" maxOccurs="unbounded" />
         <xs:choice>
@@ -1963,7 +1963,7 @@
       <xs:sequence>
         <xs:element ref="OrganisationTypeId" />
         <xs:element ref="Name" />
-        <xs:element ref="ParentOrganisationType" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="ParentOrganisationType" minOccurs="0"/>
         <xs:element ref="SubOrganisationType" minOccurs="0" maxOccurs="unbounded" />
         <xs:element ref="ModifyDate" minOccurs="0" />
         <xs:element ref="ModifiedBy" minOccurs="0" />
@@ -2437,11 +2437,11 @@
       <xs:attribute name="id" type="xs:integer" use="required" />
       <xs:attribute name="organisationId" type="xs:integer" use="required" />
       <xs:attribute name="visibleFrom" type="xs:dateTime" use="required" />
-      <xs:attribute name="registrationDeadline" type="xs:dateTime" use="optional" />
-      <xs:attribute name="startTime" type="xs:dateTime" use="optional" />
+      <xs:attribute name="registrationDeadline" type="xs:dateTime"/>
+      <xs:attribute name="startTime" type="xs:dateTime"/>
       <xs:attribute name="visibleTo" type="xs:dateTime" use="required" />
       <xs:attribute name="allowExternalRegistrations" type="xs:boolean" use="required" />
-      <xs:attribute name="contactPersonId" type="xs:integer" use="optional" />
+      <xs:attribute name="contactPersonId" type="xs:integer"/>
       <xs:attribute name="registrationCount" type="xs:integer" use="required" />
       <xs:attribute name="url" type="xs:string" use="required" />
       <xs:attribute name="entryAccessLevel" use="required">
@@ -2453,8 +2453,8 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="modifiedBy" type="xs:integer" use="optional" />
-      <xs:attribute name="modifyDate" type="xs:dateTime" use="optional" />
+      <xs:attribute name="modifiedBy" type="xs:integer"/>
+      <xs:attribute name="modifyDate" type="xs:dateTime"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="Information" type="xs:string" />
@@ -2468,7 +2468,7 @@
           <xs:complexType>
             <xs:simpleContent>
               <xs:extension base="xs:string">
-                <xs:attribute name="default" type="xs:boolean" use="optional" />
+                <xs:attribute name="default" type="xs:boolean"/>
               </xs:extension>
             </xs:simpleContent>
           </xs:complexType>
@@ -2487,7 +2487,7 @@
         </xs:simpleType>
       </xs:attribute>
       <xs:attribute name="order" type="xs:integer" use="required" />
-      <xs:attribute name="visibleInList" type="xs:boolean" use="optional" default="true" />
+      <xs:attribute name="visibleInList" type="xs:boolean" default="true" />
     </xs:complexType>
   </xs:element>
   <xs:element name="ActivityRegistration">
@@ -2504,9 +2504,9 @@
         </xs:element>
       </xs:sequence>
       <xs:attribute name="personId" type="xs:integer" use="required" />
-      <xs:attribute name="organisationId" type="xs:integer" use="optional" />
-      <xs:attribute name="modifiedBy" type="xs:integer" use="optional" />
-      <xs:attribute name="modifyDate" type="xs:dateTime" use="optional" />
+      <xs:attribute name="organisationId" type="xs:integer"/>
+      <xs:attribute name="modifiedBy" type="xs:integer"/>
+      <xs:attribute name="modifyDate" type="xs:dateTime"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="ImportStartListResult">
@@ -2533,12 +2533,12 @@
   </xs:element>
   <xs:complexType name="Document">
     <xs:attribute name="id" type="xs:integer" use="required" />
-    <xs:attribute name="referenceId" type="xs:integer" use="optional" />
+    <xs:attribute name="referenceId" type="xs:integer"/>
     <xs:attribute name="name" type="xs:string" use="required" />
     <xs:attribute name="url" type="xs:string" use="required" />
     <xs:attribute name="modifyDate" type="xs:dateTime" use="required" />
-    <xs:attribute name="type" type="xs:string" use="optional" />
-    <xs:attribute name="number" type="xs:integer" use="optional" />
+    <xs:attribute name="type" type="xs:string"/>
+    <xs:attribute name="number" type="xs:integer"/>
   </xs:complexType>
   <xs:element name="Route" type="Route" />
   <xs:element name="RouteList">
@@ -2568,11 +2568,11 @@
         <xs:attribute name="personId" type="xs:integer" use="required" />
         <xs:attribute name="personFirstName" type="xs:string" use="required" />
         <xs:attribute name="personLastName" type="xs:string" use="required" />
-        <xs:attribute name="organisationId" type="xs:integer" use="optional" />
-        <xs:attribute name="organisationName" type="xs:string" use="optional" />
+        <xs:attribute name="organisationId" type="xs:integer"/>
+        <xs:attribute name="organisationName" type="xs:string"/>
         <xs:attribute name="raceClassId" type="xs:integer" use="required" />
         <xs:attribute name="raceClassName" type="xs:string" use="required" />
-        <xs:attribute name="modifiedBy" type="xs:integer" use="optional" />
+        <xs:attribute name="modifiedBy" type="xs:integer"/>
         <xs:attribute name="modifyTime" type="xs:dateTime" use="required" />
       </xs:extension>
     </xs:simpleContent>
@@ -2583,10 +2583,10 @@
         <xs:element name="Event" minOccurs="0" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="Race" minOccurs="1" maxOccurs="unbounded">
+              <xs:element name="Race" maxOccurs="unbounded">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="Link" minOccurs="1" maxOccurs="unbounded">
+                    <xs:element name="Link" maxOccurs="unbounded">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
@@ -2685,14 +2685,14 @@
       <xs:element name="PaidTime" type="xs:dateTime" />
     </xs:sequence>
     <xs:attribute name="paid" type="xs:boolean" use="required" />
-    <xs:attribute name="groupMembershipId" type="xs:integer" use="optional" />
+    <xs:attribute name="groupMembershipId" type="xs:integer"/>
   </xs:complexType>
   <xs:complexType name="MembershipType">
     <xs:sequence>
       <xs:element name="Id" type="xs:integer" />
       <xs:element name="Name" type="xs:string" />
     </xs:sequence>
-    <xs:attribute name="groupMembership" type="xs:boolean" use="optional" default="false" />
+    <xs:attribute name="groupMembership" type="xs:boolean" default="false" />
   </xs:complexType>
   <xs:complexType name="EventorPerson">
     <xs:sequence>

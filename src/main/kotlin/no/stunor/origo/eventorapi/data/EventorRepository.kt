@@ -6,7 +6,6 @@ import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.Eventor
 import org.springframework.stereotype.Repository
 
-
 @Repository
 class EventorRepository{
     private val firestore = FirestoreClient.getFirestore()
@@ -34,5 +33,4 @@ class EventorRepository{
             future.get().documents.first().toObject(Eventor::class.java)
         }
     }
-
 }
