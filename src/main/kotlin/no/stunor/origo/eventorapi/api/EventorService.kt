@@ -106,7 +106,7 @@ class EventorService {
         events: List<String?>?,
         organisations: List<String?>?,
         persons: List<String?>?
-    ): CompetitorCountList? {
+    ): CompetitorCountList {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
@@ -120,7 +120,7 @@ class EventorService {
             CompetitorCountList::class.java,
             1
         )
-        return response.body
+        return response.body ?: CompetitorCountList()
     }
 
     fun getGetPersonalStarts(
