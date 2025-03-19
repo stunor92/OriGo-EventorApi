@@ -52,7 +52,7 @@ internal class EventController {
         )
     }
 
-    @GetMapping("/{eventorId}/{eventId}/entrylist")
+    @GetMapping("/{eventorId}/{eventId}/entry-list")
     fun getEventEntryList(
         @PathVariable("eventorId") eventorId: String,
         @PathVariable("eventId") eventId: String
@@ -66,7 +66,7 @@ internal class EventController {
         )
     }
 
-    @GetMapping("/{eventorId}/{eventId}/startlist")
+    @GetMapping("/{eventorId}/{eventId}/start-list")
     fun getEventStartList(
         @PathVariable("eventorId") eventorId: String,
         @PathVariable("eventId") eventId: String
@@ -80,7 +80,7 @@ internal class EventController {
         )
     }
 
-    @GetMapping("/{eventorId}/{eventId}/resultlist")
+    @GetMapping("/{eventorId}/{eventId}/result-list")
     fun getEventResultList(
         @PathVariable("eventorId") eventorId: String,
         @PathVariable("eventId") eventId: String

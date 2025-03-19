@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("eventlist")
+@RequestMapping("event-list")
 internal class EventListController {
     private val log = LoggerFactory.getLogger(this.javaClass)
     @Autowired
