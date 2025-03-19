@@ -71,7 +71,7 @@ class CompetitorService{
                         )
                     )
                 }
-                entryList != null && !entryList.entry.isNullOrEmpty() -> {
+                !entryList.entry.isNullOrEmpty() -> {
                     competitorList.addAll(
                         competitorConverter.generateCompetitors(
                             entryList = entryList,

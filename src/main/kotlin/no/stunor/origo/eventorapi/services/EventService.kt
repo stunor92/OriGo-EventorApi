@@ -186,7 +186,6 @@ class EventService {
 
         return entryFeeConverter.convertEntryFees(
             entryFees = entryFees,
-            event = event,
             eventor = eventor,
             eventClasses = eventClasses
         )

@@ -4,7 +4,6 @@ import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.EntryBreak
 import no.stunor.origo.eventorapi.model.event.EntryFee
-import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.Price
 import org.iof.eventor.EntryFeeList
 import org.iof.eventor.EventClassList
@@ -24,7 +23,7 @@ class EntryConverter {
         return result
     }
 
-    fun convertEntryFees(entryFees: EntryFeeList, event: Event, eventor: Eventor, eventClasses: EventClassList): List<EntryFee> {
+    fun convertEntryFees(entryFees: EntryFeeList, eventor: Eventor, eventClasses: EventClassList): List<EntryFee> {
         val result: MutableList<EntryFee> = mutableListOf()
 
         for (entryFee in entryFees.entryFee) {

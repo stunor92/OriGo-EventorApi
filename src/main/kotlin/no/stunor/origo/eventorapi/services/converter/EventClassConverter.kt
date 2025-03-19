@@ -55,10 +55,10 @@ class EventClassConverter {
 
     private fun getResultListMode(hashTableEntryList: List<HashTableEntry>): Boolean {
         for (hashTableEntry in hashTableEntryList) {
-            if (hashTableEntry.key.content == "Eventor_ResultListMode") {
-                if (hashTableEntry.value.content == "UnorderedNoTimes" || hashTableEntry.value.content == "Unordered") {
-                    return false
-                }
+            if (hashTableEntry.key.content == "Eventor_ResultListMode"
+                && (hashTableEntry.value.content == "UnorderedNoTimes"
+                        || hashTableEntry.value.content == "Unordered")) {
+                return false
             }
         }
         return true
@@ -66,10 +66,9 @@ class EventClassConverter {
 
     private fun getTimePresentation(hashTableEntryList: List<HashTableEntry>): Boolean {
         for (hashTableEntry in hashTableEntryList) {
-            if (hashTableEntry.key.content == "Eventor_ResultListMode") {
-                if (hashTableEntry.value.content == "UnorderedNoTimes") {
-                    return false
-                }
+            if (hashTableEntry.key.content == "Eventor_ResultListMode"
+                && hashTableEntry.value.content == "UnorderedNoTimes") {
+                return false
             }
         }
         return true

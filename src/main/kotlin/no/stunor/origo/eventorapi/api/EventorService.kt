@@ -179,7 +179,7 @@ class EventorService {
         eventId: String?,
         fromDate: LocalDate?,
         toDate: LocalDate?
-    ): EntryList? {
+    ): EntryList {
         val headers = HttpHeaders()
         headers["ApiKey"] = eventor.apiKey
 
@@ -195,7 +195,7 @@ class EventorService {
             EntryList::class.java,
             1
         )
-        return response.body
+        return response.body ?: EntryList()
     }
 
     fun getEvent(baseUrl: String, apiKey: String?, eventId: String): Event? {
