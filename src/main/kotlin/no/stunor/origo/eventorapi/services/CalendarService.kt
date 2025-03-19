@@ -71,14 +71,12 @@ class CalendarService {
                         toDate = LocalDate.now().plusDays(personalEntriesEnd)
                 )
                 val eventClassMap: MutableMap<String, org.iof.eventor.EventClassList> = HashMap()
-                if (entryList != null) {
-                    for (entry in entryList.entry) {
-                        for (raceId in entry.eventRaceId) {
-                            if (!eventClassMap.containsKey(raceId.content)) {
-                                val eventClassList = eventorService.getEventClasses(eventor = eventor, eventId = entry.event.eventId.content)
-                                if (eventClassList != null) {
-                                    eventClassMap[raceId.content] = eventClassList
-                                }
+                for (entry in entryList.entry) {
+                    for (raceId in entry.eventRaceId) {
+                        if (!eventClassMap.containsKey(raceId.content)) {
+                            val eventClassList = eventorService.getEventClasses(eventor = eventor, eventId = entry.event.eventId.content)
+                            if (eventClassList != null) {
+                                eventClassMap[raceId.content] = eventClassList
                             }
                         }
                     }
