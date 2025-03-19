@@ -52,29 +52,33 @@ class CompetitorService{
                     toDate = null
             )
 
-            if(resultListList != null && !resultListList.resultList.isNullOrEmpty()) {
-                competitorList.addAll(
-                    competitorConverter.generateCompetitors(
-                        eventor = eventor,
-                        resultListList = resultListList,
-                        person = person
+            when {
+                resultListList != null && !resultListList.resultList.isNullOrEmpty() -> {
+                    competitorList.addAll(
+                        competitorConverter.generateCompetitors(
+                            eventor = eventor,
+                            resultListList = resultListList,
+                            person = person
+                        )
                     )
-                )
-            } else if(startListList != null && !startListList.startList.isNullOrEmpty()){
-                competitorList.addAll(
-                    competitorConverter.generateCompetitors(
-                        eventor = eventor,
-                        startListList = startListList,
-                        person = person
+                }
+                startListList != null && !startListList.startList.isNullOrEmpty() -> {
+                    competitorList.addAll(
+                        competitorConverter.generateCompetitors(
+                            eventor = eventor,
+                            startListList = startListList,
+                            person = person
+                        )
                     )
-                )
-            } else if (entryList != null && !entryList.entry.isNullOrEmpty()){
-                competitorList.addAll(
-                    competitorConverter.generateCompetitors(
-                        entryList = entryList,
-                        person = person
+                }
+                entryList != null && !entryList.entry.isNullOrEmpty() -> {
+                    competitorList.addAll(
+                        competitorConverter.generateCompetitors(
+                            entryList = entryList,
+                            person = person
+                        )
                     )
-                )
+                }
             }
         }
 

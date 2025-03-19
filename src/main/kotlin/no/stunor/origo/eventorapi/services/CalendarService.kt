@@ -9,6 +9,10 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.CalendarConverter
+import org.iof.eventor.EntryList
+import org.iof.eventor.EventClassList
+import org.iof.eventor.ResultListList
+import org.iof.eventor.StartListList
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -93,7 +97,13 @@ class CalendarService {
                         fromDate = LocalDate.now().minusDays(personalResultsStart),
                         toDate = LocalDate.now().plusDays(personalResultsEnd)
                 )
-                val personRaces = generateCalendarRaceForPerson(eventor, person, entryList, startListList, resultListList, eventClassMap)
+                val personRaces = eventClassMap.generateCalendarRaceForPerson(
+                    eventor,
+                    person,
+                    entryList,
+                    startListList,
+                    resultListList
+                )
 
                 for (race in personRaces) {
                     var raceExist = false
@@ -156,8 +166,14 @@ class CalendarService {
         return calendarConverter.convertEvents(eventList, eventor, competitorCountList)
     }
 
-    private fun generateCalendarRaceForPerson(eventor: Eventor, person: Person, entryList: org.iof.eventor.EntryList?, startListList: org.iof.eventor.StartListList?, resultListList: org.iof.eventor.ResultListList?, eventClassMap: MutableMap<String, org.iof.eventor.EventClassList>): List<CalendarRace> {
-        var result = calendarConverter.convertEntryList(eventor, entryList, person, eventClassMap)
+    private fun MutableMap<String, EventClassList>.generateCalendarRaceForPerson(
+        eventor: Eventor,
+        person: Person,
+        entryList: EntryList?,
+        startListList: StartListList?,
+        resultListList: ResultListList?
+    ): List<CalendarRace> {
+        var result = calendarConverter.convertEntryList(eventor, entryList, person, this)
         result = calendarConverter.convertStartListList(eventor, startListList, person, result)
         result = calendarConverter.convertResultList(eventor, resultListList, person, result)
         return result.values.stream().toList()

@@ -78,23 +78,21 @@ class EventorService {
                     EventClassificationEnum.National -> classificationIds.add("2")
                     EventClassificationEnum.Regional -> classificationIds.add("3")
                     EventClassificationEnum.Local -> classificationIds.add("4")
-                    EventClassificationEnum.Club -> classificationIds.add("5")
-                    else -> {}
+                    else -> classificationIds.add("5")
                 }
             }
         }
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
-            eventor.baseUrl
-                    + "api/events?fromDate=" + (if (fromDate == null) "" else dateFormat.format(fromDate))
-                    + "&toDate=" + (if (toDate == null) "" else dateFormat.format(toDate))
-                    + (if (organisationIds != null) ("&organisationIds=" + java.lang.String.join(
-                ",",
-                organisationIds
-            )) else "")
-                    + "&classificationIds=" + java.lang.String.join(",", classificationIds)
-                    + "&includeEntryBreaks=true",
+            """
+                ${eventor.baseUrl}api/events
+                ?fromDate=${if (fromDate == null) "" else dateFormat.format(fromDate)}
+                &toDate=${if (toDate == null) "" else dateFormat.format(toDate)}
+                ${if (organisationIds != null) "&organisationIds=" + organisationIds.joinToString() else ""}
+                &classificationIds=${classificationIds.joinToString()}
+                &includeEntryBreaks=true
+            """.trimIndent(),
             HttpMethod.GET,
             request,
             EventList::class.java,
