@@ -9,7 +9,6 @@ import org.iof.eventor.Entry
 import org.iof.eventor.EntryList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import kotlin.collections.ArrayList
 
 @Component
 class EntryListConverter {
@@ -21,6 +20,9 @@ class EntryListConverter {
 
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
+
+    @Autowired
+    private lateinit var entryConverter: EntryConverter
 
     fun convertEventEntryList(entryList: EntryList): List<Competitor> {
         val result: MutableList<Competitor> = mutableListOf()
@@ -58,10 +60,10 @@ class EntryListConverter {
                     finishTime = null,
                     result = null,
                     splitTimes = listOf(),
-                    entryFeeIds = if (entry.entryEntryFee != null) convertEntryFees(
+                    entryFeeIds = entryConverter.convertEntryFeesIds(
                         entry.entryEntryFee,
                         null
-                    ) else listOf(),
+                    ),
                     status = CompetitorStatus.SignedUp
                 )
             )
@@ -124,14 +126,6 @@ class EntryListConverter {
         return result
     }
 
-    private fun convertEntryFees(entryFees: List<org.iof.eventor.EntryEntryFee>, raceId: String?): List<String> {
-        val result: MutableList<String> = ArrayList()
-        for (entryFee in entryFees) {
-            if (raceId == null || entryFee.eventRaceId == raceId)
-                result.add(entryFee.entryFeeId.content)
-        }
-        return result
-    }
 
     private fun convertTeamMember(teamMember: org.iof.eventor.TeamCompetitor, raceId: String): TeamMemberCompetitor {
         return TeamMemberCompetitor(
@@ -150,10 +144,10 @@ class EntryListConverter {
             legResult = null,
             overallResult = null,
             splitTimes = listOf(),
-            entryFeeIds = if (teamMember.entryEntryFee != null) convertEntryFees(
+            entryFeeIds = entryConverter.convertEntryFeesIds(
                 teamMember.entryEntryFee,
                 raceId
-            ) else listOf()
+            )
 
         )
     }

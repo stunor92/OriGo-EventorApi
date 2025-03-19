@@ -24,7 +24,7 @@ import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
-import no.stunor.origo.eventorapi.services.converter.EntryFeeConverter
+import no.stunor.origo.eventorapi.services.converter.EntryConverter
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
 import no.stunor.origo.eventorapi.services.converter.EventConverter
 import no.stunor.origo.eventorapi.services.converter.ResultListConverter
@@ -64,7 +64,7 @@ class EventService {
     @Autowired
     private lateinit var resultListConverter: ResultListConverter
     @Autowired
-    private lateinit var entryFeeConverter: EntryFeeConverter
+    private lateinit var entryFeeConverter: EntryConverter
 
     fun getEvent(eventorId: String, eventId: String): Event {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
@@ -184,7 +184,7 @@ class EventService {
             eventId = event.eventId
         ) ?: throw EntryListNotFoundException()
 
-        return entryFeeConverter.convertEventEntryFees(
+        return entryFeeConverter.convertEntryFees(
             entryFees = entryFees,
             event = event,
             eventor = eventor,
