@@ -19,6 +19,9 @@ class EventConverter {
     private lateinit var eventClassConverter: EventClassConverter
 
     @Autowired
+    private lateinit var entryConverter: EntryConverter
+
+    @Autowired
     private lateinit var competitorConverter: CompetitorConverter
     fun convertEventClassification(eventForm: String?): EventClassificationEnum {
         return when (eventForm) {
@@ -87,13 +90,6 @@ class EventConverter {
         }
     }
 
-    fun convertEntryBreaks(entryBreaks: List<org.iof.eventor.EntryBreak>, eventor: Eventor): List<EntryBreak> {
-        val result: MutableList<EntryBreak> = ArrayList()
-        for (entryBreak in entryBreaks) {
-            result.add(convertEntryBreak(entryBreak, eventor))
-        }
-        return result
-    }
 
     @Throws(ParseException::class)
     fun convertEvent(
@@ -118,7 +114,7 @@ class EventConverter {
             regions = regions.map { it.regionId },
             eventClasses = eventClassConverter.convertEventClasses(eventCLassList),
             documents = convertEventDocument(documentList),
-            entryBreaks = convertEntryBreaks(event.entryBreak, eventor),
+            entryBreaks = entryConverter.convertEntryBreaks(event.entryBreak, eventor),
             races = convertRaces(event, event.eventRace, eventor),
             punchingUnitTypes = convertPunchingUnitTypes(event.punchingUnitType),
             webUrls = null,
@@ -247,25 +243,6 @@ class EventConverter {
 
     fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): GeoPoint {
         return GeoPoint(eventCenterPosition.y.toDouble(), eventCenterPosition.x.toDouble())
-    }
-
-    private fun convertEntryBreak(entryBreak: org.iof.eventor.EntryBreak, eventor: Eventor): EntryBreak {
-        return EntryBreak(
-            if (entryBreak.validFromDate != null) convertValidFromDate(entryBreak.validFromDate, eventor) else null,
-            if (entryBreak.validToDate != null) convertValidToDate(entryBreak.validToDate, eventor) else null
-        )
-    }
-
-    private fun convertValidFromDate(time: org.iof.eventor.ValidFromDate, eventor: Eventor): Timestamp {
-        val timeString = time.date.content + " " + time.clock.content
-        val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
-    }
-
-    private fun convertValidToDate(time: org.iof.eventor.ValidToDate, eventor: Eventor): Timestamp {
-        val timeString = time.date.content + " " + time.clock.content
-        val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
     }
 
     private fun convertHostMessage(hashTableEntries: List<org.iof.eventor.HashTableEntry>): String? {

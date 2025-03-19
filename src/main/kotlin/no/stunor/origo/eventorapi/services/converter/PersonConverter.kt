@@ -69,9 +69,8 @@ class PersonConverter {
                 role.roleTypeId.content = "10"
             }
 
-            if (!highestRole.containsKey(role.organisationId.content)) {
-                highestRole[role.organisationId.content] = role.roleTypeId.content.toInt()
-            } else if (role.roleTypeId.content.toInt() > highestRole[role.organisationId.content]!!) {
+            if (!highestRole.containsKey(role.organisationId.content)
+                || role.roleTypeId.content.toInt() > highestRole.getValue(role.organisationId.content)) {
                 highestRole[role.organisationId.content] = role.roleTypeId.content.toInt()
             }
         }
@@ -79,12 +78,16 @@ class PersonConverter {
         val memberships: MutableMap<String, MembershipType> = HashMap()
 
         for (orgId in highestRole.keys.stream().toList()) {
-            if (highestRole[orgId] == 1) {
-                memberships[orgId] = MembershipType.Member
-            } else if (highestRole[orgId] == 3 || highestRole[orgId] == 5) {
-                memberships[orgId] = MembershipType.Organiser
-            } else if (highestRole[orgId] == 10) {
-                memberships[orgId] = MembershipType.Admin
+            when {
+                highestRole[orgId] == 1 -> {
+                    memberships[orgId] = MembershipType.Member
+                }
+                highestRole[orgId] == 3 || highestRole[orgId] == 5 -> {
+                    memberships[orgId] = MembershipType.Organiser
+                }
+                highestRole[orgId] == 10 -> {
+                    memberships[orgId] = MembershipType.Admin
+                }
             }
         }
 

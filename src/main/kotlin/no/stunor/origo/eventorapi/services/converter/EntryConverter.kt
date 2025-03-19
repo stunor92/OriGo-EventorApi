@@ -2,6 +2,7 @@ package no.stunor.origo.eventorapi.services.converter
 
 import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.event.EntryBreak
 import no.stunor.origo.eventorapi.model.event.EntryFee
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.Price
@@ -13,9 +14,17 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Component
-class EntryFeeConverter {
+class EntryConverter {
+    fun convertEntryFeesIds(entryFees: List<org.iof.eventor.EntryEntryFee>?, raceId: String?): List<String> {
+        val result: MutableList<String> = ArrayList()
+        for (entryFee in entryFees?: emptyList()) {
+            if (raceId == null || entryFee.eventRaceId == raceId)
+                result.add(entryFee.entryFeeId.content)
+        }
+        return result
+    }
 
-    fun convertEventEntryFees(entryFees: EntryFeeList, event: Event, eventor: Eventor, eventClasses: EventClassList): List<EntryFee> {
+    fun convertEntryFees(entryFees: EntryFeeList, event: Event, eventor: Eventor, eventClasses: EventClassList): List<EntryFee> {
         val result: MutableList<EntryFee> = mutableListOf()
 
         for (entryFee in entryFees.entryFee) {
@@ -66,6 +75,20 @@ class EntryFeeConverter {
             currency = amount.currency
         )
     }
+    fun convertEntryBreaks(entryBreaks: List<org.iof.eventor.EntryBreak>, eventor: Eventor): List<EntryBreak> {
+        val result: MutableList<EntryBreak> = ArrayList()
+        for (entryBreak in entryBreaks) {
+            result.add(convertEntryBreak(entryBreak, eventor))
+        }
+        return result
+    }
+
+    private fun convertEntryBreak(entryBreak: org.iof.eventor.EntryBreak, eventor: Eventor): EntryBreak {
+        return EntryBreak(
+            if (entryBreak.validFromDate != null) convertValidFromDate(entryBreak.validFromDate, eventor) else null,
+            if (entryBreak.validToDate != null) convertValidToDate(entryBreak.validToDate, eventor) else null
+        )
+    }
 
     private fun convertValidFromDate(time: org.iof.eventor.ValidFromDate, eventor: Eventor): Timestamp {
         val timeString = time.date.content + " " + time.clock.content
@@ -91,6 +114,5 @@ class EntryFeeConverter {
         }
         return ZoneId.of("Europe/Paris")
     }
-
 }
 
