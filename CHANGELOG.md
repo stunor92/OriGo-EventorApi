@@ -1,5 +1,23 @@
 # Changelog
 
+## [5.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v4.1.0...v5.0.0) (2025-03-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rollback refactoring ([#88](https://github.com/stunor92/OriGo-EventorApi/issues/88))
+* Deprecate one punchingUnit and use list instead ([#86](https://github.com/stunor92/OriGo-EventorApi/issues/86))
+
+### Features
+
+* Deprecate one punchingUnit and use list instead ([#86](https://github.com/stunor92/OriGo-EventorApi/issues/86)) ([da15428](https://github.com/stunor92/OriGo-EventorApi/commit/da15428501285062ca9be1e93056c26bda45f566))
+
+
+### Bug Fixes
+
+* Rollback refactoring ([#88](https://github.com/stunor92/OriGo-EventorApi/issues/88)) ([bc01759](https://github.com/stunor92/OriGo-EventorApi/commit/bc01759c945bffcc4edfe94a1bde372ebaea8d27))
+* wrong type of EntryBreak in CalendarRace ([9f00d20](https://github.com/stunor92/OriGo-EventorApi/commit/9f00d20fc59a937e4bd118df228187e7f9ade5ab))
+
 ## [4.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v4.0.4...v4.1.0) (2025-03-17)
 
 
