@@ -11,7 +11,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Use a lightweight JDK base image for the runtime
-FROM bellsoft/liberica-openjre-alpine:23
+FROM bellsoft/liberica-openjre-alpine:24
 
 # Copy the built jar from the builder stage
 COPY --from=builder /app/target/*.jar /app.jar
