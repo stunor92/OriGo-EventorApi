@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v5.0.0...v5.0.1) (2025-03-26)
+
+
+### Bug Fixes
+
+* Nullpointer on OrganisationConverter ([80124c0](https://github.com/stunor92/OriGo-EventorApi/commit/80124c02c003ffb4a6a221b6e0417208a2827180))
+* Nullpointer on OrganisationConverter ([#100](https://github.com/stunor92/OriGo-EventorApi/issues/100)) ([51188be](https://github.com/stunor92/OriGo-EventorApi/commit/51188bedbd8e7dbbfe03239f8ff8392ed3406887))
+
 ## [5.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v4.1.0...v5.0.0) (2025-03-19)
 
 
