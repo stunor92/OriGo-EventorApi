@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 @Component
 class EntryConverter {
     fun convertEntryFeesIds(entryFees: List<org.iof.eventor.EntryEntryFee>?, raceId: String?): List<String> {
-        val result: MutableList<String> = ArrayList()
+        val result  = mutableListOf<String>()
         for (entryFee in entryFees?: emptyList()) {
             if (raceId == null || entryFee.eventRaceId == raceId)
                 result.add(entryFee.entryFeeId.content)
@@ -24,7 +24,7 @@ class EntryConverter {
     }
 
     fun convertEntryFees(entryFees: EntryFeeList, eventor: Eventor, eventClasses: EventClassList): List<EntryFee> {
-        val result: MutableList<EntryFee> = mutableListOf()
+        val result  = mutableListOf<EntryFee>()
 
         for (entryFee in entryFees.entryFee) {
             result.add(convertEntryFee(entryFee, eventor, eventClasses))
@@ -50,7 +50,7 @@ class EntryConverter {
     }
 
     private fun findEventClasses(eventClasses: EventClassList, entryFeeId: String): List<String> {
-        val result: ArrayList<String> = ArrayList()
+        val result  = mutableListOf<String>()
         for(eventClass in eventClasses.eventClass) {
             for (entryFee in eventClass.classEntryFee) {
                 if (entryFee.entryFeeId.content == entryFeeId) {

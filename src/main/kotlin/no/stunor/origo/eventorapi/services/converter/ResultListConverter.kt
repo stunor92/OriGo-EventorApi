@@ -32,7 +32,7 @@ class ResultListConverter {
 
     @Throws(NumberFormatException::class, ParseException::class)
     fun convertEventResultList(eventor: Eventor, resultList: ResultList): List<Competitor> {
-        val competitorList: MutableList<Competitor> = mutableListOf()
+        val competitorList = mutableListOf<Competitor>()
 
 
         for (classResult in resultList.classResult) {
@@ -202,7 +202,7 @@ class ResultListConverter {
         eventor: Eventor,
         teamMembers: List<org.iof.eventor.TeamMemberResult>
     ): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = mutableListOf()
+        val result  = mutableListOf<TeamMemberCompetitor>()
         for (teamMember in teamMembers) {
             result.add(convertTeamMember(eventor, teamMember))
         }

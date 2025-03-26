@@ -12,7 +12,7 @@ class EventClassConverter {
     fun convertEventClasses(eventCLassList: EventClassList?): List<EventClass> {
         if(eventCLassList == null)
             return listOf()
-        val result: MutableList<EventClass> = ArrayList()
+        val result  = mutableListOf<EventClass>()
         for (eventClass in eventCLassList.eventClass) {
             if (eventClass != null) {
                 result.add(convertEventClass(eventClass))

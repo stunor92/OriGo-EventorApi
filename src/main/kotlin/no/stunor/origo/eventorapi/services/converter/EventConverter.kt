@@ -129,7 +129,7 @@ class EventConverter {
         eventRaces: List<org.iof.eventor.EventRace>,
         eventor: Eventor
     ): List<Race> {
-        val result: MutableList<Race> = ArrayList()
+        val result  = mutableListOf<Race>()
 
         for (eventRace in eventRaces) {
             result.add(convertRace(event, eventRace, eventor))

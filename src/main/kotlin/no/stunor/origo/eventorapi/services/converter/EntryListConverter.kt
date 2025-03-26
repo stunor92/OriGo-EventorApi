@@ -25,7 +25,7 @@ class EntryListConverter {
     private lateinit var entryConverter: EntryConverter
 
     fun convertEventEntryList(entryList: EntryList): List<Competitor> {
-        val result: MutableList<Competitor> = mutableListOf()
+        val result  = mutableListOf<Competitor>()
 
         for (entry in entryList.entry) {
             if (entry.competitor != null) {
@@ -38,7 +38,7 @@ class EntryListConverter {
     }
 
     private fun convertPersonEventEntries(entry: Entry): List<Competitor> {
-        val result: MutableList<Competitor> = mutableListOf()
+        val result  = mutableListOf<Competitor>()
 
         for (raceId in entry.eventRaceId) {
             result.add(
@@ -73,7 +73,7 @@ class EntryListConverter {
 
 
     private fun convertTeamEventEntries(entry: Entry): List<Competitor> {
-        val result: MutableList<Competitor> = mutableListOf()
+        val result  = mutableListOf<Competitor>()
 
         for (race in entry.teamCompetitor[0].entryEntryFee) {
             result.add(
@@ -98,7 +98,7 @@ class EntryListConverter {
     private fun convertTeamOrganisationIds(
         teamCompetitors: List<org.iof.eventor.TeamCompetitor>
     ): List<String> {
-        val result: MutableList<String> = mutableListOf()
+        val result  = mutableListOf<String>()
         for (teamCompetitor in teamCompetitors) {
             if (teamCompetitor.organisationId != null) {
                 var organisationExist = false
@@ -119,7 +119,7 @@ class EntryListConverter {
         teamMembers: List<org.iof.eventor.TeamCompetitor>,
         raceId: String
     ): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = ArrayList()
+        val result  = mutableListOf<TeamMemberCompetitor>()
         for (teamMember in teamMembers) {
             result.add(convertTeamMember(teamMember, raceId))
         }

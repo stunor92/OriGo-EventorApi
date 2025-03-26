@@ -35,7 +35,7 @@ class CalendarConverter {
         eventor: Eventor,
         competitorCountList: org.iof.eventor.CompetitorCountList
     ): List<CalendarRace> {
-        val result: MutableList<CalendarRace> = ArrayList()
+        val result = mutableListOf<CalendarRace>()
         for (event in eventList!!.event) {
             result.addAll(convertEvent(event, eventor, competitorCountList))
         }
@@ -47,7 +47,7 @@ class CalendarConverter {
         eventor: Eventor,
         competitorCountList: org.iof.eventor.CompetitorCountList
     ): List<CalendarRace> {
-        val result: MutableList<CalendarRace> = ArrayList()
+        val result = mutableListOf<CalendarRace>()
         for (eventRace in event.eventRace) {
             result.add(generateRace(event, eventRace, eventor, competitorCountList))
         }
