@@ -21,7 +21,7 @@ class StartListConverter {
     private lateinit var competitorConverter: CompetitorConverter
 
     fun convertEventStartList(eventor: Eventor, startList: org.iof.eventor.StartList): List<Competitor> {
-        val competitorList: MutableList<Competitor> = mutableListOf()
+        val competitorList = mutableListOf<Competitor>()
 
         for (classStart in startList.classStart) {
             for (personOrTeamStart in classStart.personStartOrTeamStart) {
@@ -151,7 +151,7 @@ class StartListConverter {
         eventor: Eventor,
         teamMembers: List<org.iof.eventor.TeamMemberStart>
     ): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = mutableListOf()
+        val result  = mutableListOf<TeamMemberCompetitor>()
         for (teamMember in teamMembers) {
             result.add(convertTeamMember(eventor, teamMember))
         }

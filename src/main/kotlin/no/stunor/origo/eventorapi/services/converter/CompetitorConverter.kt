@@ -34,7 +34,7 @@ class CompetitorConverter {
         resultListList: org.iof.eventor.ResultListList,
         person: Person
     ): List<Competitor> {
-        val competitors: MutableList<Competitor> = mutableListOf()
+        val competitors = mutableListOf<Competitor>()
         for (resultList in resultListList.resultList) {
             if (resultList.event.eventRace.size == 1) {
                 val race = resultList.event.eventRace[0]
@@ -152,7 +152,7 @@ class CompetitorConverter {
         eventor: Eventor,
         teamMembers: List<org.iof.eventor.TeamMemberResult>
     ): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = mutableListOf()
+        val result = mutableListOf<TeamMemberCompetitor>()
         for (teamMember in teamMembers) {
             result.add(
                 TeamMemberCompetitor(
@@ -194,7 +194,7 @@ class CompetitorConverter {
         startListList: org.iof.eventor.StartListList,
         person: Person
     ): List<Competitor> {
-        val competitors: MutableList<Competitor> = mutableListOf()
+        val competitors = mutableListOf<Competitor>()
         for (startList in startListList.startList) {
             if (startList.event.eventRace.size == 1) {
                 val race = startList.event.eventRace[0]
@@ -284,7 +284,7 @@ class CompetitorConverter {
         eventor: Eventor,
         teamMembers: List<org.iof.eventor.TeamMemberStart>
     ): List<TeamMemberCompetitor> {
-        val result: MutableList<TeamMemberCompetitor> = mutableListOf()
+        val result  = mutableListOf<TeamMemberCompetitor>()
         for (teamMember in teamMembers) {
             result.add(
                 TeamMemberCompetitor(
@@ -312,7 +312,7 @@ class CompetitorConverter {
         entryList: EntryList,
         person: Person
     ): Collection<Competitor> {
-        val competitors: MutableList<Competitor> = mutableListOf()
+        val competitors  = mutableListOf<Competitor>()
 
         for (entry in entryList.entry) {
             if (entry.competitor?.person?.personId?.content == person.personId || entry.competitor?.personId?.content == person.personId) {
