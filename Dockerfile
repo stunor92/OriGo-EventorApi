@@ -1,7 +1,10 @@
-# Use Maven to build the application
-FROM maven:3-eclipse-temurin-23-alpine as builder
+# Use a lightweight JDK base image for the build stage
+FROM bellsoft/liberica-openjdk-alpine:24 AS builder
 # Set the working directory
 WORKDIR /app
+
+# Install Maven
+RUN apk add --no-cache maven
 
 # Copy the pom.xml and source code
 COPY pom.xml .
