@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v5.0.1...v5.1.0) (2025-04-01)
+
+
+### Features
+
+* Remove deploy with GHA ([#104](https://github.com/stunor92/OriGo-EventorApi/issues/104)) ([92f5a7d](https://github.com/stunor92/OriGo-EventorApi/commit/92f5a7d71369b9bd426a6bd007e37632fed0238c))
+
 ## [5.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v5.0.0...v5.0.1) (2025-03-26)
 
 
