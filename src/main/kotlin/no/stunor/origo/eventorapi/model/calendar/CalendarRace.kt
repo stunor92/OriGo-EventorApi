@@ -1,7 +1,6 @@
 package no.stunor.origo.eventorapi.model.calendar
 
-import com.google.cloud.Timestamp
-import com.google.cloud.firestore.GeoPoint
+
 import no.stunor.origo.eventorapi.model.event.DisciplineEnum
 import no.stunor.origo.eventorapi.model.event.DistanceEnum
 import no.stunor.origo.eventorapi.model.event.EntryBreak
@@ -9,6 +8,7 @@ import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import no.stunor.origo.eventorapi.model.event.EventFormEnum
 import no.stunor.origo.eventorapi.model.event.EventStatusEnum
 import no.stunor.origo.eventorapi.model.event.LightConditionEnum
+import java.sql.Timestamp
 
 data class CalendarRace(
     var eventorId: String = "",
@@ -21,7 +21,7 @@ data class CalendarRace(
     var classification: EventClassificationEnum = EventClassificationEnum.Club,
     var lightCondition: LightConditionEnum = LightConditionEnum.Day,
     var distance: DistanceEnum = DistanceEnum.Middle,
-    var position: GeoPoint? = null,
+    //var position: GeoPoint? = null,
     var status: EventStatusEnum = EventStatusEnum.Applied,
     var disciplines: List<DisciplineEnum> = listOf(),
     var organisers: List<String> = listOf(),

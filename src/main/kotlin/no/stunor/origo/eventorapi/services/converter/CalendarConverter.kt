@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.services.converter
-
-import com.google.cloud.Timestamp
+import java.sql.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.calendar.CalendarCompetitor
 import no.stunor.origo.eventorapi.model.calendar.CalendarEntry
@@ -14,6 +13,7 @@ import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
 import no.stunor.origo.eventorapi.model.person.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 
 @Component
@@ -71,7 +71,7 @@ class CalendarConverter {
             classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
             lightCondition = eventConverter.convertLightCondition(eventRace.raceLightCondition),
             distance = eventConverter.convertRaceDistance(eventRace.raceDistance),
-            position = if (eventRace.eventCenterPosition != null) eventConverter.convertPosition(eventRace.eventCenterPosition) else null,
+            //position = if (eventRace.eventCenterPosition != null) eventConverter.convertPosition(eventRace.eventCenterPosition) else null,
             status = eventConverter.convertEventStatus(event.eventStatusId.content),
             disciplines = eventConverter.convertEventDisciplines(event.disciplineIdOrDiscipline),
             organisers = if (event.organiser != null) eventConverter.convertOrganisers(event.organiser.organisationIdOrOrganisation) else listOf(),
@@ -92,7 +92,7 @@ class CalendarConverter {
 
     private fun convertRaceDate(time: org.iof.eventor.RaceDate): Timestamp {
         val timeString = time.date.content + "T00:00:00.000Z"
-        return Timestamp.parseTimestamp(timeString)
+        return Timestamp.from(Instant.parse(timeString))
     }
 
     private fun getEntries(

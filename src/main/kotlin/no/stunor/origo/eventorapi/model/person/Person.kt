@@ -1,22 +1,32 @@
 package no.stunor.origo.eventorapi.model.person
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.google.cloud.firestore.annotation.DocumentId
+import jakarta.persistence.*
+import java.io.Serializable
+import java.sql.Timestamp
+import java.time.Instant
 
+data class PersonId(
+        private val personId: String,
+        private val eventorId: String
+) : Serializable {
+        constructor() : this("", "")
+}
 
+@Entity
+@IdClass(PersonId::class)
 data class Person(
-        @JsonIgnore
-        @DocumentId
-        var id: String? = null,
-        var eventorId: String = "",
-        var personId: String = "",
-        var name: PersonName = PersonName(),
+        @Id var eventorId: String = "",
+        @Id var personId: String = "",
+        @Embedded var name: PersonName = PersonName(),
         var birthYear: Int = 0,
         var nationality: String = "",
-        var gender: Gender = Gender.Other,
-        @JsonIgnore
-        var users: MutableList<String> = mutableListOf(),
+        @Enumerated(EnumType.STRING) var gender: Gender = Gender.Other,
         var mobilePhone: String? = null,
         var email: String? = null,
-        var memberships: Map<String, MembershipType> = HashMap(),
+        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "person")
+        var memberships: List<Membership> = mutableListOf(),
+        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "person")
+        @JsonIgnore var users: MutableList<UserPerson> = mutableListOf(),
+        @JsonIgnore var lastUpdated: Timestamp = Timestamp.from(Instant.now())
 )

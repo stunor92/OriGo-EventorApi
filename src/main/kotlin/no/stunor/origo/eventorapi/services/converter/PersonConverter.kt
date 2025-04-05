@@ -1,10 +1,7 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.person.Gender
-import no.stunor.origo.eventorapi.model.person.MembershipType
-import no.stunor.origo.eventorapi.model.person.Person
-import no.stunor.origo.eventorapi.model.person.PersonName
+import no.stunor.origo.eventorapi.model.person.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -15,17 +12,16 @@ class PersonConverter {
     private lateinit var contactConverter: ContactConverter
     fun convertPerson(eventorPerson: org.iof.eventor.Person, eventor: Eventor): Person {
         return Person(
-                null,
-                eventor.eventorId,
-                eventorPerson.personId.content,
-                convertPersonName(eventorPerson.personName),
-                eventorPerson.birthDate.date.content.substring(0, 4).toInt(),
-                eventorPerson.nationality.country.alpha3.value,
-                convertGender(eventorPerson.sex),
-                ArrayList(),
-                contactConverter.convertPhone(eventorPerson.tele),
-                contactConverter.convertEmail(eventorPerson.tele),
-                convertMemberships(eventorPerson.role)
+            eventorId = eventor.eventorId,
+            personId = eventorPerson.personId.content,
+            name = convertPersonName(eventorPerson.personName),
+            birthYear = eventorPerson.birthDate.date.content.substring(0, 4).toInt(),
+            nationality = eventorPerson.nationality.country.alpha3.value,
+            gender = convertGender(eventorPerson.sex),
+            //users = ArrayList(),
+            mobilePhone = contactConverter.convertPhone(eventorPerson.tele),
+            email = contactConverter.convertEmail(eventorPerson.tele),
+            memberships = convertMemberships(eventorPerson.personId.content, eventor.eventorId, eventorPerson.role)
         )
     }
 
@@ -61,7 +57,7 @@ class PersonConverter {
         return PersonName(personName.family.content, given.toString())
     }
 
-    private fun convertMemberships(roles: List<org.iof.eventor.Role>): Map<String, MembershipType> {
+    private fun convertMemberships(personId: String, eventorId: String, roles: List<org.iof.eventor.Role>): List<Membership> {
         val highestRole: MutableMap<String, Int> = HashMap()
 
         for (role in roles) {
@@ -75,18 +71,39 @@ class PersonConverter {
             }
         }
 
-        val memberships: MutableMap<String, MembershipType> = HashMap()
+        val memberships: MutableList<Membership> = mutableListOf()
 
         for (orgId in highestRole.keys.stream().toList()) {
             when {
                 highestRole[orgId] == 1 -> {
-                    memberships[orgId] = MembershipType.Member
+                    memberships.add(
+                        Membership(
+                            organisationId = orgId,
+                            personId = personId,
+                            eventorId = eventorId,
+                            type = MembershipType.Member
+                        )
+                    )
                 }
                 highestRole[orgId] == 3 || highestRole[orgId] == 5 -> {
-                    memberships[orgId] = MembershipType.Organiser
+                    memberships.add(
+                        Membership(
+                            organisationId = orgId,
+                            personId = personId,
+                            eventorId = eventorId,
+                            type = MembershipType.Organiser
+                        )
+                    )
                 }
                 highestRole[orgId] == 10 -> {
-                    memberships[orgId] = MembershipType.Admin
+                    memberships.add(
+                        Membership(
+                            organisationId = orgId,
+                            personId = personId,
+                            eventorId = eventorId,
+                            type = MembershipType.Admin
+                        )
+                    )
                 }
             }
         }
