@@ -1,20 +1,14 @@
 package no.stunor.origo.eventorapi.services.converter
 
-import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.event.PunchingUnitType
-import no.stunor.origo.eventorapi.model.event.competitor.Competitor
-import no.stunor.origo.eventorapi.model.event.competitor.CompetitorStatus
-import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
-import no.stunor.origo.eventorapi.model.event.competitor.Result
-import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
-import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
-import no.stunor.origo.eventorapi.model.event.competitor.TeamMemberCompetitor
+import no.stunor.origo.eventorapi.model.event.competitor.*
 import no.stunor.origo.eventorapi.model.person.Person
 import org.iof.eventor.EntryList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.sql.Timestamp
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -423,13 +417,13 @@ class CompetitorConverter {
     fun convertStartTime(time: org.iof.eventor.StartTime, eventor: Eventor): Timestamp {
         val timeString = time.date.content + " " + time.clock.content
         val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+        return Timestamp.from(zdt.toInstant())
     }
 
     fun convertFinishTime(time: org.iof.eventor.FinishTime, eventor: Eventor): Timestamp {
         val timeString = time.date.content + " " + time.clock.content
         val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+        return Timestamp.from(zdt.toInstant())
     }
 
     private fun parseTimestamp(time: String, eventor: Eventor): ZonedDateTime {

@@ -1,15 +1,13 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.google.cloud.Timestamp
-import com.google.cloud.firestore.annotation.DocumentId
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
+import java.sql.Timestamp
 
 data class PersonCompetitor(
         @JsonIgnore
-        @DocumentId
         override var id: String? = null,
         override var raceId: String = "",
         override var eventClassId: String = "",

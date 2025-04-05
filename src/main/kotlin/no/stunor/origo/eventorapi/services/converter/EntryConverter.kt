@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.services.converter
 
-import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.EntryBreak
 import no.stunor.origo.eventorapi.model.event.EntryFee
@@ -8,6 +7,7 @@ import no.stunor.origo.eventorapi.model.event.Price
 import org.iof.eventor.EntryFeeList
 import org.iof.eventor.EventClassList
 import org.springframework.stereotype.Component
+import java.sql.Timestamp
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -92,13 +92,13 @@ class EntryConverter {
     private fun convertValidFromDate(time: org.iof.eventor.ValidFromDate, eventor: Eventor): Timestamp {
         val timeString = time.date.content + " " + time.clock.content
         val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+        return Timestamp.from(zdt.toInstant())
     }
 
     private fun convertValidToDate(time: org.iof.eventor.ValidToDate, eventor: Eventor): Timestamp {
         val timeString = time.date.content + " " + time.clock.content
         val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+        return Timestamp.from(zdt.toInstant())
     }
 
     private fun parseTimestamp(time: String, eventor: Eventor): ZonedDateTime {

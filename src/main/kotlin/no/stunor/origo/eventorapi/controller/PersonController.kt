@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.controller
 
-
 import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.AuthService
@@ -21,14 +20,16 @@ internal class PersonController {
     @Autowired
     private lateinit var authService: AuthService
 
-    @GetMapping("/download")
-    fun HttpServletRequest.authenticate(
+    @GetMapping("/authenticate")
+    fun authenticate(
         @RequestHeader(value = "eventorId") eventorId: String,
         @RequestHeader(value = "username") username: String,
-        @RequestHeader(value = "password") password: String
+        @RequestHeader(value = "password") password: String,
+        request: HttpServletRequest
     ): ResponseEntity<Person> {
         log.info("Start authenticating user {}.", username)
-        val uid = getAttribute("uid") as String
+        val uid = request.getAttribute("uid") as String
+
         return ResponseEntity(
             authService.authenticate(
                 eventorId = eventorId,

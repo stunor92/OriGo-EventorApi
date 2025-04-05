@@ -1,19 +1,16 @@
 package no.stunor.origo.eventorapi.data
 
-import com.google.api.core.ApiFuture
-import com.google.cloud.firestore.QuerySnapshot
-import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.event.EntryFee
 import no.stunor.origo.eventorapi.model.event.Event
 import org.springframework.stereotype.Repository
 
 
 @Repository
-class EntryFeesRepository {
-    private val firestore = FirestoreClient.getFirestore()
+open class EntryFeesRepository {
+    //private val firestore = FirestoreClient.getFirestore()
 
     fun saveAll(eventDocument: String, entryFees: List<EntryFee>) {
-        for (entryFee in entryFees) {
+        /*for (entryFee in entryFees) {
             if(entryFee.id == null) {
                 firestore
                     .collection("events")
@@ -28,21 +25,21 @@ class EntryFeesRepository {
                     .document(entryFee.id!!)
                     .set(entryFee)
             }
-        }
+        }*/
     }
 
     fun delete(eventDocument: String, fee: EntryFee) {
-        fee.id?.let {
+        /*fee.id?.let {
             firestore.collection("events")
                 .document(eventDocument)
                 .collection("fees")
                 .document(it)
                 .delete()
-        }
+        }*/
     }
 
     fun findAllForEvent(event: Event): List<EntryFee> {
-        val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
+        /*val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
             .document(event.id?:"")
             .collection("fees")
             .get()
@@ -54,6 +51,7 @@ class EntryFeesRepository {
         for (document in documents) {
             result.add(document.toObject(EntryFee::class.java))
         }
-        return result.toList()
+        return result.toList()*/
+        return listOf()
     }
 }
