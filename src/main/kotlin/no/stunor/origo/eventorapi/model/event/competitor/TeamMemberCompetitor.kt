@@ -1,9 +1,9 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
-import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
+import java.sql.Timestamp
 
 
 data class TeamMemberCompetitor(

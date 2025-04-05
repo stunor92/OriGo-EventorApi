@@ -1,13 +1,10 @@
 package no.stunor.origo.eventorapi.model.event
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.google.cloud.Timestamp
-import com.google.cloud.firestore.annotation.DocumentId
-
+import java.sql.Timestamp
 
 data class Event (
         @JsonIgnore
-        @DocumentId
         var id: String? = null,
         var eventorId: String? = null,
         var eventId: String = "",

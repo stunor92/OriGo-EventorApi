@@ -1,13 +1,12 @@
 package no.stunor.origo.eventorapi.services.converter
 
-import com.google.cloud.Timestamp
-import com.google.cloud.firestore.GeoPoint
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.sql.Timestamp
 import java.text.ParseException
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -148,7 +147,7 @@ class EventConverter {
             lightCondition = convertLightCondition(eventRace.raceLightCondition),
             distance = convertRaceDistance(eventRace.raceDistance),
             date = if (eventRace.raceDate != null) convertRaceDate(eventRace.raceDate, eventor) else null,
-            position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
+            //position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
             startList = hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
             resultList = hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
             livelox = hasLivelox(event.hashTableEntry)
@@ -212,19 +211,19 @@ class EventConverter {
     private fun convertRaceDate(time: org.iof.eventor.RaceDate, eventor: Eventor): Timestamp {
         val timeString = time.date.content + " " + time.clock.content
         val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+        return Timestamp.from(zdt.toInstant())
     }
 
     private fun convertStartDate(time: org.iof.eventor.StartDate, eventor: Eventor): Timestamp {
         val timeString = time.date.content + " " + time.clock.content
         val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+        return Timestamp.from(zdt.toInstant())
     }
 
     private fun convertFinishDate(time: org.iof.eventor.FinishDate, eventor: Eventor): Timestamp {
         val timeString = time.date.content + " " + time.clock.content
         val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.ofTimeSecondsAndNanos(zdt.toInstant().epochSecond, 0)
+        return Timestamp.from(zdt.toInstant())
     }
 
 
@@ -241,9 +240,9 @@ class EventConverter {
         return ZoneId.of("Europe/Paris")
     }
 
-    fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): GeoPoint {
+    /*fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): GeoPoint {
         return GeoPoint(eventCenterPosition.y.toDouble(), eventCenterPosition.x.toDouble())
-    }
+    }*/
 
     private fun convertHostMessage(hashTableEntries: List<org.iof.eventor.HashTableEntry>): String? {
         for (hashTableEntry in hashTableEntries) {

@@ -7,6 +7,7 @@ import no.stunor.origo.eventorapi.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.PersonRepository
 import no.stunor.origo.eventorapi.model.person.Person
+import no.stunor.origo.eventorapi.model.person.UserPerson
 import no.stunor.origo.eventorapi.services.converter.PersonConverter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,15 +43,13 @@ class AuthService {
             val existingPerson = personRepository.findByPersonIdAndEventorId(person.personId, eventor.eventorId)
 
             if (existingPerson == null) {
-                person.users.add(userId)
+                person.users.add(UserPerson(userId,eventorId, person.personId, person))
                 personRepository.save(person)
             } else {
-                person.id = existingPerson.id
-
                 person.users = existingPerson.users
 
-                if (!person.users.contains(userId)) {
-                    person.users.add(userId)
+                if (!person.users.map { it.userId }.contains(userId)) {
+                    person.users.add(UserPerson(userId,eventorId, person.personId, person))
                 }
 
                 personRepository.save(person)
@@ -63,4 +62,5 @@ class AuthService {
             throw EventorConnectionException()
         }
     }
+
 }

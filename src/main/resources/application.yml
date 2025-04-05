@@ -20,6 +20,16 @@ springdoc:
   swagger-ui: 
     path: /documentation.html
 spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driverClassName: org.postgresql.Driver
+    hikari:
+      data-source-properties:
+        stringtype: unspecified
   mvc:
     format:
       date: yyyy-MM-dd
@@ -48,3 +58,5 @@ config:
   personalResults:
     start: 5
     end: 1
+  jwt:
+    secret: ${JWT_SECRET}

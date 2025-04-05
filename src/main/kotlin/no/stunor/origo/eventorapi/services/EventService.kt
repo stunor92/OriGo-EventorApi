@@ -237,7 +237,7 @@ class EventService {
     }
 
     fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {
-        val persons = personRepository.findAllByUserIdAndEventorId(userId, eventorId)
+        val persons = personRepository.findAllByUsersAndEventorId(userId, eventorId)
         var event = getEvent(
             eventorId = eventorId,
             eventId = eventId
@@ -283,9 +283,9 @@ class EventService {
     private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {
         for(organiser in event.organisers){
             for(person in persons) {
-                if (person.memberships.containsKey(organiser)
-                    && (person.memberships[organiser] == MembershipType.Organiser
-                            || person.memberships[organiser] == MembershipType.Admin))
+                if (person.memberships.map { it.organisationId }.contains(organiser)
+                    && (person.memberships.find { it.organisationId == organiser }!!.type == MembershipType.Organiser
+                            || person.memberships.find { it.organisationId == organiser }!!.type == MembershipType.Admin))
                     return
             }
         }

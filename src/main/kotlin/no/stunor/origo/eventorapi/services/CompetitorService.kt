@@ -26,7 +26,7 @@ class CompetitorService{
 
     fun getCompetitors(eventorId: String, eventId: String, userId: String): List<Competitor> {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val persons = personRepository.findAllByUserIdAndEventorId(userId = userId, eventorId = eventor.eventorId)
+        val persons = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.eventorId)
         val competitorList: MutableList<Competitor> = mutableListOf()
 
         for (person in persons) {
@@ -46,7 +46,7 @@ class CompetitorService{
             )
             val entryList = eventorService.getGetOrganisationEntries(
                     eventor = eventor,
-                    organisations = person.memberships.keys.toList(),
+                    organisations = person.memberships.map { it.organisationId }.toList(),
                     eventId = eventId,
                     fromDate = null,
                     toDate = null

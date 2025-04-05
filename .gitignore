@@ -33,3 +33,5 @@ build/
 .vscode/
 /serviceAccountKey.json
 /qodana.yaml
+
+.env

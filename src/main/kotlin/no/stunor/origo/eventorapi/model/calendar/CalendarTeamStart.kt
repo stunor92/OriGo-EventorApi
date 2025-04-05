@@ -1,7 +1,7 @@
 package no.stunor.origo.eventorapi.model.calendar
 
-import com.google.cloud.Timestamp
 import no.stunor.origo.eventorapi.model.event.EventClass
+import java.sql.Timestamp
 
 data class CalendarTeamStart(
         var teamName: String = "",

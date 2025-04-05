@@ -1,17 +1,14 @@
 package no.stunor.origo.eventorapi.data
 
-import com.google.api.core.ApiFuture
-import com.google.cloud.firestore.QuerySnapshot
-import com.google.firebase.cloud.FirestoreClient
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import org.springframework.stereotype.Repository
 
 @Repository
-class CompetitorRepository {
-    private val firestore = FirestoreClient.getFirestore()
+open class CompetitorRepository {
+    //private val firestore = FirestoreClient.getFirestore()
 
     fun saveAll(documentId: String, competitors: List<Competitor>) {
-        for (competitor in competitors) {
+        /*for (competitor in competitors) {
             if(competitor.id == null) {
                 firestore
                     .collection("events")
@@ -26,11 +23,11 @@ class CompetitorRepository {
                     .document(competitor.id!!)
                     .set(competitor)
             }
-        }
+        }*/
     }
 
     fun findAllByEventIdAndEventorId(eventId: String, eventorId: String): List<Competitor> {
-        val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
+        /*val future: ApiFuture<QuerySnapshot> = firestore.collection("events")
             .document(eventId)
             .collection("competitors")
             .whereEqualTo("eventId", eventId)
@@ -45,5 +42,8 @@ class CompetitorRepository {
             result.add(document.toObject(Competitor::class.java))
         }
         return result.toList()
+
+         */
+        return listOf()
     }
 }

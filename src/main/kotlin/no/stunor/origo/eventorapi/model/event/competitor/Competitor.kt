@@ -1,6 +1,6 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
-import com.google.cloud.Timestamp
+import java.sql.Timestamp
 
 interface Competitor {
     var id: String?
