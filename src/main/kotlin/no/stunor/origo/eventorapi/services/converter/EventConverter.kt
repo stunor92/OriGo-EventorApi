@@ -147,7 +147,7 @@ class EventConverter {
             lightCondition = convertLightCondition(eventRace.raceLightCondition),
             distance = convertRaceDistance(eventRace.raceDistance),
             date = if (eventRace.raceDate != null) convertRaceDate(eventRace.raceDate, eventor) else null,
-            //position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
+            position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
             startList = hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
             resultList = hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
             livelox = hasLivelox(event.hashTableEntry)
@@ -240,9 +240,9 @@ class EventConverter {
         return ZoneId.of("Europe/Paris")
     }
 
-    /*fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): GeoPoint {
-        return GeoPoint(eventCenterPosition.y.toDouble(), eventCenterPosition.x.toDouble())
-    }*/
+    fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): GeoPoint {
+        return RacePosition(eventCenterPosition.y.toDouble(), eventCenterPosition.x.toDouble())
+    }
 
     private fun convertHostMessage(hashTableEntries: List<org.iof.eventor.HashTableEntry>): String? {
         for (hashTableEntry in hashTableEntries) {

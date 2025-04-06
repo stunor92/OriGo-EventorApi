@@ -12,5 +12,5 @@ data class Eventor (
     var federation: String = "",
     var baseUrl: String = "",
     @JsonIgnore
-    var apiKey: String = ""
+    var eventorApiKey: String = ""
 )

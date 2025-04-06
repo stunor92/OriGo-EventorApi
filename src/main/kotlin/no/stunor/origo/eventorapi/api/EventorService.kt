@@ -67,7 +67,7 @@ class EventorService {
         classifications: List<EventClassificationEnum?>?
     ): EventList? {
         val headers = HttpHeaders()
-        headers["ApiKey"] = eventor.apiKey
+        headers["ApiKey"] = eventor.eventorApiKey
 
         val classificationIds: MutableList<String> = ArrayList()
 
@@ -108,7 +108,7 @@ class EventorService {
         persons: List<String?>?
     ): CompetitorCountList {
         val headers = HttpHeaders()
-        headers["ApiKey"] = eventor.apiKey
+        headers["ApiKey"] = eventor.eventorApiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
@@ -131,7 +131,7 @@ class EventorService {
         toDate: LocalDate?
     ): StartListList? {
         val headers = HttpHeaders()
-        headers["ApiKey"] = eventor.apiKey
+        headers["ApiKey"] = eventor.eventorApiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
@@ -156,7 +156,7 @@ class EventorService {
         toDate: LocalDate?
     ): ResultListList? {
         val headers = HttpHeaders()
-        headers["ApiKey"] = eventor.apiKey
+        headers["ApiKey"] = eventor.eventorApiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
@@ -181,7 +181,7 @@ class EventorService {
         toDate: LocalDate?
     ): EntryList {
         val headers = HttpHeaders()
-        headers["ApiKey"] = eventor.apiKey
+        headers["ApiKey"] = eventor.eventorApiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(
@@ -215,7 +215,7 @@ class EventorService {
 
     fun getEventClasses(eventor: Eventor, eventId: String): EventClassList? {
         val headers = HttpHeaders()
-        headers["ApiKey"] = eventor.apiKey
+        headers["ApiKey"] = eventor.eventorApiKey
 
         val request = HttpEntity<String>(headers)
         val response = restTemplate.exchange(

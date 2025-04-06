@@ -68,10 +68,10 @@ class EventService {
 
     fun getEvent(eventorId: String, eventId: String): Event {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val event = eventorService.getEvent(eventor.baseUrl, eventor.apiKey, eventId) ?: throw EventNotFoundException()
+        val event = eventorService.getEvent(eventor.baseUrl, eventor.eventorApiKey, eventId) ?: throw EventNotFoundException()
         val eventClassList = eventorService.getEventClasses(eventor, eventId)
 
-        val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.apiKey, eventId)
+        val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.eventorApiKey, eventId)
 
         val organisers: MutableList<Organisation> = ArrayList()
         val regions: MutableList<Region> = ArrayList()
@@ -126,7 +126,7 @@ class EventService {
 
         val entryList = eventorService.getEventEntryList(
             baseUrl = eventor.baseUrl,
-            apiKey = eventor.apiKey,
+            apiKey = eventor.eventorApiKey,
             eventId = eventId
         ) ?: throw EntryListNotFoundException()
         return entryListConverter.convertEventEntryList(entryList)
@@ -139,7 +139,7 @@ class EventService {
 
         val startList = eventorService.getEventStartList(
             baseUrl = eventor.baseUrl,
-            apiKey = eventor.apiKey,
+            apiKey = eventor.eventorApiKey,
             eventId = eventId
         ) ?: throw StartListNotFoundException()
 
@@ -153,7 +153,7 @@ class EventService {
 
         val resultList = eventorService.getEventResultList(
             baseUrl = eventor.baseUrl,
-            apiKey = eventor.apiKey,
+            apiKey = eventor.eventorApiKey,
             eventId = eventId
         ) ?: throw ResultListNotFoundException()
 
@@ -180,7 +180,7 @@ class EventService {
 
         val entryFees = eventorService.getEventEntryFees(
             baseUrl = eventor.baseUrl,
-            apiKey = eventor.apiKey,
+            apiKey = eventor.eventorApiKey,
             eventId = event.eventId
         ) ?: throw EntryListNotFoundException()
 

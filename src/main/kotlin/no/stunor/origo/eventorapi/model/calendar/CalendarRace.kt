@@ -1,13 +1,7 @@
 package no.stunor.origo.eventorapi.model.calendar
 
 
-import no.stunor.origo.eventorapi.model.event.DisciplineEnum
-import no.stunor.origo.eventorapi.model.event.DistanceEnum
-import no.stunor.origo.eventorapi.model.event.EntryBreak
-import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
-import no.stunor.origo.eventorapi.model.event.EventFormEnum
-import no.stunor.origo.eventorapi.model.event.EventStatusEnum
-import no.stunor.origo.eventorapi.model.event.LightConditionEnum
+import no.stunor.origo.eventorapi.model.event.*
 import java.sql.Timestamp
 
 data class CalendarRace(
@@ -21,7 +15,7 @@ data class CalendarRace(
     var classification: EventClassificationEnum = EventClassificationEnum.Club,
     var lightCondition: LightConditionEnum = LightConditionEnum.Day,
     var distance: DistanceEnum = DistanceEnum.Middle,
-    //var position: GeoPoint? = null,
+    var position: RacePosition? = null,
     var status: EventStatusEnum = EventStatusEnum.Applied,
     var disciplines: List<DisciplineEnum> = listOf(),
     var organisers: List<String> = listOf(),
