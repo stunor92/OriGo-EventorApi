@@ -1,5 +1,6 @@
 package no.stunor.origo.eventorapi.model.organisation
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import java.io.Serializable
 import java.sql.Timestamp
@@ -21,10 +22,10 @@ data class Organisation (
         @Enumerated(EnumType.STRING) var type: OrganisationType = OrganisationType.Club,
         var country: String = "",
         var email: String? = null,
-        var apiKey: String? = null,
+        @JsonIgnore var eventorApiKey: String? = null,
         var regionId: String? = null,
         var contactPerson: String? = null,
-        var lastUpdated: Timestamp = Timestamp.from(Instant.now())
+        @JsonIgnore var lastUpdated: Timestamp = Timestamp.from(Instant.now())
 )
 
 enum class OrganisationType {
