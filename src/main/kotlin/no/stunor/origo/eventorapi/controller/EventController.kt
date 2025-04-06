@@ -37,12 +37,11 @@ internal class EventController {
     }
 
     @GetMapping("/{eventorId}/{eventId}/me")
-    fun getEvent(
+    fun HttpServletRequest.getEvent(
         @PathVariable("eventorId") eventorId: String,
         @PathVariable("eventId") eventId: String,
-        request: HttpServletRequest
     ): ResponseEntity<List<Competitor>> {
-        val uid = request.getAttribute("uid") as String
+        val uid = getAttribute("uid") as String
         return ResponseEntity(
                 competitorService.getCompetitors(
                         eventorId = eventorId,
@@ -115,9 +114,8 @@ internal class EventController {
     fun HttpServletRequest.downloadCompetitors(
         @PathVariable("eventorId") eventorId: String,
         @PathVariable("eventId") eventId: String,
-        request: HttpServletRequest
     ) {
-        val uid = request.getAttribute("uid") as String
+        val uid = getAttribute("uid") as String
         eventService.downloadCompetitors(eventorId, eventId, uid)
     }
 }

@@ -21,14 +21,13 @@ internal class PersonController {
     private lateinit var authService: AuthService
 
     @GetMapping("/authenticate")
-    fun authenticate(
+    fun HttpServletRequest.authenticate(
         @RequestHeader(value = "eventorId") eventorId: String,
         @RequestHeader(value = "username") username: String,
-        @RequestHeader(value = "password") password: String,
-        request: HttpServletRequest
+        @RequestHeader(value = "password") password: String
     ): ResponseEntity<Person> {
         log.info("Start authenticating user {}.", username)
-        val uid = request.getAttribute("uid") as String
+        val uid = getAttribute("uid") as String
 
         return ResponseEntity(
             authService.authenticate(

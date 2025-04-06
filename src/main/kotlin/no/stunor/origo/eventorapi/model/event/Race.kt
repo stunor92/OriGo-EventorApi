@@ -9,7 +9,7 @@ data class Race (
         var lightCondition: LightConditionEnum = LightConditionEnum.Day,
         var distance: DistanceEnum = DistanceEnum.Middle,
         var date: Timestamp? = null,
-        //var position:GeoPoint?  = null,
+        var position:Position?  = null,
         var startList: Boolean = false,
         var resultList: Boolean = false,
         var livelox: Boolean = false,

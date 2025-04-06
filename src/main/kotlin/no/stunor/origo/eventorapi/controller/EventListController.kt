@@ -24,7 +24,7 @@ internal class EventListController {
 
 
     @GetMapping("/{eventorId}")
-    fun getEventList(
+    fun HttpServletRequest.getEventList(
         @PathVariable("eventorId") eventorId: String,
         @RequestParam("from") from: LocalDate,
         @RequestParam("to") to: LocalDate,
@@ -36,11 +36,10 @@ internal class EventListController {
             value = "classifications",
             required = false,
             defaultValue = "Championship, National, Regional, Local"
-        ) classifications: List<EventClassificationEnum>?,
-        request: HttpServletRequest
+        ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from eventor-{}.", eventorId)
-        val uid = request.getAttribute("uid") as String
+        val uid = getAttribute("uid") as String
         return ResponseEntity(
                 calendarService.getEventList(
                         eventorId = eventorId,
@@ -55,18 +54,17 @@ internal class EventListController {
     }
 
     @GetMapping
-    fun getEventList(
+    fun HttpServletRequest.getEventList(
         @RequestParam("from") from: LocalDate,
         @RequestParam("to") to: LocalDate,
         @RequestParam(
             value = "classifications",
             required = false,
             defaultValue = "Championship, National, Regional, Local"
-        ) classifications: List<EventClassificationEnum>?,
-        request: HttpServletRequest
+        ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from all eventors.")
-        val uid = request.getAttribute("uid") as String
+        val uid = getAttribute("uid") as String
         return ResponseEntity(
                 calendarService.getEventList(
                         from = from,
@@ -79,10 +77,8 @@ internal class EventListController {
     }
 
     @GetMapping("/me")
-    fun getUserEntries(
-        request: HttpServletRequest
-    ): ResponseEntity<List<CalendarRace>> {
-        val uid = request.getAttribute("uid") as String
+    fun HttpServletRequest.getUserEntries(): ResponseEntity<List<CalendarRace>> {
+        val uid = getAttribute("uid") as String
         log.info("Start to get personal events for user {}.", uid)
         return ResponseEntity(
                 calendarService.getEventList(
