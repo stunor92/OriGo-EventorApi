@@ -71,7 +71,7 @@ class CalendarConverter {
             classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
             lightCondition = eventConverter.convertLightCondition(eventRace.raceLightCondition),
             distance = eventConverter.convertRaceDistance(eventRace.raceDistance),
-            //position = if (eventRace.eventCenterPosition != null) eventConverter.convertPosition(eventRace.eventCenterPosition) else null,
+            position = if (eventRace.eventCenterPosition != null) eventConverter.convertPosition(eventRace.eventCenterPosition) else null,
             status = eventConverter.convertEventStatus(event.eventStatusId.content),
             disciplines = eventConverter.convertEventDisciplines(event.disciplineIdOrDiscipline),
             organisers = if (event.organiser != null) eventConverter.convertOrganisers(event.organiser.organisationIdOrOrganisation) else listOf(),

@@ -10,7 +10,7 @@ data class CalendarRace(
     var eventName: String = "",
     var raceId: String = "",
     var raceName: String? = null,
-    var raceDate: Timestamp? = null,
+    var raceDate: Timestamp,
     var type: EventFormEnum = EventFormEnum.Individual,
     var classification: EventClassificationEnum = EventClassificationEnum.Club,
     var lightCondition: LightConditionEnum = LightConditionEnum.Day,

@@ -240,7 +240,7 @@ class EventConverter {
         return ZoneId.of("Europe/Paris")
     }
 
-    private fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): RacePosition {
+    fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): RacePosition {
         return RacePosition(eventCenterPosition.y.toDouble(), eventCenterPosition.x.toDouble())
     }
 
