@@ -6,11 +6,7 @@ import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.sql.Timestamp
 import java.text.ParseException
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 @Component
 class EventConverter {
@@ -22,6 +18,10 @@ class EventConverter {
 
     @Autowired
     private lateinit var competitorConverter: CompetitorConverter
+
+    @Autowired
+    private lateinit var timeStampConverter: TimeStampConverter
+
     fun convertEventClassification(eventForm: String?): EventClassificationEnum {
         return when (eventForm) {
             "1" -> EventClassificationEnum.Championship
@@ -107,9 +107,9 @@ class EventConverter {
             classification = convertEventClassification(event.eventClassificationId.content),
             status = convertEventStatus(event.eventStatusId.content),
             disciplines = convertEventDisciplines(event.disciplineIdOrDiscipline),
-            startDate = convertStartDate(event.startDate, eventor),
-            finishDate = convertFinishDate(event.finishDate, eventor),
-            organisers = organisations.map { it.organisationId.toString() },
+            startDate = timeStampConverter.parseTimestamp("${event.startDate.date.content} ${event.startDate.clock.content}", eventor),
+            finishDate = timeStampConverter.parseTimestamp("${event.finishDate.date.content} ${event.finishDate.clock.content}", eventor),
+            organisers = organisations.map { it.organisationId },
             regions = regions.map { it.regionId },
             eventClasses = eventClassConverter.convertEventClasses(eventCLassList),
             documents = convertEventDocument(documentList),
@@ -146,7 +146,7 @@ class EventConverter {
             name = eventRace.name.content,
             lightCondition = convertLightCondition(eventRace.raceLightCondition),
             distance = convertRaceDistance(eventRace.raceDistance),
-            date = if (eventRace.raceDate != null) convertRaceDate(eventRace.raceDate, eventor) else null,
+            date = if (eventRace.raceDate != null) timeStampConverter.parseTimestamp("${eventRace.raceDate.date.content} ${eventRace.raceDate.clock.content}", eventor) else null,
             position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
             startList = hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
             resultList = hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
@@ -208,37 +208,6 @@ class EventConverter {
         return false
     }
 
-    private fun convertRaceDate(time: org.iof.eventor.RaceDate, eventor: Eventor): Timestamp {
-        val timeString = time.date.content + " " + time.clock.content
-        val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.from(zdt.toInstant())
-    }
-
-    private fun convertStartDate(time: org.iof.eventor.StartDate, eventor: Eventor): Timestamp {
-        val timeString = time.date.content + " " + time.clock.content
-        val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.from(zdt.toInstant())
-    }
-
-    private fun convertFinishDate(time: org.iof.eventor.FinishDate, eventor: Eventor): Timestamp {
-        val timeString = time.date.content + " " + time.clock.content
-        val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.from(zdt.toInstant())
-    }
-
-
-    private fun parseTimestamp(time: String, eventor: Eventor): ZonedDateTime {
-        val sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return ZonedDateTime.parse(time, sdf.withZone(getTimeZone(eventor)))
-
-    }
-
-    private fun getTimeZone(eventor: Eventor): ZoneId {
-        if (eventor.eventorId == "AUS") {
-            return ZoneId.of("Australia/Sydney")
-        }
-        return ZoneId.of("Europe/Paris")
-    }
 
     fun convertPosition(eventCenterPosition: org.iof.eventor.EventCenterPosition): RacePosition {
         return RacePosition(eventCenterPosition.y.toDouble(), eventCenterPosition.x.toDouble())

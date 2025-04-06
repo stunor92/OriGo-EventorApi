@@ -8,13 +8,9 @@ import no.stunor.origo.eventorapi.model.person.Person
 import org.iof.eventor.EntryList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.sql.Timestamp
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Component
@@ -22,6 +18,8 @@ class CompetitorConverter {
     @Autowired
     private lateinit var personConverter: PersonConverter
 
+    @Autowired
+    private lateinit var timeStampConverter: TimeStampConverter
 
     fun generateCompetitors(
         eventor: Eventor,
@@ -46,12 +44,12 @@ class CompetitorConverter {
                                     nationality = result.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(result.person.sex),
                                     bib = null,
-                                    startTime = if (result.result.startTime != null) convertStartTime(
-                                        result.result.startTime,
+                                    startTime = if (result.result.startTime != null) timeStampConverter.parseTimestamp(
+                                        "${result.result.startTime.date.content} ${result.result.startTime.clock.content}",
                                         eventor
                                     ) else null,
-                                    finishTime = if (result.result.finishTime != null) convertFinishTime(
-                                        result.result.finishTime,
+                                    finishTime = if (result.result.finishTime != null) timeStampConverter.parseTimestamp(
+                                        "${result.result.finishTime.date.content} ${result.result.finishTime.clock.content}",
                                         eventor
                                     ) else null,
                                     result = Result(
@@ -74,12 +72,12 @@ class CompetitorConverter {
                                     name = result.teamName.content,
                                     organisationIds = convertOrganisationIds(result.organisationIdOrOrganisationOrCountryId),
                                     bib = null,
-                                    startTime = if (result.startTime != null) convertStartTime(
-                                        result.startTime,
+                                    startTime = if (result.startTime != null) timeStampConverter.parseTimestamp(
+                                        "${result.startTime.date.content} ${result.startTime.clock.content}",
                                         eventor
                                     ) else null,
-                                    finishTime = if (result.finishTime != null) convertFinishTime(
-                                        result.finishTime,
+                                    finishTime = if (result.finishTime != null) timeStampConverter.parseTimestamp(
+                                        "${result.finishTime.date.content} ${result.finishTime.clock.content}",
                                         eventor
                                     ) else null,
                                     result = Result(
@@ -112,12 +110,12 @@ class CompetitorConverter {
                                         nationality = result.person.nationality.country.alpha3.value,
                                         gender = personConverter.convertGender(result.person.sex),
                                         bib = null,
-                                        startTime = if (raceResult.result?.startTime != null) convertStartTime(
-                                            raceResult.result.startTime,
+                                        startTime = if (raceResult.result?.startTime != null) timeStampConverter.parseTimestamp(
+                                            "${raceResult.result.startTime.date.content} ${raceResult.result.startTime.clock.content}",
                                             eventor
                                         ) else null,
-                                        finishTime = if (raceResult.result?.finishTime != null) convertFinishTime(
-                                            raceResult.result.finishTime,
+                                        finishTime = if (raceResult.result?.finishTime != null) timeStampConverter.parseTimestamp(
+                                            "${raceResult.result.finishTime.date.content} ${raceResult.result.finishTime.clock.content}",
                                             eventor
                                         ) else null,
                                         result = Result(
@@ -156,12 +154,12 @@ class CompetitorConverter {
                     nationality = teamMember.person.nationality.country.alpha3.value,
                     gender = personConverter.convertGender(teamMember.person.sex),
                     leg = teamMember.leg.toInt(),
-                    startTime = if (teamMember.startTime != null) convertStartTime(
-                        teamMember.startTime,
+                    startTime = if (teamMember.startTime != null) timeStampConverter.parseTimestamp(
+                        "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
                         eventor
                     ) else null,
-                    finishTime = if (teamMember.finishTime != null) convertFinishTime(
-                        teamMember.finishTime,
+                    finishTime = if (teamMember.finishTime != null) timeStampConverter.parseTimestamp(
+                        "${teamMember.finishTime.date.content} ${teamMember.finishTime.clock.content}",
                         eventor
                     ) else null,
                     legResult = Result(
@@ -206,8 +204,8 @@ class CompetitorConverter {
                                     nationality = start.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(start.person.sex),
                                     bib = null,
-                                    startTime = if (start.start.startTime != null) convertStartTime(
-                                        start.start.startTime,
+                                    startTime = if (start.start.startTime != null) timeStampConverter.parseTimestamp(
+                                        "${start.start.startTime.date.content} ${start.start.startTime.clock.content}",
                                         eventor
                                     ) else null,
                                     finishTime = null,
@@ -224,8 +222,8 @@ class CompetitorConverter {
                                     name = start.teamName.content,
                                     organisationIds = convertOrganisationIds(start.organisationIdOrOrganisationOrCountryId),
                                     bib = null,
-                                    startTime = if (start.startTime != null) convertStartTime(
-                                        start.startTime,
+                                    startTime = if (start.startTime != null) timeStampConverter.parseTimestamp(
+                                        "${start.startTime.date.content} ${start.startTime.clock.content}",
                                         eventor
                                     ) else null,
                                     finishTime = null,
@@ -254,8 +252,8 @@ class CompetitorConverter {
                                         nationality = start.person.nationality.country.alpha3.value,
                                         gender = personConverter.convertGender(start.person.sex),
                                         bib = null,
-                                        startTime = if (start.start.startTime != null) convertStartTime(
-                                            start.start.startTime,
+                                        startTime = if (start.start.startTime != null) timeStampConverter.parseTimestamp(
+                                            "${start.start.startTime.date.content} ${start.start.startTime.clock.content}",
                                             eventor
                                         ) else null,
                                         finishTime = null,
@@ -288,8 +286,8 @@ class CompetitorConverter {
                     nationality = teamMember.person.nationality.country.alpha3.value,
                     gender = personConverter.convertGender(teamMember.person.sex),
                     leg = teamMember.leg.toInt(),
-                    startTime = if (teamMember.startTime != null) convertStartTime(
-                        teamMember.startTime,
+                    startTime = if (teamMember.startTime != null) timeStampConverter.parseTimestamp(
+                        "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
                         eventor
                     ) else null,
                     finishTime = null,
@@ -412,31 +410,6 @@ class CompetitorConverter {
             return seconds.toInt()
         }
 
-    }
-
-    fun convertStartTime(time: org.iof.eventor.StartTime, eventor: Eventor): Timestamp {
-        val timeString = time.date.content + " " + time.clock.content
-        val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.from(zdt.toInstant())
-    }
-
-    fun convertFinishTime(time: org.iof.eventor.FinishTime, eventor: Eventor): Timestamp {
-        val timeString = time.date.content + " " + time.clock.content
-        val zdt = parseTimestamp(timeString, eventor)
-        return Timestamp.from(zdt.toInstant())
-    }
-
-    private fun parseTimestamp(time: String, eventor: Eventor): ZonedDateTime {
-        val sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return ZonedDateTime.parse(time, sdf.withZone(getTimeZone(eventor)))
-
-    }
-
-    private fun getTimeZone(eventor: Eventor): ZoneId {
-        if (eventor.eventorId == "AUS") {
-            return ZoneId.of("Australia/Sydney")
-        }
-        return ZoneId.of("Europe/Paris")
     }
 
 

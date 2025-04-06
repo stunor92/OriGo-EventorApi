@@ -61,7 +61,8 @@ internal class EventListController {
             value = "classifications",
             required = false,
             defaultValue = "Championship, National, Regional, Local"
-        ) classifications: List<EventClassificationEnum>?
+        ) classifications: List<EventClassificationEnum>?,
+        request: HttpServletRequest
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from all eventors.")
         val uid = getAttribute("uid") as String

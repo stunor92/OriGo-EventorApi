@@ -1,8 +1,8 @@
 package no.stunor.origo.eventorapi.model.event
 
-import java.sql.Timestamp
+import java.time.ZonedDateTime
 
 data class EntryBreak(
-        val from: Timestamp? = null,
-        val to: Timestamp? = null
+        val from: ZonedDateTime? = null,
+        val to: ZonedDateTime? = null
 )

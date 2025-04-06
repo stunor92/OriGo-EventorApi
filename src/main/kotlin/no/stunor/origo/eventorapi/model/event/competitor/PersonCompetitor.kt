@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
-import java.sql.Timestamp
+import java.time.ZonedDateTime
 
 data class PersonCompetitor(
         @JsonIgnore
@@ -20,8 +20,8 @@ data class PersonCompetitor(
         var punchingUnits: List<PunchingUnit> = listOf(),
         override var bib: String? = null,
         override var status: CompetitorStatus,
-        override var startTime: Timestamp? = null,
-        override var finishTime: Timestamp? = null,
+        override var startTime: ZonedDateTime? = null,
+        override var finishTime: ZonedDateTime? = null,
         var result: Result? = null,
         var splitTimes: List<SplitTime> = listOf(),
         var entryFeeIds: List<String> = listOf()

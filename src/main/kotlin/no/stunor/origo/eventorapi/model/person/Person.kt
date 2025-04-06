@@ -3,8 +3,7 @@ package no.stunor.origo.eventorapi.model.person
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import java.io.Serializable
-import java.sql.Timestamp
-import java.time.Instant
+import java.time.ZonedDateTime
 
 data class PersonId(
         private val personId: String,
@@ -28,5 +27,5 @@ data class Person(
         var memberships: List<Membership> = mutableListOf(),
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "person")
         @JsonIgnore var users: MutableList<UserPerson> = mutableListOf(),
-        @JsonIgnore var lastUpdated: Timestamp = Timestamp.from(Instant.now())
+        @JsonIgnore var lastUpdated: ZonedDateTime = ZonedDateTime.now()
 )

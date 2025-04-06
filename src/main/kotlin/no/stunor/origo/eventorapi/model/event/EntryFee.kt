@@ -1,7 +1,7 @@
 package no.stunor.origo.eventorapi.model.event
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.sql.Timestamp
+import java.time.ZonedDateTime
 
 
 data class EntryFee (
@@ -12,8 +12,8 @@ data class EntryFee (
         var price: Price? = null,
         var externalFee: Price? =null,
         var percentageSurcharge: Int? = null,
-        var validFrom: Timestamp? = null,
-        var validTo: Timestamp? = null,
+        var validFrom: ZonedDateTime? = null,
+        var validTo: ZonedDateTime? = null,
         var fromBirthYear: Int? = null,
         var toBirthYear: Int? = null,
         var taxIncluded: Boolean = false,

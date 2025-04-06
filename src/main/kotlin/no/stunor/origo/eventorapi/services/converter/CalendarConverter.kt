@@ -1,23 +1,18 @@
 package no.stunor.origo.eventorapi.services.converter
-import java.sql.Timestamp
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.calendar.CalendarCompetitor
-import no.stunor.origo.eventorapi.model.calendar.CalendarEntry
-import no.stunor.origo.eventorapi.model.calendar.CalendarPersonResult
-import no.stunor.origo.eventorapi.model.calendar.CalendarPersonStart
-import no.stunor.origo.eventorapi.model.calendar.CalendarRace
-import no.stunor.origo.eventorapi.model.calendar.CalendarTeamResult
-import no.stunor.origo.eventorapi.model.calendar.CalendarTeamStart
+import no.stunor.origo.eventorapi.model.calendar.*
 import no.stunor.origo.eventorapi.model.event.competitor.Result
 import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
 import no.stunor.origo.eventorapi.model.person.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 
 @Component
 class CalendarConverter {
+    @Autowired
+    private lateinit var timeStampConverter: TimeStampConverter
+
     @Autowired
     private lateinit var entryConverter: EntryConverter
 
@@ -66,7 +61,7 @@ class CalendarConverter {
             eventName = event.name.content,
             raceId = eventRace.eventRaceId.content,
             raceName = eventRace.name.content,
-            raceDate = convertRaceDate(eventRace.raceDate),
+            raceDate = timeStampConverter.parseTimestamp("${eventRace.raceDate.date.content} 00:00:00"),
             type = eventConverter.convertEventForm(event.eventForm),
             classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
             lightCondition = eventConverter.convertLightCondition(eventRace.raceLightCondition),
@@ -88,11 +83,6 @@ class CalendarConverter {
             resultList = eventConverter.hasResultList(event.hashTableEntry, eventRace.eventRaceId.content),
             livelox = eventConverter.hasLivelox(event.hashTableEntry)
         )
-    }
-
-    private fun convertRaceDate(time: org.iof.eventor.RaceDate): Timestamp {
-        val timeString = time.date.content + "T00:00:00.000Z"
-        return Timestamp.from(Instant.parse(timeString))
     }
 
     private fun getEntries(
@@ -542,7 +532,10 @@ class CalendarConverter {
         }
 
         return CalendarPersonStart(
-            if (start.startTime != null) competitorConverter.convertStartTime(start.startTime, eventor) else null,
+            if (start.startTime != null) timeStampConverter.parseTimestamp(
+                "${start.startTime.date.content} ${start.startTime.clock.content}",
+                eventor
+            ) else null,
             if (start.bibNumber != null) start.bibNumber.content else null,
             eventClassConverter.convertEventClass(classStart.eventClass)
         )
@@ -555,8 +548,8 @@ class CalendarConverter {
     ): CalendarTeamStart {
         return CalendarTeamStart(
             teamStart.teamName.content,
-            if (teamStart.startTime != null) competitorConverter.convertStartTime(
-                teamStart.startTime,
+            if (teamStart.startTime != null) timeStampConverter.parseTimestamp(
+                "${teamStart.startTime.date.content} ${teamStart.startTime.clock.content}",
                 eventor
             ) else null,
             if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,

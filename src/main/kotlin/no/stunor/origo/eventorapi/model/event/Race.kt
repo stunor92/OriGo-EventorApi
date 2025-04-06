@@ -1,6 +1,6 @@
 package no.stunor.origo.eventorapi.model.event
 
-import java.sql.Timestamp
+import java.time.ZonedDateTime
 
 
 data class Race (
@@ -8,7 +8,7 @@ data class Race (
         var name: String = "",
         var lightCondition: LightConditionEnum = LightConditionEnum.Day,
         var distance: DistanceEnum = DistanceEnum.Middle,
-        var date: Timestamp? = null,
+        var date: ZonedDateTime? = null,
         var position:RacePosition?  = null,
         var startList: Boolean = false,
         var resultList: Boolean = false,

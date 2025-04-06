@@ -1,7 +1,7 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.sql.Timestamp
+import java.time.ZonedDateTime
 
 data class TeamCompetitor(
         @JsonIgnore
@@ -13,8 +13,8 @@ data class TeamCompetitor(
         override var name: Any = "",
         override var bib: String? = null,
         override var status: CompetitorStatus,
-        override var startTime: Timestamp? = null,
-        override var finishTime: Timestamp? = null,
+        override var startTime: ZonedDateTime? = null,
+        override var finishTime: ZonedDateTime? = null,
         var result: Result? = null,
 ) : Competitor {
         override fun equals(other: Any?): Boolean {

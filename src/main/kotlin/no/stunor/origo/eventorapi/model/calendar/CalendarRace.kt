@@ -1,8 +1,7 @@
 package no.stunor.origo.eventorapi.model.calendar
 
-
 import no.stunor.origo.eventorapi.model.event.*
-import java.sql.Timestamp
+import java.time.Instant
 
 data class CalendarRace(
     var eventorId: String = "",
@@ -10,7 +9,7 @@ data class CalendarRace(
     var eventName: String = "",
     var raceId: String = "",
     var raceName: String? = null,
-    var raceDate: Timestamp,
+    var raceDate: Instant,
     var type: EventFormEnum = EventFormEnum.Individual,
     var classification: EventClassificationEnum = EventClassificationEnum.Club,
     var lightCondition: LightConditionEnum = LightConditionEnum.Day,

@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component
 @Component
 class StartListConverter {
     @Autowired
+    private lateinit var timeStampConverter: TimeStampConverter
+
+    @Autowired
     private lateinit var personConverter: PersonConverter
 
     @Autowired
@@ -83,7 +86,9 @@ class StartListConverter {
                 raceStart.start.bibNumber.content
             else null,
             startTime = if (raceStart.start?.startTime != null)
-                competitorConverter.convertStartTime(raceStart.start.startTime, eventor)
+                timeStampConverter.parseTimestamp(
+                    "${raceStart.start.startTime.date.content} ${raceStart.start.startTime.clock.content}",
+                    eventor)
             else null,
             finishTime = null,
             result = null,
@@ -117,7 +122,9 @@ class StartListConverter {
                 personStart.start.bibNumber.content
             else null,
             startTime = if (personStart.start.startTime != null)
-                competitorConverter.convertStartTime(personStart.start.startTime, eventor)
+                timeStampConverter.parseTimestamp(
+                    "${personStart.start.startTime.date.content} ${personStart.start.startTime.clock.content}",
+                    eventor)
             else null,
             status = CompetitorStatus.SignedUp
         )
@@ -138,8 +145,8 @@ class StartListConverter {
             ),
             teamMembers = convertTeamMembers(eventor, teamStart.teamMemberStart),
             bib = if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
-            startTime = if (teamStart.startTime != null) competitorConverter.convertStartTime(
-                teamStart.startTime,
+            startTime = if (teamStart.startTime != null) timeStampConverter.parseTimestamp(
+                "${teamStart.startTime.date.content} ${teamStart.startTime.clock.content}",
                 eventor
             ) else null,
             status = CompetitorStatus.SignedUp
@@ -174,8 +181,8 @@ class StartListConverter {
             else null,
             gender = if (teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
             leg = teamMember.leg.toInt(),
-            startTime = if (teamMember.startTime != null) competitorConverter.convertStartTime(
-                teamMember.startTime,
+            startTime = if (teamMember.startTime != null) timeStampConverter.parseTimestamp(
+                "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
                 eventor
             ) else null,
             splitTimes = listOf()

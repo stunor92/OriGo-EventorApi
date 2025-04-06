@@ -1,6 +1,6 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
-import java.sql.Timestamp
+import java.time.ZonedDateTime
 
 interface Competitor {
     var id: String?
@@ -9,6 +9,6 @@ interface Competitor {
     var eventClassId: String
     var bib: String?
     var status: CompetitorStatus
-    var startTime: Timestamp?
-    var finishTime: Timestamp?
+    var startTime: ZonedDateTime?
+    var finishTime: ZonedDateTime?
 }

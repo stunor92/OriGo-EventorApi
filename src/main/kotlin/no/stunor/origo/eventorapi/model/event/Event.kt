@@ -1,7 +1,7 @@
 package no.stunor.origo.eventorapi.model.event
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.sql.Timestamp
+import java.time.ZonedDateTime
 
 data class Event (
         @JsonIgnore
@@ -13,8 +13,8 @@ data class Event (
         var classification: EventClassificationEnum = EventClassificationEnum.Club,
         var status: EventStatusEnum = EventStatusEnum.Created,
         var disciplines: List<DisciplineEnum> = ArrayList(),
-        var startDate: Timestamp? = null,
-        var finishDate: Timestamp? = null,
+        var startDate: ZonedDateTime? = null,
+        var finishDate: ZonedDateTime? = null,
         var organisers: List<String> = ArrayList(),
         var regions: List<String> = ArrayList(),
         var eventClasses: List<EventClass> = ArrayList(),
