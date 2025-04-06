@@ -1,8 +1,8 @@
 package no.stunor.origo.eventorapi.model.event
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 data class EntryBreak(
-        val from: ZonedDateTime? = null,
-        val to: ZonedDateTime? = null
+        val from: Instant? = null,
+        val to: Instant? = null
 )

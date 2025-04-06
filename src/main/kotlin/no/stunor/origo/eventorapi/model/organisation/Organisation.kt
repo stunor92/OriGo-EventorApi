@@ -3,7 +3,7 @@ package no.stunor.origo.eventorapi.model.organisation
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import java.io.Serializable
-import java.time.ZonedDateTime
+import java.time.Instant
 
 data class OrganisationId(
         private val organisationId: String,
@@ -24,7 +24,7 @@ data class Organisation (
         @JsonIgnore var eventorApiKey: String? = null,
         var regionId: String? = null,
         var contactPerson: String? = null,
-        @JsonIgnore var lastUpdated: ZonedDateTime = ZonedDateTime.now()
+        @JsonIgnore var lastUpdated: Instant = Instant.now()
 )
 
 enum class OrganisationType {

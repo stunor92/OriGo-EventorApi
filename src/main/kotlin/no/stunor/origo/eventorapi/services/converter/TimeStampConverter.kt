@@ -4,18 +4,18 @@ import no.stunor.origo.eventorapi.model.Eventor
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @Component
 class TimeStampConverter {
     fun parseTimestamp(time: String): Instant {
-        val sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return Instant.from(sdf.withZone(ZoneId.systemDefault()).parse(time))
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return Instant.from(formatter.withZone(ZoneOffset.UTC).parse(time))
     }
-    fun parseTimestamp(time: String, eventor: Eventor): ZonedDateTime {
-        val sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return ZonedDateTime.parse(time, sdf.withZone(getTimeZone(eventor)))
+    fun parseTimestamp(time: String, eventor: Eventor): Instant {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return Instant.from(formatter.withZone(getTimeZone(eventor)).parse(time))
     }
 
     private fun getTimeZone(eventor: Eventor): ZoneId {

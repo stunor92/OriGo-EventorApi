@@ -3,8 +3,7 @@ package no.stunor.origo.eventorapi.model.event.competitor
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
-import java.time.ZonedDateTime
-
+import java.time.Instant
 
 data class TeamMemberCompetitor(
         var personId: String? = null,
@@ -14,8 +13,8 @@ data class TeamMemberCompetitor(
         var gender: Gender? = null,
         var punchingUnits: List<PunchingUnit> = listOf(),
         var leg: Int = 1,
-        var startTime: ZonedDateTime? = null,
-        var finishTime: ZonedDateTime? = null,
+        var startTime: Instant? = null,
+        var finishTime: Instant? = null,
         var legResult: Result? = null,
         var overallResult: Result? = null,
         var splitTimes: List<SplitTime> = listOf(),
