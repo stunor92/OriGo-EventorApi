@@ -30,6 +30,11 @@ spring:
     hikari:
       data-source-properties:
         stringtype: unspecified
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   mvc:
     format:
       date: yyyy-MM-dd
