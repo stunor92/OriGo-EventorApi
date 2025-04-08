@@ -18,7 +18,6 @@ class PersonConverter {
             birthYear = eventorPerson.birthDate.date.content.substring(0, 4).toInt(),
             nationality = eventorPerson.nationality.country.alpha3.value,
             gender = convertGender(eventorPerson.sex),
-            //users = ArrayList(),
             mobilePhone = contactConverter.convertPhone(eventorPerson.tele),
             email = contactConverter.convertEmail(eventorPerson.tele),
             memberships = convertMemberships(eventorPerson.personId.content, eventor.eventorId, eventorPerson.role)

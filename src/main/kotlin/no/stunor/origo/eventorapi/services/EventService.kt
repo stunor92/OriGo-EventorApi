@@ -22,7 +22,6 @@ import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.EntryConverter
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
@@ -68,7 +67,7 @@ class EventService {
 
     fun getEvent(eventorId: String, eventId: String): Event {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val event = eventorService.getEvent(eventor.baseUrl, eventor.eventorApiKey, eventId) ?: throw EventNotFoundException()
+        val eventorEvent = eventorService.getEvent(eventor.baseUrl, eventor.eventorApiKey, eventId) ?: throw EventNotFoundException()
         val eventClassList = eventorService.getEventClasses(eventor, eventId)
 
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.eventorApiKey, eventId)
@@ -76,7 +75,7 @@ class EventService {
         val organisers: MutableList<Organisation> = ArrayList()
         val regions: MutableList<Region> = ArrayList()
 
-        for (o in event.organiser.organisationIdOrOrganisation) {
+        for (o in eventorEvent.organiser.organisationIdOrOrganisation) {
             val org = o as org.iof.eventor.Organisation
             organisationRepository.findByOrganisationIdAndEventorId(
                 organisationId = org.organisationId.content,
@@ -109,14 +108,16 @@ class EventService {
                 regions.add(region)
             }
         }
-        return eventConverter.convertEvent(
-            event = event,
+        val event =  eventConverter.convertEvent(
+            eventorEvent = eventorEvent,
             eventCLassList = eventClassList,
             documentList = documentList,
             organisations = organisers,
             regions = regions,
             eventor = eventor
         )
+        eventRepository.save(event)
+        return event
     }
 
     fun getEntryList(eventorId: String, eventId: String): List<Competitor> {
@@ -191,23 +192,6 @@ class EventService {
         )
     }
 
-    fun downloadEvent(eventorId: String, eventId: String) {
-        val event = getEvent(
-            eventorId = eventorId,
-            eventId = eventId
-        )
-
-        val existingEvent = eventRepository.findByEventIdAndEventorId(
-            eventId = eventId,
-            eventorId = eventorId
-        )
-
-        if(existingEvent != null) {
-            event.id = existingEvent.id
-        }
-        eventRepository.save(event)
-    }
-
     fun downloadEntryFees(eventorId: String, eventId: String) {
         val event = eventRepository.findByEventIdAndEventorId(
             eventId = eventId,
@@ -227,13 +211,13 @@ class EventService {
                 entryFee.id = existingFees.first{ it.entryFeeId == entryFee.entryFeeId }.id
             }
         }
-        event.id?.let { entryFeesRepository.saveAll(it, entryFees) }
+        //TODO event.id?.let { entryFeesRepository.saveAll(it, entryFees) }
         // Delete fees that are not in the provided list
-        for (fee in existingFees) {
+        /*for (fee in existingFees) {
             if (!providedFeeIds.contains(fee.entryFeeId)) {
                 entryFeesRepository.delete(event.id!!, fee)
             }
-        }
+        }*/
     }
 
     fun downloadCompetitors(eventorId: String, eventId: String, userId: String) {
@@ -270,25 +254,19 @@ class EventService {
                 result.add(competitor)
             }
         }
-        if (event.id == null){
-            event = eventRepository.findByEventIdAndEventorId(
-                eventId = eventId,
-                eventorId = eventorId
-            ) ?: event
-        }
 
-        event.id?.let { competitorsRepository.saveAll(it, result) }
+        //TODO competitorsRepository.saveAll(result)
     }
 
     private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {
-        for(organiser in event.organisers){
+        /*for(organiser in event.organisers){
             for(person in persons) {
                 if (person.memberships.map { it.organisationId }.contains(organiser)
                     && (person.memberships.find { it.organisationId == organiser }!!.type == MembershipType.Organiser
                             || person.memberships.find { it.organisationId == organiser }!!.type == MembershipType.Admin))
                     return
             }
-        }
+        }*/
         throw OrganisationNotOrganiserException()
     }
 }

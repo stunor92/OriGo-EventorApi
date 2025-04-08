@@ -1,10 +1,12 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import no.stunor.origo.eventorapi.config.TimestampISO8601Serializer
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
-import java.time.Instant
+import java.sql.Timestamp
 
 data class PersonCompetitor(
         @JsonIgnore
@@ -20,8 +22,8 @@ data class PersonCompetitor(
         var punchingUnits: List<PunchingUnit> = listOf(),
         override var bib: String? = null,
         override var status: CompetitorStatus,
-        override var startTime: Instant? = null,
-        override var finishTime: Instant? = null,
+        @JsonSerialize(using = TimestampISO8601Serializer::class) override var startTime: Timestamp? = null,
+        @JsonSerialize(using = TimestampISO8601Serializer::class) override var finishTime: Timestamp? = null,
         var result: Result? = null,
         var splitTimes: List<SplitTime> = listOf(),
         var entryFeeIds: List<String> = listOf()
@@ -37,13 +39,13 @@ data class PersonCompetitor(
 
         override fun hashCode(): Int {
                 var result = id?.hashCode() ?: 0
-                result = 31 * result + raceId.hashCode()
-                result = 31 * result + eventClassId.hashCode()
-                result = 31 * result + (personId?.hashCode() ?: 0)
-                result = 31 * result + name.hashCode()
-                result = 31 * result + (organisationId?.hashCode() ?: 0)
-                result = 31 * result + (birthYear ?: 0)
-                result = 31 * result + (nationality?.hashCode() ?: 0)
+                (31 * result + raceId.hashCode()).also { result = it }
+                (31 * result + eventClassId.hashCode()).also { result = it }
+                (31 * result + (personId?.hashCode() ?: 0)).also { result = it }
+                (31 * result + name.hashCode()).also { result = it }
+                (31 * result + (organisationId?.hashCode() ?: 0)).also { result = it }
+                (31 * result + (birthYear ?: 0)).also { result = it }
+                (31 * result + (nationality?.hashCode() ?: 0)).also { result = it }
                 result = 31 * result + gender.hashCode()
                 result = 31 * result + (bib?.hashCode() ?: 0)
                 result = 31 * result + (startTime?.hashCode() ?: 0)

@@ -1,6 +1,6 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
-import java.time.Instant
+import java.sql.Timestamp
 
 interface Competitor {
     var id: String?
@@ -9,6 +9,6 @@ interface Competitor {
     var eventClassId: String
     var bib: String?
     var status: CompetitorStatus
-    var startTime: Instant?
-    var finishTime: Instant?
+    var startTime: Timestamp?
+    var finishTime: Timestamp?
 }

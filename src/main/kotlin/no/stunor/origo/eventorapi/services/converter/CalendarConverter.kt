@@ -1,6 +1,7 @@
 package no.stunor.origo.eventorapi.services.converter
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.calendar.*
+import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.competitor.Result
 import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
 import no.stunor.origo.eventorapi.model.person.Person
@@ -175,6 +176,7 @@ class CalendarConverter {
                             raceMap.getValue(raceId).userEntries.add(
                                 generateCompetitor(
                                     eventor = eventor,
+                                    eventId = entry.event.eventId.content,
                                     person = person,
                                     entry = entry,
                                     classStart = null,
@@ -224,14 +226,15 @@ class CalendarConverter {
                         if (raceMap.getValue(raceId).userEntries.isEmpty()) {
                             raceMap.getValue(raceId).userEntries.add(
                                 generateCompetitor(
-                                    eventor,
-                                    person,
-                                    null,
-                                    classStart,
-                                    start,
-                                    null,
-                                    null,
-                                    null
+                                    eventor = eventor,
+                                    eventId = startList.event.eventId.content,
+                                    person =person,
+                                    entry = null,
+                                    classStart = classStart,
+                                    start = start,
+                                    classResult = null,
+                                    result = null,
+                                    eventClassList = null
                                 )
                             )
                         } else {
@@ -239,11 +242,12 @@ class CalendarConverter {
                             raceMap.getValue(raceId).userEntries.removeAt(0)
                             raceMap.getValue(raceId).userEntries.add(
                                 updateUserStart(
-                                    eventor,
-                                    person,
-                                    userEntry,
-                                    classStart,
-                                    start
+                                    eventor = eventor,
+                                    eventId = startList.event.eventId.content,
+                                    person = person,
+                                    userEntry = userEntry,
+                                    classStart = classStart,
+                                    start = start
                                 )
                             )
                         }
@@ -270,14 +274,15 @@ class CalendarConverter {
                                     if (raceMap.getValue(raceId).userEntries.isEmpty()) {
                                         raceMap.getValue(raceId).userEntries.add(
                                             generateCompetitor(
-                                                eventor,
-                                                person,
-                                                null,
-                                                classStart,
-                                                start,
-                                                null,
-                                                null,
-                                                null
+                                                eventor = eventor,
+                                                eventId = startList.event.eventId.content,
+                                                person = person,
+                                                entry = null,
+                                                classStart = classStart,
+                                                start = start,
+                                                classResult = null,
+                                                result = null,
+                                                eventClassList = null
                                             )
                                         )
                                     } else {
@@ -285,11 +290,12 @@ class CalendarConverter {
                                         raceMap.getValue(raceId).userEntries.removeAt(0)
                                         raceMap.getValue(raceId).userEntries.add(
                                             updateUserStart(
-                                                eventor,
-                                                person,
-                                                userEntry,
-                                                classStart,
-                                                start
+                                                eventor = eventor,
+                                                eventId = startList.event.eventId.content,
+                                                person = person,
+                                                userEntry = userEntry,
+                                                classStart = classStart,
+                                                start = start
                                             )
                                         )
                                     }
@@ -334,14 +340,15 @@ class CalendarConverter {
                         if (raceMap.getValue(raceId).userEntries.isEmpty()) {
                             raceMap.getValue(raceId).userEntries.add(
                                 generateCompetitor(
-                                    eventor,
-                                    person,
-                                    null,
-                                    null,
-                                    null,
-                                    classResult,
-                                    result,
-                                    null
+                                    eventor = eventor,
+                                    eventId = resultList.event.eventId.content,
+                                    person = person,
+                                    entry = null,
+                                    classStart = null,
+                                    start = null,
+                                    classResult = classResult,
+                                    result = result,
+                                    eventClassList = null
                                 )
                             )
                         } else {
@@ -352,12 +359,14 @@ class CalendarConverter {
                             raceMap.getValue(raceId).userEntries.removeAt(0)
                             raceMap.getValue(raceId).userEntries.add(
                                 updateUserResult(
-                                    person,
-                                    userEntry,
-                                    personStart,
-                                    teamStart,
-                                    classResult,
-                                    result
+                                    eventor = eventor,
+                                    eventId = resultList.event.eventId.content,
+                                    person = person,
+                                    userEntry = userEntry,
+                                    personStart = personStart,
+                                    teamStart = teamStart,
+                                    classResult = classResult,
+                                    result = result
                                 )
                             )
                         }
@@ -384,14 +393,15 @@ class CalendarConverter {
                                     if (raceMap.getValue(raceId).userEntries.isEmpty()) {
                                         raceMap.getValue(raceId).userEntries.add(
                                             generateCompetitor(
-                                                eventor,
-                                                person,
-                                                null,
-                                                null,
-                                                null,
-                                                classResult,
-                                                result,
-                                                null
+                                                eventor = eventor,
+                                                eventId = resultList.event.eventId.content,
+                                                person = person,
+                                                entry = null,
+                                                classStart = null,
+                                                start = null,
+                                                classResult = classResult,
+                                                result = result,
+                                                eventClassList = null
                                             )
                                         )
                                     } else {
@@ -401,12 +411,14 @@ class CalendarConverter {
                                         raceMap.getValue(raceId).userEntries.removeAt(0)
                                         raceMap.getValue(raceId).userEntries.add(
                                             updateUserResult(
-                                                person,
-                                                userEntry,
-                                                personStart,
-                                                teamStart,
-                                                classResult,
-                                                result
+                                                eventor = eventor,
+                                                eventId = resultList.event.eventId.content,
+                                                person = person,
+                                                userEntry = userEntry,
+                                                personStart = personStart,
+                                                teamStart = teamStart,
+                                                classResult = classResult,
+                                                result = result
                                             )
                                         )
                                     }
@@ -426,6 +438,7 @@ class CalendarConverter {
 
     private fun generateCompetitor(
         eventor: Eventor,
+        eventId: String,
         person: Person,
         entry: org.iof.eventor.Entry?,
         classStart: org.iof.eventor.ClassStart?,
@@ -437,30 +450,42 @@ class CalendarConverter {
         return CalendarCompetitor(
             person.personId,
             person.name,
-            if (entry != null) createUserEntry(entry, eventClassList) else null,
+            if (entry != null) createUserEntry(
+                entry = entry,
+                eventClassList = eventClassList,
+                eventor = eventor,
+                eventId = eventId
+            ) else null,
             if (start != null && start is org.iof.eventor.PersonStart && classStart != null) createPersonStart(
-                eventor,
-                start,
-                classStart
+                eventor = eventor,
+                eventId = eventId,
+                personStart = start,
+                classStart = classStart
             ) else null,
             if (start != null && start is org.iof.eventor.TeamStart && classStart != null) createTeamStart(
-                eventor,
-                start,
-                classStart
+                eventor = eventor,
+                eventId = eventId,
+                teamStart = start,
+                classStart = classStart
             ) else null,
             if (result != null && result is org.iof.eventor.PersonResult && classResult != null) createPersonResult(
-                result,
-                classResult
+                eventor = eventor,
+                eventId = eventId,
+                personResult = result,
+                classResult = classResult
             ) else null,
             if (result != null && result is org.iof.eventor.TeamResult && classResult != null) createTeamResult(
-                result,
-                classResult
+                eventor = eventor,
+                eventId = eventId,
+                teamResult = result,
+                classResult = classResult
             ) else null
         )
     }
 
     private fun updateUserStart(
         eventor: Eventor,
+        eventId: String,
         person: Person,
         userEntry: CalendarEntry?,
         classStart: org.iof.eventor.ClassStart,
@@ -471,14 +496,16 @@ class CalendarConverter {
             person.name,
             userEntry,
             if (start != null && start is org.iof.eventor.PersonStart) createPersonStart(
-                eventor,
-                start,
-                classStart
+                eventor = eventor,
+                eventId = eventId,
+                personStart = start,
+                classStart = classStart
             ) else null,
             if (start != null && start is org.iof.eventor.TeamStart) createTeamStart(
-                eventor,
-                start,
-                classStart
+                eventor = eventor,
+                eventId = eventId,
+                teamStart = start,
+                classStart = classStart
             ) else null,
             null,
             null
@@ -486,6 +513,8 @@ class CalendarConverter {
     }
 
     private fun updateUserResult(
+        eventor: Eventor,
+        eventId: String,
         person: Person,
         userEntry: CalendarEntry?,
         personStart: CalendarPersonStart?,
@@ -500,28 +529,40 @@ class CalendarConverter {
             personStart,
             teamStart,
             if (result != null && result is org.iof.eventor.PersonResult) createPersonResult(
-                result,
-                classResult
+                eventor = eventor,
+                eventId = eventId,
+                personResult = result,
+                classResult = classResult
             ) else null,
-            if (result != null && result is org.iof.eventor.TeamResult) createTeamResult(result, classResult) else null
+            if (result != null && result is org.iof.eventor.TeamResult) createTeamResult(
+                eventor = eventor,
+                eventId = eventId,
+                teamResult = result,
+                classResult = classResult
+            ) else null
         )
     }
 
     private fun createUserEntry(
         entry: org.iof.eventor.Entry,
-        eventClassList: org.iof.eventor.EventClassList?
+        eventClassList: org.iof.eventor.EventClassList?,
+        eventId: String,
+        eventor: Eventor
     ): CalendarEntry {
         return CalendarEntry(
-            if (entry.entryClass != null && entry.entryClass.isNotEmpty()) eventClassConverter.getEventClassFromId(
-                eventClassList!!,
-                entry.entryClass[0].eventClassId.content
+            eventClass = if (entry.entryClass != null && entry.entryClass.isNotEmpty()) eventClassConverter.getEventClassFromId(
+                eventClassList =eventClassList!!,
+                entryClassId = entry.entryClass[0].eventClassId.content,
+                eventor = eventor,
+                event = Event(eventId = eventId),
             ) else null,
-            competitorConverter.convertPunchingUnits(entry.competitor.cCard),
+            punchingUnits = competitorConverter.convertPunchingUnits(entry.competitor.cCard),
         )
     }
 
     private fun createPersonStart(
         eventor: Eventor,
+        eventId: String,
         personStart: org.iof.eventor.PersonStart,
         classStart: org.iof.eventor.ClassStart
     ): CalendarPersonStart {
@@ -532,33 +573,44 @@ class CalendarConverter {
         }
 
         return CalendarPersonStart(
-            if (start.startTime != null) timeStampConverter.parseTimestamp(
+            startTime = if (start.startTime != null) timeStampConverter.parseTimestamp(
                 "${start.startTime.date.content} ${start.startTime.clock.content}",
                 eventor
             ) else null,
-            if (start.bibNumber != null) start.bibNumber.content else null,
-            eventClassConverter.convertEventClass(classStart.eventClass)
+            bib = if (start.bibNumber != null) start.bibNumber.content else null,
+            eventClass = eventClassConverter.convertEventClass(
+                eventor = eventor,
+                event = Event(eventId = eventId),
+                eventClass = classStart.eventClass
+            )
         )
     }
 
     private fun createTeamStart(
         eventor: Eventor,
+        eventId: String,
         teamStart: org.iof.eventor.TeamStart,
         classStart: org.iof.eventor.ClassStart
     ): CalendarTeamStart {
         return CalendarTeamStart(
-            teamStart.teamName.content,
-            if (teamStart.startTime != null) timeStampConverter.parseTimestamp(
+            teamName = teamStart.teamName.content,
+            startTime = if (teamStart.startTime != null) timeStampConverter.parseTimestamp(
                 "${teamStart.startTime.date.content} ${teamStart.startTime.clock.content}",
                 eventor
             ) else null,
-            if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
-            teamStart.teamMemberStart[0].leg.toInt(),
-            eventClassConverter.convertEventClass(classStart.eventClass)
+            bib = if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
+            leg = teamStart.teamMemberStart[0].leg.toInt(),
+            eventClass = eventClassConverter.convertEventClass(
+                eventor = eventor,
+                event = Event(eventId = eventId),
+                eventClass = classStart.eventClass
+            )
         )
     }
 
     private fun createPersonResult(
+        eventor: Eventor,
+        eventId: String,
         personResult: org.iof.eventor.PersonResult,
         classResult: org.iof.eventor.ClassResult
     ): CalendarPersonResult? {
@@ -580,13 +632,19 @@ class CalendarConverter {
                     status = ResultStatus.valueOf(result.competitorStatus.value),
                 ),
                 bib = if (result.bibNumber != null) result.bibNumber.content else null,
-                eventClass = eventClassConverter.convertEventClass(classResult.eventClass)
+                eventClass = eventClassConverter.convertEventClass(
+                    eventor = eventor,
+                    event = Event(eventId = eventId),
+                    eventClass = classResult.eventClass
+                )
             )
         }
         return null
     }
 
     private fun createTeamResult(
+        eventor: Eventor,
+        eventId: String,
         teamResult: org.iof.eventor.TeamResult,
         classResult: org.iof.eventor.ClassResult
     ): CalendarTeamResult {
@@ -606,7 +664,11 @@ class CalendarConverter {
                 position = null,
                 status = ResultStatus.valueOf(teamResult.teamStatus.value)
             ),
-            eventClass = eventClassConverter.convertEventClass(classResult.eventClass)
+            eventClass = eventClassConverter.convertEventClass(
+                eventor = eventor,
+                event = Event(eventId = eventId),
+                eventClass = classResult.eventClass
+            )
         )
     }
 }

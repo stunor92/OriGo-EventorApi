@@ -1,13 +1,14 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.event.EntryBreak
 import no.stunor.origo.eventorapi.model.event.EntryFee
 import no.stunor.origo.eventorapi.model.event.Price
 import org.iof.eventor.EntryFeeList
 import org.iof.eventor.EventClassList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.sql.Timestamp
+import java.time.Instant
 
 @Component
 class EntryConverter {
@@ -74,19 +75,22 @@ class EntryConverter {
             currency = amount.currency
         )
     }
-    fun convertEntryBreaks(entryBreaks: List<org.iof.eventor.EntryBreak>, eventor: Eventor): List<EntryBreak> {
-        val result: MutableList<EntryBreak> = ArrayList()
+    fun convertEntryBreaks(
+        entryBreaks: List<org.iof.eventor.EntryBreak>,
+        eventor: Eventor
+    ): List<Timestamp> {
+        val result: MutableList<Timestamp> = ArrayList()
         for (entryBreak in entryBreaks) {
-            result.add(convertEntryBreak(entryBreak, eventor))
+            if (entryBreak.validToDate != null) {
+                result.add(
+                    timeStampConverter.parseTimestamp(
+                        "${entryBreak.validToDate.date.content} ${entryBreak.validToDate.clock.content}",
+                        eventor
+                    )
+                )
+            }
         }
         return result
-    }
-
-    private fun convertEntryBreak(entryBreak: org.iof.eventor.EntryBreak, eventor: Eventor): EntryBreak {
-        return EntryBreak(
-            if (entryBreak.validFromDate != null) timeStampConverter.parseTimestamp("${entryBreak.validFromDate.date.content} ${entryBreak.validFromDate.clock.content}", eventor) else null,
-            if (entryBreak.validToDate != null) timeStampConverter.parseTimestamp("${entryBreak.validToDate.date.content} ${entryBreak.validToDate.clock.content}", eventor) else null,
-        )
     }
 }
 

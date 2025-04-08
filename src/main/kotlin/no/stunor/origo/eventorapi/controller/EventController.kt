@@ -28,11 +28,8 @@ internal class EventController {
         @PathVariable("eventId") eventId: String
     ): ResponseEntity<Event> {
         return ResponseEntity(
-                eventService.getEvent(
-                        eventorId = eventorId,
-                        eventId = eventId
-                ),
-                HttpStatus.OK
+            eventService.getEvent(eventorId, eventId),
+            HttpStatus.OK
         )
     }
 
@@ -92,14 +89,6 @@ internal class EventController {
                 ),
                 HttpStatus.OK
         )
-    }
-
-    @GetMapping("/{eventorId}/{eventId}/download")
-    fun downloadEvent(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ) {
-        eventService.downloadEvent(eventorId, eventId)
     }
 
     @GetMapping("/{eventorId}/{eventId}/fees/download")

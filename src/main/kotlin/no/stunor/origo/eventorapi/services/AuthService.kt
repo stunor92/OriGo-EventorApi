@@ -40,20 +40,15 @@ class AuthService {
 
             val person = personConverter.convertPerson(eventorPerson, eventor)
 
-            val existingPerson = personRepository.findByPersonIdAndEventorId(person.personId, eventor.eventorId)
-
-            if (existingPerson == null) {
-                person.users.add(UserPerson(userId,eventorId, person.personId, person))
-                personRepository.save(person)
-            } else {
-                person.users = existingPerson.users
-
-                if (!person.users.map { it.userId }.contains(userId)) {
-                    person.users.add(UserPerson(userId,eventorId, person.personId, person))
-                }
-
-                personRepository.save(person)
-            }
+            person.users.add(
+                UserPerson(
+                    userId = userId,
+                    eventorId = eventorId,
+                    personId = person.personId,
+                    person = person
+                )
+            )
+            personRepository.save(person)
             return person
         } catch (e: HttpClientErrorException) {
             if (e.statusCode.value() == 401) {

@@ -4,35 +4,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import java.io.Serializable
 
-data class EventClassId(
-        private val classId: String,
+data class DocumentId(
+        private val documentId: String,
         private val eventId: String,
         private val eventorId: String
 ) : Serializable {
         constructor() : this("", "", "")
 }
+
 @Entity
-@IdClass(EventClassId::class)
-@Table(name = "class")
-data class EventClass (
+@IdClass(DocumentId::class)
+data class Document (
         @JsonIgnore @Id var eventorId: String = "",
         @JsonIgnore @Id var eventId: String = "",
-        @Id var classId: String = "",
+        @Id var documentId: String = "",
         var name: String = "",
-        var shortName: String = "",
-        @Enumerated(EnumType.STRING) var type: EventClassTypeEnum = EventClassTypeEnum.Normal,
-        var minAge: Int? = 0,
-        var maxAge: Int? = 99,
-        @Enumerated(EnumType.STRING) var gender: ClassGender = ClassGender.Both,
-        var presentTime: Boolean = true,
-        var orderedResult: Boolean = true,
-        var legs: Int = 1,
-        var minAverageAge: Int? = 0,
-        var maxAverageAge: Int? = 99,
+        var url: String = "",
+        var type: String = "",
         @ManyToOne
         @JoinColumns(
                 JoinColumn(name = "eventId", referencedColumnName = "eventId", insertable = true, updatable = true),
                 JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = true, updatable = true)
         )
-        @JsonIgnore var event: Event? = null
+        @JsonIgnore var event: Event? = null,
 )
