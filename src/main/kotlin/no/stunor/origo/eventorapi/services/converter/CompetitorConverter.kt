@@ -36,7 +36,7 @@ class CompetitorConverter {
                             competitors.add(
                                 PersonCompetitor(
                                     raceId = race.eventRaceId.content,
-                                    eventClassId = classResult.eventClass.eventClassId.content,
+                                    classId = classResult.eventClass.eventClassId.content,
                                     personId = person.personId,
                                     name = personConverter.convertPersonName(result.person.personName),
                                     organisationId = if (result.organisation != null) result.organisation.organisationId.content else null,
@@ -68,7 +68,7 @@ class CompetitorConverter {
                             competitors.add(
                                 TeamCompetitor(
                                     raceId = race.eventRaceId.content,
-                                    eventClassId = classResult.eventClass.eventClassId.content,
+                                    classId = classResult.eventClass.eventClassId.content,
                                     name = result.teamName.content,
                                     organisationIds = convertOrganisationIds(result.organisationIdOrOrganisationOrCountryId),
                                     bib = null,
@@ -102,7 +102,7 @@ class CompetitorConverter {
                                 competitors.add(
                                     PersonCompetitor(
                                         raceId = raceResult.eventRaceId.content,
-                                        eventClassId = classResult.eventClass.eventClassId.content,
+                                        classId = classResult.eventClass.eventClassId.content,
                                         personId = person.personId,
                                         name = personConverter.convertPersonName(result.person.personName),
                                         organisationId = if (result.organisation != null) result.organisation.organisationId.content else null,
@@ -196,7 +196,7 @@ class CompetitorConverter {
                             competitors.add(
                                 PersonCompetitor(
                                     raceId = race.eventRaceId.content,
-                                    eventClassId = classStart.eventClass.eventClassId.content,
+                                    classId = classStart.eventClass.eventClassId.content,
                                     personId = person.personId,
                                     name = personConverter.convertPersonName(start.person.personName),
                                     organisationId = if (start.organisation != null) start.organisation.organisationId.content else null,
@@ -218,7 +218,7 @@ class CompetitorConverter {
                             competitors.add(
                                 TeamCompetitor(
                                     raceId = race.eventRaceId.content,
-                                    eventClassId = classStart.eventClass.eventClassId.content,
+                                    classId = classStart.eventClass.eventClassId.content,
                                     name = start.teamName.content,
                                     organisationIds = convertOrganisationIds(start.organisationIdOrOrganisationOrCountryId),
                                     bib = null,
@@ -244,7 +244,7 @@ class CompetitorConverter {
                                 competitors.add(
                                     PersonCompetitor(
                                         raceId = raceStart.eventRaceId.content,
-                                        eventClassId = classStart.eventClass.eventClassId.content,
+                                        classId = classStart.eventClass.eventClassId.content,
                                         personId = person.personId,
                                         name = personConverter.convertPersonName(start.person.personName),
                                         organisationId = if (start.organisation != null) start.organisation.organisationId.content else null,
@@ -312,7 +312,7 @@ class CompetitorConverter {
                     competitors.add(
                         PersonCompetitor(
                             raceId = eventRaceId.content,
-                            eventClassId = entry.entryClass[0].eventClassId.content,
+                            classId = entry.entryClass[0].eventClassId.content,
                             personId = person.personId,
                             name = person.name,
                             organisationId = if (!entry.organisationId.isNullOrEmpty()) entry.organisationId[0].content else null,
@@ -337,7 +337,7 @@ class CompetitorConverter {
                         for (race in entry.eventRaceId) {
                             TeamCompetitor(
                                 raceId = race.content,
-                                eventClassId = entry.entryClass[0].eventClassId.content,
+                                classId = entry.entryClass[0].eventClassId.content,
                                 name = entry.teamName.content,
                                 organisationIds = convertOrganisationIds(entry.organisationId),
                                 bib = entry.bibNumber.content,

@@ -9,7 +9,7 @@ data class TeamCompetitor(
         @JsonIgnore
         override var id: String? = null,
         override var raceId: String = "",
-        override var eventClassId: String = "",
+        override var classId: String = "",
         var organisationIds: List<String> = listOf(),
         var teamMembers: List<TeamMemberCompetitor> = listOf(),
         override var name: Any = "",
@@ -30,7 +30,7 @@ data class TeamCompetitor(
         override fun hashCode(): Int {
                 var result = id?.hashCode() ?: 0
                 (31 * result + raceId.hashCode()).also { result = it }
-                (31 * result + eventClassId.hashCode()).also { result = it }
+                (31 * result + classId.hashCode()).also { result = it }
                 (31 * result + organisationIds.hashCode()).also { result = it }
                 result = 31 * result + teamMembers.hashCode()
                 result = 31 * result + name.hashCode()

@@ -6,7 +6,7 @@ interface Competitor {
     var id: String?
     var name: Any
     var raceId: String
-    var eventClassId: String
+    var classId: String
     var bib: String?
     var status: CompetitorStatus
     var startTime: Timestamp?

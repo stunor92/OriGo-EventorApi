@@ -44,7 +44,7 @@ class EntryListConverter {
             result.add(
                 PersonCompetitor(
                     raceId = raceId.content,
-                    eventClassId = entry.entryClass[0].eventClassId.content,
+                    classId = entry.entryClass[0].eventClassId.content,
                     personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
                     name = personConverter.convertPersonName(entry.competitor.person.personName),
                     organisationId = if(entry.competitor.organisation != null) organisationConverter.convertOrganisationId(entry.competitor.organisation) else organisationConverter.convertOrganisationId(entry.competitor.organisationId),
@@ -79,7 +79,7 @@ class EntryListConverter {
             result.add(
                 TeamCompetitor(
                     raceId = race.eventRaceId,
-                    eventClassId = entry.entryClass[0].eventClassId.content,
+                    classId = entry.entryClass[0].eventClassId.content,
                     name = entry.teamName.content,
                     organisationIds =  convertTeamOrganisationIds(entry.teamCompetitor),
                     bib = if (entry.bibNumber != null) entry.bibNumber.content else null,

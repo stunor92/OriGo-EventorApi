@@ -67,7 +67,7 @@ class StartListConverter {
     ): Competitor {
         return PersonCompetitor(
             raceId = raceStart.eventRaceId.content,
-            eventClassId = classStart.eventClass.eventClassId.content,
+            classId = classStart.eventClass.eventClassId.content,
             personId = if (personStart.person.personId != null)
                 personStart.person.personId.content
             else null,
@@ -105,7 +105,7 @@ class StartListConverter {
     ): Competitor {
         return PersonCompetitor(
             raceId = event.eventRace[0].eventRaceId.content,
-            eventClassId = classStart.eventClass.eventClassId.content,
+            classId = classStart.eventClass.eventClassId.content,
             personId = if (personStart.person.personId != null) personStart.person.personId.content else null,
             name = personConverter.convertPersonName(personStart.person.personName),
             organisationId = if (personStart.organisation != null)
@@ -138,7 +138,7 @@ class StartListConverter {
     ): Competitor {
         return TeamCompetitor(
             raceId = event.eventRace[0].eventRaceId.content,
-            eventClassId = classStart.eventClass.eventClassId.content,
+            classId = classStart.eventClass.eventClassId.content,
             name = teamStart.teamName.content,
             organisationIds = organisationConverter.convertOrganisationIds(
                 teamStart.organisationIdOrOrganisationOrCountryId

@@ -12,7 +12,7 @@ data class PersonCompetitor(
         @JsonIgnore
         override var id: String? = null,
         override var raceId: String = "",
-        override var eventClassId: String = "",
+        override var classId: String = "",
         var personId: String? = null,
         override var name: Any = PersonName(),
         var organisationId: String? = null,
@@ -40,7 +40,7 @@ data class PersonCompetitor(
         override fun hashCode(): Int {
                 var result = id?.hashCode() ?: 0
                 (31 * result + raceId.hashCode()).also { result = it }
-                (31 * result + eventClassId.hashCode()).also { result = it }
+                (31 * result + classId.hashCode()).also { result = it }
                 (31 * result + (personId?.hashCode() ?: 0)).also { result = it }
                 (31 * result + name.hashCode()).also { result = it }
                 (31 * result + (organisationId?.hashCode() ?: 0)).also { result = it }
