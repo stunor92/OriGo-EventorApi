@@ -10,11 +10,11 @@ import java.time.format.DateTimeFormatter
 
 @Component
 class TimeStampConverter {
-    fun parseTimestamp(time: String): Timestamp {
+    fun parseDate(time: String): Timestamp {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         return Timestamp.from(Instant.from(formatter.withZone(ZoneOffset.UTC).parse(time)))
     }
-    fun parseTimestamp(time: String, eventor: Eventor): Timestamp {
+    fun parseDate(time: String, eventor: Eventor): Timestamp {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         return Timestamp.from(Instant.from(formatter.withZone(getTimeZone(eventor)).parse(time)))
     }

@@ -86,7 +86,7 @@ class StartListConverter {
                 raceStart.start.bibNumber.content
             else null,
             startTime = if (raceStart.start?.startTime != null)
-                timeStampConverter.parseTimestamp(
+                timeStampConverter.parseDate(
                     "${raceStart.start.startTime.date.content} ${raceStart.start.startTime.clock.content}",
                     eventor)
             else null,
@@ -122,7 +122,7 @@ class StartListConverter {
                 personStart.start.bibNumber.content
             else null,
             startTime = if (personStart.start.startTime != null)
-                timeStampConverter.parseTimestamp(
+                timeStampConverter.parseDate(
                     "${personStart.start.startTime.date.content} ${personStart.start.startTime.clock.content}",
                     eventor)
             else null,
@@ -145,7 +145,7 @@ class StartListConverter {
             ),
             teamMembers = convertTeamMembers(eventor, teamStart.teamMemberStart),
             bib = if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
-            startTime = if (teamStart.startTime != null) timeStampConverter.parseTimestamp(
+            startTime = if (teamStart.startTime != null) timeStampConverter.parseDate(
                 "${teamStart.startTime.date.content} ${teamStart.startTime.clock.content}",
                 eventor
             ) else null,
@@ -181,7 +181,7 @@ class StartListConverter {
             else null,
             gender = if (teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
             leg = teamMember.leg.toInt(),
-            startTime = if (teamMember.startTime != null) timeStampConverter.parseTimestamp(
+            startTime = if (teamMember.startTime != null) timeStampConverter.parseDate(
                 "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
                 eventor
             ) else null,

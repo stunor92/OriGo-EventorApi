@@ -62,7 +62,7 @@ class CalendarConverter {
             eventName = event.name.content,
             raceId = eventRace.eventRaceId.content,
             raceName = eventRace.name.content,
-            raceDate = timeStampConverter.parseTimestamp("${eventRace.raceDate.date.content} 00:00:00"),
+            raceDate = timeStampConverter.parseDate("${eventRace.raceDate.date.content} 00:00:00"),
             type = eventConverter.convertEventForm(event.eventForm),
             classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
             lightCondition = eventConverter.convertLightCondition(eventRace.raceLightCondition),
@@ -573,7 +573,7 @@ class CalendarConverter {
         }
 
         return CalendarPersonStart(
-            startTime = if (start.startTime != null) timeStampConverter.parseTimestamp(
+            startTime = if (start.startTime != null) timeStampConverter.parseDate(
                 "${start.startTime.date.content} ${start.startTime.clock.content}",
                 eventor
             ) else null,
@@ -594,7 +594,7 @@ class CalendarConverter {
     ): CalendarTeamStart {
         return CalendarTeamStart(
             teamName = teamStart.teamName.content,
-            startTime = if (teamStart.startTime != null) timeStampConverter.parseTimestamp(
+            startTime = if (teamStart.startTime != null) timeStampConverter.parseDate(
                 "${teamStart.startTime.date.content} ${teamStart.startTime.clock.content}",
                 eventor
             ) else null,

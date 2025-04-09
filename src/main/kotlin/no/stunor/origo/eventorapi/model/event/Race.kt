@@ -1,9 +1,7 @@
 package no.stunor.origo.eventorapi.model.event
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
-import no.stunor.origo.eventorapi.config.TimestampISO8601Serializer
 import java.io.Serializable
 import java.sql.Timestamp
 
@@ -24,7 +22,7 @@ data class Race (
         var name: String = "",
         @Enumerated(EnumType.STRING) var lightCondition: LightConditionEnum = LightConditionEnum.Day,
         @Enumerated(EnumType.STRING) var distance: DistanceEnum = DistanceEnum.Middle,
-        @JsonSerialize(using = TimestampISO8601Serializer::class) var date: Timestamp? = null,
+        var date: Timestamp? = null,
         @Embedded var position:RacePosition?  = null,
         var startList: Boolean = false,
         var resultList: Boolean = false,

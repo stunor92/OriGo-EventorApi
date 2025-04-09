@@ -7,8 +7,8 @@ import org.iof.eventor.EntryFeeList
 import org.iof.eventor.EventClassList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.sql.Timestamp
 import java.time.Instant
+import java.sql.Timestamp
 
 @Component
 class EntryConverter {
@@ -40,8 +40,8 @@ class EntryConverter {
             price = if(entryFee.valueOperator == "fixed" && entryFee.amount != null) convertPrice(entryFee.amount) else null,
             externalFee = if(entryFee.externalFee != null) convertExternalFee(entryFee.externalFee) else null,
             percentageSurcharge = if(entryFee.valueOperator == "percent" && entryFee.amount != null) entryFee.amount.content.toInt() else null,
-            validFrom = if (entryFee.validFromDate != null) timeStampConverter.parseTimestamp("${entryFee.validFromDate.date.content} ${entryFee.validFromDate.clock.content}", eventor) else null,
-            validTo = if (entryFee.validToDate != null) timeStampConverter.parseTimestamp("${entryFee.validToDate.date.content} ${entryFee.validToDate.clock.content}", eventor) else null,
+            validFrom = if (entryFee.validFromDate != null) timeStampConverter.parseDate("${entryFee.validFromDate.date.content} ${entryFee.validFromDate.clock.content}", eventor) else null,
+            validTo = if (entryFee.validToDate != null) timeStampConverter.parseDate("${entryFee.validToDate.date.content} ${entryFee.validToDate.clock.content}", eventor) else null,
             fromBirthYear = if(entryFee.fromDateOfBirth != null) entryFee.fromDateOfBirth.date.content.substring(0,4).toInt() else null,
             toBirthYear = if(entryFee.toDateOfBirth != null) entryFee.toDateOfBirth.date.content.substring(0,4).toInt() else null,
             taxIncluded = entryFee.taxIncluded == "Y",
@@ -83,7 +83,7 @@ class EntryConverter {
         for (entryBreak in entryBreaks) {
             if (entryBreak.validToDate != null) {
                 result.add(
-                    timeStampConverter.parseTimestamp(
+                    timeStampConverter.parseDate(
                         "${entryBreak.validToDate.date.content} ${entryBreak.validToDate.clock.content}",
                         eventor
                     )

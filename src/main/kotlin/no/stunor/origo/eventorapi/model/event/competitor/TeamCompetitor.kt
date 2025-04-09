@@ -1,8 +1,6 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import no.stunor.origo.eventorapi.config.TimestampISO8601Serializer
 import java.sql.Timestamp
 
 data class TeamCompetitor(
@@ -15,8 +13,8 @@ data class TeamCompetitor(
         override var name: Any = "",
         override var bib: String? = null,
         override var status: CompetitorStatus,
-        @JsonSerialize(using = TimestampISO8601Serializer::class) override var startTime: Timestamp? = null,
-        @JsonSerialize(using = TimestampISO8601Serializer::class) override var finishTime: Timestamp? = null,
+        override var startTime: Timestamp? = null,
+        override var finishTime: Timestamp? = null,
         var result: Result? = null,
 ) : Competitor {
         override fun equals(other: Any?): Boolean {

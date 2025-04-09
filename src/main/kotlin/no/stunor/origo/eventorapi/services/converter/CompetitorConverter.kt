@@ -44,11 +44,11 @@ class CompetitorConverter {
                                     nationality = result.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(result.person.sex),
                                     bib = null,
-                                    startTime = if (result.result.startTime != null) timeStampConverter.parseTimestamp(
+                                    startTime = if (result.result.startTime != null) timeStampConverter.parseDate(
                                         "${result.result.startTime.date.content} ${result.result.startTime.clock.content}",
                                         eventor
                                     ) else null,
-                                    finishTime = if (result.result.finishTime != null) timeStampConverter.parseTimestamp(
+                                    finishTime = if (result.result.finishTime != null) timeStampConverter.parseDate(
                                         "${result.result.finishTime.date.content} ${result.result.finishTime.clock.content}",
                                         eventor
                                     ) else null,
@@ -72,11 +72,11 @@ class CompetitorConverter {
                                     name = result.teamName.content,
                                     organisationIds = convertOrganisationIds(result.organisationIdOrOrganisationOrCountryId),
                                     bib = null,
-                                    startTime = if (result.startTime != null) timeStampConverter.parseTimestamp(
+                                    startTime = if (result.startTime != null) timeStampConverter.parseDate(
                                         "${result.startTime.date.content} ${result.startTime.clock.content}",
                                         eventor
                                     ) else null,
-                                    finishTime = if (result.finishTime != null) timeStampConverter.parseTimestamp(
+                                    finishTime = if (result.finishTime != null) timeStampConverter.parseDate(
                                         "${result.finishTime.date.content} ${result.finishTime.clock.content}",
                                         eventor
                                     ) else null,
@@ -110,11 +110,11 @@ class CompetitorConverter {
                                         nationality = result.person.nationality.country.alpha3.value,
                                         gender = personConverter.convertGender(result.person.sex),
                                         bib = null,
-                                        startTime = if (raceResult.result?.startTime != null) timeStampConverter.parseTimestamp(
+                                        startTime = if (raceResult.result?.startTime != null) timeStampConverter.parseDate(
                                             "${raceResult.result.startTime.date.content} ${raceResult.result.startTime.clock.content}",
                                             eventor
                                         ) else null,
-                                        finishTime = if (raceResult.result?.finishTime != null) timeStampConverter.parseTimestamp(
+                                        finishTime = if (raceResult.result?.finishTime != null) timeStampConverter.parseDate(
                                             "${raceResult.result.finishTime.date.content} ${raceResult.result.finishTime.clock.content}",
                                             eventor
                                         ) else null,
@@ -154,11 +154,11 @@ class CompetitorConverter {
                     nationality = teamMember.person.nationality.country.alpha3.value,
                     gender = personConverter.convertGender(teamMember.person.sex),
                     leg = teamMember.leg.toInt(),
-                    startTime = if (teamMember.startTime != null) timeStampConverter.parseTimestamp(
+                    startTime = if (teamMember.startTime != null) timeStampConverter.parseDate(
                         "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
                         eventor
                     ) else null,
-                    finishTime = if (teamMember.finishTime != null) timeStampConverter.parseTimestamp(
+                    finishTime = if (teamMember.finishTime != null) timeStampConverter.parseDate(
                         "${teamMember.finishTime.date.content} ${teamMember.finishTime.clock.content}",
                         eventor
                     ) else null,
@@ -204,7 +204,7 @@ class CompetitorConverter {
                                     nationality = start.person.nationality.country.alpha3.value,
                                     gender = personConverter.convertGender(start.person.sex),
                                     bib = null,
-                                    startTime = if (start.start.startTime != null) timeStampConverter.parseTimestamp(
+                                    startTime = if (start.start.startTime != null) timeStampConverter.parseDate(
                                         "${start.start.startTime.date.content} ${start.start.startTime.clock.content}",
                                         eventor
                                     ) else null,
@@ -222,7 +222,7 @@ class CompetitorConverter {
                                     name = start.teamName.content,
                                     organisationIds = convertOrganisationIds(start.organisationIdOrOrganisationOrCountryId),
                                     bib = null,
-                                    startTime = if (start.startTime != null) timeStampConverter.parseTimestamp(
+                                    startTime = if (start.startTime != null) timeStampConverter.parseDate(
                                         "${start.startTime.date.content} ${start.startTime.clock.content}",
                                         eventor
                                     ) else null,
@@ -252,7 +252,7 @@ class CompetitorConverter {
                                         nationality = start.person.nationality.country.alpha3.value,
                                         gender = personConverter.convertGender(start.person.sex),
                                         bib = null,
-                                        startTime = if (start.start.startTime != null) timeStampConverter.parseTimestamp(
+                                        startTime = if (start.start.startTime != null) timeStampConverter.parseDate(
                                             "${start.start.startTime.date.content} ${start.start.startTime.clock.content}",
                                             eventor
                                         ) else null,
@@ -286,7 +286,7 @@ class CompetitorConverter {
                     nationality = teamMember.person.nationality.country.alpha3.value,
                     gender = personConverter.convertGender(teamMember.person.sex),
                     leg = teamMember.leg.toInt(),
-                    startTime = if (teamMember.startTime != null) timeStampConverter.parseTimestamp(
+                    startTime = if (teamMember.startTime != null) timeStampConverter.parseDate(
                         "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
                         eventor
                     ) else null,

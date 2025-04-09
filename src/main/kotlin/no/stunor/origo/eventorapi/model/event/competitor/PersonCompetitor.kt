@@ -1,8 +1,6 @@
 package no.stunor.origo.eventorapi.model.event.competitor
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import no.stunor.origo.eventorapi.config.TimestampISO8601Serializer
 import no.stunor.origo.eventorapi.model.event.PunchingUnit
 import no.stunor.origo.eventorapi.model.person.Gender
 import no.stunor.origo.eventorapi.model.person.PersonName
@@ -22,8 +20,8 @@ data class PersonCompetitor(
         var punchingUnits: List<PunchingUnit> = listOf(),
         override var bib: String? = null,
         override var status: CompetitorStatus,
-        @JsonSerialize(using = TimestampISO8601Serializer::class) override var startTime: Timestamp? = null,
-        @JsonSerialize(using = TimestampISO8601Serializer::class) override var finishTime: Timestamp? = null,
+        override var startTime: Timestamp? = null,
+        override var finishTime: Timestamp? = null,
         var result: Result? = null,
         var splitTimes: List<SplitTime> = listOf(),
         var entryFeeIds: List<String> = listOf()
