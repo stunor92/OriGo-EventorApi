@@ -23,8 +23,12 @@ data class Document (
         var type: String = "",
         @ManyToOne
         @JoinColumns(
-                JoinColumn(name = "eventId", referencedColumnName = "eventId", insertable = true, updatable = true),
-                JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = true, updatable = true)
+                JoinColumn(name = "eventId", referencedColumnName = "eventId", insertable = false, updatable = false),
+                JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false)
         )
         @JsonIgnore var event: Event? = null,
-)
+){
+        override fun toString(): String {
+                return "$eventorId: $documentId - $name"
+        }
+}

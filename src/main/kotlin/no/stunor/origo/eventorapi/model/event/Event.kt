@@ -63,4 +63,8 @@ data class Event(
     var message: String? = null,
     var email: String? = null,
     var phone: String? = null
-)
+){
+    override fun toString(): String {
+        return "$eventorId: $eventId - $name"
+    }
+}

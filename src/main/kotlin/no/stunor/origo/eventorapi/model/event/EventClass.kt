@@ -31,8 +31,8 @@ data class EventClass (
         var maxAverageAge: Int? = 99,
         @ManyToOne
         @JoinColumns(
-                JoinColumn(name = "eventId", referencedColumnName = "eventId", insertable = true, updatable = true),
-                JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = true, updatable = true)
+                JoinColumn(name = "eventId", referencedColumnName = "eventId", insertable = false, updatable = false),
+                JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false)
         )
         @JsonIgnore var event: Event? = null
 )
