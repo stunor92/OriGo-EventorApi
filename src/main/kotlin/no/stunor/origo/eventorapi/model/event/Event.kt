@@ -55,7 +55,7 @@ data class Event(
     var finishDate: Timestamp? = null,
     @Type(ListArrayType::class) var organisers: List<String> = ArrayList(),
     @Type(ListArrayType::class) var regions: List<String> = ArrayList(),
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var eventClasses: List<EventClass> = ArrayList(),
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var classes: List<EventClass> = ArrayList(),
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var documents: List<Document> = ArrayList(),
     @Type(TimestampArrayType::class) var entryBreaks: Array<Timestamp> = arrayOf(),
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var races: List<Race> = ArrayList(),

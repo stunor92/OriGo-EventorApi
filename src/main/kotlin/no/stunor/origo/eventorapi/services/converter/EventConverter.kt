@@ -119,7 +119,7 @@ class EventConverter {
             email = null,
             phone = null
         )
-        event.eventClasses = eventClassConverter.convertEventClasses(eventCLassList = eventCLassList, eventor = eventor, event = event)
+        event.classes = eventClassConverter.convertEventClasses(eventCLassList = eventCLassList, eventor = eventor, event = event)
         event.races = convertRaces(event, eventorEvent.hashTableEntry, eventorEvent.eventRace, eventor)
         event.documents = convertEventDocument(documentList, event= event, eventorId = eventor.eventorId)
         return event
