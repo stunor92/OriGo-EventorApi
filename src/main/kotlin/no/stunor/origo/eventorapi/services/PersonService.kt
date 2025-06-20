@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
 
 @Service
-class AuthService {
+class PersonService {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     @Autowired
@@ -56,6 +56,12 @@ class AuthService {
             }
             throw EventorConnectionException()
         }
+    }
+
+    fun delete(eventorId: String, personId: String, userId: String) {
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        log.info("Start deleting person {} on {} for {}.", personId, eventor.name, userId)
+        //TODO
     }
 
 }

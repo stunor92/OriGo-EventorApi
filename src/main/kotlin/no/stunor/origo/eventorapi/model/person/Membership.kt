@@ -16,7 +16,7 @@ data class MembershipId(
 @IdClass(MembershipId::class)
 data class Membership (
     @JsonIgnore @Id var eventorId: String = "",
-    @JsonIgnore@Id var personId: String = "",
+    @JsonIgnore @Id var personId: String = "",
     @Id var organisationId: String = "",
     @Enumerated(EnumType.STRING) var type: MembershipType = MembershipType.Member,
     @ManyToOne
