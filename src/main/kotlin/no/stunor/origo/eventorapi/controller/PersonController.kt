@@ -37,7 +37,7 @@ internal class PersonController {
     }
 
     @DeleteMapping("/{eventorId}/{personId}")
-    fun HttpServletRequest.authenticate(
+    fun HttpServletRequest.delete(
         @PathVariable(value = "eventorId") eventorId: String,
         @PathVariable(value = "personId") personId: String
     ) {

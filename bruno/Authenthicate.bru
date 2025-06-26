@@ -4,14 +4,13 @@ meta {
   seq: 1
 }
 
-get {
-  url: {{baseUrl}}authenticate
+post {
+  url: {{baseUrl}}person/NOR
   body: none
-  auth: bearer
+  auth: inherit
 }
 
 headers {
   username: xxx
   password: xxx
-  eventorId: NOR
 }

@@ -6,6 +6,7 @@ import no.stunor.origo.eventorapi.exception.EventorConnectionException
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.PersonRepository
+import no.stunor.origo.eventorapi.data.UserPersonRepository
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.model.person.UserPerson
 import no.stunor.origo.eventorapi.services.converter.PersonConverter
@@ -23,6 +24,9 @@ class PersonService {
 
     @Autowired
     private lateinit var personRepository: PersonRepository
+
+    @Autowired
+    private lateinit var userPersonRepository: UserPersonRepository
 
     @Autowired
     private lateinit var eventorService: EventorService
@@ -59,9 +63,7 @@ class PersonService {
     }
 
     fun delete(eventorId: String, personId: String, userId: String) {
-        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        log.info("Start deleting person {} on {} for {}.", personId, eventor.name, userId)
-        //TODO
+        userPersonRepository.deleteByUserIdAndPersonIdAndEventorId(userId = userId, eventorId = eventorId, personId =  personId)
     }
 
 }
