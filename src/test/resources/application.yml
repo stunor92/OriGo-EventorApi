@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+config:
+  personalEntries:
+    start: 1
+    end: 7
+  personalStarts:
+    start: 1
+    end: 5
+  personalResults:
+    start: 5
+    end: 1
+  jwt:
+    secret: abcd1234abcd1234abcd1234abcd1234
