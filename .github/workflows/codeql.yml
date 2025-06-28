@@ -35,11 +35,11 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - name: Set up JDK 23
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: '23'
+          java-version: '24'
 
       - name: Build with Maven
         run: mvn clean install
