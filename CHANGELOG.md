@@ -1,5 +1,40 @@
 # Changelog
 
+## [6.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v5.1.0...v6.0.0) (2025-07-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* Migated the event-endpoint to supabase
+* Migated the event-endpoint to supabase
+* Migrate auth person to use supabase ([#107](https://github.com/stunor92/OriGo-EventorApi/issues/107))
+
+### Features
+
+* Add api for delete person ([896f2c4](https://github.com/stunor92/OriGo-EventorApi/commit/896f2c4dbecc3e147498a2019214dc56c2967c4c))
+* implemented disconnect eventor-person and delete user ([de7f7d6](https://github.com/stunor92/OriGo-EventorApi/commit/de7f7d6847d33b81c2974fb06879226c833ee1e5))
+* Migated the event-endpoint to supabase ([ac04f3b](https://github.com/stunor92/OriGo-EventorApi/commit/ac04f3bb16fcc5a5aba4a8c3a737ca5ab19975d8))
+* Migated the event-endpoint to supabase ([c29a9e3](https://github.com/stunor92/OriGo-EventorApi/commit/c29a9e3c651fd722fdab2cbbc445a1709776dc30))
+* Migrate auth person to use supabase ([#107](https://github.com/stunor92/OriGo-EventorApi/issues/107)) ([2c998eb](https://github.com/stunor92/OriGo-EventorApi/commit/2c998eb10312fb5a7a76f40c36e02c9d8ec3c5a0))
+
+
+### Bug Fixes
+
+* Add missing depencency ([838ed44](https://github.com/stunor92/OriGo-EventorApi/commit/838ed44969d30fd265090b78368c07cb1571be40))
+* Cast uuid to string in select query ([d513912](https://github.com/stunor92/OriGo-EventorApi/commit/d51391287cd8ab1454e3824ddf7867fad65b0fef))
+* Change from apiKey to eventorApiKey columns ([ac09a50](https://github.com/stunor92/OriGo-EventorApi/commit/ac09a50f0b3a1622c7f3b8bb9c9b0eea7481742b))
+* Change from apiKey to eventorApiKey columns ([26e97b2](https://github.com/stunor92/OriGo-EventorApi/commit/26e97b226732f18942781cdba28a32c52f0944d8))
+* Fix some stuff with CalendarRace ([b823891](https://github.com/stunor92/OriGo-EventorApi/commit/b8238917c465325e1b517ab975342cb370024d57))
+* Fixed problems with inserting events ([bdbfa0c](https://github.com/stunor92/OriGo-EventorApi/commit/bdbfa0cb7ee0efd10c97a01f847f5da545571836))
+* Fixed the timestamp problem ([8c18748](https://github.com/stunor92/OriGo-EventorApi/commit/8c1874864a9c6872e23b1f8989ba30c3db5496d6))
+* Instant time in CalendarRace ([18ea38c](https://github.com/stunor92/OriGo-EventorApi/commit/18ea38ce6079f8e30a50639197f6aee3d9d1f7c8))
+* Rename eventClasses ([7a29178](https://github.com/stunor92/OriGo-EventorApi/commit/7a291783de2d663bf1d96fae98e3a6160f3a41cf))
+* Rename eventClassId to classId ([17b3dbc](https://github.com/stunor92/OriGo-EventorApi/commit/17b3dbcdf710817ea3d1b53c6e5644b905f06255))
+* Specify jpa hibernate dialect ([ed5049b](https://github.com/stunor92/OriGo-EventorApi/commit/ed5049be0a946da30d39d28b47b1d9c0cf12f661))
+* Specify jwt algorithm used in supabase ([1211bd4](https://github.com/stunor92/OriGo-EventorApi/commit/1211bd4ad2ce01de34285ed1926e2dd211e8e9a3))
+* Use instant for timestamp ([594cb32](https://github.com/stunor92/OriGo-EventorApi/commit/594cb327c8eafcf61fa30067daefbd73c55f4cde))
+* Use uid from token ([38a77f8](https://github.com/stunor92/OriGo-EventorApi/commit/38a77f81db28a175f4859ee1e07af7a3760674a9))
+
 ## [5.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v5.0.1...v5.1.0) (2025-04-01)
 
 
