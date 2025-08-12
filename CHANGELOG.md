@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.0.0...v6.1.0) (2025-08-12)
+
+
+### Features
+
+* Add automatic release via prof branch ([55ee347](https://github.com/stunor92/OriGo-EventorApi/commit/55ee34757593825f75f4a6ef3ef7ff942f4519d3))
+
 ## [6.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v5.1.0...v6.0.0) (2025-07-28)
 
 
