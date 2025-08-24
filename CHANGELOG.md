@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.1.0...v6.2.0) (2025-08-24)
+
+
+### Features
+
+* Cleanup application config and connect to local db locally ([7c14526](https://github.com/stunor92/OriGo-EventorApi/commit/7c14526e5955b63a347e97d5212fe4a5bdf8bf1c))
+
 ## [6.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.0.0...v6.1.0) (2025-08-12)
 
 
