@@ -1,13 +1,6 @@
 logging:
   level:
     root: INFO
-    com:
-      google:
-        cloud:
-          firestore:
-            CustomClassMapper: ERROR
-            encoding:
-              PojoBeanMapper: ERROR
 server:
   port: 8080
   error:
@@ -20,8 +13,6 @@ springdoc:
   swagger-ui: 
     path: /documentation.html
 spring:
-  config:
-    import: optional:file:.env[.properties]
   datasource:
     url: ${POSTGRES_DB}
     username: ${POSTGRES_USER}

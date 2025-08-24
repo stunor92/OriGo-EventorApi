@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:54322/postgres
+    username: postgres
+    password: postgres
+config:
+  personalEntries:
+    start: 1
+    end: 7
+  personalStarts:
+    start: 1
+    end: 5
+  personalResults:
+    start: 5
+    end: 1
+  jwt:
+    secret: super-secret-jwt-token-with-at-least-32-characters-long
