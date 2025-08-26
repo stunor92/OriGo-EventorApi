@@ -23,7 +23,6 @@ internal class PersonController {
         @RequestHeader(value = "username") username: String,
         @RequestHeader(value = "password") password: String
     ): ResponseEntity<Person> {
-        log.info("Start authenticating user {}.", username)
         val uid = getAttribute("uid") as String
 
         return ResponseEntity(

@@ -22,7 +22,7 @@ class EntryListConverter {
     private lateinit var organisationConverter: OrganisationConverter
 
     @Autowired
-    private lateinit var entryConverter: EntryConverter
+    private lateinit var feeConverter: FeeConverter
 
     fun convertEventEntryList(entryList: EntryList): List<Competitor> {
         val result  = mutableListOf<Competitor>()
@@ -60,7 +60,7 @@ class EntryListConverter {
                     finishTime = null,
                     result = null,
                     splitTimes = listOf(),
-                    entryFeeIds = entryConverter.convertEntryFeesIds(
+                    entryFeeIds = feeConverter.convertEntryFeesIds(
                         entry.entryEntryFee,
                         null
                     ),
@@ -144,7 +144,7 @@ class EntryListConverter {
             legResult = null,
             overallResult = null,
             splitTimes = listOf(),
-            entryFeeIds = entryConverter.convertEntryFeesIds(
+            entryFeeIds = feeConverter.convertEntryFeesIds(
                 teamMember.entryEntryFee,
                 raceId
             )

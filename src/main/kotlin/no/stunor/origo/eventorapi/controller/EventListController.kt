@@ -80,7 +80,6 @@ internal class EventListController {
     @GetMapping("/me")
     fun HttpServletRequest.getUserEntries(): ResponseEntity<List<CalendarRace>> {
         val uid = getAttribute("uid") as String
-        log.info("Start to get personal events for user {}.", uid)
         return ResponseEntity(
                 calendarService.getEventList(
                         userId = uid

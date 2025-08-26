@@ -25,7 +25,6 @@ data class PersonCompetitor(
         var result: Result? = null,
         var splitTimes: List<SplitTime> = listOf(),
         var entryFeeIds: List<String> = listOf()
-
 ) : Competitor {
         override fun equals(other: Any?): Boolean {
                 return if(other is PersonCompetitor){

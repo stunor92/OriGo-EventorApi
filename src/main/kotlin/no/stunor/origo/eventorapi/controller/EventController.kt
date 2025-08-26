@@ -91,15 +91,7 @@ internal class EventController {
         )
     }
 
-    @GetMapping("/{eventorId}/{eventId}/fees/download")
-    fun downloadEntryFees(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
-    ) {
-        eventService.downloadEntryFees(eventorId, eventId)
-    }
-
-    @GetMapping("/{eventorId}/{eventId}/competitors/download")
+    @GetMapping("/{eventorId}/{eventId}/competitors")
     fun HttpServletRequest.downloadCompetitors(
         @PathVariable("eventorId") eventorId: String,
         @PathVariable("eventId") eventId: String,

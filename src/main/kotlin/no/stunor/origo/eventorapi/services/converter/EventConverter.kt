@@ -15,7 +15,7 @@ class EventConverter {
     private lateinit var eventClassConverter: EventClassConverter
 
     @Autowired
-    private lateinit var entryConverter: EntryConverter
+    private lateinit var feeConverter: FeeConverter
 
     @Autowired
     private lateinit var competitorConverter: CompetitorConverter
@@ -94,8 +94,9 @@ class EventConverter {
     @Throws(ParseException::class)
     fun convertEvent(
         eventorEvent: org.iof.eventor.Event,
-        eventCLassList: org.iof.eventor.EventClassList?,
-        documentList: org.iof.eventor.DocumentList?,
+        classes: org.iof.eventor.EventClassList?,
+        fees: org.iof.eventor.EntryFeeList?,
+        documents: org.iof.eventor.DocumentList?,
         organisations: List<Organisation>,
         regions: List<Region>,
         eventor: Eventor
@@ -112,16 +113,17 @@ class EventConverter {
             finishDate = timeStampConverter.parseDate("${eventorEvent.finishDate.date.content} ${eventorEvent.finishDate.clock.content}", eventor),
             organisers = organisations.map { it.organisationId },
             regions = regions.map { it.regionId },
-            entryBreaks = entryConverter.convertEntryBreaks(eventorEvent.entryBreak, eventor).toTypedArray(),
+            entryBreaks = feeConverter.convertEntryBreaks(eventorEvent.entryBreak, eventor).toTypedArray(),
             punchingUnitTypes = convertPunchingUnitTypes(eventorEvent.punchingUnitType).toTypedArray(),
             webUrls = listOf(),
             message = convertHostMessage(eventorEvent.hashTableEntry),
             email = null,
             phone = null
         )
-        event.classes = eventClassConverter.convertEventClasses(eventCLassList = eventCLassList, eventor = eventor, event = event)
+        event.classes = eventClassConverter.convertEventClasses(eventCLassList = classes, eventor = eventor, event = event)
         event.races = convertRaces(event, eventorEvent.hashTableEntry, eventorEvent.eventRace, eventor)
-        event.documents = convertEventDocument(documentList, event= event, eventorId = eventor.eventorId)
+        event.documents = convertEventDocument(documents, event= event, eventorId = eventor.eventorId)
+        event.fees = feeConverter.convertEntryFees(entryFees = fees, eventor = eventor, event = event, eventClasses = classes)
         return event
 
     }

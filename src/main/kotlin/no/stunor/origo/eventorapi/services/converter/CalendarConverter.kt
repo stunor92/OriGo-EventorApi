@@ -15,7 +15,7 @@ class CalendarConverter {
     private lateinit var timeStampConverter: TimeStampConverter
 
     @Autowired
-    private lateinit var entryConverter: EntryConverter
+    private lateinit var feeConverter: FeeConverter
 
     @Autowired
     private lateinit var eventConverter: EventConverter
@@ -71,7 +71,7 @@ class CalendarConverter {
             status = eventConverter.convertEventStatus(event.eventStatusId.content),
             disciplines = eventConverter.convertEventDisciplines(event.disciplineIdOrDiscipline),
             organisers = if (event.organiser != null) eventConverter.convertOrganisers(event.organiser.organisationIdOrOrganisation) else listOf(),
-            entryBreaks = entryConverter.convertEntryBreaks(event.entryBreak, eventor),
+            entryBreaks = feeConverter.convertEntryBreaks(event.entryBreak, eventor),
             entries = getEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
             userEntries = mutableListOf(),
             organisationEntries = getOrganisationEntries(
