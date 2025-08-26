@@ -11,7 +11,7 @@
 
     <groupId>no.stunor.origo</groupId>
     <artifactId>eventor-api</artifactId>
-    <version>6.2.1-SNAPSHOT</version>
+    <version>6.2.1</version>
 
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
