@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.2.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.1.0...v6.2.0) (2025-08-26)
+
+
+### Features
+
+* Automatic download fees when fetching event ([89e5bb1](https://github.com/stunor92/OriGo-EventorApi/commit/89e5bb19244e69c8c8f176f2a51491e835a15eaf))
+* Cleanup application config and connect to local db locally ([7c14526](https://github.com/stunor92/OriGo-EventorApi/commit/7c14526e5955b63a347e97d5212fe4a5bdf8bf1c))
+
 ## [6.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.0.0...v6.1.0) (2025-08-12)
 
 
