@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.1](https://github.com/stunor92/OriGo-EventorApi/compare/v6.2.0...v6.2.1) (2025-08-26)
+
+
+### Bug Fixes
+
+* Dump spring boot starter to 3.5.4 ([691fd72](https://github.com/stunor92/OriGo-EventorApi/commit/691fd72e1bfaf87381531c2b1890d373448ccd93))
+
 ## [6.2.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.1.0...v6.2.0) (2025-08-26)
 
 
