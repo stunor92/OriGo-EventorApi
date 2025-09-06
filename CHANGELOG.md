@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.2.1...v6.3.0) (2025-09-06)
+
+
+### Features
+
+* Use joining table for organisers ([b6e5e91](https://github.com/stunor92/OriGo-EventorApi/commit/b6e5e9128b564db074eaf668361e6a0e4c2b686b))
+
 ## [6.2.1](https://github.com/stunor92/OriGo-EventorApi/compare/v6.2.0...v6.2.1) (2025-08-26)
 
 
