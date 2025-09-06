@@ -14,8 +14,6 @@ open class WebConfig(
 ) : WebMvcConfigurer {
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-        if (!env.activeProfiles.contains("local")) {
             registry.addInterceptor(jwtInterceptor)
-        }
     }
 }

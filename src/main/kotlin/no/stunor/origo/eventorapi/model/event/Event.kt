@@ -5,6 +5,7 @@ import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import io.hypersistence.utils.hibernate.type.array.TimestampArrayType
 import io.hypersistence.utils.hibernate.type.array.internal.AbstractArrayType
 import jakarta.persistence.*
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.hibernate.annotations.Type
 import java.io.Serializable
 import java.sql.Timestamp
@@ -53,7 +54,15 @@ data class Event(
     var punchingUnitTypes: Array<PunchingUnitType> = arrayOf(),
     var startDate: Timestamp? = null,
     var finishDate: Timestamp? = null,
-    @Type(ListArrayType::class) var organisers: List<String> = ArrayList(),
+    @ManyToMany(cascade = [CascadeType.ALL])
+    @JoinTable(
+        name = "event_organiser",
+        joinColumns = [JoinColumn(name = "event_id", referencedColumnName = "eventId"), JoinColumn(name = "eventor_id", referencedColumnName = "eventorId")],
+        inverseJoinColumns = [JoinColumn(name = "organisation_id", referencedColumnName = "organisationId")]
+    )
+    var organisers: List<Organisation> = ArrayList(),
+    @Column(name = "organisers")@Type(ListArrayType::class) var organisationId: List<String> = ArrayList(),
+
     @Type(ListArrayType::class) var regions: List<String> = ArrayList(),
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var classes: List<EventClass> = ArrayList(),
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var documents: List<Document> = ArrayList(),

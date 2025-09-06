@@ -9,6 +9,7 @@ import no.stunor.origo.eventorapi.data.PersonRepository
 import no.stunor.origo.eventorapi.data.RegionRepository
 import no.stunor.origo.eventorapi.exception.EntryListNotFoundException
 import no.stunor.origo.eventorapi.exception.EventNotFoundException
+import no.stunor.origo.eventorapi.exception.EventNotSupportedException
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.exception.EventorParsingException
 import no.stunor.origo.eventorapi.exception.OrganisationNotOrganiserException
@@ -16,10 +17,12 @@ import no.stunor.origo.eventorapi.exception.ResultListNotFoundException
 import no.stunor.origo.eventorapi.exception.StartListNotFoundException
 import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.Event
+import no.stunor.origo.eventorapi.model.event.EventFormEnum
 import no.stunor.origo.eventorapi.model.event.competitor.Competitor
 import no.stunor.origo.eventorapi.model.event.competitor.PersonCompetitor
 import no.stunor.origo.eventorapi.model.event.competitor.TeamCompetitor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
+import no.stunor.origo.eventorapi.model.person.MembershipType
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.EntryListConverter
 import no.stunor.origo.eventorapi.services.converter.EventConverter
@@ -171,6 +174,10 @@ class EventService {
             eventId = eventId
         )
 
+        if (event.type != EventFormEnum.Individual) {
+            throw EventNotSupportedException()
+        }
+
         authenticateEventOrganiser(
             event = event,
             persons = persons
@@ -203,14 +210,14 @@ class EventService {
     }
 
     private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {
-        /*for(organiser in event.organisers){
+        for(organiser in event.organisers){
             for(person in persons) {
-                if (person.memberships.map { it.organisationId }.contains(organiser)
-                    && (person.memberships.find { it.organisationId == organiser }!!.type == MembershipType.Organiser
-                            || person.memberships.find { it.organisationId == organiser }!!.type == MembershipType.Admin))
+                if (person.memberships.map { it.organisationId }.contains(organiser.organisationId)
+                    && (person.memberships.find { it.organisationId == organiser.organisationId }!!.type == MembershipType.Organiser
+                            || person.memberships.find { it.organisationId == organiser.organisationId }!!.type == MembershipType.Admin))
                     return
             }
-        }*/
+        }
         throw OrganisationNotOrganiserException()
     }
 }
