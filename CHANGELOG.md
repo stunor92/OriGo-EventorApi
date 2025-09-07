@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.1](https://github.com/stunor92/OriGo-EventorApi/compare/v6.3.0...v6.3.1) (2025-09-07)
+
+
+### Bug Fixes
+
+* Skip major release tagging ([274c060](https://github.com/stunor92/OriGo-EventorApi/commit/274c060b544c2dd29d265b3bf3a5a695135518ca))
+
 ## [6.3.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.2.1...v6.3.0) (2025-09-06)
 
 
