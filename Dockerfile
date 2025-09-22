@@ -1,5 +1,5 @@
 # Use a lightweight JDK base image for the build stage
-FROM bellsoft/liberica-openjdk-alpine:24 AS builder
+FROM bellsoft/liberica-openjdk-alpine:25 AS builder
 # Set the working directory
 WORKDIR /app
 
