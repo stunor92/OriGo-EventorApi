@@ -1,10 +1,13 @@
 package no.stunor.origo.eventorapi.model.event
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.hypersistence.utils.hibernate.type.array.EnumArrayType
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import io.hypersistence.utils.hibernate.type.array.TimestampArrayType
 import io.hypersistence.utils.hibernate.type.array.internal.AbstractArrayType
 import jakarta.persistence.*
+import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.hibernate.annotations.Type
 import java.io.Serializable
@@ -17,11 +20,17 @@ data class EventId(
     constructor() : this("", "")
 }
 
-
 @Entity
 @IdClass(EventId::class)
 data class Event(
-    @Id var eventorId: String = "",
+    @Id
+    @JsonIgnore
+    val eventorId: String = "",
+    @ManyToOne
+    @JoinColumns(
+        JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false)
+    )
+    var eventor: Eventor = Eventor(),
     @Id var eventId: String = "",
     var name: String = "",
     @Enumerated(EnumType.STRING) var type: EventFormEnum = EventFormEnum.Individual,
@@ -61,9 +70,6 @@ data class Event(
         inverseJoinColumns = [JoinColumn(name = "organisation_id", referencedColumnName = "organisationId")]
     )
     var organisers: List<Organisation> = ArrayList(),
-    @Column(name = "organisers")@Type(ListArrayType::class) var organisationId: List<String> = ArrayList(),
-
-    @Type(ListArrayType::class) var regions: List<String> = ArrayList(),
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var classes: List<EventClass> = ArrayList(),
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var documents: List<Document> = ArrayList(),
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var fees: List<Fee> = ArrayList(),
@@ -73,40 +79,31 @@ data class Event(
     var message: String? = null,
     var email: String? = null,
     var phone: String? = null
-){
-    override fun toString(): String {
-        return "$eventorId: $eventId - $name"
-    }
-
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other !is Event) return false
 
-        other as Event
-
-        if (eventorId != other.eventorId) return false
-        if (eventId != other.eventId) return false
-        if (name != other.name) return false
-        if (type != other.type) return false
-        if (classification != other.classification) return false
-        if (status != other.status) return false
-        if (!disciplines.contentEquals(other.disciplines)) return false
-        if (!punchingUnitTypes.contentEquals(other.punchingUnitTypes)) return false
-        if (startDate != other.startDate) return false
-        if (finishDate != other.finishDate) return false
-        if (organisers != other.organisers) return false
-        if (regions != other.regions) return false
-        if (classes != other.classes) return false
-        if (documents != other.documents) return false
-        if (fees != other.fees) return false
-        if (!entryBreaks.contentEquals(other.entryBreaks)) return false
-        if (races != other.races) return false
-        if (webUrls != other.webUrls) return false
-        if (message != other.message) return false
-        if (email != other.email) return false
-        if (phone != other.phone) return false
-
-        return true
+        return eventorId == other.eventorId &&
+            eventId == other.eventId &&
+            name == other.name &&
+            type == other.type &&
+            classification == other.classification &&
+            status == other.status &&
+            disciplines.contentEquals(other.disciplines) &&
+            punchingUnitTypes.contentEquals(other.punchingUnitTypes) &&
+            startDate == other.startDate &&
+            finishDate == other.finishDate &&
+            organisers == other.organisers &&
+            classes == other.classes &&
+            documents == other.documents &&
+            fees == other.fees &&
+            entryBreaks.contentEquals(other.entryBreaks) &&
+            races == other.races &&
+            webUrls == other.webUrls &&
+            message == other.message &&
+            email == other.email &&
+            phone == other.phone
     }
 
     override fun hashCode(): Int {
@@ -121,7 +118,6 @@ data class Event(
         result = 31 * result + (startDate?.hashCode() ?: 0)
         result = 31 * result + (finishDate?.hashCode() ?: 0)
         result = 31 * result + organisers.hashCode()
-        result = 31 * result + regions.hashCode()
         result = 31 * result + classes.hashCode()
         result = 31 * result + documents.hashCode()
         result = 31 * result + fees.hashCode()

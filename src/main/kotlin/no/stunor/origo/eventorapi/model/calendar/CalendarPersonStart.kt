@@ -1,7 +1,6 @@
 package no.stunor.origo.eventorapi.model.calendar
 
 import no.stunor.origo.eventorapi.model.event.EventClass
-import java.time.Instant
 import java.sql.Timestamp
 
 data class CalendarPersonStart(

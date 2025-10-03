@@ -24,12 +24,6 @@ class PersonConverter {
         )
     }
 
-    fun convertBirthYear(birthDate: org.iof.eventor.BirthDate?): Int? {
-        if (birthDate == null) {
-            return null
-        }
-        return birthDate.date.content.substring(0, 4).toInt()
-    }
     fun convertGender(sex: String?): Gender {
         if (sex == null) {
             return Gender.Other

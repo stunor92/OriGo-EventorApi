@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PersonRepository : CrudRepository<Person, String> {
-    fun findByPersonIdAndEventorId(personId: String, eventorId: String): Person?
     @Query("SELECT p FROM Person p JOIN p.users u WHERE CAST(u.userId AS String) LIKE %:userId%")
     fun findAllByUsers(@Param("userId") userId: String): List<Person>
 

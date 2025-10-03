@@ -1,5 +1,6 @@
 package no.stunor.origo.eventorapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.IdClass
@@ -15,9 +16,7 @@ data class RegionId(
 @Entity
 @IdClass(RegionId::class)
 data class Region (
-        @Id
-        var eventorId: String = "",
-        @Id
-        var regionId: String = "",
+        @JsonIgnore @Id var eventorId: String = "",
+        @Id var regionId: String = "",
         var name: String = ""
 )

@@ -1,10 +1,12 @@
 package no.stunor.origo.eventorapi.model.calendar
 
+import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.*
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import java.sql.Timestamp
 
 data class CalendarRace(
-    var eventorId: String = "",
+    var eventor: Eventor = Eventor(),
     var eventId: String = "",
     var eventName: String = "",
     var raceId: String = "",
@@ -17,11 +19,11 @@ data class CalendarRace(
     var position: RacePosition? = null,
     var status: EventStatusEnum = EventStatusEnum.Applied,
     var disciplines: List<Discipline> = listOf(),
-    var organisers: List<String> = listOf(),
+    var organisers: List<Organisation> = listOf(),
     var entryBreaks: List<Timestamp> = listOf(),
     var entries: Int = 0,
     var userEntries: MutableList<CalendarCompetitor> = mutableListOf(),
-    var organisationEntries: MutableMap<String, Int> = mutableMapOf(),
+    var organisationEntries: MutableList<OrganisationEntries> = mutableListOf(),
     var signedUp: Boolean = false,
     var startList: Boolean = false,
     var resultList: Boolean = false,

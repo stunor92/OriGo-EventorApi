@@ -1,10 +1,8 @@
 package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
-import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
-import org.iof.eventor.HashTableEntry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.ParseException
@@ -18,7 +16,7 @@ class EventConverter {
     private lateinit var feeConverter: FeeConverter
 
     @Autowired
-    private lateinit var competitorConverter: CompetitorConverter
+    private lateinit var entryListConverter: EntryListConverter
 
     @Autowired
     private lateinit var timeStampConverter: TimeStampConverter
@@ -48,18 +46,6 @@ class EventConverter {
             "11" -> EventStatusEnum.Reported
             else -> EventStatusEnum.Applied
         }
-    }
-
-    fun convertOrganisers(organisers: List<Any>): List<String> {
-        val result: MutableList<String> = ArrayList()
-        for (organiser in organisers) {
-            if (organiser is org.iof.eventor.Organisation) {
-                if (organiser.organisationId != null) result.add(organiser.organisationId.content)
-            } else if (organiser is org.iof.eventor.OrganisationId) {
-                result.add(organiser.content)
-            }
-        }
-        return result
     }
 
     fun convertEventDisciplines(disciplineIds: List<Any>): List<Discipline> {
@@ -98,11 +84,11 @@ class EventConverter {
         fees: org.iof.eventor.EntryFeeList?,
         documents: org.iof.eventor.DocumentList?,
         organisations: List<Organisation>,
-        regions: List<Region>,
         eventor: Eventor
     ): Event {
         var event = Event(
             eventorId = eventor.eventorId,
+            eventor = eventor,
             eventId = eventorEvent.eventId.content,
             name = eventorEvent.name.content,
             type = convertEventForm(eventorEvent.eventForm),
@@ -111,11 +97,9 @@ class EventConverter {
             disciplines = convertEventDisciplines(eventorEvent.disciplineIdOrDiscipline).toTypedArray(),
             startDate = timeStampConverter.parseDate("${eventorEvent.startDate.date.content} ${eventorEvent.startDate.clock.content}", eventor),
             finishDate = timeStampConverter.parseDate("${eventorEvent.finishDate.date.content} ${eventorEvent.finishDate.clock.content}", eventor),
-            organisers = organisations.map { it },
-            organisationId = organisations.map { it.organisationId },
-            regions = regions.map { it.regionId },
+            organisers = organisations,
             entryBreaks = feeConverter.convertEntryBreaks(eventorEvent.entryBreak, eventor).toTypedArray(),
-            punchingUnitTypes = convertPunchingUnitTypes(eventorEvent.punchingUnitType).toTypedArray(),
+            punchingUnitTypes = entryListConverter.convertPunchingUnitTypes(eventorEvent.punchingUnitType).toTypedArray(),
             webUrls = listOf(),
             message = convertHostMessage(eventorEvent.hashTableEntry),
             email = null,
@@ -131,7 +115,7 @@ class EventConverter {
 
     private fun convertRaces(
         event: Event,
-        hashTableEntries: List<HashTableEntry>,
+        hashTableEntries: List<org.iof.eventor.HashTableEntry>,
         eventRaces: List<org.iof.eventor.EventRace>,
         eventor: Eventor
     ): List<Race> {
@@ -150,7 +134,7 @@ class EventConverter {
 
     private fun convertRace(
         event: Event,
-        hashTableEntries: List<HashTableEntry>,
+        hashTableEntries: List<org.iof.eventor.HashTableEntry>,
         eventRace: org.iof.eventor.EventRace,
         eventor: Eventor
     ): Race {
@@ -236,15 +220,6 @@ class EventConverter {
             }
         }
         return null
-    }
-
-
-    private fun convertPunchingUnitTypes(punchingUnitTypes: List<org.iof.eventor.PunchingUnitType>): List<PunchingUnitType> {
-        val result: MutableList<PunchingUnitType> = ArrayList()
-        for (punchingUnitType in punchingUnitTypes) {
-            result.add(competitorConverter.convertPunchingUnitType(punchingUnitType.value))
-        }
-        return result
     }
 
 

@@ -2,11 +2,16 @@ package no.stunor.origo.eventorapi.services.converter
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.calendar.*
 import no.stunor.origo.eventorapi.model.event.Event
-import no.stunor.origo.eventorapi.model.event.competitor.Result
-import no.stunor.origo.eventorapi.model.event.competitor.ResultStatus
+import no.stunor.origo.eventorapi.model.event.entry.Result
+import no.stunor.origo.eventorapi.model.event.entry.ResultStatus
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.text.DateFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 @Component
@@ -21,10 +26,13 @@ class CalendarConverter {
     private lateinit var eventConverter: EventConverter
 
     @Autowired
+    private lateinit var organisationConverter: OrganisationConverter
+
+    @Autowired
     private lateinit var eventClassConverter: EventClassConverter
 
     @Autowired
-    private lateinit var competitorConverter: CompetitorConverter
+    private lateinit var entryListConverter: EntryListConverter
 
     fun convertEvents(
         eventList: org.iof.eventor.EventList?,
@@ -57,7 +65,7 @@ class CalendarConverter {
         competitorCountList: org.iof.eventor.CompetitorCountList
     ): CalendarRace {
         return CalendarRace(
-            eventorId = eventor.eventorId,
+            eventor = eventor,
             eventId = event.eventId.content,
             eventName = event.name.content,
             raceId = eventRace.eventRaceId.content,
@@ -70,14 +78,18 @@ class CalendarConverter {
             position = if (eventRace.eventCenterPosition != null) eventConverter.convertPosition(eventRace.eventCenterPosition) else null,
             status = eventConverter.convertEventStatus(event.eventStatusId.content),
             disciplines = eventConverter.convertEventDisciplines(event.disciplineIdOrDiscipline),
-            organisers = if (event.organiser != null) eventConverter.convertOrganisers(event.organiser.organisationIdOrOrganisation) else listOf(),
+            organisers = if (event.organiser != null) organisationConverter.convertOrganisations(
+                event.organiser.organisationIdOrOrganisation,
+                eventor
+            ) else listOf(),
             entryBreaks = feeConverter.convertEntryBreaks(event.entryBreak, eventor),
             entries = getEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
             userEntries = mutableListOf(),
             organisationEntries = getOrganisationEntries(
                 event.eventId.content,
                 eventRace.eventRaceId.content,
-                competitorCountList
+                competitorCountList,
+                eventor
             ),
             signedUp = isSignedUp(event.eventId.content, competitorCountList),
             startList = eventConverter.hasStartList(event.hashTableEntry, eventRace.eventRaceId.content),
@@ -94,7 +106,8 @@ class CalendarConverter {
         if (competitorCountList != null) {
             for (competitorCount in competitorCountList.competitorCount) {
                 if (competitorCount.eventId == eventId
-                    && (competitorCount.eventRaceId == null || competitorCount.eventRaceId == eventRaceId)) {
+                    && (competitorCount.eventRaceId == null || competitorCount.eventRaceId == eventRaceId)
+                ) {
                     return competitorCount.numberOfEntries.toInt()
                 }
             }
@@ -105,23 +118,43 @@ class CalendarConverter {
     private fun getOrganisationEntries(
         eventId: String,
         eventRaceId: String,
-        competitorCountList: org.iof.eventor.CompetitorCountList
-    ): MutableMap<String, Int> {
-        val result: MutableMap<String, Int> = HashMap()
+        competitorCountList: org.iof.eventor.CompetitorCountList,
+        eventor: Eventor
+    ): MutableList<OrganisationEntries> {
+        val result = mutableListOf<OrganisationEntries>()
         for (competitorCount in competitorCountList.competitorCount) {
-            if (competitorCount.eventId == eventId
-                && (competitorCount.eventRaceId == null
-                        || competitorCount.eventRaceId == eventRaceId)
-                    && competitorCount.organisationCompetitorCount != null) {
-                for (organisationCompetitorCount in competitorCount.organisationCompetitorCount) {
-                    result[organisationCompetitorCount.organisationId] =
-                        organisationCompetitorCount.numberOfEntries.toInt()
-                }
-
-
+            if (!isRelevantCompetitorCount(competitorCount, eventId, eventRaceId)) continue
+            val orgCounts: List<org.iof.eventor.OrganisationCompetitorCount> = competitorCount.organisationCompetitorCount ?: continue
+            for (organisationCompetitorCount in orgCounts) {
+                val organisation = organisationConverter.convertOrganisation(organisationCompetitorCount.organisationId, eventor)
+                if (organisation == null) continue
+                updateOrganisationEntriesList(result, organisation, organisationCompetitorCount.numberOfEntries.toInt())
             }
         }
         return result
+    }
+
+    private fun isRelevantCompetitorCount(
+        competitorCount: org.iof.eventor.CompetitorCount,
+        eventId: String,
+        eventRaceId: String
+    ): Boolean {
+        return competitorCount.eventId == eventId &&
+                (competitorCount.eventRaceId == null || competitorCount.eventRaceId == eventRaceId) &&
+                competitorCount.organisationCompetitorCount != null
+    }
+
+    private fun updateOrganisationEntriesList(
+        result: MutableList<OrganisationEntries>,
+        organisation: Organisation,
+        entriesToAdd: Int
+    ) {
+        val existing = result.firstOrNull { it.organisation == organisation }
+        if (existing == null) {
+            result.add(OrganisationEntries(organisation, entriesToAdd))
+        } else {
+            existing.entries += entriesToAdd
+        }
     }
 
     private fun isSignedUp(eventId: String, competitorCountList: org.iof.eventor.CompetitorCountList?): Boolean {
@@ -129,7 +162,8 @@ class CalendarConverter {
             for (competitorCount in competitorCountList.competitorCount) {
                 if (competitorCount.eventId == eventId
                     && competitorCount.classCompetitorCount != null
-                    && competitorCount.classCompetitorCount.isNotEmpty()) {
+                    && competitorCount.classCompetitorCount.isNotEmpty()
+                ) {
                     return true
                 }
             }
@@ -144,58 +178,76 @@ class CalendarConverter {
         eventClassMap: Map<String, org.iof.eventor.EventClassList>
     ): MutableMap<String?, CalendarRace> {
         val raceMap: MutableMap<String?, CalendarRace> = HashMap()
-
-        if (entryList == null)
-            return raceMap
+        if (entryList == null) return raceMap
 
         for (entry in entryList.entry) {
             for (eventRaceId in entry.eventRaceId) {
-                for (race in entry.event.eventRace) {
-                    if (race.eventRaceId.content == eventRaceId.content) {
-                        val raceId = eventRaceId.content
-                        if (!raceMap.containsKey(raceId)) {
-                            raceMap[raceId] = generateRace(
-                                event = entry.event,
-                                eventRace = race,
-                                eventor = eventor,
-                                competitorCountList = org.iof.eventor.CompetitorCountList()
-                            )
-                        }
+                val raceId = eventRaceId.content
+                val race = entry.event.eventRace.find { it.eventRaceId.content == raceId } ?: continue
+                val organisation =
+                    organisationConverter.convertOrganisation(entry.competitor.organisationId.content, eventor)
 
-                        if (!raceMap.getValue(raceId).organisationEntries.containsKey(entry.competitor.organisationId.content)) {
-                            raceMap.getValue(raceId).organisationEntries[entry.competitor.organisationId.content] = 1
-                        } else {
-                            val count = raceMap
-                                .getValue(raceId)
-                                .organisationEntries
-                                .getValue(entry.competitor.organisationId.content)
-                            raceMap.getValue(raceId).organisationEntries[entry.competitor.organisationId.content] = count + 1
-                        }
+                if (!raceMap.containsKey(raceId)) {
+                    raceMap[raceId] = generateRace(
+                        event = entry.event,
+                        eventRace = race,
+                        eventor = eventor,
+                        competitorCountList = org.iof.eventor.CompetitorCountList()
+                    )
+                }
 
-                        if (entry.competitor.personId.content == person.personId) {
-                            raceMap.getValue(raceId).userEntries.add(
-                                generateCompetitor(
-                                    eventor = eventor,
-                                    eventId = entry.event.eventId.content,
-                                    person = person,
-                                    entry = entry,
-                                    classStart = null,
-                                    start = null,
-                                    classResult = null,
-                                    result = null,
-                                    eventClassList = eventClassMap[raceId]
-                                )
-                            )
-                        }
-                        if (raceMap.getValue(raceId).userEntries.isNotEmpty()) {
-                            raceMap.getValue(raceId).signedUp = true
-                        }
-
-                    }
+                organisation?.let { updateOrganisationEntries(raceMap, raceId, it) }
+                if (entry.competitor.personId.content == person.personId) {
+                    updateUserEntries(
+                        raceMap,
+                        raceId,
+                        eventor,
+                        entry.event.eventId.content,
+                        person,
+                        entry,
+                        eventClassMap[raceId]
+                    )
+                }
+                if (raceMap.getValue(raceId).userEntries.isNotEmpty()) {
+                    raceMap.getValue(raceId).signedUp = true
                 }
             }
         }
         return raceMap
+    }
+
+    private fun updateOrganisationEntries(
+        raceMap: Map<String?, CalendarRace>,
+        raceId: String?,
+        organisation: Organisation
+    ) {
+        val orgEntries = raceMap.getValue(raceId).organisationEntries.toList()
+        orgEntries.first { it.organisation == organisation }.entries =
+            orgEntries.first { it.organisation == organisation }.entries++
+    }
+
+    private fun updateUserEntries(
+        raceMap: Map<String?, CalendarRace>,
+        raceId: String?,
+        eventor: Eventor,
+        eventId: String,
+        person: Person,
+        entry: org.iof.eventor.Entry,
+        eventClassList: org.iof.eventor.EventClassList?
+    ) {
+        raceMap.getValue(raceId).userEntries.add(
+            generateCompetitor(
+                eventor = eventor,
+                eventId = eventId,
+                person = person,
+                entry = entry,
+                classStart = null,
+                start = null,
+                classResult = null,
+                result = null,
+                eventClassList = eventClassList
+            )
+        )
     }
 
     fun convertStartListList(
@@ -228,7 +280,7 @@ class CalendarConverter {
                                 generateCompetitor(
                                     eventor = eventor,
                                     eventId = startList.event.eventId.content,
-                                    person =person,
+                                    person = person,
                                     entry = null,
                                     classStart = classStart,
                                     start = start,
@@ -551,12 +603,15 @@ class CalendarConverter {
     ): CalendarEntry {
         return CalendarEntry(
             eventClass = if (entry.entryClass != null && entry.entryClass.isNotEmpty()) eventClassConverter.getEventClassFromId(
-                eventClassList =eventClassList!!,
+                eventClassList = eventClassList!!,
                 entryClassId = entry.entryClass[0].eventClassId.content,
                 eventor = eventor,
-                event = Event(eventId = eventId),
+                event = Event(
+                    eventor = eventor,
+                    eventId = eventId
+                ),
             ) else null,
-            punchingUnits = competitorConverter.convertPunchingUnits(entry.competitor.cCard),
+            punchingUnits = entryListConverter.convertPunchingUnits(entry.competitor.cCard),
         )
     }
 
@@ -580,7 +635,10 @@ class CalendarConverter {
             bib = if (start.bibNumber != null) start.bibNumber.content else null,
             eventClass = eventClassConverter.convertEventClass(
                 eventor = eventor,
-                event = Event(eventId = eventId),
+                event = Event(
+                    eventor = eventor,
+                    eventId = eventId
+                ),
                 eventClass = classStart.eventClass
             )
         )
@@ -602,7 +660,10 @@ class CalendarConverter {
             leg = teamStart.teamMemberStart[0].leg.toInt(),
             eventClass = eventClassConverter.convertEventClass(
                 eventor = eventor,
-                event = Event(eventId = eventId),
+                event = Event(
+                    eventor = eventor,
+                    eventId = eventId
+                ),
                 eventClass = classStart.eventClass
             )
         )
@@ -626,15 +687,18 @@ class CalendarConverter {
         if (result != null) {
             return CalendarPersonResult(
                 result = Result(
-                    time = if (result.time != null) competitorConverter.convertTimeSec(result.time.content) else null,
-                    timeBehind = if (result.timeDiff != null) competitorConverter.convertTimeSec(result.timeDiff.content) else null,
+                    time = if (result.time != null) convertTimeSec(result.time.content) else null,
+                    timeBehind = if (result.timeDiff != null) convertTimeSec(result.timeDiff.content) else null,
                     position = if (result.resultPosition != null && result.resultPosition.content != "0") result.resultPosition.content.toInt() else null,
                     status = ResultStatus.valueOf(result.competitorStatus.value),
                 ),
                 bib = if (result.bibNumber != null) result.bibNumber.content else null,
                 eventClass = eventClassConverter.convertEventClass(
                     eventor = eventor,
-                    event = Event(eventId = eventId),
+                    event = Event(
+                        eventor = eventor,
+                        eventId = eventId
+                    ),
                     eventClass = classResult.eventClass
                 )
             )
@@ -652,23 +716,45 @@ class CalendarConverter {
             teamName = teamResult.teamName.content,
             bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
             result = Result(
-                time = if (teamResult.time != null) competitorConverter.convertTimeSec(teamResult.time.content) else null,
-                timeBehind = if (teamResult.timeDiff != null) competitorConverter.convertTimeSec(teamResult.timeDiff.content) else null,
+                time = if (teamResult.time != null) convertTimeSec(teamResult.time.content) else null,
+                timeBehind = if (teamResult.timeDiff != null) convertTimeSec(teamResult.timeDiff.content) else null,
                 position = if (teamResult.resultPosition != null && teamResult.resultPosition.content != "0") teamResult.resultPosition.content.toInt() else null,
                 status = ResultStatus.valueOf(teamResult.teamStatus.value),
             ),
             leg = teamResult.teamMemberResult[0].leg.toInt(),
             legResult = Result(
-                time = if (teamResult.teamMemberResult[0].time != null) competitorConverter.convertTimeSec(teamResult.teamMemberResult[0].time.content) else null,
+                time = if (teamResult.teamMemberResult[0].time != null) convertTimeSec(teamResult.teamMemberResult[0].time.content) else null,
                 timeBehind = null,
                 position = null,
                 status = ResultStatus.valueOf(teamResult.teamStatus.value)
             ),
             eventClass = eventClassConverter.convertEventClass(
                 eventor = eventor,
-                event = Event(eventId = eventId),
+                event = Event(
+                    eventor = eventor,
+                    eventId = eventId
+                ),
                 eventClass = classResult.eventClass
             )
         )
+    }
+
+    private fun convertTimeSec(time: String?): Int {
+        var date: Date
+        var reference: Date
+        try {
+            val dateFormat: DateFormat = SimpleDateFormat("HH:mm:ss")
+            reference = dateFormat.parse("00:00:00")
+            date = dateFormat.parse(time)
+            val seconds = (date.time - reference.time) / 1000L
+            return seconds.toInt()
+        } catch (_: ParseException) {
+            val dateFormat: DateFormat = SimpleDateFormat("mm:ss")
+            reference = dateFormat.parse("00:00:00")
+            date = dateFormat.parse(time)
+            val seconds = (date.time - reference.time) / 1000L
+            return seconds.toInt()
+        }
+
     }
 }

@@ -8,9 +8,7 @@ data class UserPersonId(
     private val userId: String,
     private val personId: String,
     private val eventorId: String
-) : Serializable {
-    constructor() : this("", "", "")
-}
+) : Serializable
 
 @Entity
 @IdClass(UserPersonId::class)

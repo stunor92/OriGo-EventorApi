@@ -2,8 +2,8 @@ package no.stunor.origo.eventorapi.model.organisation
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import no.stunor.origo.eventorapi.model.Region
 import java.io.Serializable
-import java.time.Instant
 
 data class OrganisationId(
         private val organisationId: String,
@@ -16,15 +16,16 @@ data class OrganisationId(
 @IdClass(OrganisationId::class)
 data class Organisation (
         @Id var organisationId: String = "",
-        @Id var eventorId: String = "",
+        @JsonIgnore @Id var eventorId: String = "",
         var name: String = "",
         @Enumerated(EnumType.STRING) var type: OrganisationType = OrganisationType.Club,
         var country: String = "",
-        var email: String? = null,
-        @JsonIgnore var eventorApiKey: String? = null,
-        var regionId: String? = null,
-        var contactPerson: String? = null,
-        @JsonIgnore var lastUpdated: Instant = Instant.now()
+        @ManyToOne
+        @JoinColumns(
+                JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false),
+                JoinColumn(name = "regionId", referencedColumnName = "regionId", insertable = false, updatable = false)
+        )
+        var region: Region? = null,
 )
 
 enum class OrganisationType {

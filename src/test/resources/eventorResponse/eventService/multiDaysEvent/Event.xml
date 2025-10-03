@@ -77,7 +77,7 @@
         </RaceDate>
         <EventCenterPosition x="5.27114872577514" y="60.2871357154867" unit="WGS-84" />
     </EventRace>
-    <WebURL>http://gneist.no</WebURL>
+    <WebURL>https://gneist.no</WebURL>
     <ContactData>
         <Tele phoneNumber="45296098" mailAddress="orinetering@gneist.no">
             <TeleType value="official" />
