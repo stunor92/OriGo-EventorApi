@@ -1,5 +1,16 @@
 # Changelog
 
+## [7.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.3.1...v7.0.0) (2025-10-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Use more inlined objects instead of references
+
+### Features
+
+* Use more inlined objects instead of references ([611f581](https://github.com/stunor92/OriGo-EventorApi/commit/611f5810a59a6f5cf74b20b2a703cc498744e9d3))
+
 ## [6.3.1](https://github.com/stunor92/OriGo-EventorApi/compare/v6.3.0...v6.3.1) (2025-09-07)
 
 
