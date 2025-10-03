@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v7.0.0...v7.0.1) (2025-10-03)
+
+
+### Bug Fixes
+
+* Try to fix competitor count in calendarserivce ([4daaf99](https://github.com/stunor92/OriGo-EventorApi/commit/4daaf999ab3b1b723f5dbb394ea7dade230df818))
+
 ## [7.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v6.3.1...v7.0.0) (2025-10-03)
 
 
