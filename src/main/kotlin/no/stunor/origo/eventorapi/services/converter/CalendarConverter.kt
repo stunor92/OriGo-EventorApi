@@ -128,7 +128,7 @@ class CalendarConverter {
             for (organisationCompetitorCount in orgCounts) {
                 val organisation = organisationConverter.convertOrganisation(organisationCompetitorCount.organisationId, eventor)
                 if (organisation == null) continue
-                updateOrganisationEntriesList(result, organisation, organisationCompetitorCount.numberOfEntries.toInt())
+                result.add(OrganisationEntries(organisation, organisationCompetitorCount.numberOfEntries.toInt()))
             }
         }
         return result
@@ -142,19 +142,6 @@ class CalendarConverter {
         return competitorCount.eventId == eventId &&
                 (competitorCount.eventRaceId == null || competitorCount.eventRaceId == eventRaceId) &&
                 competitorCount.organisationCompetitorCount != null
-    }
-
-    private fun updateOrganisationEntriesList(
-        result: MutableList<OrganisationEntries>,
-        organisation: Organisation,
-        entriesToAdd: Int
-    ) {
-        val existing = result.firstOrNull { it.organisation == organisation }
-        if (existing == null) {
-            result.add(OrganisationEntries(organisation, entriesToAdd))
-        } else {
-            existing.entries += entriesToAdd
-        }
     }
 
     private fun isSignedUp(eventId: String, competitorCountList: org.iof.eventor.CompetitorCountList?): Boolean {
