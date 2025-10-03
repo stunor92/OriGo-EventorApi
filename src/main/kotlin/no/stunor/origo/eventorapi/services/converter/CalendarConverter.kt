@@ -1,4 +1,6 @@
 package no.stunor.origo.eventorapi.services.converter
+import no.stunor.origo.eventorapi.data.OrganisationRepository
+import no.stunor.origo.eventorapi.data.RegionRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.calendar.*
 import no.stunor.origo.eventorapi.model.event.Event
@@ -6,7 +8,6 @@ import no.stunor.origo.eventorapi.model.event.entry.Result
 import no.stunor.origo.eventorapi.model.event.entry.ResultStatus
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.person.Person
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.text.DateFormat
 import java.text.ParseException
@@ -15,24 +16,20 @@ import java.util.Date
 
 
 @Component
-class CalendarConverter {
-    @Autowired
-    private lateinit var timeStampConverter: TimeStampConverter
+class CalendarConverter(
+    var organisationRepository: OrganisationRepository,
+    var regionRepository: RegionRepository
+) {
+    var timeStampConverter = TimeStampConverter()
+    var feeConverter = FeeConverter()
+    var eventConverter = EventConverter()
 
-    @Autowired
-    private lateinit var feeConverter: FeeConverter
-
-    @Autowired
-    private lateinit var eventConverter: EventConverter
-
-    @Autowired
-    private lateinit var organisationConverter: OrganisationConverter
-
-    @Autowired
-    private lateinit var eventClassConverter: EventClassConverter
-
-    @Autowired
-    private lateinit var entryListConverter: EntryListConverter
+    var organisationConverter = OrganisationConverter(
+        organisationRepository = organisationRepository,
+        regionRepository = regionRepository
+    )
+    var eventClassConverter = EventClassConverter()
+    var entryListConverter = EntryListConverter()
 
     fun convertEvents(
         eventList: org.iof.eventor.EventList?,
@@ -183,7 +180,7 @@ class CalendarConverter {
                     )
                 }
 
-                organisation?.let { updateOrganisationEntries(raceMap, raceId, it) }
+                organisation?.let { raceMap.getValue(raceId).organisationEntries = updateOrganisationEntries(raceMap.getValue(raceId).organisationEntries, it) }
                 if (entry.competitor.personId.content == person.personId) {
                     updateUserEntries(
                         raceMap,
@@ -204,13 +201,15 @@ class CalendarConverter {
     }
 
     private fun updateOrganisationEntries(
-        raceMap: Map<String?, CalendarRace>,
-        raceId: String?,
+        organisationEntries: MutableList<OrganisationEntries>,
         organisation: Organisation
-    ) {
-        val orgEntries = raceMap.getValue(raceId).organisationEntries.toList()
-        orgEntries.first { it.organisation == organisation }.entries =
-            orgEntries.first { it.organisation == organisation }.entries++
+    ): MutableList<OrganisationEntries> {
+        if(organisationEntries.none { it.organisation == organisation }) {
+            organisationEntries.add(OrganisationEntries(organisation, 0))
+        }
+        val count = organisationEntries.first { it.organisation == organisation }.entries + 1
+        organisationEntries.first { it.organisation == organisation }.entries = count
+        return organisationEntries
     }
 
     private fun updateUserEntries(

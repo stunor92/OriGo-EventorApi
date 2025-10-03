@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResultListList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <ResultList>
+        <Event>
+            <EventId>17544</EventId>
+            <Name>DM Vest Vestlandsmesterskap Lang</Name>
+            <EventClassificationId>2</EventClassificationId>
+            <EventStatusId>11</EventStatusId>
+            <StartDate>
+                <Date>2023-08-26</Date>
+                <Clock>15:00:00</Clock>
+            </StartDate>
+            <FinishDate>
+                <Date>2023-08-26</Date>
+                <Clock>15:00:00</Clock>
+            </FinishDate>
+            <Organiser>
+                <Organisation>
+                    <OrganisationId>13</OrganisationId>
+                    <Name>Rogaland</Name>
+                    <ShortName>Rogaland</ShortName>
+                    <MediaName>Rogaland</MediaName>
+                    <OrganisationTypeId>2</OrganisationTypeId>
+                    <CountryId value="578"/>
+                    <ModifyDate>
+                        <Date>2011-02-02</Date>
+                        <Clock>10:10:30</Clock>
+                    </ModifyDate>
+                </Organisation>
+                <Organisation>
+                    <OrganisationId>14</OrganisationId>
+                    <Name>Sogn og Fjordane</Name>
+                    <ShortName>Sogn og Fjordane</ShortName>
+                    <MediaName>Sogn og Fjordane</MediaName>
+                    <OrganisationTypeId>2</OrganisationTypeId>
+                    <CountryId value="578"/>
+                    <ModifyDate>
+                        <Date>2014-11-23</Date>
+                        <Clock>11:45:12</Clock>
+                    </ModifyDate>
+                </Organisation>
+                <Organisation>
+                    <OrganisationId>87</OrganisationId>
+                    <Name>Førde IL</Name>
+                    <ShortName>Førde IL</ShortName>
+                    <MediaName>Førde IL</MediaName>
+                    <OrganisationTypeId>3</OrganisationTypeId>
+                    <CountryId value="578"/>
+                    <OrganisationStatusId>1</OrganisationStatusId>
+                    <ModifyDate>
+                        <Date>2017-03-07</Date>
+                        <Clock>09:33:16</Clock>
+                    </ModifyDate>
+                </Organisation>
+                <Organisation>
+                    <OrganisationId>8</OrganisationId>
+                    <Name>Hordaland</Name>
+                    <ShortName>Hordaland</ShortName>
+                    <MediaName>Hordaland</MediaName>
+                    <OrganisationTypeId>2</OrganisationTypeId>
+                    <CountryId value="578"/>
+                    <ModifyDate>
+                        <Date>2014-08-14</Date>
+                        <Clock>12:13:29</Clock>
+                    </ModifyDate>
+                </Organisation>
+            </Organiser>
+            <EventRace raceDistance="Long">
+                <EventRaceId>18209</EventRaceId>
+                <EventId>17544</EventId>
+                <Name></Name>
+                <RaceDate>
+                    <Date>2023-08-26</Date>
+                    <Clock>15:00:00</Clock>
+                </RaceDate>
+                <EventCenterPosition x="6.15780284516219" y="61.4707068352807" unit="WGS-84"/>
+                <WRSInfo>
+                    <EventRaceId>18209</EventRaceId>
+                    <EventDate>2023-08-26</EventDate>
+                    <Distance>Long</Distance>
+                </WRSInfo>
+            </EventRace>
+            <WebURL>http://orientering.fordeidrettslag.no/</WebURL>
+            <PunchingUnitType value="Emit"/>
+            <ModifyDate>
+                <Date>2023-09-10</Date>
+                <Clock>07:08:59</Clock>
+            </ModifyDate>
+            <ModifiedBy>
+                <PersonId>609</PersonId>
+            </ModifiedBy>
+        </Event>
+        <ClassResult numberOfEntries="6" numberOfStarts="5">
+            <EventClass lowAge="14" sequence="9" sex="B" numberOfEntries="6">
+                <EventClassId>176127</EventClassId>
+                <Name>AL-åpen</Name>
+                <ClassShortName>AL-åpen</ClassShortName>
+                <EventClassStatus value="normal"/>
+                <ClassTypeId>3</ClassTypeId>
+                <BaseClassId>181</BaseClassId>
+                <ExternalId>0</ExternalId>
+                <ClassRaceInfo noOfEntries="6" noOfStarts="5">
+                    <EventRaceId>18209</EventRaceId>
+                    <Name></Name>
+                </ClassRaceInfo>
+            </EventClass>
+            <PersonResult>
+                <Person sex="M">
+                    <PersonName>
+                        <Family>Nordmann</Family>
+                        <Given sequence="1">Ola</Given>
+                    </PersonName>
+                    <PersonId>354</PersonId>
+                    <BirthDate>
+                        <Date>1992-01-01</Date>
+                    </BirthDate>
+                    <Nationality>
+                        <Country>
+                            <CountryId value="578"/>
+                            <Alpha3 value="NOR"/>
+                            <Name languageId="en">Norway</Name>
+                            <Name languageId="sv">Norge</Name>
+                        </Country>
+                    </Nationality>
+                </Person>
+                <Organisation>
+                    <OrganisationId>141</OrganisationId>
+                    <Name>Gneist, IL</Name>
+                    <ShortName>Gneist, IL</ShortName>
+                    <OrganisationTypeId>5</OrganisationTypeId>
+                    <CountryId value="578"/>
+                </Organisation>
+                <Result>
+                    <ResultId>4122935</ResultId>
+                    <BibNumber>49</BibNumber>
+                    <StartTime>
+                        <Date>2023-08-26</Date>
+                        <Clock>15:04:24</Clock>
+                    </StartTime>
+                    <FinishTime>
+                        <Date>2023-08-26</Date>
+                        <Clock>16:11:09</Clock>
+                    </FinishTime>
+                    <Time>1:06:45</Time>
+                    <TimeDiff>20:24</TimeDiff>
+                    <ResultPosition>4</ResultPosition>
+                    <CompetitorStatus value="OK"/>
+                    <ModifyDate>
+                        <Date>2023-08-26</Date>
+                        <Clock>18:00:05</Clock>
+                    </ModifyDate>
+                </Result>
+            </PersonResult>
+        </ClassResult>
+    </ResultList>
+    <ResultList>
+        <Event>
+            <EventId>17545</EventId>
+            <Name>DM Vest Vestlandsmesterskap Mellom</Name>
+            <EventClassificationId>2</EventClassificationId>
+            <EventStatusId>11</EventStatusId>
+            <StartDate>
+                <Date>2023-08-27</Date>
+                <Clock>00:00:00</Clock>
+            </StartDate>
+            <FinishDate>
+                <Date>2023-08-27</Date>
+                <Clock>00:00:00</Clock>
+            </FinishDate>
+            <Organiser>
+                <Organisation>
+                    <OrganisationId>87</OrganisationId>
+                    <Name>Førde IL</Name>
+                    <ShortName>Førde IL</ShortName>
+                    <MediaName>Førde IL</MediaName>
+                    <OrganisationTypeId>3</OrganisationTypeId>
+                    <CountryId value="578"/>
+                    <OrganisationStatusId>1</OrganisationStatusId>
+                    <ModifyDate>
+                        <Date>2017-03-07</Date>
+                        <Clock>09:33:16</Clock>
+                    </ModifyDate>
+                </Organisation>
+                <Organisation>
+                    <OrganisationId>14</OrganisationId>
+                    <Name>Sogn og Fjordane</Name>
+                    <ShortName>Sogn og Fjordane</ShortName>
+                    <MediaName>Sogn og Fjordane</MediaName>
+                    <OrganisationTypeId>2</OrganisationTypeId>
+                    <CountryId value="578"/>
+                    <ModifyDate>
+                        <Date>2014-11-23</Date>
+                        <Clock>11:45:12</Clock>
+                    </ModifyDate>
+                </Organisation>
+                <Organisation>
+                    <OrganisationId>13</OrganisationId>
+                    <Name>Rogaland</Name>
+                    <ShortName>Rogaland</ShortName>
+                    <MediaName>Rogaland</MediaName>
+                    <OrganisationTypeId>2</OrganisationTypeId>
+                    <CountryId value="578"/>
+                    <ModifyDate>
+                        <Date>2011-02-02</Date>
+                        <Clock>10:10:30</Clock>
+                    </ModifyDate>
+                </Organisation>
+                <Organisation>
+                    <OrganisationId>8</OrganisationId>
+                    <Name>Hordaland</Name>
+                    <ShortName>Hordaland</ShortName>
+                    <MediaName>Hordaland</MediaName>
+                    <OrganisationTypeId>2</OrganisationTypeId>
+                    <CountryId value="578"/>
+                    <ModifyDate>
+                        <Date>2014-08-14</Date>
+                        <Clock>12:13:29</Clock>
+                    </ModifyDate>
+                </Organisation>
+            </Organiser>
+            <EventRace>
+                <EventRaceId>18210</EventRaceId>
+                <EventId>17545</EventId>
+                <Name></Name>
+                <RaceDate>
+                    <Date>2023-08-27</Date>
+                    <Clock>00:00:00</Clock>
+                </RaceDate>
+                <EventCenterPosition x="6.15828365454429" y="61.470655661388" unit="WGS-84"/>
+                <WRSInfo>
+                    <EventRaceId>18210</EventRaceId>
+                    <EventDate>2023-08-27</EventDate>
+                    <Distance>Middle</Distance>
+                </WRSInfo>
+            </EventRace>
+            <WebURL>http://orientering.fordeidrettslag.no/</WebURL>
+            <PunchingUnitType value="Emit"/>
+            <ModifyDate>
+                <Date>2023-10-06</Date>
+                <Clock>08:19:02</Clock>
+            </ModifyDate>
+            <ModifiedBy>
+                <PersonId>609</PersonId>
+            </ModifiedBy>
+        </Event>
+        <ClassResult numberOfEntries="7" numberOfStarts="7">
+            <EventClass lowAge="14" sequence="9" sex="B" numberOfEntries="7">
+                <EventClassId>176391</EventClassId>
+                <Name>AL-åpen</Name>
+                <ClassShortName>AL-åpen</ClassShortName>
+                <EventClassStatus value="normal"/>
+                <ClassTypeId>3</ClassTypeId>
+                <BaseClassId>181</BaseClassId>
+                <ExternalId>0</ExternalId>
+                <ClassRaceInfo noOfEntries="7" noOfStarts="7">
+                    <EventRaceId>18210</EventRaceId>
+                    <Name></Name>
+                </ClassRaceInfo>
+            </EventClass>
+            <PersonResult>
+                <Person sex="M">
+                    <PersonName>
+                        <Family>Nordmann</Family>
+                        <Given sequence="1">Ola</Given>
+                    </PersonName>
+                    <PersonId>354</PersonId>
+                    <BirthDate>
+                        <Date>1992-01-01</Date>
+                    </BirthDate>
+                    <Nationality>
+                        <Country>
+                            <CountryId value="578"/>
+                            <Alpha3 value="NOR"/>
+                            <Name languageId="en">Norway</Name>
+                            <Name languageId="sv">Norge</Name>
+                        </Country>
+                    </Nationality>
+                </Person>
+                <Organisation>
+                    <OrganisationId>141</OrganisationId>
+                    <Name>Gneist, IL</Name>
+                    <ShortName>Gneist, IL</ShortName>
+                    <OrganisationTypeId>5</OrganisationTypeId>
+                    <CountryId value="578"/>
+                </Organisation>
+                <Result>
+                    <ResultId>4138253</ResultId>
+                    <BibNumber>33</BibNumber>
+                    <StartTime>
+                        <Date>2023-08-27</Date>
+                        <Clock>11:17:56</Clock>
+                    </StartTime>
+                    <FinishTime>
+                        <Date>2023-08-27</Date>
+                        <Clock>12:04:29</Clock>
+                    </FinishTime>
+                    <Time>46:33</Time>
+                    <TimeDiff>1:58</TimeDiff>
+                    <ResultPosition>2</ResultPosition>
+                    <CompetitorStatus value="OK"/>
+                    <ModifyDate>
+                        <Date>2023-08-30</Date>
+                        <Clock>10:09:36</Clock>
+                    </ModifyDate>
+                </Result>
+            </PersonResult>
+        </ClassResult>
+    </ResultList>
+</ResultListList>

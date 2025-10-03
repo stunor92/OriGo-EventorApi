@@ -3,7 +3,9 @@ package no.stunor.origo.eventorapi.services
 import no.stunor.origo.eventorapi.api.EventorService
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.data.EventorRepository
+import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.data.PersonRepository
+import no.stunor.origo.eventorapi.data.RegionRepository
 import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
@@ -16,21 +18,20 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
-class CalendarService {
+class CalendarService(
+    var personRepository: PersonRepository,
+    var eventorRepository: EventorRepository,
+    var organisationRepository: OrganisationRepository,
+    var regionRepository: RegionRepository,
+    var eventorService: EventorService
+) {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    @Autowired
-    private lateinit var eventorRepository: EventorRepository
-
-    @Autowired
-    private lateinit var personRepository: PersonRepository
-
-    @Autowired
-    private lateinit var eventorService: EventorService
-
-    @Autowired
-    private lateinit var calendarConverter: CalendarConverter
+    private var calendarConverter = CalendarConverter(
+        organisationRepository = organisationRepository,
+        regionRepository = regionRepository
+    )
 
     @Value("\${config.personalEntries.start}")
     private val personalEntriesStart = 0L

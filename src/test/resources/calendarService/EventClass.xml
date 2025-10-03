@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventClassList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <EventClass lowAge="14" highAge="14" sex="M" numberOfEntries="68">
+        <EventClassId>167512</EventClassId>
+        <Name>Herrer 14</Name>
+        <ClassShortName>H14</ClassShortName>
+        <EventClassStatus value="normal"/>
+        <ClassType>
+            <ClassTypeId>1</ClassTypeId>
+            <ShortName>E</ShortName>
+            <Name>Eliteklasser</Name>
+        </ClassType>
+        <ExternalId>1</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>57078</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>57077</EntryFeeId>
+            <Sequence>10</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit"/>
+        <PunchingUnitType value="emiTag"/>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="68" noOfStarts="66">
+            <ClassRaceInfoId>181913</ClassRaceInfoId>
+            <EventRaceId>15321</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated"/>
+            <PunchingUnitType value="Emit"/>
+            <PunchingUnitType value="emiTag"/>
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="15" highAge="15" sex="M" numberOfEntries="53">
+        <EventClassId>167513</EventClassId>
+        <Name>Herrer 15</Name>
+        <ClassShortName>H15</ClassShortName>
+        <EventClassStatus value="normal"/>
+        <ClassType>
+            <ClassTypeId>1</ClassTypeId>
+            <ShortName>E</ShortName>
+            <Name>Eliteklasser</Name>
+        </ClassType>
+        <ExternalId>2</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>57078</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>57077</EntryFeeId>
+            <Sequence>10</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit"/>
+        <PunchingUnitType value="emiTag"/>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="53" noOfStarts="49">
+            <ClassRaceInfoId>181914</ClassRaceInfoId>
+            <EventRaceId>15321</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated"/>
+            <PunchingUnitType value="Emit"/>
+            <PunchingUnitType value="emiTag"/>
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="16" highAge="16" sex="M" numberOfEntries="45">
+        <EventClassId>167514</EventClassId>
+        <Name>Herrer 16</Name>
+        <ClassShortName>H16</ClassShortName>
+        <EventClassStatus value="normal"/>
+        <ClassType>
+            <ClassTypeId>1</ClassTypeId>
+            <ShortName>E</ShortName>
+            <Name>Eliteklasser</Name>
+        </ClassType>
+        <ExternalId>3</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>57077</EntryFeeId>
+            <Sequence>10</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>57078</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit"/>
+        <PunchingUnitType value="emiTag"/>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="45" noOfStarts="43">
+            <ClassRaceInfoId>181915</ClassRaceInfoId>
+            <EventRaceId>15321</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated"/>
+            <PunchingUnitType value="Emit"/>
+            <PunchingUnitType value="emiTag"/>
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="14" highAge="14" sex="F" numberOfEntries="57">
+        <EventClassId>167515</EventClassId>
+        <Name>Damer 14</Name>
+        <ClassShortName>D14</ClassShortName>
+        <EventClassStatus value="normal"/>
+        <ClassType>
+            <ClassTypeId>1</ClassTypeId>
+            <ShortName>E</ShortName>
+            <Name>Eliteklasser</Name>
+        </ClassType>
+        <ExternalId>4</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>57077</EntryFeeId>
+            <Sequence>10</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>57078</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit"/>
+        <PunchingUnitType value="emiTag"/>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="57" noOfStarts="57">
+            <ClassRaceInfoId>181916</ClassRaceInfoId>
+            <EventRaceId>15321</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated"/>
+            <PunchingUnitType value="Emit"/>
+            <PunchingUnitType value="emiTag"/>
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="15" highAge="15" sex="F" numberOfEntries="46">
+        <EventClassId>167516</EventClassId>
+        <Name>Damer 15</Name>
+        <ClassShortName>D15</ClassShortName>
+        <EventClassStatus value="normal"/>
+        <ClassType>
+            <ClassTypeId>1</ClassTypeId>
+            <ShortName>E</ShortName>
+            <Name>Eliteklasser</Name>
+        </ClassType>
+        <ExternalId>5</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>57077</EntryFeeId>
+            <Sequence>10</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>57078</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit"/>
+        <PunchingUnitType value="emiTag"/>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="46" noOfStarts="42">
+            <ClassRaceInfoId>181917</ClassRaceInfoId>
+            <EventRaceId>15321</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated"/>
+            <PunchingUnitType value="Emit"/>
+            <PunchingUnitType value="emiTag"/>
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="16" highAge="16" sex="F" numberOfEntries="44">
+        <EventClassId>167517</EventClassId>
+        <Name>Damer 16</Name>
+        <ClassShortName>D16</ClassShortName>
+        <EventClassStatus value="normal"/>
+        <ClassType>
+            <ClassTypeId>1</ClassTypeId>
+            <ShortName>E</ShortName>
+            <Name>Eliteklasser</Name>
+        </ClassType>
+        <ExternalId>6</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>57077</EntryFeeId>
+            <Sequence>10</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>57078</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit"/>
+        <PunchingUnitType value="emiTag"/>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="44" noOfStarts="44">
+            <ClassRaceInfoId>181918</ClassRaceInfoId>
+            <EventRaceId>15321</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated"/>
+            <PunchingUnitType value="Emit"/>
+            <PunchingUnitType value="emiTag"/>
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="14" highAge="16" sex="M" numberOfEntries="3">
+        <EventClassId>167518</EventClassId>
+        <Name>Herrer 14-16C</Name>
+        <ClassShortName>H14-16C</ClassShortName>
+        <EventClassStatus value="normal"/>
+        <ClassType>
+            <ClassTypeId>1</ClassTypeId>
+            <ShortName>E</ShortName>
+            <Name>Eliteklasser</Name>
+        </ClassType>
+        <ExternalId>7</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>57077</EntryFeeId>
+            <Sequence>10</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>57078</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit"/>
+        <PunchingUnitType value="emiTag"/>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="3" noOfStarts="3">
+            <ClassRaceInfoId>181919</ClassRaceInfoId>
+            <EventRaceId>15321</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated"/>
+            <PunchingUnitType value="Emit"/>
+            <PunchingUnitType value="emiTag"/>
+        </ClassRaceInfo>
+    </EventClass>
+    <EventClass lowAge="14" highAge="16" sex="F" numberOfEntries="8">
+        <EventClassId>167519</EventClassId>
+        <Name>Damer 14-16C</Name>
+        <ClassShortName>D14-16C</ClassShortName>
+        <EventClassStatus value="normal"/>
+        <ClassType>
+            <ClassTypeId>1</ClassTypeId>
+            <ShortName>E</ShortName>
+            <Name>Eliteklasser</Name>
+        </ClassType>
+        <ExternalId>8</ExternalId>
+        <ClassEntryFee>
+            <EntryFeeId>57077</EntryFeeId>
+            <Sequence>10</Sequence>
+        </ClassEntryFee>
+        <ClassEntryFee>
+            <EntryFeeId>57078</EntryFeeId>
+            <Sequence>60</Sequence>
+        </ClassEntryFee>
+        <PunchingUnitType value="Emit"/>
+        <PunchingUnitType value="emiTag"/>
+        <ClassRaceInfo minRunners="1" maxRunners="1" noOfEntries="8" noOfStarts="6">
+            <ClassRaceInfoId>181920</ClassRaceInfoId>
+            <EventRaceId>15321</EventRaceId>
+            <Name></Name>
+            <ClassRaceStatus value="notAllocated"/>
+            <PunchingUnitType value="Emit"/>
+            <PunchingUnitType value="emiTag"/>
+        </ClassRaceInfo>
+    </EventClass>
+</EventClassList>

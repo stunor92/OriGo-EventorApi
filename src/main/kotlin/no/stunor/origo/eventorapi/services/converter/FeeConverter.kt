@@ -5,15 +5,13 @@ import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.Fee
 import org.iof.eventor.EntryFeeList
 import org.iof.eventor.EventClassList
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.sql.Timestamp
 
 @Component
 class FeeConverter {
 
-    @Autowired
-    private lateinit var timeStampConverter: TimeStampConverter
+    var timeStampConverter =  TimeStampConverter()
     fun convertEntryFeesIds(entryFees: List<org.iof.eventor.EntryEntryFee>?, raceId: String?): List<String> {
         val result  = mutableListOf<String>()
         for (entryFee in entryFees?: emptyList()) {

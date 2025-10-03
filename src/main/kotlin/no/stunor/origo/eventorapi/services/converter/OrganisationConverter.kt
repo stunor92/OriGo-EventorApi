@@ -9,13 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class OrganisationConverter {
-
-    @Autowired
-    private lateinit var organisationRepository: OrganisationRepository
-
-    @Autowired
-    private lateinit var regionRepository: RegionRepository
+class OrganisationConverter(
+    var organisationRepository: OrganisationRepository,
+    var regionRepository: RegionRepository
+) {
 
     fun convertOrganisations(organisations: List<Any>, eventor: Eventor): List<Organisation> {
         val result = mutableListOf<Organisation>()
