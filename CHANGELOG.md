@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v7.0.1...v7.0.2) (2025-10-03)
+
+
+### Bug Fixes
+
+* Fixed OrganisationEntries with test ([157ed5e](https://github.com/stunor92/OriGo-EventorApi/commit/157ed5e9d094fe0079dee9e88460f452b6c4147c))
+
 ## [7.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v7.0.0...v7.0.1) (2025-10-03)
 
 
