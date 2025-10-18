@@ -22,9 +22,6 @@ import java.util.*
 class ResultListConverter {
 
     @Autowired
-    private lateinit var timeStampConverter: TimeStampConverter
-
-    @Autowired
     private lateinit var organisationConverter: OrganisationConverter
 
     @Throws(NumberFormatException::class, ParseException::class)
@@ -82,11 +79,11 @@ class ResultListConverter {
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
             gender = PersonConverter.convertGender(personResult.person.sex),
             bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
-            startTime = if (personResult.result.startTime != null) timeStampConverter.parseDate(
+            startTime = if (personResult.result.startTime != null) TimeStampConverter.parseDate(
                 "${personResult.result.startTime.date.content} ${personResult.result.startTime.clock.content}",
                 eventor
             ) else null,
-            finishTime = if (personResult.result.finishTime != null) timeStampConverter.parseDate(
+            finishTime = if (personResult.result.finishTime != null) TimeStampConverter.parseDate(
                 "${personResult.result.finishTime.date.content} ${personResult.result.finishTime.clock.content}",
                 eventor
             ) else null,
@@ -119,11 +116,11 @@ class ResultListConverter {
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
             gender = PersonConverter.convertGender(personResult.person.sex),
             bib = if (personResult.result?.bibNumber != null) personResult.result.bibNumber.content else null,
-            startTime = if (personResult.result?.startTime != null) timeStampConverter.parseDate(
+            startTime = if (personResult.result?.startTime != null) TimeStampConverter.parseDate(
                 "${raceResult.result.startTime.date.content} ${raceResult.result.startTime.clock.content}",
                 eventor
             ) else null,
-            finishTime = if (raceResult.result?.finishTime != null) timeStampConverter.parseDate(
+            finishTime = if (raceResult.result?.finishTime != null) TimeStampConverter.parseDate(
                 "${raceResult.result.finishTime.date.content} ${raceResult.result.finishTime.clock.content}",
                 eventor
             ) else null,
@@ -162,11 +159,11 @@ class ResultListConverter {
             ),
             teamMembers = convertTeamMembers(eventor, teamResult.teamMemberResult),
             bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
-            startTime = if (teamResult.startTime != null) timeStampConverter.parseDate(
+            startTime = if (teamResult.startTime != null) TimeStampConverter.parseDate(
                 "${teamResult.startTime.date.content} ${teamResult.startTime.clock.content}",
                 eventor
             ) else null,
-            finishTime = if (teamResult.finishTime != null) timeStampConverter.parseDate(
+            finishTime = if (teamResult.finishTime != null) TimeStampConverter.parseDate(
                 "${teamResult.finishTime.date.content} ${teamResult.finishTime.clock.content}",
                 eventor
             ) else null,
@@ -222,11 +219,11 @@ class ResultListConverter {
             nationality = if (teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality.country.alpha3.value else null,
             gender = if (teamMember.person != null) PersonConverter.convertGender(teamMember.person.sex) else null,
             leg = teamMember.leg.toInt(),
-            startTime = if (teamMember.startTime != null) timeStampConverter.parseDate(
+            startTime = if (teamMember.startTime != null) TimeStampConverter.parseDate(
                 "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
                 eventor
             ) else null,
-            finishTime = if (teamMember.finishTime != null) timeStampConverter.parseDate(
+            finishTime = if (teamMember.finishTime != null) TimeStampConverter.parseDate(
                 "${teamMember.finishTime.date.content} ${teamMember.finishTime.clock.content}",
                 eventor
             ) else null,

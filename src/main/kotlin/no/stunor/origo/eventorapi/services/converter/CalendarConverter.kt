@@ -20,8 +20,6 @@ class CalendarConverter(
     var organisationRepository: OrganisationRepository,
     var regionRepository: RegionRepository
 ) {
-    var timeStampConverter = TimeStampConverter()
-    var feeConverter = FeeConverter()
     var eventConverter = EventConverter()
 
     var organisationConverter = OrganisationConverter(
@@ -66,7 +64,7 @@ class CalendarConverter(
             eventName = event.name.content,
             raceId = eventRace.eventRaceId.content,
             raceName = eventRace.name.content,
-            raceDate = timeStampConverter.parseDate("${eventRace.raceDate.date.content} 00:00:00"),
+            raceDate = TimeStampConverter.parseDate("${eventRace.raceDate.date.content} 00:00:00"),
             type = eventConverter.convertEventForm(event.eventForm),
             classification = eventConverter.convertEventClassification(event.eventClassificationId.content),
             lightCondition = eventConverter.convertLightCondition(eventRace.raceLightCondition),
@@ -78,7 +76,7 @@ class CalendarConverter(
                 event.organiser.organisationIdOrOrganisation,
                 eventor
             ) else listOf(),
-            entryBreaks = feeConverter.convertEntryBreaks(event.entryBreak, eventor),
+            entryBreaks = eventConverter.convertEntryBreaks(event.entryBreak, eventor),
             entries = getEntries(event.eventId.content, eventRace.eventRaceId.content, competitorCountList),
             userEntries = mutableListOf(),
             organisationEntries = getOrganisationEntries(
@@ -610,7 +608,7 @@ class CalendarConverter(
         val start: org.iof.eventor.Start = personStart.start ?: personStart.raceStart[0].start
 
         return CalendarPersonStart(
-            startTime = if (start.startTime != null) timeStampConverter.parseDate(
+            startTime = if (start.startTime != null) TimeStampConverter.parseDate(
                 "${start.startTime.date.content} ${start.startTime.clock.content}",
                 eventor
             ) else null,
@@ -634,7 +632,7 @@ class CalendarConverter(
     ): CalendarTeamStart {
         return CalendarTeamStart(
             teamName = teamStart.teamName.content,
-            startTime = if (teamStart.startTime != null) timeStampConverter.parseDate(
+            startTime = if (teamStart.startTime != null) TimeStampConverter.parseDate(
                 "${teamStart.startTime.date.content} ${teamStart.startTime.clock.content}",
                 eventor
             ) else null,

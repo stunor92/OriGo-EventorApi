@@ -13,7 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor
 @Component
 class JwtInterceptor : HandlerInterceptor {
 
-    @Value($$"{config.jwt.secret}")
+    @Value("\${config.jwt.secret}")
     private lateinit var jwtSecret: String
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
@@ -21,12 +21,12 @@ class JwtInterceptor : HandlerInterceptor {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             val token = authorizationHeader.removePrefix("Bearer ")
             val secretKey = Keys.hmacShaKeyFor(jwtSecret.toByteArray())
-            val claims = Jwts.parser()
+            val claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
                 .body
-            val uid = claims["sub"] as String
+            val uid = claims["sub"]?.toString() ?: ""
             request.setAttribute("uid", uid)
         }
         return true

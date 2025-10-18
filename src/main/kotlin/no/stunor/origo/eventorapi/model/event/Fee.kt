@@ -30,7 +30,11 @@ data class Fee (
     @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(
         name = "class_fee",
-        joinColumns = [JoinColumn(name = "event_id", referencedColumnName = "eventId"), JoinColumn(name = "eventor_id", referencedColumnName = "eventorId")],
+        joinColumns = [
+            JoinColumn(name = "event_id", referencedColumnName = "eventId"),
+            JoinColumn(name = "eventor_id", referencedColumnName = "eventorId"),
+            JoinColumn(name = "fee_id", referencedColumnName = "feeId")
+        ],
         inverseJoinColumns = [JoinColumn(name = "class_id", referencedColumnName = "classId")]
     )
     var classes: MutableList<EventClass> = mutableListOf()

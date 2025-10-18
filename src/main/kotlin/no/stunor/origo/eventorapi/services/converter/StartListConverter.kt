@@ -12,9 +12,6 @@ import org.springframework.stereotype.Component
 @Component
 class StartListConverter {
     @Autowired
-    private lateinit var timeStampConverter: TimeStampConverter
-
-    @Autowired
     private lateinit var organisationConverter: OrganisationConverter
 
     fun convertEventStartList(eventor: Eventor, startList: org.iof.eventor.StartList): List<Entry> {
@@ -73,7 +70,7 @@ class StartListConverter {
                 raceStart.start.bibNumber.content
             else null,
             startTime = if (raceStart.start?.startTime != null)
-                timeStampConverter.parseDate(
+                TimeStampConverter.parseDate(
                     "${raceStart.start.startTime.date.content} ${raceStart.start.startTime.clock.content}",
                     eventor)
             else null,
@@ -109,7 +106,7 @@ class StartListConverter {
                 personStart.start.bibNumber.content
             else null,
             startTime = if (personStart.start.startTime != null)
-                timeStampConverter.parseDate(
+                TimeStampConverter.parseDate(
                     "${personStart.start.startTime.date.content} ${personStart.start.startTime.clock.content}",
                     eventor)
             else null,
@@ -133,7 +130,7 @@ class StartListConverter {
             ),
             teamMembers = convertTeamMembers(eventor, teamStart.teamMemberStart),
             bib = if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
-            startTime = if (teamStart.startTime != null) timeStampConverter.parseDate(
+            startTime = if (teamStart.startTime != null) TimeStampConverter.parseDate(
                 "${teamStart.startTime.date.content} ${teamStart.startTime.clock.content}",
                 eventor
             ) else null,
@@ -169,7 +166,7 @@ class StartListConverter {
             else null,
             gender = if (teamMember.person != null) PersonConverter.convertGender(teamMember.person.sex) else null,
             leg = teamMember.leg.toInt(),
-            startTime = if (teamMember.startTime != null) timeStampConverter.parseDate(
+            startTime = if (teamMember.startTime != null) TimeStampConverter.parseDate(
                 "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
                 eventor
             ) else null,

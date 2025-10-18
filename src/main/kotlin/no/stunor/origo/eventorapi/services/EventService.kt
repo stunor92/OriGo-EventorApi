@@ -1,8 +1,6 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.data.ClassRepository
-import no.stunor.origo.eventorapi.data.EventRepository
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.exception.EntryListNotFoundException
 import no.stunor.origo.eventorapi.exception.EventNotFoundException
@@ -23,11 +21,8 @@ open class EventService {
     private lateinit var eventorService: EventorService
     @Autowired
     private lateinit var eventConverter: EventConverter
-
     @Autowired
-    private lateinit var eventRepository: EventRepository
-    @Autowired
-    private lateinit var classRepository: ClassRepository
+    private lateinit var postgresService: PostgresService
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
     @Autowired
@@ -56,19 +51,11 @@ open class EventService {
             organisations = organisers,
             eventor = eventor
         )
-        runAsyncPostgresUpdates(event, eventor)
+        postgresService.runAsyncPostgresUpdates(event, eventClassList?.eventClass ?: listOf())
         return event
     }
 
-    @org.springframework.scheduling.annotation.Async
-    open fun runAsyncPostgresUpdates(event: Event, eventor: no.stunor.origo.eventorapi.model.Eventor) {
-        eventRepository.save(event)
-        val existingClasses = classRepository.findAllByEventIdAndEventorId(event.eventId, eventor.eventorId)
-        val deletedClasses = existingClasses.filter { !event.classes.contains(it) }
-        classRepository.deleteAll(deletedClasses)
-        //val fees = eventorService.getEventEntryFees(eventor, event.eventId)
 
-    }
 
     fun getEntryList(eventorId: String, eventId: String): List<Entry> {
         val eventor = eventorRepository.findByEventorId(
@@ -121,8 +108,6 @@ open class EventService {
                 )
             }
         }
-
-
         return entries
     }
 }

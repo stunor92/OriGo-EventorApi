@@ -5,18 +5,13 @@ import no.stunor.origo.eventorapi.model.event.*
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.sql.Timestamp
 import java.text.ParseException
 
 @Component
 class EventConverter {
     @Autowired
-    private lateinit var feeConverter: FeeConverter
-
-    @Autowired
     private lateinit var entryListConverter: EntryListConverter
-
-    @Autowired
-    private lateinit var timeStampConverter: TimeStampConverter
 
     fun convertEventClassification(eventForm: String?): EventClassificationEnum {
         return when (eventForm) {
@@ -91,10 +86,10 @@ class EventConverter {
             classification = convertEventClassification(eventorEvent.eventClassificationId.content),
             status = convertEventStatus(eventorEvent.eventStatusId.content),
             disciplines = convertEventDisciplines(eventorEvent.disciplineIdOrDiscipline).toTypedArray(),
-            startDate = timeStampConverter.parseDate("${eventorEvent.startDate.date.content} ${eventorEvent.startDate.clock.content}", eventor),
-            finishDate = timeStampConverter.parseDate("${eventorEvent.finishDate.date.content} ${eventorEvent.finishDate.clock.content}", eventor),
+            startDate = TimeStampConverter.parseDate("${eventorEvent.startDate.date.content} ${eventorEvent.startDate.clock.content}", eventor),
+            finishDate = TimeStampConverter.parseDate("${eventorEvent.finishDate.date.content} ${eventorEvent.finishDate.clock.content}", eventor),
             organisers = organisations,
-            entryBreaks = feeConverter.convertEntryBreaks(eventorEvent.entryBreak, eventor).toTypedArray(),
+            entryBreaks = convertEntryBreaks(eventorEvent.entryBreak, eventor).toTypedArray(),
             punchingUnitTypes = entryListConverter.convertPunchingUnitTypes(eventorEvent.punchingUnitType).toTypedArray(),
             webUrls = listOf(),
             message = convertHostMessage(eventorEvent.hashTableEntry),
@@ -140,7 +135,7 @@ class EventConverter {
             name = eventRace.name.content,
             lightCondition = convertLightCondition(eventRace.raceLightCondition),
             distance = convertRaceDistance(eventRace.raceDistance),
-            date = if (eventRace.raceDate != null) timeStampConverter.parseDate("${eventRace.raceDate.date.content} ${eventRace.raceDate.clock.content}", eventor) else null,
+            date = if (eventRace.raceDate != null) TimeStampConverter.parseDate("${eventRace.raceDate.date.content} ${eventRace.raceDate.clock.content}", eventor) else null,
             position = if (eventRace.eventCenterPosition != null) convertPosition(eventRace.eventCenterPosition) else null,
             startList = hasStartList(hashTableEntries, eventRace.eventRaceId.content),
             resultList = hasResultList(hashTableEntries, eventRace.eventRaceId.content),
@@ -235,6 +230,24 @@ class EventConverter {
                     event = event
                 )
             )
+        }
+        return result
+    }
+
+    fun convertEntryBreaks(
+        entryBreaks: List<org.iof.eventor.EntryBreak>,
+        eventor: Eventor
+    ): List<Timestamp> {
+        val result: MutableList<Timestamp> = ArrayList()
+        for (entryBreak in entryBreaks) {
+            if (entryBreak.validToDate != null) {
+                result.add(
+                    TimeStampConverter.parseDate(
+                        "${entryBreak.validToDate.date.content} ${entryBreak.validToDate.clock.content}",
+                        eventor
+                    )
+                )
+            }
         }
         return result
     }
