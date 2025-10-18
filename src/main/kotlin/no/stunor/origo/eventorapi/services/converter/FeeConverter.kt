@@ -2,6 +2,7 @@ package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.Event
+import no.stunor.origo.eventorapi.model.event.EventClass
 import no.stunor.origo.eventorapi.model.event.Fee
 import org.iof.eventor.EntryFeeList
 import org.iof.eventor.EventClassList
@@ -21,7 +22,7 @@ class FeeConverter {
         return result
     }
 
-    fun convertEntryFees(entryFees: EntryFeeList?, eventor: Eventor, event: Event, eventClasses: EventClassList?): List<Fee> {
+    fun convertEntryFees(entryFees: EntryFeeList?, eventor: Eventor, event: Event, eventClasses: EventClassList?): MutableList<Fee> {
         val result  = mutableListOf<Fee>()
 
         if (entryFees == null) return result
@@ -47,18 +48,17 @@ class FeeConverter {
             fromBirthYear = if(entryFee.fromDateOfBirth != null) entryFee.fromDateOfBirth.date.content.substring(0,4).toInt() else null,
             toBirthYear = if(entryFee.toDateOfBirth != null) entryFee.toDateOfBirth.date.content.substring(0,4).toInt() else null,
             taxIncluded = entryFee.taxIncluded == "Y",
-            classIds = findEventClasses(eventClasses, entryFee.entryFeeId.content),
-            event = event
+            //classes = findEventClasses(eventClasses, entryFee.entryFeeId.content, event, eventor),
         )
     }
 
-    private fun findEventClasses(eventClasses: EventClassList?, entryFeeId: String): List<String> {
-        val result  = mutableListOf<String>()
+    private fun findEventClasses(eventClasses: EventClassList?, entryFeeId: String, event: Event, eventor: Eventor): List<EventClass> {
+        val result  = mutableListOf<EventClass>()
         if (eventClasses == null) return result
         for(eventClass in eventClasses.eventClass) {
             for (entryFee in eventClass.classEntryFee) {
                 if (entryFee.entryFeeId.content == entryFeeId) {
-                    result.add(eventClass.eventClassId.content)
+                    result.add(EventClassConverter.convertEventClass(eventClass,eventor, event))
                 }
             }
         }

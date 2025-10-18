@@ -16,13 +16,7 @@ import org.springframework.stereotype.Component
 @Component
 class EntryListConverter {
     @Autowired
-    private lateinit var personConverter: PersonConverter
-
-    @Autowired
     private lateinit var organisationConverter: OrganisationConverter
-
-    @Autowired
-    private lateinit var feeConverter: FeeConverter
 
     fun convertEventEntryList(entryList: EntryList, eventor: Eventor): List<Entry> {
         val result  = mutableListOf<Entry>()
@@ -43,12 +37,10 @@ class EntryListConverter {
         for (raceId in entry.eventRaceId) {
             result.add(
                 PersonEntry(
-                    eventorId = eventor.eventorId,
-                    eventId = entry.eventId.content,
                     raceId = raceId.content,
                     classId = entry.entryClass[0].eventClassId.content,
                     personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
-                    name = personConverter.convertPersonName(entry.competitor.person.personName),
+                    name = PersonConverter.convertPersonName(entry.competitor.person.personName),
                     organisation =
                         if(entry.competitor.organisation != null)
                             organisationConverter.convertOrganisation(entry.competitor.organisation, eventor)
@@ -59,17 +51,13 @@ class EntryListConverter {
                         4
                     ).toInt() else null,
                     nationality = if (entry.competitor.person.nationality?.country != null) entry.competitor.person.nationality.country.alpha3.value else null,
-                    gender = personConverter.convertGender(entry.competitor.person.sex),
+                    gender = PersonConverter.convertGender(entry.competitor.person.sex),
                     punchingUnits = convertPunchingUnits(entry.competitor.cCard),
                     bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
                     startTime = null,
                     finishTime = null,
                     result = null,
-                    splitTimes = listOf(),
-                    feeIds = feeConverter.convertEntryFeesIds(
-                        entry.entryEntryFee,
-                        null
-                    ),
+                    splitTimes = mutableListOf(),
                     status = EntryStatus.SignedUp
                 )
             )
@@ -84,8 +72,6 @@ class EntryListConverter {
         for (race in entry.teamCompetitor[0].entryEntryFee) {
             result.add(
                 TeamEntry(
-                    eventorId = eventor.eventorId,
-                    eventId = entry.eventId.content,
                     raceId = race.eventRaceId,
                     classId = entry.entryClass[0].eventClassId.content,
                     name = entry.teamName.content,
@@ -106,7 +92,7 @@ class EntryListConverter {
     private fun convertTeamOrganisations(
         teamCompetitors: List<org.iof.eventor.TeamCompetitor>,
         eventor: Eventor
-    ): List<Organisation> {
+    ): MutableList<Organisation> {
         val result  = mutableListOf<Organisation>()
         for (teamCompetitor in teamCompetitors) {
             if (teamCompetitor.organisationId != null
@@ -129,41 +115,36 @@ class EntryListConverter {
     private fun convertTeamMembers(
         teamMembers: List<org.iof.eventor.TeamCompetitor>,
         raceId: String
-    ): List<TeamMember> {
+    ): MutableList<TeamMember> {
         val result  = mutableListOf<TeamMember>()
         for (teamMember in teamMembers) {
-            result.add(convertTeamMember(teamMember, raceId))
+            result.add(convertTeamMember(teamMember))
         }
         return result
     }
 
 
-    private fun convertTeamMember(teamMember: org.iof.eventor.TeamCompetitor, raceId: String): TeamMember {
+    private fun convertTeamMember(teamMember: org.iof.eventor.TeamCompetitor): TeamMember {
         return TeamMember(
             personId = if (teamMember.person != null && teamMember.person.personId != null) teamMember.person.personId.content else null,
-            name = if (teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
+            name = if (teamMember.person != null) PersonConverter.convertPersonName(teamMember.person.personName) else null,
             birthYear = if (teamMember.person != null && teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(
                 0,
                 4
             ).toInt() else null,
             nationality = if (teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality.country.alpha3.value else null,
-            gender = if (teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
+            gender = if (teamMember.person != null) PersonConverter.convertGender(teamMember.person.sex) else null,
             punchingUnits = convertPunchingUnits(teamMember.cCard),
             leg = teamMember.teamSequence.content.toInt(),
             startTime = null,
             finishTime = null,
             legResult = null,
             overallResult = null,
-            splitTimes = listOf(),
-            feeIds = feeConverter.convertEntryFeesIds(
-                teamMember.entryEntryFee,
-                raceId
-            )
-
+            splitTimes = mutableListOf(),
         )
     }
 
-    fun convertPunchingUnits(cCards: List<org.iof.eventor.CCard>): List<PunchingUnit> {
+    fun convertPunchingUnits(cCards: List<org.iof.eventor.CCard>): MutableList<PunchingUnit> {
         val punchingUnits: MutableList<PunchingUnit> = ArrayList()
         for (c in cCards) {
             punchingUnits.add(convertPunchingUnit(c))

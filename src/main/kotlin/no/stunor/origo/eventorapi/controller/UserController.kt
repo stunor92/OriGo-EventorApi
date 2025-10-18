@@ -14,7 +14,7 @@ internal class UserController {
     @Autowired
     private lateinit var userService: UserService
 
-    @DeleteMapping()
+    @DeleteMapping
     fun HttpServletRequest.delete() {
         val uid = getAttribute("uid") as String
         log.info("Start deleting user.")

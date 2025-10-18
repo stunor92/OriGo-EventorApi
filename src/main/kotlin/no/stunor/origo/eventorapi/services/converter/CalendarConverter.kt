@@ -28,7 +28,6 @@ class CalendarConverter(
         organisationRepository = organisationRepository,
         regionRepository = regionRepository
     )
-    var eventClassConverter = EventClassConverter()
     var entryListConverter = EntryListConverter()
 
     fun convertEvents(
@@ -123,8 +122,9 @@ class CalendarConverter(
             if (!isRelevantCompetitorCount(competitorCount, eventId, eventRaceId)) continue
             val orgCounts: List<org.iof.eventor.OrganisationCompetitorCount> = competitorCount.organisationCompetitorCount ?: continue
             for (organisationCompetitorCount in orgCounts) {
-                val organisation = organisationConverter.convertOrganisation(organisationCompetitorCount.organisationId, eventor)
-                if (organisation == null) continue
+                val organisation =
+                    organisationConverter.convertOrganisation(organisationCompetitorCount.organisationId, eventor)
+                        ?: continue
                 result.add(OrganisationEntries(organisation, organisationCompetitorCount.numberOfEntries.toInt()))
             }
         }
@@ -588,7 +588,7 @@ class CalendarConverter(
         eventor: Eventor
     ): CalendarEntry {
         return CalendarEntry(
-            eventClass = if (entry.entryClass != null && entry.entryClass.isNotEmpty()) eventClassConverter.getEventClassFromId(
+            eventClass = if (entry.entryClass != null && entry.entryClass.isNotEmpty()) EventClassConverter.getEventClassFromId(
                 eventClassList = eventClassList!!,
                 entryClassId = entry.entryClass[0].eventClassId.content,
                 eventor = eventor,
@@ -607,11 +607,7 @@ class CalendarConverter(
         personStart: org.iof.eventor.PersonStart,
         classStart: org.iof.eventor.ClassStart
     ): CalendarPersonStart {
-        val start: org.iof.eventor.Start = if (personStart.start != null) {
-            personStart.start
-        } else {
-            personStart.raceStart[0].start
-        }
+        val start: org.iof.eventor.Start = personStart.start ?: personStart.raceStart[0].start
 
         return CalendarPersonStart(
             startTime = if (start.startTime != null) timeStampConverter.parseDate(
@@ -619,7 +615,7 @@ class CalendarConverter(
                 eventor
             ) else null,
             bib = if (start.bibNumber != null) start.bibNumber.content else null,
-            eventClass = eventClassConverter.convertEventClass(
+            eventClass = EventClassConverter.convertEventClass(
                 eventor = eventor,
                 event = Event(
                     eventor = eventor,
@@ -644,7 +640,7 @@ class CalendarConverter(
             ) else null,
             bib = if (teamStart.bibNumber != null) teamStart.bibNumber.content else null,
             leg = teamStart.teamMemberStart[0].leg.toInt(),
-            eventClass = eventClassConverter.convertEventClass(
+            eventClass = EventClassConverter.convertEventClass(
                 eventor = eventor,
                 event = Event(
                     eventor = eventor,
@@ -679,7 +675,7 @@ class CalendarConverter(
                     status = ResultStatus.valueOf(result.competitorStatus.value),
                 ),
                 bib = if (result.bibNumber != null) result.bibNumber.content else null,
-                eventClass = eventClassConverter.convertEventClass(
+                eventClass = EventClassConverter.convertEventClass(
                     eventor = eventor,
                     event = Event(
                         eventor = eventor,
@@ -714,7 +710,7 @@ class CalendarConverter(
                 position = null,
                 status = ResultStatus.valueOf(teamResult.teamStatus.value)
             ),
-            eventClass = eventClassConverter.convertEventClass(
+            eventClass = EventClassConverter.convertEventClass(
                 eventor = eventor,
                 event = Event(
                     eventor = eventor,

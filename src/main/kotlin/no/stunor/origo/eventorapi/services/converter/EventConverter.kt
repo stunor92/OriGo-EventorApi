@@ -10,9 +10,6 @@ import java.text.ParseException
 @Component
 class EventConverter {
     @Autowired
-    private lateinit var eventClassConverter: EventClassConverter
-
-    @Autowired
     private lateinit var feeConverter: FeeConverter
 
     @Autowired
@@ -81,12 +78,11 @@ class EventConverter {
     fun convertEvent(
         eventorEvent: org.iof.eventor.Event,
         classes: org.iof.eventor.EventClassList?,
-        fees: org.iof.eventor.EntryFeeList?,
         documents: org.iof.eventor.DocumentList?,
-        organisations: List<Organisation>,
+        organisations: MutableList<Organisation>,
         eventor: Eventor
     ): Event {
-        var event = Event(
+        val event = Event(
             eventorId = eventor.eventorId,
             eventor = eventor,
             eventId = eventorEvent.eventId.content,
@@ -105,10 +101,9 @@ class EventConverter {
             email = null,
             phone = null
         )
-        event.classes = eventClassConverter.convertEventClasses(eventCLassList = classes, eventor = eventor, event = event)
+        event.classes = EventClassConverter.convertEventClasses(eventCLassList = classes, eventor = eventor, event = event)
         event.races = convertRaces(event, eventorEvent.hashTableEntry, eventorEvent.eventRace, eventor)
         event.documents = convertEventDocument(documents, event= event, eventorId = eventor.eventorId)
-        event.fees = feeConverter.convertEntryFees(entryFees = fees, eventor = eventor, event = event, eventClasses = classes)
         return event
 
     }
@@ -118,7 +113,7 @@ class EventConverter {
         hashTableEntries: List<org.iof.eventor.HashTableEntry>,
         eventRaces: List<org.iof.eventor.EventRace>,
         eventor: Eventor
-    ): List<Race> {
+    ): MutableList<Race> {
         val result  = mutableListOf<Race>()
 
         for (eventRace in eventRaces) {
@@ -223,10 +218,10 @@ class EventConverter {
     }
 
 
-    private fun convertEventDocument(documentList: org.iof.eventor.DocumentList?, event: Event, eventorId: String): List<Document> {
+    private fun convertEventDocument(documentList: org.iof.eventor.DocumentList?, event: Event, eventorId: String): MutableList<Document> {
         val result: MutableList<Document> = ArrayList()
         if (documentList == null) {
-            return listOf()
+            return mutableListOf()
         }
         for (document in documentList.document) {
             result.add(

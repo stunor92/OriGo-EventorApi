@@ -26,7 +26,11 @@ data class Organisation (
                 JoinColumn(name = "regionId", referencedColumnName = "regionId", insertable = false, updatable = false)
         )
         var region: Region? = null,
-)
+) {
+    override fun toString(): String {
+        return "Organisation(organisationId='$organisationId', eventorId='$eventorId', name='$name', type=$type, country='$country', regionId=${region?.regionId})"
+    }
+}
 
 enum class OrganisationType {
         Club, Region, Federation, IOF

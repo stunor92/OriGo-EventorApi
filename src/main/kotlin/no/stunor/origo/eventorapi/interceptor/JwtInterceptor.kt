@@ -13,7 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor
 @Component
 class JwtInterceptor : HandlerInterceptor {
 
-    @Value("\${config.jwt.secret}")
+    @Value($$"{config.jwt.secret}")
     private lateinit var jwtSecret: String
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {

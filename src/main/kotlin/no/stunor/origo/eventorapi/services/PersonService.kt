@@ -31,9 +31,6 @@ class PersonService {
     @Autowired
     private lateinit var eventorService: EventorService
 
-    @Autowired
-    private lateinit var personConverter: PersonConverter
-
     fun authenticate(eventorId: String, username: String, password: String, userId: String): Person {
         try {
             val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
@@ -42,7 +39,7 @@ class PersonService {
 
             val eventorPerson = eventorService.authenticatePerson(eventor, username, password)?: throw EventorAuthException()
 
-            val person = personConverter.convertPerson(eventorPerson, eventor)
+            val person = PersonConverter.convertPerson(eventorPerson, eventor)
 
             person.users.add(
                 UserPerson(

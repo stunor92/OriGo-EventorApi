@@ -5,7 +5,6 @@ import no.stunor.origo.eventorapi.data.RegionRepository
 import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.organisation.OrganisationType
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
@@ -14,7 +13,7 @@ class OrganisationConverter(
     var regionRepository: RegionRepository
 ) {
 
-    fun convertOrganisations(organisations: List<Any>, eventor: Eventor): List<Organisation> {
+    fun convertOrganisations(organisations: List<Any>, eventor: Eventor): MutableList<Organisation> {
         val result = mutableListOf<Organisation>()
         for (organisation in organisations) {
             convertOrganisation(organisation, eventor)?.let { result.add(it) }

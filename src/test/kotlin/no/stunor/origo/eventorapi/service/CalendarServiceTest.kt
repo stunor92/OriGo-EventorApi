@@ -47,7 +47,7 @@ class CalendarServiceTest {
         every { eventorService.getGetPersonalStarts(any(), any(), any(), any(), any()) } returns startList
         every { eventorService.getGetPersonalResults(any(), any(), any(), any(), any()) } returns resultList
         every { organisationRepository.findByOrganisationIdAndEventorId(any(),any()) } returns OrganisationFactory.createTestOrganisation()
-        val result = calendarService.getEventList("123");
+        val result = calendarService.getEventList("123")
 
         assert(result.size == 27)
         val dm = result.first { it.eventId == "17544" }

@@ -19,4 +19,8 @@ data class Region (
         @JsonIgnore @Id var eventorId: String = "",
         @Id var regionId: String = "",
         var name: String = ""
-)
+) {
+    override fun toString(): String {
+        return "Region(regionId='$regionId', eventorId='$eventorId', name='$name')"
+    }
+}

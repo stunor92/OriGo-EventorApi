@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.controller
 
-import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.entry.Entry
 import no.stunor.origo.eventorapi.services.EventService
@@ -41,14 +40,5 @@ internal class EventController {
                 ),
                 HttpStatus.OK
         )
-    }
-
-    @GetMapping("/{eventorId}/{eventId}/entries")
-    fun HttpServletRequest.downloadEntries(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String,
-    ) {
-        val uid = getAttribute("uid") as String
-        eventService.downloadEntries(eventorId, eventId, uid)
     }
 }

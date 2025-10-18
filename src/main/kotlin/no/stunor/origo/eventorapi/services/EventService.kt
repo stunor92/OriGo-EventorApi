@@ -1,35 +1,20 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.data.EntryRepository
+import no.stunor.origo.eventorapi.data.ClassRepository
 import no.stunor.origo.eventorapi.data.EventRepository
 import no.stunor.origo.eventorapi.data.EventorRepository
-import no.stunor.origo.eventorapi.data.PersonRepository
 import no.stunor.origo.eventorapi.exception.EntryListNotFoundException
 import no.stunor.origo.eventorapi.exception.EventNotFoundException
-import no.stunor.origo.eventorapi.exception.EventNotSupportedException
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
-import no.stunor.origo.eventorapi.exception.OrganisationNotOrganiserException
 import no.stunor.origo.eventorapi.model.event.Event
-import no.stunor.origo.eventorapi.model.event.EventFormEnum
 import no.stunor.origo.eventorapi.model.event.entry.Entry
-import no.stunor.origo.eventorapi.model.event.entry.PersonEntry
-import no.stunor.origo.eventorapi.model.event.entry.TeamEntry
-import no.stunor.origo.eventorapi.model.person.MembershipType
-import no.stunor.origo.eventorapi.model.person.Person
-import no.stunor.origo.eventorapi.services.converter.EntryListConverter
-import no.stunor.origo.eventorapi.services.converter.EventConverter
-import no.stunor.origo.eventorapi.services.converter.OrganisationConverter
-import no.stunor.origo.eventorapi.services.converter.ResultListConverter
-import no.stunor.origo.eventorapi.services.converter.StartListConverter
-import org.slf4j.LoggerFactory
+import no.stunor.origo.eventorapi.services.converter.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class EventService {
-
-    private val log = LoggerFactory.getLogger(this.javaClass)
+open class EventService {
 
     @Autowired
     private lateinit var eventorRepository: EventorRepository
@@ -38,12 +23,11 @@ class EventService {
     private lateinit var eventorService: EventorService
     @Autowired
     private lateinit var eventConverter: EventConverter
-    @Autowired
-    private lateinit var personRepository: PersonRepository
-    @Autowired
-    private lateinit var entryRepository: EntryRepository
+
     @Autowired
     private lateinit var eventRepository: EventRepository
+    @Autowired
+    private lateinit var classRepository: ClassRepository
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
     @Autowired
@@ -58,7 +42,6 @@ class EventService {
         val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
         val eventorEvent = eventorService.getEvent(eventor.baseUrl, eventor.eventorApiKey, eventId) ?: throw EventNotFoundException()
         val eventClassList = eventorService.getEventClasses(eventor, eventId)
-        val fees = eventorService.getEventEntryFees(eventor, eventId)
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.eventorApiKey, eventId)
 
 
@@ -69,13 +52,22 @@ class EventService {
         val event =  eventConverter.convertEvent(
             eventorEvent = eventorEvent,
             classes = eventClassList,
-            fees = fees,
             documents = documentList,
             organisations = organisers,
             eventor = eventor
         )
-        eventRepository.save(event)
+        runAsyncPostgresUpdates(event, eventor)
         return event
+    }
+
+    @org.springframework.scheduling.annotation.Async
+    open fun runAsyncPostgresUpdates(event: Event, eventor: no.stunor.origo.eventorapi.model.Eventor) {
+        eventRepository.save(event)
+        val existingClasses = classRepository.findAllByEventIdAndEventorId(event.eventId, eventor.eventorId)
+        val deletedClasses = existingClasses.filter { !event.classes.contains(it) }
+        classRepository.deleteAll(deletedClasses)
+        //val fees = eventorService.getEventEntryFees(eventor, event.eventId)
+
     }
 
     fun getEntryList(eventorId: String, eventId: String): List<Entry> {
@@ -101,7 +93,7 @@ class EventService {
             eventId = eventId
         ) ?: throw EntryListNotFoundException()
 
-        var entries : MutableList<Entry> = mutableListOf<Entry>()
+        val entries : MutableList<Entry> = mutableListOf()
 
         when {
             resultList != null -> {
@@ -132,59 +124,5 @@ class EventService {
 
 
         return entries
-    }
-
-    fun downloadEntries(eventorId: String, eventId: String, userId: String) {
-        val persons = personRepository.findAllByUsersAndEventorId(userId, eventorId)
-        var event = getEvent(
-            eventorId = eventorId,
-            eventId = eventId
-        )
-
-        if (event.type != EventFormEnum.Individual) {
-            throw EventNotSupportedException()
-        }
-
-        /*authenticateEventOrganiser(
-            event = event,
-            persons = persons
-        )*/
-
-        val competitors = getEntryList(
-            eventorId = eventorId,
-            eventId = eventId
-        )
-
-        val existingCompetitors: MutableList<Entry> = mutableListOf()
-        existingCompetitors.addAll(
-            entryRepository.findAllByEventIdAndEventorId(
-                eventId = eventId,
-                eventorId = eventorId
-            )
-        )
-
-        val result: MutableList<Entry> = mutableListOf()
-        for (competitor in competitors){
-            if (competitor is PersonEntry && !existingCompetitors.contains(competitor)) {
-                result.add(competitor)
-            }
-            else if(competitor is TeamEntry && !existingCompetitors.contains(competitor)){
-                result.add(competitor)
-            }
-        }
-
-        entryRepository.saveAll(result)
-    }
-
-    private fun authenticateEventOrganiser(event: Event, persons: List<Person>) {
-        for(organiser in event.organisers){
-            for(person in persons) {
-                if (person.memberships.map { it.organisationId }.contains(organiser.organisationId)
-                    && (person.memberships.find { it.organisationId == organiser.organisationId }!!.type == MembershipType.Organiser
-                            || person.memberships.find { it.organisationId == organiser.organisationId }!!.type == MembershipType.Admin))
-                    return
-            }
-        }
-        throw OrganisationNotOrganiserException()
     }
 }

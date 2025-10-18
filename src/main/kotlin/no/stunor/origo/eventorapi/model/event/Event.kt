@@ -69,17 +69,20 @@ data class Event(
         joinColumns = [JoinColumn(name = "event_id", referencedColumnName = "eventId"), JoinColumn(name = "eventor_id", referencedColumnName = "eventorId")],
         inverseJoinColumns = [JoinColumn(name = "organisation_id", referencedColumnName = "organisationId")]
     )
-    var organisers: List<Organisation> = ArrayList(),
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var classes: List<EventClass> = ArrayList(),
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var documents: List<Document> = ArrayList(),
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var fees: List<Fee> = ArrayList(),
+    var organisers: MutableList<Organisation> = ArrayList(),
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var classes: MutableList<EventClass> = ArrayList(),
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var documents: MutableList<Document> = ArrayList(),
     @Type(TimestampArrayType::class) var entryBreaks: Array<Timestamp> = arrayOf(),
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var races: List<Race> = ArrayList(),
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var races: MutableList<Race> = ArrayList(),
     @Type(value = ListArrayType::class) var webUrls: List<String> = listOf(),
     var message: String? = null,
     var email: String? = null,
     var phone: String? = null
 ) {
+    override fun toString(): String {
+        return "Event(eventId='$eventId', eventorId='$eventorId', name='$name')"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Event) return false
@@ -97,7 +100,6 @@ data class Event(
             organisers == other.organisers &&
             classes == other.classes &&
             documents == other.documents &&
-            fees == other.fees &&
             entryBreaks.contentEquals(other.entryBreaks) &&
             races == other.races &&
             webUrls == other.webUrls &&
@@ -120,7 +122,6 @@ data class Event(
         result = 31 * result + organisers.hashCode()
         result = 31 * result + classes.hashCode()
         result = 31 * result + documents.hashCode()
-        result = 31 * result + fees.hashCode()
         result = 31 * result + entryBreaks.contentHashCode()
         result = 31 * result + races.hashCode()
         result = 31 * result + webUrls.hashCode()

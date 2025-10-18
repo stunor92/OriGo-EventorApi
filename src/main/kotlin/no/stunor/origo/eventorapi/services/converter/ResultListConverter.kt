@@ -25,9 +25,6 @@ class ResultListConverter {
     private lateinit var timeStampConverter: TimeStampConverter
 
     @Autowired
-    private lateinit var personConverter: PersonConverter
-
-    @Autowired
     private lateinit var organisationConverter: OrganisationConverter
 
     @Throws(NumberFormatException::class, ParseException::class)
@@ -73,7 +70,7 @@ class ResultListConverter {
             raceId = event.eventRace[0].eventRaceId.content,
             classId = classResult.eventClass.eventClassId.content,
             personId = if (personResult.person.personId != null) personResult.person.personId.content else null,
-            name = personConverter.convertPersonName(personResult.person.personName),
+            name = PersonConverter.convertPersonName(personResult.person.personName),
             organisation = if(personResult.organisation != null)
                 organisationConverter.convertOrganisation(personResult.organisation, eventor)
             else
@@ -83,7 +80,7 @@ class ResultListConverter {
                 4
             ).toInt() else null,
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
-            gender = personConverter.convertGender(personResult.person.sex),
+            gender = PersonConverter.convertGender(personResult.person.sex),
             bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
             startTime = if (personResult.result.startTime != null) timeStampConverter.parseDate(
                 "${personResult.result.startTime.date.content} ${personResult.result.startTime.clock.content}",
@@ -110,7 +107,7 @@ class ResultListConverter {
             raceId = raceResult.eventRaceId.content,
             classId = classResult.eventClass.eventClassId.content,
             personId = if (personResult.person.personId != null) personResult.person.personId.content else null,
-            name = personConverter.convertPersonName(personResult.person.personName),
+            name = PersonConverter.convertPersonName(personResult.person.personName),
             organisation = if(personResult.organisation != null)
                 organisationConverter.convertOrganisation(personResult.organisation, eventor)
             else
@@ -120,7 +117,7 @@ class ResultListConverter {
                 4
             ).toInt() else null,
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
-            gender = personConverter.convertGender(personResult.person.sex),
+            gender = PersonConverter.convertGender(personResult.person.sex),
             bib = if (personResult.result?.bibNumber != null) personResult.result.bibNumber.content else null,
             startTime = if (personResult.result?.startTime != null) timeStampConverter.parseDate(
                 "${raceResult.result.startTime.date.content} ${raceResult.result.startTime.clock.content}",
@@ -179,9 +176,9 @@ class ResultListConverter {
     }
 
     @Throws(NumberFormatException::class, ParseException::class)
-    private fun convertSplitTimes(splitTimes: List<org.iof.eventor.SplitTime>?): List<SplitTime> {
+    private fun convertSplitTimes(splitTimes: List<org.iof.eventor.SplitTime>?): MutableList<SplitTime> {
         if (splitTimes == null)
-            return listOf()
+            return mutableListOf()
         val result: MutableList<SplitTime> = ArrayList()
         for (splitTime in splitTimes) {
             result.add(convertSplitTime(splitTime))
@@ -202,7 +199,7 @@ class ResultListConverter {
     fun convertTeamMembers(
         eventor: Eventor,
         teamMembers: List<org.iof.eventor.TeamMemberResult>
-    ): List<TeamMember> {
+    ): MutableList<TeamMember> {
         val result  = mutableListOf<TeamMember>()
         for (teamMember in teamMembers) {
             result.add(convertTeamMember(eventor, teamMember))
@@ -217,13 +214,13 @@ class ResultListConverter {
     ): TeamMember {
         return TeamMember(
             personId = if (teamMember.person != null && teamMember.person.personId != null) teamMember.person.personId.content else null,
-            name = if (teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
+            name = if (teamMember.person != null) PersonConverter.convertPersonName(teamMember.person.personName) else null,
             birthYear = if (teamMember.person != null && teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(
                 0,
                 4
             ).toInt() else null,
             nationality = if (teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality.country.alpha3.value else null,
-            gender = if (teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
+            gender = if (teamMember.person != null) PersonConverter.convertGender(teamMember.person.sex) else null,
             leg = teamMember.leg.toInt(),
             startTime = if (teamMember.startTime != null) timeStampConverter.parseDate(
                 "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",

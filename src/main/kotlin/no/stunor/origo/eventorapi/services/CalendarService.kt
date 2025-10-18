@@ -1,18 +1,17 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
-import no.stunor.origo.eventorapi.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.data.PersonRepository
 import no.stunor.origo.eventorapi.data.RegionRepository
-import no.stunor.origo.eventorapi.model.calendar.CalendarRace
+import no.stunor.origo.eventorapi.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.model.Eventor
+import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.converter.CalendarConverter
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -33,22 +32,22 @@ class CalendarService(
         regionRepository = regionRepository
     )
 
-    @Value("\${config.personalEntries.start}")
+    @Value($$"${config.personalEntries.start}")
     private val personalEntriesStart = 0L
 
-    @Value("\${config.personalEntries.end}")
+    @Value($$"${config.personalEntries.end}")
     private val personalEntriesEnd = 0L
 
-    @Value("\${config.personalStarts.start}")
+    @Value($$"${config.personalStarts.start}")
     private val personalStartsStart = 0L
 
-    @Value("\${config.personalStarts.end}")
+    @Value($$"${config.personalStarts.end}")
     private val personalStartsEnd = 0L
 
-    @Value("\${config.personalResults.start}")
+    @Value($$"${config.personalResults.start}")
     private val personalResultsStart = 0L
 
-    @Value("\${config.personalResults.end}")
+    @Value($$"${config.personalResults.end}")
     private val personalResultsEnd = 0L
 
     fun getEventList(userId: String): List<CalendarRace> {
