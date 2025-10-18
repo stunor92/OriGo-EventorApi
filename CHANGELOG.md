@@ -1,5 +1,22 @@
 # Changelog
 
+## [8.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v7.0.2...v8.0.0) (2025-10-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* Fees is not relevant to return in responses for this application
+
+### Features
+
+* Fees is not relevant to return in responses for this application ([d33da27](https://github.com/stunor92/OriGo-EventorApi/commit/d33da2718db93638926f2d5a85a0588ef20e2ea1))
+* Fees is updated in database when a event is fetched ([3ffaf8a](https://github.com/stunor92/OriGo-EventorApi/commit/3ffaf8a36cd75de7e109a1a2f0abf7e44ade1ede))
+
+
+### Bug Fixes
+
+* Improve the combination of result-, start- and entry-list ([4c035ba](https://github.com/stunor92/OriGo-EventorApi/commit/4c035bab0ef5bc47f880977511baeecf4b76d936))
+
 ## [7.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v7.0.1...v7.0.2) (2025-10-03)
 
 
