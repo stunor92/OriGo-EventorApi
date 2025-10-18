@@ -1,7 +1,6 @@
 package no.stunor.origo.eventorapi.model.event.entry
 
 import java.sql.Timestamp
-import java.util.UUID
 
 abstract class Entry(
     open var entryId: String,

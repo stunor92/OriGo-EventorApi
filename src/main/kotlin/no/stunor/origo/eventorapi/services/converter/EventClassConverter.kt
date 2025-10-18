@@ -20,13 +20,13 @@ class EventClassConverter {
             val result = mutableListOf<EventClass>()
             for (eventClass in eventCLassList.eventClass) {
                 if (eventClass != null) {
-                    result.add(convertEventClass(eventClass, eventor, event))
+                    result.add(convertEventClass(eventor, event, eventClass))
                 }
             }
             return result
         }
 
-        fun convertEventClass(eventClass: org.iof.eventor.EventClass, eventor: Eventor, event: Event): EventClass {
+        fun convertEventClass(eventor: Eventor, event: Event, eventClass: org.iof.eventor.EventClass): EventClass {
             return EventClass(
                 eventorId = eventor.eventorId,
                 eventId = event.eventId,
@@ -93,7 +93,7 @@ class EventClassConverter {
         ): EventClass? {
             for (eventClass in eventClassList.eventClass) {
                 if (eventClass.eventClassId.content == entryClassId) {
-                    return convertEventClass(eventClass, eventor, event)
+                    return convertEventClass(eventor, event, eventClass)
                 }
             }
             return null
