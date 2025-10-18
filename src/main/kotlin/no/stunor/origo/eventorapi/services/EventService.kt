@@ -5,6 +5,7 @@ import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.exception.EntryListNotFoundException
 import no.stunor.origo.eventorapi.exception.EventNotFoundException
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
+import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.entry.Entry
 import no.stunor.origo.eventorapi.services.converter.*
@@ -55,57 +56,63 @@ open class EventService {
         return event
     }
 
+    private fun fetchResultEntries(eventor: Eventor, eventId: String): List<Entry> {
+        val resultList = eventorService.getEventResultList(eventor.baseUrl, eventor.eventorApiKey, eventId)
+        return resultList?.let { resultListConverter.convertEventResultList(eventor, it) } ?: emptyList()
+    }
 
+    private fun fetchStartEntries(eventor: Eventor, eventId: String): List<Entry> {
+        val startList = eventorService.getEventStartList(eventor.baseUrl, eventor.eventorApiKey, eventId)
+        return startList?.let { startListConverter.convertEventStartList(eventor, it) } ?: emptyList()
+    }
+
+    private fun fetchEntryEntries(eventor: Eventor, eventId: String): List<Entry> {
+        val entryList = eventorService.getEventEntryList(eventor.baseUrl, eventor.eventorApiKey, eventId)
+            ?: throw EntryListNotFoundException()
+        return if (!entryList.entry.isNullOrEmpty()) entryListConverter.convertEventEntryList(eventor, entryList) else emptyList()
+    }
+
+    private fun updateEntrySets(entry: Entry, personIds: MutableSet<String>, teamNames: MutableSet<String>) {
+        when (entry) {
+            is no.stunor.origo.eventorapi.model.event.entry.PersonEntry -> entry.personId?.let { personIds.add(it) }
+            is no.stunor.origo.eventorapi.model.event.entry.TeamEntry -> teamNames.add(entry.name)
+        }
+    }
+
+    private fun isNewEntry(entry: Entry, personIds: Set<String>, teamNames: Set<String>): Boolean {
+        return when (entry) {
+            is no.stunor.origo.eventorapi.model.event.entry.PersonEntry -> entry.personId != null && entry.personId !in personIds
+            is no.stunor.origo.eventorapi.model.event.entry.TeamEntry -> entry.name.isNotEmpty() && entry.name !in teamNames
+            else -> true
+        }
+    }
 
     fun getEntryList(eventorId: String, eventId: String): List<Entry> {
-        val eventor = eventorRepository.findByEventorId(
-            eventorId = eventorId
-        ) ?: throw EventorNotFoundException()
+        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+        val entries: MutableList<Entry> = mutableListOf()
+        val personIds: MutableSet<String> = mutableSetOf()
+        val teamNames: MutableSet<String> = mutableSetOf()
 
-        val resultList = eventorService.getEventResultList(
-            baseUrl = eventor.baseUrl,
-            apiKey = eventor.eventorApiKey,
-            eventId = eventId
-        )
+        val resultEntries = fetchResultEntries(eventor, eventId)
+        val startEntries = fetchStartEntries(eventor, eventId)
+        val entryEntries = fetchEntryEntries(eventor, eventId)
 
-        val startList = eventorService.getEventStartList(
-            baseUrl = eventor.baseUrl,
-            apiKey = eventor.eventorApiKey,
-            eventId = eventId
-        )
-
-        val entryList = eventorService.getEventEntryList(
-            baseUrl = eventor.baseUrl,
-            apiKey = eventor.eventorApiKey,
-            eventId = eventId
-        ) ?: throw EntryListNotFoundException()
-
-        val entries : MutableList<Entry> = mutableListOf()
-
-        when {
-            resultList != null -> {
-                entries.addAll(
-                    resultListConverter.convertEventResultList(
-                        eventor = eventor,
-                        resultList = resultList
-                    )
-                )
+        // Add all result entries
+        for (entry in resultEntries) {
+            entries.add(entry)
+            updateEntrySets(entry, personIds, teamNames)
+        }
+        // Add new start entries
+        for (entry in startEntries) {
+            if (isNewEntry(entry, personIds, teamNames)) {
+                entries.add(entry)
+                updateEntrySets(entry, personIds, teamNames)
             }
-            startList != null -> {
-                entries.addAll(
-                    startListConverter.convertEventStartList(
-                        eventor = eventor,
-                        startList = startList
-                    )
-                )
-            }
-            !entryList.entry.isNullOrEmpty() -> {
-                entries.addAll(
-                    entryListConverter.convertEventEntryList(
-                        eventor = eventor,
-                        entryList = entryList
-                    )
-                )
+        }
+        // Add new entry entries
+        for (entry in entryEntries) {
+            if (isNewEntry(entry, personIds, teamNames)) {
+                entries.add(entry)
             }
         }
         return entries

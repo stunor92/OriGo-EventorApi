@@ -18,7 +18,7 @@ class EntryListConverter {
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
 
-    fun convertEventEntryList(entryList: EntryList, eventor: Eventor): List<Entry> {
+    fun convertEventEntryList(eventor: Eventor, entryList: EntryList): List<Entry> {
         val result  = mutableListOf<Entry>()
 
         for (entry in entryList.entry) {
@@ -77,7 +77,7 @@ class EntryListConverter {
                     name = entry.teamName.content,
                     organisations =  convertTeamOrganisations(entry.teamCompetitor, eventor),
                     bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
-                    teamMembers = convertTeamMembers(entry.teamCompetitor, race.eventRaceId),
+                    teamMembers = convertTeamMembers(entry.teamCompetitor),
                     startTime = null,
                     finishTime = null,
                     result = null,
@@ -113,8 +113,7 @@ class EntryListConverter {
     }
 
     private fun convertTeamMembers(
-        teamMembers: List<org.iof.eventor.TeamCompetitor>,
-        raceId: String
+        teamMembers: List<org.iof.eventor.TeamCompetitor>
     ): MutableList<TeamMember> {
         val result  = mutableListOf<TeamMember>()
         for (teamMember in teamMembers) {
