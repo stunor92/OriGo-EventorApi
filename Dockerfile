@@ -1,23 +1,10 @@
-# Use a lightweight JDK base image for the build stage
+# Dockerfile.distroless
 FROM bellsoft/liberica-openjdk-alpine:25 AS builder
-# Set the working directory
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Install Maven
-RUN apk add --no-cache maven
-
-# Copy the pom.xml and source code
-COPY pom.xml .
-COPY src ./src
-
-# Build the application
-RUN mvn package -DskipTests
-
-# Use a lightweight JDK base image for the runtime
-FROM bellsoft/liberica-openjre-alpine:25
-
-# Copy the built jar from the builder stage
-COPY --from=builder /app/target/*.jar /app.jar
-
-# Run the application
-CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
+FROM gcr.io/distroless/java25-debian13
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
