@@ -2,6 +2,7 @@ name: "CodeQL Advanced"
 
 on:
   push:
+    branches: [ "main" ]
   pull_request:
   schedule:
     - cron: '00 10 * * *'
@@ -33,11 +34,11 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - name: Set up JDK 23
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'liberica'
-          java-version: '25'
+          java-version: '21'
 
       - name: Build with Maven
         run: mvn clean install
