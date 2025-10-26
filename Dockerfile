@@ -1,10 +1,8 @@
-# Dockerfile.distroless
-FROM bellsoft/liberica-openjdk-alpine:25 AS builder
-WORKDIR /app
+FROM eclipse-temurin:21-jdk-jammy AS builder
+WORKDIR /build
 COPY . .
-RUN mvn clean package -DskipTests
+RUN ./mvnw package -DskipTests
 
-FROM gcr.io/distroless/java25-debian13
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+FROM gcr.io/distroless/java21-debian12
+COPY --from=builder /build/target/*.jar /app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]

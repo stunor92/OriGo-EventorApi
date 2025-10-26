@@ -1,0 +1,21 @@
+# Exclude local build artifacts
+target/
+
+# IDE / tooling
+.idea/
+*.iml
+.qodana/
+
+# VCS
+.git
+.gitignore
+
+# Logs
+*.log
+
+# MacOS metadata
+.DS_Store
+
+# Node / other (future-proof)
+node_modules/
+
