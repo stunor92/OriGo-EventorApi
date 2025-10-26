@@ -21,12 +21,11 @@ class JwtInterceptor : HandlerInterceptor {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             val token = authorizationHeader.removePrefix("Bearer ")
             val secretKey = Keys.hmacShaKeyFor(jwtSecret.toByteArray())
-            val claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+            val claimsJws = Jwts.parser()
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
-                .body
-            val uid = claims["sub"]?.toString() ?: ""
+                .parseSignedClaims(token)
+            val uid = claimsJws.payload["sub"]?.toString() ?: ""
             request.setAttribute("uid", uid)
         }
         return true
