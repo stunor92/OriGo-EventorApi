@@ -128,11 +128,6 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.8</version>
         </dependency>
-        <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-71</artifactId>
-            <version>3.11.0</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -196,13 +191,6 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/main/kotlin</source>
-                                <source>target/generated-sources/annotations</source>
-                                <source>target/generated-sources/jaxb</source>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
@@ -218,6 +206,9 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <jvmTarget>${maven.compiler.target}</jvmTarget>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

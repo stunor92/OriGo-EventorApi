@@ -89,7 +89,7 @@ class EventConverter {
             startDate = TimeStampConverter.parseDate("${eventorEvent.startDate.date.content} ${eventorEvent.startDate.clock.content}", eventor),
             finishDate = TimeStampConverter.parseDate("${eventorEvent.finishDate.date.content} ${eventorEvent.finishDate.clock.content}", eventor),
             organisers = organisations,
-            entryBreaks = convertEntryBreaks(eventorEvent.entryBreak, eventor).toTypedArray(),
+            entryBreaks = convertEntryBreaks(eventorEvent.entryBreak, eventor),
             punchingUnitTypes = entryListConverter.convertPunchingUnitTypes(eventorEvent.punchingUnitType).toTypedArray(),
             webUrls = listOf(),
             message = convertHostMessage(eventorEvent.hashTableEntry),
