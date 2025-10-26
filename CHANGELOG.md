@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v8.0.0...v8.0.1) (2025-10-26)
+
+
+### Bug Fixes
+
+* Remove hypersistence depndency ([a365fdc](https://github.com/stunor92/OriGo-EventorApi/commit/a365fdc4d08d47eaaacdd82cdecdc7d6a1e556e8))
+
 ## [8.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v7.0.2...v8.0.0) (2025-10-18)
 
 
