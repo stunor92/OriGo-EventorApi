@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v8.0.3...v8.1.0) (2025-10-26)
+
+
+### Features
+
+* Improve ci-pipeline ([#184](https://github.com/stunor92/OriGo-EventorApi/issues/184)) ([db39b0d](https://github.com/stunor92/OriGo-EventorApi/commit/db39b0d7d13161c5adff94150c5472cad7f0a4b2))
+
+
+### Bug Fixes
+
+* Add hypersistence again ([#186](https://github.com/stunor92/OriGo-EventorApi/issues/186)) ([22e5e71](https://github.com/stunor92/OriGo-EventorApi/commit/22e5e71c89bd81cf72af53a1097b0c9c8edab0b6))
+
 ## [8.0.3](https://github.com/stunor92/OriGo-EventorApi/compare/v8.0.2...v8.0.3) (2025-10-26)
 
 
