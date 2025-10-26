@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v8.0.1...v8.0.2) (2025-10-26)
+
+
+### Bug Fixes
+
+* Distroless dockerimage ([f4a2bf8](https://github.com/stunor92/OriGo-EventorApi/commit/f4a2bf882632e034f7188e447a8d243c214a1033))
+* Push image to github when releae is done ([5a1a9ea](https://github.com/stunor92/OriGo-EventorApi/commit/5a1a9ea4ea9e27b295fbb9379ae600df1e1d2dc6))
+
 ## [8.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v8.0.0...v8.0.1) (2025-10-26)
 
 
