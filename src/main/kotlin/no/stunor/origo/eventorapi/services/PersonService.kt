@@ -10,14 +10,12 @@ import no.stunor.origo.eventorapi.data.UserPersonRepository
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.model.person.UserPerson
 import no.stunor.origo.eventorapi.services.converter.PersonConverter
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
 
 @Service
 class PersonService {
-    private val log = LoggerFactory.getLogger(this.javaClass)
 
     @Autowired
     private lateinit var eventorRepository: EventorRepository
@@ -34,8 +32,6 @@ class PersonService {
     fun authenticate(eventorId: String, username: String, password: String, userId: String): Person {
         try {
             val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-
-            log.info("Start authenticating user {} on {}.", username, eventor.name)
 
             val eventorPerson = eventorService.authenticatePerson(eventor, username, password)?: throw EventorAuthException()
 
