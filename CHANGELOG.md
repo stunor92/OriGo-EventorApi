@@ -1,5 +1,18 @@
 # Changelog
 
+## [8.0.3](https://github.com/stunor92/OriGo-EventorApi/compare/v8.0.2...v8.0.3) (2025-10-26)
+
+
+### Features
+
+* Codeql scan on all branch ([#181](https://github.com/stunor92/OriGo-EventorApi/issues/181)) ([3f432a7](https://github.com/stunor92/OriGo-EventorApi/commit/3f432a7fb03e07215eef9334c0d2f882a5df0864))
+
+
+### Bug Fixes
+
+* Only codeQL on prs ([#182](https://github.com/stunor92/OriGo-EventorApi/issues/182)) ([d57f3d2](https://github.com/stunor92/OriGo-EventorApi/commit/d57f3d20a105635b19b6eccaa8617a8e1415daec))
+* Try to set Enumerated type in the array-types ([57b22a6](https://github.com/stunor92/OriGo-EventorApi/commit/57b22a68fd425838a51771ee071934a41b8cb7c3))
+
 ## [8.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v8.0.1...v8.0.2) (2025-10-26)
 
 
