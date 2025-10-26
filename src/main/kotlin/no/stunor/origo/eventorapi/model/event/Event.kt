@@ -24,19 +24,22 @@ data class Event(
     @JsonIgnore
     val eventorId: String = "",
     @ManyToOne
-    @JoinColumns(
-        JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false)
-    )
+    @JoinColumns(JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false))
     var eventor: Eventor = Eventor(),
     @Id var eventId: String = "",
     var name: String = "",
-    @Enumerated(EnumType.STRING) var type: EventFormEnum = EventFormEnum.Individual,
-    @Enumerated(EnumType.STRING) var classification: EventClassificationEnum = EventClassificationEnum.Club,
-    @Enumerated(EnumType.STRING) var status: EventStatusEnum = EventStatusEnum.Created,
+    @Enumerated(EnumType.STRING)
+    var type: EventFormEnum = EventFormEnum.Individual,
+    @Enumerated(EnumType.STRING)
+    var classification: EventClassificationEnum = EventClassificationEnum.Club,
+    @Enumerated(EnumType.STRING)
+    var status: EventStatusEnum = EventStatusEnum.Created,
     @JdbcTypeCode(SqlTypes.ARRAY)
+    @Enumerated(EnumType.STRING)
     @Column(name = "disciplines", columnDefinition = "discipline[]")
     var disciplines: Array<Discipline> = arrayOf(),
     @JdbcTypeCode(SqlTypes.ARRAY)
+    @Enumerated(EnumType.STRING)
     @Column(name = "punching_unit_types", columnDefinition = "punching_unit_type[]")
     var punchingUnitTypes: Array<PunchingUnitType> = arrayOf(),
     var startDate: Timestamp? = null,
@@ -56,12 +59,15 @@ data class Event(
     @JdbcTypeCode(SqlTypes.ARRAY) @Column(
         name = "entry_breaks",
         columnDefinition = "timestamp[]"
-    ) var entryBreaks: List<Timestamp> = listOf(),
+    )
+    var entryBreaks: List<Timestamp> = listOf(),
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var races: MutableList<Race> = ArrayList(),
-    @JdbcTypeCode(SqlTypes.ARRAY) @Column(
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(
         name = "web_urls",
         columnDefinition = "text[]"
-    ) var webUrls: List<String> = listOf(),
+    )
+    var webUrls: List<String> = listOf(),
     var message: String? = null,
     var email: String? = null,
     var phone: String? = null
