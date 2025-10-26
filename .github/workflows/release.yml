@@ -33,14 +33,17 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push Docker Image
         if: ${{ steps.release.outputs.release_created }}
-        env:
-          IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/eventor-api
-          IMAGE_TAG: ${{ steps.release.outputs.tag_name }}
         run: |
-          echo "Building image $IMAGE_NAME:$IMAGE_TAG"
-          docker build -t $IMAGE_NAME:$IMAGE_TAG -t $IMAGE_NAME:latest .
-          docker push $IMAGE_NAME:$IMAGE_TAG
-          docker push $IMAGE_NAME:latest
+          IMAGE=ghcr.io/${{ github.repository_owner }}/eventor-api
+          TAG=${{ steps.release.outputs.tag_name }}
+          echo "Building image ${IMAGE}:${TAG}"  
+          docker build -t ${IMAGE}:${TAG} -t ${IMAGE}:latest .
+          docker push ${IMAGE}:${TAG}
+          docker push ${IMAGE}:latest
+          echo "Computing digest for released tag"  
+          DIGEST=$(docker image inspect ${IMAGE}:${TAG} --format='{{index .RepoDigests 0}}')
+          echo "Image digest: ${DIGEST}"  
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
       - name: Output Published Image References
         if: ${{ steps.release.outputs.release_created }}
         run: |
