@@ -157,7 +157,7 @@ class CalendarService(
 
         for (person in persons) {
             personIds.add(person.eventorRef)
-            organisationIds.addAll(person.memberships.map { it.organisation?.eventorRef ?: "" })
+            organisationIds.addAll(person.memberships.mapNotNull { it.organisation?.eventorRef })
         }
 
         log.info("Fetching competitor-count for persons {} and organisations {}.", personIds, organisationIds)
