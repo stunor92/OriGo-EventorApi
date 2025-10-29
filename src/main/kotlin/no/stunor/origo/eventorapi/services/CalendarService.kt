@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class CalendarService(
@@ -55,8 +56,8 @@ class CalendarService(
         val persons = personRepository.findAllByUsers(userId)
 
         for (person in persons) {
-            val eventor = eventorRepository.findByEventorId(person.eventorId) ?: continue
-            val organisationIds = person.memberships.map { it.organisationId }
+            val eventor = eventorRepository.findById(person.eventorId).getOrNull() ?: continue
+            val organisationIds = person.memberships.map { it.organisation?.eventorRef ?: "" }
             val entryList = eventorService.getGetOrganisationEntries(
                 eventor = eventor,
                 organisations = organisationIds,
@@ -67,14 +68,14 @@ class CalendarService(
             val eventClassMap = buildEventClassMap(entryList, eventor)
             val startListList = eventorService.getGetPersonalStarts(
                 eventor = eventor,
-                personId = person.personId,
+                personId = person.eventorRef,
                 eventId = null,
                 fromDate = LocalDate.now().minusDays(personalStartsStart),
                 toDate = LocalDate.now().plusDays(personalStartsEnd)
             )
             val resultListList = eventorService.getGetPersonalResults(
                 eventor = eventor,
-                personId = person.personId,
+                personId = person.eventorRef,
                 eventId = null,
                 fromDate = LocalDate.now().minusDays(personalResultsStart),
                 toDate = LocalDate.now().plusDays(personalResultsEnd)
@@ -127,10 +128,10 @@ class CalendarService(
     fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
         val eventorList: MutableIterable<Eventor> = eventorRepository.findAll()
 
-        val result: MutableList<CalendarRace> = ArrayList()
+        val result: MutableList<CalendarRace> = mutableListOf()
 
         for (eventor in eventorList) {
-            val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.eventorId)
+            val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
             result.addAll(getEventList(eventor = eventor, from = from, to = to, organisations = null, classifications = classifications, persons = persons))
 
         }
@@ -138,25 +139,25 @@ class CalendarService(
     }
 
     fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
-        val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
-        val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.eventorId)
+        val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
+        val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
         return getEventList(eventor = eventor, from = from, to = to, organisations = organisations, classifications = classifications, persons = persons )
     }
 
     private fun getEventList(eventor: Eventor, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, persons: List<Person>): List<CalendarRace> {
         val eventList = eventorService.getEventList(eventor, from, to, organisations, classifications)
-        val events: MutableList<String?> = ArrayList()
+        val events: MutableList<String?> = mutableListOf()
         for (event in eventList!!.event) {
             events.add(event.eventId.content)
         }
 
-        val personIds: MutableList<String?> = ArrayList()
-        val organisationIds: MutableList<String?> = ArrayList()
+        val personIds: MutableList<String?> = mutableListOf()
+        val organisationIds: MutableList<String?> = mutableListOf()
 
 
         for (person in persons) {
-            personIds.add(person.personId)
-            organisationIds.addAll(person.memberships.map { it.organisationId })
+            personIds.add(person.eventorRef)
+            organisationIds.addAll(person.memberships.map { it.organisation?.eventorRef ?: "" })
         }
 
         log.info("Fetching competitor-count for persons {} and organisations {}.", personIds, organisationIds)

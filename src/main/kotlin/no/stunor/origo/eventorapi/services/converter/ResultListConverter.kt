@@ -24,6 +24,9 @@ class ResultListConverter {
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
 
+    @Autowired
+    private lateinit var personConverter: PersonConverter
+
     @Throws(NumberFormatException::class, ParseException::class)
     fun convertEventResultList(eventor: Eventor, resultList: ResultList): List<Entry> {
         val competitorList = mutableListOf<Entry>()
@@ -67,25 +70,25 @@ class ResultListConverter {
             raceId = event.eventRace[0].eventRaceId.content,
             classId = classResult.eventClass.eventClassId.content,
             personId = if (personResult.person.personId != null) personResult.person.personId.content else null,
-            name = PersonConverter.convertPersonName(personResult.person.personName),
+            name = personConverter.convertPersonName(personResult.person.personName),
             organisation = if(personResult.organisation != null)
-                organisationConverter.convertOrganisation(personResult.organisation, eventor)
+                organisationConverter.convertOrganisation(personResult.organisation, eventor.id)
             else
-                organisationConverter.convertOrganisation(personResult.organisationId, eventor),
+                organisationConverter.convertOrganisation(personResult.organisationId, eventor.id),
             birthYear = if (personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(
                 0,
                 4
             ).toInt() else null,
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
-            gender = PersonConverter.convertGender(personResult.person.sex),
+            gender = personConverter.convertGender(personResult.person.sex),
             bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
             startTime = if (personResult.result.startTime != null) TimeStampConverter.parseDate(
                 "${personResult.result.startTime.date.content} ${personResult.result.startTime.clock.content}",
-                eventor
+                eventor.id
             ) else null,
             finishTime = if (personResult.result.finishTime != null) TimeStampConverter.parseDate(
                 "${personResult.result.finishTime.date.content} ${personResult.result.finishTime.clock.content}",
-                eventor
+                eventor.id
             ) else null,
             result = convertPersonResult(personResult.result),
             splitTimes = convertSplitTimes(personResult.result.splitTime),
@@ -104,25 +107,25 @@ class ResultListConverter {
             raceId = raceResult.eventRaceId.content,
             classId = classResult.eventClass.eventClassId.content,
             personId = if (personResult.person.personId != null) personResult.person.personId.content else null,
-            name = PersonConverter.convertPersonName(personResult.person.personName),
+            name = personConverter.convertPersonName(personResult.person.personName),
             organisation = if(personResult.organisation != null)
-                organisationConverter.convertOrganisation(personResult.organisation, eventor)
+                organisationConverter.convertOrganisation(personResult.organisation, eventor.id)
             else
-                organisationConverter.convertOrganisation(personResult.organisationId, eventor),
+                organisationConverter.convertOrganisation(personResult.organisationId, eventor.id),
             birthYear = if (personResult.person.birthDate != null) personResult.person.birthDate.date.content.substring(
                 0,
                 4
             ).toInt() else null,
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
-            gender = PersonConverter.convertGender(personResult.person.sex),
+            gender = personConverter.convertGender(personResult.person.sex),
             bib = if (personResult.result?.bibNumber != null) personResult.result.bibNumber.content else null,
             startTime = if (personResult.result?.startTime != null) TimeStampConverter.parseDate(
                 "${raceResult.result.startTime.date.content} ${raceResult.result.startTime.clock.content}",
-                eventor
+                eventor.id
             ) else null,
             finishTime = if (raceResult.result?.finishTime != null) TimeStampConverter.parseDate(
                 "${raceResult.result.finishTime.date.content} ${raceResult.result.finishTime.clock.content}",
-                eventor
+                eventor.id
             ) else null,
             result = convertPersonResult(raceResult.result),
             splitTimes = convertSplitTimes(raceResult.result?.splitTime),
@@ -155,17 +158,17 @@ class ResultListConverter {
             name = teamResult.teamName.content,
             organisations =  organisationConverter.convertOrganisations(
                 organisations = teamResult.organisationIdOrOrganisationOrCountryId,
-                eventor = eventor
+                eventorId = eventor.id
             ),
             teamMembers = convertTeamMembers(eventor, teamResult.teamMemberResult),
             bib = if (teamResult.bibNumber != null) teamResult.bibNumber.content else null,
             startTime = if (teamResult.startTime != null) TimeStampConverter.parseDate(
                 "${teamResult.startTime.date.content} ${teamResult.startTime.clock.content}",
-                eventor
+                eventor.id
             ) else null,
             finishTime = if (teamResult.finishTime != null) TimeStampConverter.parseDate(
                 "${teamResult.finishTime.date.content} ${teamResult.finishTime.clock.content}",
-                eventor
+                eventor.id
             ) else null,
             result = convertTeamResult(teamResult),
             status = EntryStatus.Finished
@@ -176,7 +179,7 @@ class ResultListConverter {
     private fun convertSplitTimes(splitTimes: List<org.iof.eventor.SplitTime>?): MutableList<SplitTime> {
         if (splitTimes == null)
             return mutableListOf()
-        val result: MutableList<SplitTime> = ArrayList()
+        val result: MutableList<SplitTime> = mutableListOf()
         for (splitTime in splitTimes) {
             result.add(convertSplitTime(splitTime))
         }
@@ -211,21 +214,21 @@ class ResultListConverter {
     ): TeamMember {
         return TeamMember(
             personId = if (teamMember.person != null && teamMember.person.personId != null) teamMember.person.personId.content else null,
-            name = if (teamMember.person != null) PersonConverter.convertPersonName(teamMember.person.personName) else null,
+            name = if (teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
             birthYear = if (teamMember.person != null && teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(
                 0,
                 4
             ).toInt() else null,
             nationality = if (teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality.country.alpha3.value else null,
-            gender = if (teamMember.person != null) PersonConverter.convertGender(teamMember.person.sex) else null,
+            gender = if (teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
             leg = teamMember.leg.toInt(),
             startTime = if (teamMember.startTime != null) TimeStampConverter.parseDate(
                 "${teamMember.startTime.date.content} ${teamMember.startTime.clock.content}",
-                eventor
+                eventor.id
             ) else null,
             finishTime = if (teamMember.finishTime != null) TimeStampConverter.parseDate(
                 "${teamMember.finishTime.date.content} ${teamMember.finishTime.clock.content}",
-                eventor
+                eventor.id
             ) else null,
             legResult = convertLegResult(teamMember),
             overallResult = if (teamMember.overallResult != null) convertOverallResult(teamMember.overallResult) else null,

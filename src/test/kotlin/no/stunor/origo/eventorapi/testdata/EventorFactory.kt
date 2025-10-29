@@ -6,7 +6,7 @@ class EventorFactory {
     companion object {
         fun createEventorNorway(): Eventor {
             return Eventor(
-                eventorId = "NOR",
+                id = "NOR",
                 name = "Eventor Norge",
                 federation = "Norges Orienteringsforbund",
                 baseUrl = "https://eventor.orientering.no/api"

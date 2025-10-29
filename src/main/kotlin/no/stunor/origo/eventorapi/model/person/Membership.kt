@@ -2,30 +2,41 @@ package no.stunor.origo.eventorapi.model.person
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import no.stunor.origo.eventorapi.model.organisation.Organisation
 import java.io.Serializable
+import java.util.*
 
-data class MembershipId(
-    private val personId: String,
-    private val organisationId: String,
-    private val eventorId: String
-) : Serializable {
-    constructor() : this("", "", "")
-}
+@Embeddable
+data class MembershipKey(
+    @Column(name = "person_id") var personId: UUID? = UUID(0,0),
+    @Column(name = "organisation_id") var organisationId: UUID? = UUID(0,0),
+) : Serializable
 
 @Entity
-@IdClass(MembershipId::class)
-data class Membership (
-    @JsonIgnore @Id var eventorId: String = "",
-    @JsonIgnore @Id var personId: String = "",
-    @Id var organisationId: String = "",
-    @Enumerated(EnumType.STRING) var type: MembershipType = MembershipType.Member,
-    @ManyToOne
-    @JoinColumns(
-        JoinColumn(name = "personId", referencedColumnName = "personId", insertable = false, updatable = false),
-        JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false)
-    )
-    @JsonIgnore var person: Person? = null,
-)
+@Table(name = "membership")
+data class Membership(
+    @JsonIgnore
+    @EmbeddedId
+    var id: MembershipKey = MembershipKey(),
+    @JsonIgnore
+    @MapsId("personId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id")
+    var person: Person? = null,
+    @MapsId("organisationId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organisation_id")
+    var organisation: Organisation? = null,
+    @Enumerated(EnumType.STRING) var type: MembershipType = MembershipType.Member
+) {
+    var personId: UUID?
+        get() = id.personId
+        set(value) { id.personId = value }
+
+    var organisationId: UUID?
+        get() = id.organisationId
+        set(value) { id.organisationId = value }
+}
 
 enum class MembershipType  {
     Member, Organiser, Admin

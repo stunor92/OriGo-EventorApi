@@ -2,69 +2,72 @@ package no.stunor.origo.eventorapi.services.converter
 
 import no.stunor.origo.eventorapi.data.OrganisationRepository
 import no.stunor.origo.eventorapi.data.RegionRepository
-import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.organisation.OrganisationType
 import org.springframework.stereotype.Component
 
 @Component
 class OrganisationConverter(
-    var organisationRepository: OrganisationRepository,
-    var regionRepository: RegionRepository
+    private val organisationRepository: OrganisationRepository,
+    private val regionRepository: RegionRepository
 ) {
 
-    fun convertOrganisations(organisations: List<Any>, eventor: Eventor): MutableList<Organisation> {
+    fun convertOrganisations(organisations: List<Any>, eventorId: String): MutableList<Organisation> {
         val result = mutableListOf<Organisation>()
         for (organisation in organisations) {
-            convertOrganisation(organisation, eventor)?.let { result.add(it) }
+            convertOrganisation(organisation, eventorId)?.let { result.add(it) }
         }
         return result
     }
 
-    fun convertOrganisation(organisation: Any?, eventor: Eventor): Organisation? {
-        if (organisation == null) {
-            return null
-        }
+    fun convertOrganisation(organisation: Any?, eventorId: String): Organisation? {
+        if (organisation == null) return null
         return when (organisation) {
-            is org.iof.eventor.Organisation -> convertOrganisation(organisation, eventor)
-            is org.iof.eventor.OrganisationId -> organisationRepository.findByOrganisationIdAndEventorId(organisation.content, eventor.eventorId)
-            is String -> organisationRepository.findByOrganisationIdAndEventorId(organisation, eventor.eventorId)
+            is org.iof.eventor.Organisation -> mergeOrganisation(organisation, eventorId)
+            is org.iof.eventor.OrganisationId -> organisationRepository.findByEventorRefAndEventorId(organisation.content, eventorId)
+            is String -> organisationRepository.findByEventorRefAndEventorId(organisation, eventorId)
 
             else -> null
         }
     }
 
-    private fun convertOrganisation(organisation: org.iof.eventor.Organisation, eventor: Eventor): Organisation? {
-        if (organisation.organisationId == null) {
-            return null
+    private fun mergeOrganisation(organisation: org.iof.eventor.Organisation, eventorId: String): Organisation? {
+        if (organisation.organisationId == null) return null
+        val eventorRef = organisation.organisationId.content
+        val existing = organisationRepository.findByEventorRefAndEventorId(eventorRef, eventorId)
+        val country = if (organisation.country != null && organisation.country.alpha3 != null && organisation.country.alpha3.value.length == 3) {
+            organisation.country.alpha3.value
+        } else eventorId
+        val region = if (organisation.parentOrganisation != null) {
+            organisation.parentOrganisation.organisationId?.content?.let {
+                regionRepository.findByEventorRefAndEventorId(it, eventorId)
+                    ?: regionRepository.findByEventorRefAndEventorId(eventorRef, eventorId)
+            }
+        } else regionRepository.findByEventorRefAndEventorId(eventorRef, eventorId)
+
+        if (existing != null) {
+            // Update mutable fields
+            existing.name = organisation.name.content
+            existing.type = convertOrganisationType(organisation)
+            existing.country = country
+            existing.region = region
+            return existing
         }
+        // Create new (will need explicit save or cascade PERSIST)
         return Organisation(
-            organisationId = organisation.organisationId.content,
-            eventorId = eventor.eventorId,
+            eventorRef = eventorRef,
+            eventorId = eventorId,
             name = organisation.name.content,
             type = convertOrganisationType(organisation),
-            country = if(organisation.country != null
-                && organisation.country.alpha3 != null
-                && organisation.country.alpha3.value.length == 3) {
-                organisation.country.alpha3.value
-            } else
-                eventor.eventorId,
-            region = if (organisation.parentOrganisation != null)
-                organisation.parentOrganisation.organisationId?.content?.let {
-                regionRepository.findByRegionIdAndEventorId(it, eventor.eventorId) ?:
-                regionRepository.findByRegionIdAndEventorId(organisation.organisationId.content, eventor.eventorId)
-            }
-            else
-                regionRepository.findByRegionIdAndEventorId(organisation.organisationId.content, eventor.eventorId)
+            country = country,
+            region = region
         )
     }
 
-    private fun convertOrganisationType(organisation: org.iof.eventor.Organisation): OrganisationType {
-        return when (organisation.organisationTypeId.content) {
-            "1" -> OrganisationType.Federation
-            "2" -> OrganisationType.Region
-            "5" -> OrganisationType.IOF
-            else -> OrganisationType.Club
-        }
+    private fun convertOrganisationType(organisation: org.iof.eventor.Organisation): OrganisationType = when (organisation.organisationTypeId.content) {
+        "1" -> OrganisationType.Federation
+        "2" -> OrganisationType.Region
+        "5" -> OrganisationType.IOF
+        else -> OrganisationType.Club
     }
 }

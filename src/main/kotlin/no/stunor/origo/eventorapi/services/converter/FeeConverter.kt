@@ -27,9 +27,7 @@ class FeeConverter {
             eventClassList: List<org.iof.eventor.EventClass>
         ): Fee {
             return Fee(
-                eventorId = event.eventor.eventorId,
-                eventId = event.eventId,
-                feeId = entryFee.entryFeeId.content,
+                eventorRef = entryFee.entryFeeId.content,
                 name = entryFee.name.content,
                 currency = if (entryFee.valueOperator == "fixed" && entryFee.amount != null) entryFee.amount.currency else null,
                 amount = if (entryFee.valueOperator == "fixed" && entryFee.amount != null) entryFee.amount.content.toDouble() else null,
@@ -37,11 +35,11 @@ class FeeConverter {
                 percentageSurcharge = if (entryFee.valueOperator == "percent" && entryFee.amount != null) entryFee.amount.content.toInt() else null,
                 validFrom = if (entryFee.validFromDate != null) TimeStampConverter.parseDate(
                     "${entryFee.validFromDate.date.content} ${entryFee.validFromDate.clock.content}",
-                    event.eventor
+                    event.eventorId
                 ) else null,
                 validTo = if (entryFee.validToDate != null) TimeStampConverter.parseDate(
                     "${entryFee.validToDate.date.content} ${entryFee.validToDate.clock.content}",
-                    event.eventor
+                    event.eventorId
                 ) else null,
                 fromBirthYear = if (entryFee.fromDateOfBirth != null) entryFee.fromDateOfBirth.date.content.substring(
                     0,
@@ -50,7 +48,8 @@ class FeeConverter {
                 toBirthYear = if (entryFee.toDateOfBirth != null) entryFee.toDateOfBirth.date.content.substring(0, 4)
                     .toInt() else null,
                 taxIncluded = entryFee.taxIncluded == "Y",
-                classes = findEventClasses(event.classes, entryFee, eventClassList)
+                classes = findEventClasses(event.classes, entryFee, eventClassList),
+                eventId = event.id
             )
         }
 
@@ -64,7 +63,7 @@ class FeeConverter {
             for (eventClass in eventClassList) {
                 for (classFee in eventClass.classEntryFee) {
                     if (classFee.entryFeeId.content == fee.entryFeeId.content) {
-                        classes.find{ it.classId == eventClass.eventClassId.content }?.let { result.add(it) }
+                        classes.find{ it.eventorRef == eventClass.eventClassId.content }?.let { result.add(it) }
                     }
                 }
             }

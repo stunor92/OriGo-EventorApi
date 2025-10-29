@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.services.converter
 
-import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.ClassGender
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.EventClass
@@ -12,25 +11,22 @@ class EventClassConverter {
     companion object {
         fun convertEventClasses(
             eventCLassList: EventClassList?,
-            eventor: Eventor,
             event: Event
-        ): MutableList<EventClass> {
+        ): List<EventClass> {
             if (eventCLassList == null)
                 return mutableListOf()
             val result = mutableListOf<EventClass>()
             for (eventClass in eventCLassList.eventClass) {
                 if (eventClass != null) {
-                    result.add(convertEventClass(eventor, event, eventClass))
+                    result.add(convertEventClass(event, eventClass))
                 }
             }
             return result
         }
 
-        fun convertEventClass(eventor: Eventor, event: Event, eventClass: org.iof.eventor.EventClass): EventClass {
+        fun convertEventClass(event: Event, eventClass: org.iof.eventor.EventClass): EventClass {
             return EventClass(
-                eventorId = eventor.eventorId,
-                eventId = event.eventId,
-                classId = eventClass.eventClassId.content,
+                eventorRef = eventClass.eventClassId.content,
                 name = eventClass.name.content,
                 shortName = eventClass.classShortName.content,
                 type = getClassTypeFromId(if (eventClass.classType != null) eventClass.classType.classTypeId.content else eventClass.classTypeId.content),
@@ -88,12 +84,11 @@ class EventClassConverter {
         fun getEventClassFromId(
             eventClassList: EventClassList,
             entryClassId: String,
-            eventor: Eventor,
             event: Event
         ): EventClass? {
             for (eventClass in eventClassList.eventClass) {
                 if (eventClass.eventClassId.content == entryClassId) {
-                    return convertEventClass(eventor, event, eventClass)
+                    return convertEventClass(event, eventClass)
                 }
             }
             return null

@@ -2,25 +2,19 @@ package no.stunor.origo.eventorapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
-import jakarta.persistence.IdClass
-import java.io.Serializable
-
-data class RegionId(
-        private val regionId: String,
-        private val eventorId: String
-) : Serializable {
-        constructor() : this("", "")
-}
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
+import java.util.*
 
 @Entity
-@IdClass(RegionId::class)
 data class Region (
-        @JsonIgnore @Id var eventorId: String = "",
-        @Id var regionId: String = "",
-        var name: String = ""
-) {
-    override fun toString(): String {
-        return "Region(regionId='$regionId', eventorId='$eventorId', name='$name')"
-    }
-}
+    @Id
+    @GeneratedValue
+    @JdbcTypeCode(SqlTypes.UUID)
+    var id: UUID? = null,
+    @JsonIgnore var eventorId: String = "",
+    var eventorRef: String = "",
+    var name: String = "",
+)
