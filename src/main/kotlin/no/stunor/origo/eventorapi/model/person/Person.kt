@@ -13,7 +13,7 @@ data class Person(
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.UUID)
     var id: UUID? = null,
-    @JsonIgnore var eventorId: String = "",
+    var eventorId: String = "",
     var eventorRef: String = "",
     @Embedded var name: PersonName = PersonName(),
     var birthYear: Int = 0,
