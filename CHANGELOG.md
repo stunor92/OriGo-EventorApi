@@ -1,5 +1,16 @@
 # Changelog
 
+## [9.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v8.1.0...v9.0.0) (2025-10-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* Use generated uuid as id on entities ([#192](https://github.com/stunor92/OriGo-EventorApi/issues/192))
+
+### Features
+
+* Use generated uuid as id on entities ([#192](https://github.com/stunor92/OriGo-EventorApi/issues/192)) ([d38215b](https://github.com/stunor92/OriGo-EventorApi/commit/d38215b1479a0fea43313e6660f822ff3e104d1f))
+
 ## [8.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v8.0.3...v8.1.0) (2025-10-26)
 
 
