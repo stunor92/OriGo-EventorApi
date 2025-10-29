@@ -18,6 +18,9 @@ class EntryListConverter {
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
 
+    @Autowired
+    private lateinit var personConverter: PersonConverter
+
     fun convertEventEntryList(eventor: Eventor, entryList: EntryList): List<Entry> {
         val result  = mutableListOf<Entry>()
 
@@ -40,18 +43,18 @@ class EntryListConverter {
                     raceId = raceId.content,
                     classId = entry.entryClass[0].eventClassId.content,
                     personId = if (entry.competitor.person.personId != null) entry.competitor.person.personId.content else null,
-                    name = PersonConverter.convertPersonName(entry.competitor.person.personName),
+                    name = personConverter.convertPersonName(entry.competitor.person.personName),
                     organisation =
                         if(entry.competitor.organisation != null)
-                            organisationConverter.convertOrganisation(entry.competitor.organisation, eventor)
+                            organisationConverter.convertOrganisation(entry.competitor.organisation, eventor.id)
                         else
-                            organisationConverter.convertOrganisation(entry.competitor.organisationId, eventor),
+                            organisationConverter.convertOrganisation(entry.competitor.organisationId, eventor.id),
                     birthYear = if (entry.competitor.person.birthDate != null) entry.competitor.person.birthDate.date.content.substring(
                         0,
                         4
                     ).toInt() else null,
                     nationality = if (entry.competitor.person.nationality?.country != null) entry.competitor.person.nationality.country.alpha3.value else null,
-                    gender = PersonConverter.convertGender(entry.competitor.person.sex),
+                    gender = personConverter.convertGender(entry.competitor.person.sex),
                     punchingUnits = convertPunchingUnits(entry.competitor.cCard),
                     bib = if (entry.bibNumber != null) entry.bibNumber.content else null,
                     startTime = null,
@@ -96,11 +99,11 @@ class EntryListConverter {
         val result  = mutableListOf<Organisation>()
         for (teamCompetitor in teamCompetitors) {
             if (teamCompetitor.organisationId != null
-                && !result.any { it.organisationId == teamCompetitor.organisationId.content }
+                && !result.any { it.eventorRef == teamCompetitor.organisationId.content }
             ) {
                 organisationConverter.convertOrganisation(
                     organisation = teamCompetitor.organisationId,
-                    eventor = eventor
+                    eventorId = eventor.id
                 )?.let {
                     result.add(
                         it
@@ -126,13 +129,13 @@ class EntryListConverter {
     private fun convertTeamMember(teamMember: org.iof.eventor.TeamCompetitor): TeamMember {
         return TeamMember(
             personId = if (teamMember.person != null && teamMember.person.personId != null) teamMember.person.personId.content else null,
-            name = if (teamMember.person != null) PersonConverter.convertPersonName(teamMember.person.personName) else null,
+            name = if (teamMember.person != null) personConverter.convertPersonName(teamMember.person.personName) else null,
             birthYear = if (teamMember.person != null && teamMember.person.birthDate != null) teamMember.person.birthDate.date.content.substring(
                 0,
                 4
             ).toInt() else null,
             nationality = if (teamMember.person != null && teamMember.person.nationality != null) teamMember.person.nationality.country.alpha3.value else null,
-            gender = if (teamMember.person != null) PersonConverter.convertGender(teamMember.person.sex) else null,
+            gender = if (teamMember.person != null) personConverter.convertGender(teamMember.person.sex) else null,
             punchingUnits = convertPunchingUnits(teamMember.cCard),
             leg = teamMember.teamSequence.content.toInt(),
             startTime = null,
@@ -144,7 +147,7 @@ class EntryListConverter {
     }
 
     fun convertPunchingUnits(cCards: List<org.iof.eventor.CCard>): MutableList<PunchingUnit> {
-        val punchingUnits: MutableList<PunchingUnit> = ArrayList()
+        val punchingUnits: MutableList<PunchingUnit> = mutableListOf()
         for (c in cCards) {
             punchingUnits.add(convertPunchingUnit(c))
         }
@@ -155,8 +158,8 @@ class EntryListConverter {
         return PunchingUnit(cCard.cCardId.content, convertPunchingUnitType(cCard.punchingUnitType.value))
     }
 
-    fun convertPunchingUnitTypes(punchingUnitTypes: List<org.iof.eventor.PunchingUnitType>): List<PunchingUnitType> {
-        val result: MutableList<PunchingUnitType> = ArrayList()
+    fun convertPunchingUnitTypes(punchingUnitTypes: List<org.iof.eventor.PunchingUnitType>): ArrayList<PunchingUnitType> {
+        val result: ArrayList<PunchingUnitType> = ArrayList()
         for (punchingUnitType in punchingUnitTypes) {
             result.add(convertPunchingUnitType(punchingUnitType.value))
         }

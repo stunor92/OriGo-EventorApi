@@ -1,37 +1,26 @@
 package no.stunor.origo.eventorapi.model.event
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.hypersistence.utils.hibernate.type.array.EnumArrayType
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import io.hypersistence.utils.hibernate.type.array.TimestampArrayType
 import io.hypersistence.utils.hibernate.type.array.internal.AbstractArrayType
 import jakarta.persistence.*
-import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.organisation.Organisation
+import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.Type
-import java.io.Serializable
+import org.hibernate.type.SqlTypes
 import java.sql.Timestamp
-
-data class EventId(
-    private val eventId: String,
-    private val eventorId: String
-) : Serializable {
-    constructor() : this("", "")
-}
+import java.util.*
 
 @Entity
-@IdClass(EventId::class)
 data class Event(
     @Id
-    @JsonIgnore
-    val eventorId: String = "",
-    @ManyToOne
-    @JoinColumns(
-        JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false)
-    )
-    var eventor: Eventor = Eventor(),
-    @Id var eventId: String = "",
+    @GeneratedValue
+    @JdbcTypeCode(SqlTypes.UUID)
+    var id: UUID? = null,
+    @JsonIgnore var eventorId: String = "",
+    var eventorRef: String = "",
     var name: String = "",
     @Enumerated(EnumType.STRING) var type: EventFormEnum = EventFormEnum.Individual,
     @Enumerated(EnumType.STRING) var classification: EventClassificationEnum = EventClassificationEnum.Club,
@@ -39,16 +28,12 @@ data class Event(
     @Type(
         value = EnumArrayType::class,
         parameters = [org.hibernate.annotations.Parameter(
-
             name = AbstractArrayType.SQL_ARRAY_TYPE,
             value = "discipline"
         )]
     )
-    @Column(
-        name = "disciplines",
-        columnDefinition = "discipline[]"
-    )
-    var disciplines: Array<Discipline> = arrayOf(),
+    @Column(name = "disciplines", columnDefinition = "discipline[]")
+    var disciplines: Array<Discipline> = emptyArray(),
     @Type(
         value = EnumArrayType::class,
         parameters = [org.hibernate.annotations.Parameter(
@@ -56,61 +41,72 @@ data class Event(
             value = "punching_unit_type"
         )]
     )
-    @Column(
-        name = "punching_unit_types",
-        columnDefinition = "punching_unit_type[]"
-    )
-    var punchingUnitTypes: Array<PunchingUnitType> = arrayOf(),
+    @Column(name = "punching_unit_types", columnDefinition = "punching_unit_type[]")
+    var punchingUnitTypes: Array<PunchingUnitType> = emptyArray(),
     var startDate: Timestamp? = null,
     var finishDate: Timestamp? = null,
-    @ManyToMany(cascade = [CascadeType.ALL])
+    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @JoinTable(
         name = "event_organiser",
-        joinColumns = [JoinColumn(name = "event_id", referencedColumnName = "eventId"), JoinColumn(name = "eventor_id", referencedColumnName = "eventorId")],
-        inverseJoinColumns = [JoinColumn(name = "organisation_id", referencedColumnName = "organisationId")]
+        joinColumns = [JoinColumn(name = "event_id")],
+        inverseJoinColumns = [JoinColumn(name = "organisation_id")]
     )
-    var organisers: MutableList<Organisation> = ArrayList(),
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var classes: MutableList<EventClass> = ArrayList(),
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var documents: MutableList<Document> = ArrayList(),
-    @Type(TimestampArrayType::class) var entryBreaks: Array<Timestamp> = arrayOf(),
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var races: MutableList<Race> = ArrayList(),
+    var organisers: MutableList<Organisation> = mutableListOf(),
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var classes: MutableList<EventClass> = mutableListOf(),
+    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], mappedBy = "event", orphanRemoval = true) var documents: MutableList<Document> = mutableListOf(),
+    @Type(TimestampArrayType::class) var entryBreaks: Array<Timestamp> = emptyArray(),
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "event") var races: MutableList<Race> = mutableListOf(),
     @Type(value = ListArrayType::class) var webUrls: List<String> = listOf(),
     var message: String? = null,
     var email: String? = null,
     var phone: String? = null
 ) {
-    override fun toString(): String {
-        return "Event(eventId='$eventId', eventorId='$eventorId', name='$name')"
+    private fun basicFieldsEqual(other: Event): Boolean {
+        val checks = listOf(
+            { id == other.id },
+            { eventorId == other.eventorId },
+            { eventorRef == other.eventorRef },
+            { name == other.name },
+            { type == other.type },
+            { classification == other.classification },
+            { status == other.status },
+            { startDate == other.startDate },
+            { finishDate == other.finishDate },
+            { message == other.message },
+            { email == other.email },
+            { phone == other.phone }
+        )
+        return checks.all { it() }
+    }
+
+    private fun arraysEqual(other: Event): Boolean {
+        return disciplines.contentEquals(other.disciplines) &&
+                punchingUnitTypes.contentEquals(other.punchingUnitTypes) &&
+                entryBreaks.contentEquals(other.entryBreaks)
+    }
+
+    private fun collectionsEqual(other: Event): Boolean {
+        return organisers == other.organisers &&
+                classes == other.classes &&
+                documents == other.documents &&
+                races == other.races &&
+                webUrls == other.webUrls
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Event) return false
-
-        return eventorId == other.eventorId &&
-                eventId == other.eventId &&
-                name == other.name &&
-                type == other.type &&
-                classification == other.classification &&
-                status == other.status &&
-                disciplines.contentEquals(other.disciplines) &&
-                punchingUnitTypes.contentEquals(other.punchingUnitTypes) &&
-                startDate == other.startDate &&
-                finishDate == other.finishDate &&
-                organisers == other.organisers &&
-                classes == other.classes &&
-                documents == other.documents &&
-                entryBreaks.contentEquals(other.entryBreaks) &&
-                races == other.races &&
-                webUrls == other.webUrls &&
-                message == other.message &&
-                email == other.email &&
-                phone == other.phone
+        if (javaClass != other?.javaClass) return false
+        other as Event
+        if (!basicFieldsEqual(other)) return false
+        if (!arraysEqual(other)) return false
+        if (!collectionsEqual(other)) return false
+        return true
     }
 
     override fun hashCode(): Int {
-        var result = eventorId.hashCode()
-        result = 31 * result + eventId.hashCode()
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + eventorId.hashCode()
+        result = 31 * result + eventorRef.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + type.hashCode()
         result = 31 * result + classification.hashCode()

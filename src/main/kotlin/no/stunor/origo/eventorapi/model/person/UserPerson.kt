@@ -3,23 +3,27 @@ package no.stunor.origo.eventorapi.model.person
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import java.io.Serializable
+import java.util.*
 
-data class UserPersonId(
-    private val userId: String,
-    private val personId: String,
-    private val eventorId: String
+@Embeddable
+data class UserPersonKey(
+    var userId: String = "",
+    @Column(name = "person_id") var personId: UUID? = null,
 ) : Serializable
 
 @Entity
-@IdClass(UserPersonId::class)
-data class UserPerson (
-    @Id var userId: String = "",
-    @Id var eventorId: String = "",
-    @Id var personId: String = "",
-    @ManyToOne
-    @JoinColumns(
-        JoinColumn(name = "personId", referencedColumnName = "personId", insertable = false, updatable = false),
-        JoinColumn(name = "eventorId", referencedColumnName = "eventorId", insertable = false, updatable = false)
-    )
+@Table(name = "user_person")
+data class UserPerson(
+    @EmbeddedId var id: UserPersonKey = UserPersonKey(),
+    @MapsId("personId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id")
     @JsonIgnore var person: Person? = null,
-)
+) {
+    var userId: String
+        get() = id.userId
+        set(value) { id.userId = value }
+    var personId: UUID?
+        get() = id.personId
+        set(value) { id.personId = value }
+}

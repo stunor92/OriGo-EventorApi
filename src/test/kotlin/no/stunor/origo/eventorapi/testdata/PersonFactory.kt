@@ -1,13 +1,15 @@
 package no.stunor.origo.eventorapi.testdata
 
 import no.stunor.origo.eventorapi.model.person.*
+import java.util.UUID
 
 class PersonFactory {
     companion object {
         fun createTestPerson(): Person {
             return Person(
+                id = UUID.randomUUID(),
                 eventorId = "NOR",
-                personId = "123",
+                eventorRef = "123",
                 name = PersonName(
                     given = "Ola",
                     family = "Nordmann",
@@ -17,17 +19,19 @@ class PersonFactory {
                 gender = Gender.Man,
                 mobilePhone = "+4712345678",
                 email = "test@test.no",
-                memberships = listOf(
+                memberships = mutableListOf(
                     Membership(
-                        eventorId = "NOR",
-                        personId = "123",
-                        organisationId = "141",
+                        id = MembershipKey(
+                            personId = UUID.randomUUID(),
+                            organisationId = UUID.randomUUID()
+                        ),
                         type = MembershipType.Admin
                     ),
                     Membership(
-                        eventorId = "NOR",
-                        personId = "123",
-                        organisationId = "8",
+                        id = MembershipKey(
+                            personId = UUID.randomUUID(),
+                            organisationId = UUID.randomUUID()
+                        ),
                         type = MembershipType.Organiser
                     )
                 ),

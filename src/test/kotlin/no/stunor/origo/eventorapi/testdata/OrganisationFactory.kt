@@ -9,12 +9,12 @@ class OrganisationFactory {
         fun createTestOrganisation(): Organisation {
             return Organisation(
                 eventorId = "NOR",
-                organisationId = "141",
+                eventorRef = "141",
                 name = "Testklubben",
                 type = OrganisationType.Club,
                 country = "NOR",
                 region = Region(
-                    regionId = "8",
+                    eventorRef = "8",
                     name = "Hordaland"
                 ),
 

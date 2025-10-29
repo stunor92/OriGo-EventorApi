@@ -18,6 +18,7 @@ import org.iof.eventor.ResultListList
 import org.iof.eventor.StartListList
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.util.Optional
 
 class CalendarServiceTest {
     var eventorRepository = mockk<EventorRepository>()
@@ -41,17 +42,17 @@ class CalendarServiceTest {
     @Test
     fun testGetRacesForUser() {
         every { personRepository.findAllByUsers(any()) } returns listOf(PersonFactory.createTestPerson())
-        every { eventorRepository.findByEventorId(any()) } returns EventorFactory.createEventorNorway()
+        every { eventorRepository.findById(any()) } returns Optional.of(EventorFactory.createEventorNorway())
         every { eventorService.getGetOrganisationEntries(any(), any(), any(), any(), any()) } returns entryList
         every { eventorService.getEventClasses(any(), any()) } returns eventClass
         every { eventorService.getGetPersonalStarts(any(), any(), any(), any(), any()) } returns startList
         every { eventorService.getGetPersonalResults(any(), any(), any(), any(), any()) } returns resultList
-        every { organisationRepository.findByOrganisationIdAndEventorId(any(),any()) } returns OrganisationFactory.createTestOrganisation()
+        every { organisationRepository.findByEventorRefAndEventorId(any(),any()) } returns OrganisationFactory.createTestOrganisation()
         val result = calendarService.getEventList("123")
 
         assert(result.size == 27)
         val dm = result.first { it.eventId == "17544" }
         assert(dm.userEntries.size == 1)
-        assert(dm.organisationEntries.first { it.organisation.organisationId == "141" }.entries == 95)
+        assert(dm.organisationEntries.first { it.organisation.eventorRef == "141" }.entries == 95)
     }
 }

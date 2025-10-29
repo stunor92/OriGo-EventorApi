@@ -1,22 +1,19 @@
 package no.stunor.origo.eventorapi.model.event
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
-import java.io.Serializable
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import java.sql.Timestamp
+import java.util.UUID
 
-data class FeeId(
-        private val feeId: String,
-        private val eventId: String,
-        private val eventorId: String
-) : Serializable {
-        constructor() : this("", "", "")
-}
 @Entity
-@IdClass(FeeId::class)
 data class Fee (
-    @Id var eventorId: String = "",
-    @Id var eventId: String = "",
-    @Id var feeId: String = "",
+    @Id
+    @GeneratedValue
+    @JdbcTypeCode(SqlTypes.UUID)
+    var id: UUID? = null,
+    var eventorRef: String = "",
     var name: String = "",
     var currency: String? = null,
     var amount: Double? = null,
@@ -30,12 +27,9 @@ data class Fee (
     @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(
         name = "class_fee",
-        joinColumns = [
-            JoinColumn(name = "event_id", referencedColumnName = "eventId"),
-            JoinColumn(name = "eventor_id", referencedColumnName = "eventorId"),
-            JoinColumn(name = "fee_id", referencedColumnName = "feeId")
-        ],
-        inverseJoinColumns = [JoinColumn(name = "class_id", referencedColumnName = "classId")]
+        joinColumns = [JoinColumn(name = "fee_id")],
+        inverseJoinColumns = [JoinColumn(name = "class_id")]
     )
-    var classes: MutableList<EventClass> = mutableListOf()
+    var classes: MutableList<EventClass> = mutableListOf(),
+    @JsonIgnore var eventId: UUID? = null
 )

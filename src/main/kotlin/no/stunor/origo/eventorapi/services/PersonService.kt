@@ -1,18 +1,21 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
+import no.stunor.origo.eventorapi.data.EventorRepository
+import no.stunor.origo.eventorapi.data.MembershipRepository
+import no.stunor.origo.eventorapi.data.PersonRepository
+import no.stunor.origo.eventorapi.data.UserPersonRepository
 import no.stunor.origo.eventorapi.exception.EventorAuthException
 import no.stunor.origo.eventorapi.exception.EventorConnectionException
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
-import no.stunor.origo.eventorapi.data.EventorRepository
-import no.stunor.origo.eventorapi.data.PersonRepository
-import no.stunor.origo.eventorapi.data.UserPersonRepository
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.model.person.UserPerson
+import no.stunor.origo.eventorapi.model.person.UserPersonKey
 import no.stunor.origo.eventorapi.services.converter.PersonConverter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class PersonService {
@@ -24,27 +27,32 @@ class PersonService {
     private lateinit var personRepository: PersonRepository
 
     @Autowired
+    private lateinit var membershipRepository: MembershipRepository
+
+    @Autowired
     private lateinit var userPersonRepository: UserPersonRepository
 
     @Autowired
     private lateinit var eventorService: EventorService
 
+    @Autowired
+    private lateinit var personConverter: PersonConverter
+
     fun authenticate(eventorId: String, username: String, password: String, userId: String): Person {
         try {
-            val eventor = eventorRepository.findByEventorId(eventorId) ?: throw EventorNotFoundException()
+            val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
 
             val eventorPerson = eventorService.authenticatePerson(eventor, username, password)?: throw EventorAuthException()
 
-            val person = PersonConverter.convertPerson(eventorPerson, eventor)
+            val person = personConverter.convertPerson(eventorPerson, eventor)
+            val existingPerson = personRepository.findByEventorIdAndEventorRef(eventorId, person.eventorRef)
+            if (existingPerson != null) {
+                person.id = existingPerson.id
+                membershipRepository.deleteByPersonId(existingPerson.id)
+            }
 
-            person.users.add(
-                UserPerson(
-                    userId = userId,
-                    eventorId = eventorId,
-                    personId = person.personId,
-                    person = person
-                )
-            )
+            val userPerson = UserPerson(id = UserPersonKey(userId = userId, personId = person.id), person = person)
+            person.users.add(userPerson)
             personRepository.save(person)
             return person
         } catch (e: HttpClientErrorException) {
@@ -56,7 +64,8 @@ class PersonService {
     }
 
     fun delete(eventorId: String, personId: String, userId: String) {
-        userPersonRepository.deleteByUserIdAndPersonIdAndEventorId(userId = userId, eventorId = eventorId, personId =  personId)
+        val person = personRepository.findByEventorIdAndEventorRef(eventorId, personId) ?: return
+        userPersonRepository.deleteByUserIdAndPersonId(userId = userId, personId =  person.id)
     }
 
 }

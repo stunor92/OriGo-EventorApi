@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface RegionRepository : CrudRepository<Region, String> {
-    fun findByRegionIdAndEventorId(regionId: String, eventorId: String): Region?
+    fun findByEventorRefAndEventorId(eventorRef: String, eventorId: String): Region?
 }
