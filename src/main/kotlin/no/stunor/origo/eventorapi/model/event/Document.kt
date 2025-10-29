@@ -7,7 +7,7 @@ import org.hibernate.type.SqlTypes
 import java.util.UUID
 
 @Entity
-class Document(
+data class Document(
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.UUID)
@@ -16,7 +16,7 @@ class Document(
     var name: String = "",
     var url: String = "",
     var type: String = "",
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     @JsonIgnore var event: Event = Event()
 )

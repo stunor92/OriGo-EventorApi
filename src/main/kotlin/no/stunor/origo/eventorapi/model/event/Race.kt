@@ -23,7 +23,7 @@ data class Race(
     var startList: Boolean = false,
     var resultList: Boolean = false,
     var livelox: Boolean = false,
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     @JsonIgnore var event: Event = Event()
 )
