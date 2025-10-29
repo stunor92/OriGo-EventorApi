@@ -57,7 +57,7 @@ class CalendarService(
 
         for (person in persons) {
             val eventor = eventorRepository.findById(person.eventorId).getOrNull() ?: continue
-            val organisationIds = person.memberships.map { it.organisation?.eventorRef ?: "" }
+            val organisationIds = person.memberships.mapNotNull { it.organisation?.eventorRef }
             val entryList = eventorService.getGetOrganisationEntries(
                 eventor = eventor,
                 organisations = organisationIds,
