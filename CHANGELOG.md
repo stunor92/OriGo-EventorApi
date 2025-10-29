@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.0...v9.0.1) (2025-10-29)
+
+
+### Bug Fixes
+
+* Return eventorId for person in json ([#197](https://github.com/stunor92/OriGo-EventorApi/issues/197)) ([7e2d77d](https://github.com/stunor92/OriGo-EventorApi/commit/7e2d77d4679b717dce446d867b78191088d6b4c8))
+
 ## [9.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v8.1.0...v9.0.0) (2025-10-29)
 
 
