@@ -127,6 +127,51 @@ open class EventService {
         }
     }
 
+    private fun mergePunchingUnits(existing: Entry, incoming: Entry) {
+        when {
+            existing is no.stunor.origo.eventorapi.model.event.entry.PersonEntry && incoming is no.stunor.origo.eventorapi.model.event.entry.PersonEntry -> {
+                // Merge punching units uniquely by id
+                val existingIds = existing.punchingUnits.map { it.id }.toMutableSet()
+                for (p in incoming.punchingUnits) {
+                    if (p.id.isNotBlank() && existingIds.add(p.id)) {
+                        existing.punchingUnits.add(p)
+                    } else // If id is blank, just add if not already present by type/id combo
+                        if (p.id.isBlank() && existing.punchingUnits.none { it.type == p.type && it.id == p.id }) {
+                            existing.punchingUnits.add(p)
+                        }
+                }
+            }
+            existing is no.stunor.origo.eventorapi.model.event.entry.TeamEntry && incoming is no.stunor.origo.eventorapi.model.event.entry.TeamEntry -> {
+                // Merge team member punching units
+                existing.teamMembers.forEach { existingMember ->
+                    if (existingMember.personId != null) {
+                        val incomingMember = incoming.teamMembers.find { it.personId == existingMember.personId }
+                        if (incomingMember != null) {
+                            val existingIds = existingMember.punchingUnits.map { it.id }.toMutableSet()
+                            for (p in incomingMember.punchingUnits) {
+                                if (p.id.isNotBlank() && existingIds.add(p.id)) {
+                                    existingMember.punchingUnits.add(p)
+                                } else if (p.id.isBlank() && existingMember.punchingUnits.none { it.type == p.type && it.id == p.id }) {
+                                    existingMember.punchingUnits.add(p)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun findExisting(entries: List<Entry>, incoming: Entry): Entry? {
+        return when (incoming) {
+            is no.stunor.origo.eventorapi.model.event.entry.PersonEntry -> incoming.personId?.let { pid ->
+                entries.firstOrNull { it is no.stunor.origo.eventorapi.model.event.entry.PersonEntry && it.personId == pid }
+            }
+            is no.stunor.origo.eventorapi.model.event.entry.TeamEntry -> entries.firstOrNull { it is no.stunor.origo.eventorapi.model.event.entry.TeamEntry && it.name == incoming.name }
+            else -> null
+        }
+    }
+
     open fun getEntryList(eventorId: String, eventId: String): List<Entry> {
         val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
         val entries: MutableList<Entry> = mutableListOf()
@@ -142,17 +187,28 @@ open class EventService {
             entries.add(entry)
             updateEntrySets(entry, personIds, teamNames)
         }
-        // Add new start entries
+        // Add new start entries or merge punching units
         for (entry in startEntries) {
             if (isNewEntry(entry, personIds, teamNames)) {
                 entries.add(entry)
                 updateEntrySets(entry, personIds, teamNames)
+            } else {
+                val existing = findExisting(entries, entry)
+                if (existing != null) {
+                    mergePunchingUnits(existing, entry)
+                }
             }
         }
-        // Add new entry entries
+        // Add new entry entries or merge punching units
         for (entry in entryEntries) {
             if (isNewEntry(entry, personIds, teamNames)) {
                 entries.add(entry)
+                updateEntrySets(entry, personIds, teamNames)
+            } else {
+                val existing = findExisting(entries, entry)
+                if (existing != null) {
+                    mergePunchingUnits(existing, entry)
+                }
             }
         }
         return entries
