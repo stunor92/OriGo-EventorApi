@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.1...v9.0.2) (2025-11-05)
+
+
+### Bug Fixes
+
+* Add punching-units on start and result list ([#200](https://github.com/stunor92/OriGo-EventorApi/issues/200)) ([023bdfe](https://github.com/stunor92/OriGo-EventorApi/commit/023bdfece95f5579ec67e2bd099b7bd7f7bda186))
+
 ## [9.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.0...v9.0.1) (2025-10-29)
 
 
