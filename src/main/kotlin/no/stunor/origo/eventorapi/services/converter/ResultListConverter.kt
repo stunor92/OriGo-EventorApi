@@ -122,9 +122,9 @@ class ResultListConverter {
             ).toInt() else null,
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
             gender = personConverter.convertGender(personResult.person.sex),
-            bib = if (personResult.result?.bibNumber != null) personResult.result.bibNumber.content else null,
+            bib = if (raceResult.result?.bibNumber != null) raceResult.result.bibNumber.content else null,
             punchingUnits = entryListConverter.convertPunchingUnits(raceResult.result?.cCardIdOrCCard?.filterIsInstance<org.iof.eventor.CCard>() ?: emptyList()),
-            startTime = if (personResult.result?.startTime != null) TimeStampConverter.parseDate(
+            startTime = if (raceResult.result?.startTime != null) TimeStampConverter.parseDate(
                 "${raceResult.result.startTime.date.content} ${raceResult.result.startTime.clock.content}",
                 eventor.id
             ) else null,
