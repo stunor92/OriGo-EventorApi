@@ -114,6 +114,13 @@ open class EventService {
         return if (!entryList.entry.isNullOrEmpty()) entryListConverter.convertEventEntryList(eventor, entryList) else emptyList()
     }
 
+    /**
+     * Merge punching units from an incoming PersonEntry into an existing PersonEntry.
+     * Only adds punching units that are not already present based on their (id, type) pair.
+     * Handles both punching units with non-blank IDs and those with blank IDs.
+     * @param existing The target PersonEntry to which punching units will be added
+     * @param incoming The source PersonEntry from which punching units are read
+     */
     private fun mergePersonPunchingUnits(existing: PersonEntry, incoming: PersonEntry) {
         if (incoming.punchingUnits.isEmpty()) return
         val seenIds = existing.punchingUnits.asSequence().map { it.id to it.type }.toMutableSet()
@@ -127,6 +134,14 @@ open class EventService {
         }
     }
 
+    /**
+     * Merge punching units from an incoming TeamEntry into an existing TeamEntry.
+     * Matches team members by personId and merges punching units for each matched member.
+     * Only adds punching units that are not already present based on their (id, type) pair.
+     * Team members without a personId or without matches in the existing entry are skipped.
+     * @param existing The target TeamEntry to which punching units will be added
+     * @param incoming The source TeamEntry from which punching units are read
+     */
     private fun mergeTeamPunchingUnits(existing: TeamEntry, incoming: TeamEntry) {
         if (incoming.teamMembers.isEmpty()) return
         // Map existing members by personId for O(1) access
