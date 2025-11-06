@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.3](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.2...v9.0.3) (2025-11-06)
+
+
+### Bug Fixes
+
+* Optimize entry-lists from eventor ([#203](https://github.com/stunor92/OriGo-EventorApi/issues/203)) ([083da24](https://github.com/stunor92/OriGo-EventorApi/commit/083da24a6c25de51fc2d7e203418b9268a352cb7))
+
 ## [9.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.1...v9.0.2) (2025-11-05)
 
 
