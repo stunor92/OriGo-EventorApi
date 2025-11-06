@@ -114,19 +114,35 @@ open class EventService {
         return if (!entryList.entry.isNullOrEmpty()) entryListConverter.convertEventEntryList(eventor, entryList) else emptyList()
     }
 
+    /**
+     * Merges punching units from an incoming PersonEntry into an existing PersonEntry.
+     * 
+     * This function combines punching units from both entries while avoiding duplicates.
+     * Duplicates are identified by their (id, type) pair. Only unique punching units
+     * from the incoming entry are added to the existing entry.
+     *
+     * @param existing The PersonEntry to merge into (will be modified)
+     * @param incoming The PersonEntry to merge from (will not be modified)
+     */
     private fun mergePersonPunchingUnits(existing: PersonEntry, incoming: PersonEntry) {
         if (incoming.punchingUnits.isEmpty()) return
         val seenIds = existing.punchingUnits.asSequence().map { it.id to it.type }.toMutableSet()
         for (p in incoming.punchingUnits) {
             val key = p.id to p.type
-            if (p.id.isNotBlank()) {
-                if (seenIds.add(key)) existing.punchingUnits.add(p)
-            } else if (seenIds.add(key)) {
-                existing.punchingUnits.add(p)
-            }
+            if (seenIds.add(key)) existing.punchingUnits.add(p)
         }
     }
 
+    /**
+     * Merges punching units from an incoming TeamEntry into an existing TeamEntry.
+     * 
+     * This function combines punching units for matching team members between both entries.
+     * Team members are matched by their personId. For each matching member, punching units
+     * are merged while avoiding duplicates. Duplicates are identified by their (id, type) pair.
+     *
+     * @param existing The TeamEntry to merge into (will be modified)
+     * @param incoming The TeamEntry to merge from (will not be modified)
+     */
     private fun mergeTeamPunchingUnits(existing: TeamEntry, incoming: TeamEntry) {
         if (incoming.teamMembers.isEmpty()) return
         // Map existing members by personId for O(1) access
@@ -139,11 +155,7 @@ open class EventService {
             val seenIds = existingMember.punchingUnits.asSequence().map { it.id to it.type }.toMutableSet()
             for (p in incomingMember.punchingUnits) {
                 val key = p.id to p.type
-                if (p.id.isNotBlank()) {
-                    if (seenIds.add(key)) existingMember.punchingUnits.add(p)
-                } else if (seenIds.add(key)) {
-                    existingMember.punchingUnits.add(p)
-                }
+                if (seenIds.add(key)) existingMember.punchingUnits.add(p)
             }
         }
     }
