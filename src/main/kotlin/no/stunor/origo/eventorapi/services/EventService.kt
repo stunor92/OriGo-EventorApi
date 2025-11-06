@@ -116,7 +116,7 @@ open class EventService {
 
     /**
      * Merges punching units from an incoming PersonEntry into an existing PersonEntry.
-     * 
+     *
      * This function combines punching units from both entries while avoiding duplicates.
      * Duplicates are identified by their (id, type) pair. Only unique punching units
      * from the incoming entry are added to the existing entry.
@@ -135,7 +135,7 @@ open class EventService {
 
     /**
      * Merges punching units from an incoming TeamEntry into an existing TeamEntry.
-     * 
+     *
      * This function combines punching units for matching team members between both entries.
      * Team members are matched by their personId. For each matching member, punching units
      * are merged while avoiding duplicates. Duplicates are identified by their (id, type) pair.
@@ -206,7 +206,6 @@ open class EventService {
                 val key = entryKey(e)
                 if (key == null) {
                     val composite = keylessCompositeKey(e) ?: continue
-                    // cannot build meaningful merge key
                     val existingKeyless = keylessEntries[composite]
                     if (existingKeyless == null) {
                         keylessEntries[composite] = e
