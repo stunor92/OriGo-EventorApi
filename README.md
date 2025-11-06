@@ -15,6 +15,27 @@ The application provides endpoints to convert Eventor IOF-XML files to JSON. You
 - Java 21 or higher
 - Maven 3.6.0 or higher
 
+## Configuration
+
+The application uses Spring profiles for configuration:
+- `application.yml` - Production configuration using environment variables
+- `application-local.yml` - Local development configuration with example values
+
+### Required Environment Variables (Production)
+
+- `POSTGRES_DB` - PostgreSQL database connection URL
+- `POSTGRES_USER` - Database username
+- `POSTGRES_PASSWORD` - Database password
+- `JWT_SECRET` - Secret key for JWT token signing (minimum 32 characters)
+
+### Security Notes
+
+⚠️ **Important**: Never commit actual secrets or production credentials to version control.
+
+- The `application-local.yml` file contains example values for local development only
+- Always use environment variables for production deployments
+- Change default values in local configuration before using in any shared environment
+
 ## Build the project
 mvn clean install
 

@@ -1,8 +1,11 @@
+# Local development configuration
+# WARNING: These are example values for local development only.
+# DO NOT use these values in production!
 spring:
   datasource:
     url: jdbc:postgresql://127.0.0.1:54322/postgres
     username: postgres
-    password: postgres
+    password: postgres  # Change this for your local database
 config:
   personalEntries:
     start: 5
@@ -14,4 +17,4 @@ config:
     start: 500
     end: 5
   jwt:
-    secret: super-secret-jwt-token-with-at-least-32-characters-long
+    secret: super-secret-jwt-token-with-at-least-32-characters-long  # CHANGE THIS - for local dev only
