@@ -1,0 +1,21 @@
+# Local development configuration template
+# Copy this file to application-local.yml and update with your local values
+# The application-local.yml file is ignored by git to prevent committing credentials
+
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:54322/postgres
+    username: postgres
+    password: <your-local-postgres-password>  # Replace with your local database password
+config:
+  personalEntries:
+    start: 5
+    end: 90
+  personalStarts:
+    start: 5
+    end: 90
+  personalResults:
+    start: 500
+    end: 5
+  jwt:
+    secret: <your-local-jwt-secret-min-32-chars>  # Replace with your JWT secret (minimum 32 characters)

@@ -19,7 +19,21 @@ The application provides endpoints to convert Eventor IOF-XML files to JSON. You
 
 The application uses Spring profiles for configuration:
 - `application.yml` - Production configuration using environment variables
-- `application-local.yml` - Local development configuration with example values
+- `application-local.yml` - Local development configuration (not in version control)
+- `application-local.yml.example` - Template for local development configuration
+
+### Local Development Setup
+
+1. Copy the example configuration file:
+   ```bash
+   cp src/main/resources/application-local.yml.example src/main/resources/application-local.yml
+   ```
+
+2. Update `application-local.yml` with your local values:
+   - Set your local PostgreSQL password
+   - Set a JWT secret (minimum 32 characters)
+
+3. The `application-local.yml` file is ignored by git to prevent committing credentials
 
 ### Required Environment Variables (Production)
 
@@ -32,9 +46,10 @@ The application uses Spring profiles for configuration:
 
 ⚠️ **Important**: Never commit actual secrets or production credentials to version control.
 
-- The `application-local.yml` file contains example values for local development only
+- Use the `application-local.yml.example` template for local development
+- The actual `application-local.yml` file is ignored by git
 - Always use environment variables for production deployments
-- Change default values in local configuration before using in any shared environment
+- Never commit credentials, API keys, or secrets to the repository
 
 ## Build the project
 mvn clean install
