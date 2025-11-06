@@ -85,7 +85,7 @@ class ResultListConverter {
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
             gender = personConverter.convertGender(personResult.person.sex),
             bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
-            punchingUnits = entryListConverter.convertPunchingUnits(personResult.result.cCardIdOrCCard.filterIsInstance<org.iof.eventor.CCard>()),
+            punchingUnits = entryListConverter.convertPunchingUnits(personResult.result.cCardIdOrCCard?.filterIsInstance<org.iof.eventor.CCard>() ?: emptyList()),
             startTime = if (personResult.result.startTime != null) TimeStampConverter.parseDate(
                 "${personResult.result.startTime.date.content} ${personResult.result.startTime.clock.content}",
                 eventor.id
