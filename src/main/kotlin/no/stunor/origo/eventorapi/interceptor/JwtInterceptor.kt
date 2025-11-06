@@ -25,9 +25,9 @@ class JwtInterceptor : HandlerInterceptor {
         
         // Since this interceptor is only applied to protected paths, we require authentication
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            log.warn("Missing or invalid Authorization header for ${request.requestURI}")
+            log.warn("Missing or invalid Authorization header for ${request.method} ${request.requestURI}")
             response.status = HttpStatus.UNAUTHORIZED.value()
-            response.writer.write("Missing or invalid Authorization header")
+            response.writer.write("Authentication required")
             return false
         }
         
@@ -41,21 +41,21 @@ class JwtInterceptor : HandlerInterceptor {
             val uid = claimsJws.payload["sub"]?.toString()
             
             if (uid.isNullOrEmpty()) {
-                log.warn("JWT token missing 'sub' claim for ${request.requestURI}")
+                log.warn("JWT token missing required claim for ${request.method} ${request.requestURI}")
                 response.status = HttpStatus.UNAUTHORIZED.value()
-                response.writer.write("Invalid JWT token: missing subject")
+                response.writer.write("Invalid authentication token")
                 return false
             }
             
             request.setAttribute("uid", uid)
             return true
         } catch (e: JwtException) {
-            log.warn("Invalid JWT token for ${request.requestURI}: ${e.message}")
+            log.warn("JWT validation failed for ${request.method} ${request.requestURI}: ${e.javaClass.simpleName}")
             response.status = HttpStatus.UNAUTHORIZED.value()
-            response.writer.write("Invalid or expired JWT token")
+            response.writer.write("Authentication failed")
             return false
         } catch (e: Exception) {
-            log.error("Unexpected error processing JWT token for ${request.requestURI}: ${e.message}", e)
+            log.error("Unexpected error processing JWT for ${request.method} ${request.requestURI}: ${e.javaClass.simpleName}", e)
             response.status = HttpStatus.UNAUTHORIZED.value()
             response.writer.write("Authentication failed")
             return false
