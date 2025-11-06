@@ -197,7 +197,9 @@ open class EventService {
         val resultEntries = fetchResultEntries(eventor, eventId)
         
         // Optimization: If result list exists and is non-empty, skip fetching start and entry lists
-        // because result list already contains start times, finish times, and punching units
+        // Result list contains: start times, finish times, results, split times
+        // Result list may contain punching units (if available in Eventor response)
+        // This optimization eliminates 2 API calls and reduces processing overhead
         if (resultEntries.isNotEmpty()) {
             return resultEntries
         }
