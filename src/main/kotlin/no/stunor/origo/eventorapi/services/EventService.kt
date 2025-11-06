@@ -119,11 +119,7 @@ open class EventService {
         val seenIds = existing.punchingUnits.asSequence().map { it.id to it.type }.toMutableSet()
         for (p in incoming.punchingUnits) {
             val key = p.id to p.type
-            if (p.id.isNotBlank()) {
-                if (seenIds.add(key)) existing.punchingUnits.add(p)
-            } else if (seenIds.add(key)) {
-                existing.punchingUnits.add(p)
-            }
+            if (seenIds.add(key)) existing.punchingUnits.add(p)
         }
     }
 
