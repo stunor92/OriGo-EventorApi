@@ -41,7 +41,7 @@ class JwtInterceptor : HandlerInterceptor {
             val uid = claimsJws.payload["sub"]?.toString()
             
             if (uid.isNullOrEmpty()) {
-                log.error("JWT token missing 'sub' claim")
+                log.warn("JWT token missing 'sub' claim for ${request.requestURI}")
                 response.status = HttpStatus.UNAUTHORIZED.value()
                 response.writer.write("Invalid JWT token: missing subject")
                 return false
@@ -50,14 +50,14 @@ class JwtInterceptor : HandlerInterceptor {
             request.setAttribute("uid", uid)
             return true
         } catch (e: JwtException) {
-            log.error("Invalid JWT token: ${e.message}")
+            log.warn("Invalid JWT token for ${request.requestURI}: ${e.message}")
             response.status = HttpStatus.UNAUTHORIZED.value()
             response.writer.write("Invalid or expired JWT token")
             return false
         } catch (e: Exception) {
-            log.error("Error processing JWT token: ${e.message}")
-            response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
-            response.writer.write("Error processing authentication")
+            log.error("Unexpected error processing JWT token for ${request.requestURI}: ${e.message}", e)
+            response.status = HttpStatus.UNAUTHORIZED.value()
+            response.writer.write("Authentication failed")
             return false
         }
     }
