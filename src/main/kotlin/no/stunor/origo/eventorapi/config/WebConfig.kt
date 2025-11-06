@@ -13,5 +13,7 @@ open class WebConfig(
 
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(jwtInterceptor)
+            .addPathPatterns("/event-list/**", "/person/**", "/user/**")
+            .excludePathPatterns("/actuator/**", "/api-docs/**", "/documentation.html", "/swagger-ui/**")
     }
 }
