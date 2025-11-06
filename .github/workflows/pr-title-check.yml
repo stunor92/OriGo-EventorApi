@@ -29,11 +29,14 @@ jobs:
             ci
             chore
             revert
-          # Configure which scopes are allowed (optional, can be empty)
-          # If empty or not defined, any scope is allowed
-          # Examples: api, ui, deps, core
-          # Leave empty to allow any scope
-          scopes: |
+          # Configure which scopes are allowed
+          # Leave empty (omit 'scopes' parameter) to allow any scope
+          # To restrict scopes, uncomment and list allowed values:
+          # scopes: |
+          #   api
+          #   ui
+          #   deps
+          #   core
           # Require a scope to be provided (set to true to make scope mandatory)
           requireScope: false
           # Optionally require subject to start with lowercase
