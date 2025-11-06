@@ -11,6 +11,8 @@ import no.stunor.origo.eventorapi.model.Eventor
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.Fee
 import no.stunor.origo.eventorapi.model.event.entry.Entry
+import no.stunor.origo.eventorapi.model.event.entry.PersonEntry
+import no.stunor.origo.eventorapi.model.event.entry.TeamEntry
 import no.stunor.origo.eventorapi.services.converter.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -112,105 +114,122 @@ open class EventService {
         return if (!entryList.entry.isNullOrEmpty()) entryListConverter.convertEventEntryList(eventor, entryList) else emptyList()
     }
 
-    private fun updateEntrySets(entry: Entry, personIds: MutableSet<String>, teamNames: MutableSet<String>) {
-        when (entry) {
-            is no.stunor.origo.eventorapi.model.event.entry.PersonEntry -> entry.personId?.let { personIds.add(it) }
-            is no.stunor.origo.eventorapi.model.event.entry.TeamEntry -> teamNames.add(entry.name)
+    /**
+     * Merges punching units from an incoming PersonEntry into an existing PersonEntry.
+     *
+     * This function combines punching units from both entries while avoiding duplicates.
+     * Duplicates are identified by their (id, type) pair. Only unique punching units
+     * from the incoming entry are added to the existing entry.
+     *
+     * @param existing The PersonEntry to merge into (will be modified)
+     * @param incoming The PersonEntry to merge from (will not be modified)
+     */
+    private fun mergePersonPunchingUnits(existing: PersonEntry, incoming: PersonEntry) {
+        if (incoming.punchingUnits.isEmpty()) return
+        val seenIds = existing.punchingUnits.asSequence().map { it.id to it.type }.toMutableSet()
+        for (p in incoming.punchingUnits) {
+            val key = p.id to p.type
+            if (seenIds.add(key)) existing.punchingUnits.add(p)
         }
     }
 
-    private fun isNewEntry(entry: Entry, personIds: Set<String>, teamNames: Set<String>): Boolean {
-        return when (entry) {
-            is no.stunor.origo.eventorapi.model.event.entry.PersonEntry -> entry.personId != null && entry.personId !in personIds
-            is no.stunor.origo.eventorapi.model.event.entry.TeamEntry -> entry.name.isNotEmpty() && entry.name !in teamNames
-            else -> true
+    /**
+     * Merges punching units from an incoming TeamEntry into an existing TeamEntry.
+     *
+     * This function combines punching units for matching team members between both entries.
+     * Team members are matched by their personId. For each matching member, punching units
+     * are merged while avoiding duplicates. Duplicates are identified by their (id, type) pair.
+     *
+     * @param existing The TeamEntry to merge into (will be modified)
+     * @param incoming The TeamEntry to merge from (will not be modified)
+     */
+    private fun mergeTeamPunchingUnits(existing: TeamEntry, incoming: TeamEntry) {
+        if (incoming.teamMembers.isEmpty()) return
+        // Map existing members by personId for O(1) access
+        val memberByPersonId = existing.teamMembers.filter { !it.personId.isNullOrBlank() }
+            .associateBy { it.personId!! }
+        for (incomingMember in incoming.teamMembers) {
+            val pid = incomingMember.personId ?: continue
+            val existingMember = memberByPersonId[pid] ?: continue
+            if (incomingMember.punchingUnits.isEmpty()) continue
+            val seenIds = existingMember.punchingUnits.asSequence().map { it.id to it.type }.toMutableSet()
+            for (p in incomingMember.punchingUnits) {
+                val key = p.id to p.type
+                if (seenIds.add(key)) existingMember.punchingUnits.add(p)
+            }
         }
     }
 
     private fun mergePunchingUnits(existing: Entry, incoming: Entry) {
-        when {
-            existing is no.stunor.origo.eventorapi.model.event.entry.PersonEntry && incoming is no.stunor.origo.eventorapi.model.event.entry.PersonEntry -> {
-                // Merge punching units uniquely by id
-                val existingIds = existing.punchingUnits.map { it.id }.toMutableSet()
-                for (p in incoming.punchingUnits) {
-                    if (p.id.isNotBlank() && existingIds.add(p.id)) {
-                        existing.punchingUnits.add(p)
-                    } else // If id is blank, just add if not already present by type/id combo
-                        if (p.id.isBlank() && existing.punchingUnits.none { it.type == p.type && it.id == p.id }) {
-                            existing.punchingUnits.add(p)
-                        }
-                }
-            }
-            existing is no.stunor.origo.eventorapi.model.event.entry.TeamEntry && incoming is no.stunor.origo.eventorapi.model.event.entry.TeamEntry -> {
-                // Merge team member punching units
-                existing.teamMembers.forEach { existingMember ->
-                    if (existingMember.personId != null) {
-                        val incomingMember = incoming.teamMembers.find { it.personId == existingMember.personId }
-                        if (incomingMember != null) {
-                            val existingIds = existingMember.punchingUnits.map { it.id }.toMutableSet()
-                            for (p in incomingMember.punchingUnits) {
-                                if (p.id.isNotBlank() && existingIds.add(p.id)) {
-                                    existingMember.punchingUnits.add(p)
-                                } else if (p.id.isBlank() && existingMember.punchingUnits.none { it.type == p.type && it.id == p.id }) {
-                                    existingMember.punchingUnits.add(p)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        when (existing) {
+            is PersonEntry if incoming is PersonEntry -> mergePersonPunchingUnits(existing, incoming)
+            is TeamEntry if incoming is TeamEntry -> mergeTeamPunchingUnits(existing, incoming)
         }
     }
 
-    private fun findExisting(entries: List<Entry>, incoming: Entry): Entry? {
-        return when (incoming) {
-            is no.stunor.origo.eventorapi.model.event.entry.PersonEntry -> incoming.personId?.let { pid ->
-                entries.firstOrNull { it is no.stunor.origo.eventorapi.model.event.entry.PersonEntry && it.personId == pid }
-            }
-            is no.stunor.origo.eventorapi.model.event.entry.TeamEntry -> entries.firstOrNull { it is no.stunor.origo.eventorapi.model.event.entry.TeamEntry && it.name == incoming.name }
+    private fun entryKey(entry: Entry): String? = when (entry) {
+        is PersonEntry -> entry.personId?.takeIf { it.isNotBlank() }?.let { "PERSON:$it" }
+        is TeamEntry -> entry.name.takeIf { it.isNotBlank() }?.let { "TEAM:$it" }
+        else -> null
+    }
+
+    private fun keylessCompositeKey(entry: Entry): String? {
+        return when (entry) {
+            is PersonEntry -> if (entry.personId.isNullOrBlank()) {
+                val given = entry.name.given.trim().lowercase()
+                val family = entry.name.family.trim().lowercase()
+                val orgRef = entry.organisation?.eventorRef?.trim()?.lowercase() ?: ""
+                if (given.isEmpty() && family.isEmpty()) return null // insufficient to build key
+                "P|$given|$family|$orgRef|${entry.classId}|${entry.raceId}"
+            } else null
+            is TeamEntry -> if (entry.name.isBlank()) {
+                // Team entries without a name: use organisation refs if present
+                val orgs = entry.organisations.joinToString("+") { it.eventorRef.lowercase() }
+                if (orgs.isEmpty()) return null
+                "T|$orgs|${entry.classId}|${entry.raceId}"
+            } else null
             else -> null
         }
     }
 
     open fun getEntryList(eventorId: String, eventId: String): List<Entry> {
         val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
-        val entries: MutableList<Entry> = mutableListOf()
-        val personIds: MutableSet<String> = mutableSetOf()
-        val teamNames: MutableSet<String> = mutableSetOf()
-
         val resultEntries = fetchResultEntries(eventor, eventId)
         val startEntries = fetchStartEntries(eventor, eventId)
         val entryEntries = fetchEntryEntries(eventor, eventId)
 
-        // Add all result entries
-        for (entry in resultEntries) {
-            entries.add(entry)
-            updateEntrySets(entry, personIds, teamNames)
-        }
-        // Add new start entries or merge punching units
-        for (entry in startEntries) {
-            if (isNewEntry(entry, personIds, teamNames)) {
-                entries.add(entry)
-                updateEntrySets(entry, personIds, teamNames)
-            } else {
-                val existing = findExisting(entries, entry)
-                if (existing != null) {
-                    mergePunchingUnits(existing, entry)
+        val entriesByKey = LinkedHashMap<String, Entry>()
+        val keylessEntries = LinkedHashMap<String, Entry>() // keyed by composite name/org/class/race
+
+        fun addOrMerge(list: List<Entry>) {
+            for (e in list) {
+                val key = entryKey(e)
+                if (key == null) {
+                    val composite = keylessCompositeKey(e) ?: continue
+                    val existingKeyless = keylessEntries[composite]
+                    if (existingKeyless == null) {
+                        keylessEntries[composite] = e
+                    } else {
+                        mergePunchingUnits(existingKeyless, e)
+                    }
+                    continue
+                }
+                val existing = entriesByKey[key]
+                if (existing == null) {
+                    entriesByKey[key] = e
+                } else {
+                    mergePunchingUnits(existing, e)
                 }
             }
         }
-        // Add new entry entries or merge punching units
-        for (entry in entryEntries) {
-            if (isNewEntry(entry, personIds, teamNames)) {
-                entries.add(entry)
-                updateEntrySets(entry, personIds, teamNames)
-            } else {
-                val existing = findExisting(entries, entry)
-                if (existing != null) {
-                    mergePunchingUnits(existing, entry)
-                }
-            }
-        }
-        return entries
+        // Order: results, then start, then entry (same as before)
+        addOrMerge(resultEntries)
+        addOrMerge(startEntries)
+        addOrMerge(entryEntries)
+
+        val finalList = ArrayList<Entry>(entriesByKey.size + keylessEntries.size)
+        finalList.addAll(entriesByKey.values)
+        finalList.addAll(keylessEntries.values)
+        return finalList
     }
 }
