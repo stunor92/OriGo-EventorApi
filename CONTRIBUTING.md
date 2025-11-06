@@ -46,7 +46,7 @@ or with optional scope:
 ❌ Bad examples:
 - `Add new feature` (missing type)
 - `Feature: Add support` (wrong type, should be 'feat')
-- `fix: Fix bug` (subject should start with lowercase: 'fix: fix bug')
+- `fix: Fix login timeout` (subject should start with lowercase: 'fix: resolve login timeout')
 - `feat:add feature` (missing space after colon)
 
 ### Why Conventional Commits?
