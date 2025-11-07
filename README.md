@@ -103,5 +103,14 @@ or with optional scope:
 5. Push to the branch (`git push origin feature-branch`)
 6. Create a new Pull Request with a title following the conventional commit format
 
+## Release Process
+
+This project uses [Release Please](https://github.com/googleapis/release-please) to automate releases:
+
+- Release Please creates PRs with titles like `chore(main): release X.Y.Z`
+- These release PRs are **automatically merged** once all required checks pass
+- After merge, a new release is created and Docker images are published to GHCR
+- Version numbers follow [Semantic Versioning](https://semver.org/)
+
 ### License
 This project is licensed under the MIT License - see the LICENSE file for details.
