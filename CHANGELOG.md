@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.1](https://github.com/stunor92/OriGo-EventorApi/compare/v9.1.0...v9.1.1) (2025-11-07)
+
+
+### Bug Fixes
+
+* testing auto merge of snapshot-release ([#223](https://github.com/stunor92/OriGo-EventorApi/issues/223)) ([6b7115a](https://github.com/stunor92/OriGo-EventorApi/commit/6b7115a7b5bbd0c69739ea28d1e004f0412593bb))
+
 ## [9.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.4...v9.1.0) (2025-11-07)
 
 
