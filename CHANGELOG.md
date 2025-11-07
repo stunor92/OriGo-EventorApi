@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.4](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.3...v9.0.4) (2025-11-07)
+
+
+### Performance Improvements
+
+* optimize entry list merging when results are available ([#216](https://github.com/stunor92/OriGo-EventorApi/issues/216)) ([a913e94](https://github.com/stunor92/OriGo-EventorApi/commit/a913e94f7f350e23e7594179ff646c1016aa88f3))
+
 ## [9.0.3](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.2...v9.0.3) (2025-11-06)
 
 
