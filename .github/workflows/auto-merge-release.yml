@@ -18,8 +18,7 @@ jobs:
     # Only run for PRs created by release-please bot
     if: |
       github.event.pull_request.user.login == 'github-actions[bot]' &&
-      startsWith(github.event.pull_request.title, 'chore(main): release') &&
-      github.event.pull_request.author_association == 'CONTRIBUTOR'
+      startsWith(github.event.pull_request.title, 'chore(main): release')
     steps:
       - name: Enable auto-merge for release PRs
         run: gh pr merge --auto --squash "$PR_NUMBER"
