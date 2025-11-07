@@ -15,10 +15,11 @@ permissions:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    # Only run for PRs created by release-please bot
+    # Only run for PRs created by release-please bot with SNAPSHOT releases
     if: |
       github.event.pull_request.user.login == 'github-actions[bot]' &&
-      startsWith(github.event.pull_request.title, 'chore(main): release')
+      startsWith(github.event.pull_request.title, 'chore(main): release') &&
+      endsWith(github.event.pull_request.title, 'SNAPSHOT')
     steps:
       - name: Enable auto-merge for release PRs
         run: gh pr merge --auto --squash "$PR_NUMBER"

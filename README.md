@@ -108,7 +108,7 @@ or with optional scope:
 This project uses [Release Please](https://github.com/googleapis/release-please) to automate releases:
 
 - Release Please creates PRs with titles like `chore(main): release X.Y.Z`
-- These release PRs are **automatically merged** once all required checks pass
+- Release PRs ending with **SNAPSHOT** are **automatically merged** once all required checks pass
 - After merge, a new release is created and Docker images are published to GHCR
 - Version numbers follow [Semantic Versioning](https://semver.org/)
 
