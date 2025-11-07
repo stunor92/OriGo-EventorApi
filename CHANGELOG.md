@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.0](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.4...v9.1.0) (2025-11-07)
+
+
+### Features
+
+* add auto-merge workflow for SNAPSHOT release PRs ([#219](https://github.com/stunor92/OriGo-EventorApi/issues/219)) ([67571d8](https://github.com/stunor92/OriGo-EventorApi/commit/67571d8556eea6aa56751514e23a7598fbbfac8d))
+
 ## [9.0.4](https://github.com/stunor92/OriGo-EventorApi/compare/v9.0.3...v9.0.4) (2025-11-07)
 
 
