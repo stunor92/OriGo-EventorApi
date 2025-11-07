@@ -27,6 +27,9 @@ class ResultListConverter {
     @Autowired
     private lateinit var personConverter: PersonConverter
 
+    @Autowired
+    private lateinit var entryListConverter: EntryListConverter
+
     @Throws(NumberFormatException::class, ParseException::class)
     fun convertEventResultList(eventor: Eventor, resultList: ResultList): List<Entry> {
         val competitorList = mutableListOf<Entry>()
@@ -82,6 +85,7 @@ class ResultListConverter {
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
             gender = personConverter.convertGender(personResult.person.sex),
             bib = if (personResult.result.bibNumber != null) personResult.result.bibNumber.content else null,
+            punchingUnits = entryListConverter.convertPunchingUnits(personResult.result.cCardIdOrCCard?.filterIsInstance<org.iof.eventor.CCard>() ?: emptyList()),
             startTime = if (personResult.result.startTime != null) TimeStampConverter.parseDate(
                 "${personResult.result.startTime.date.content} ${personResult.result.startTime.clock.content}",
                 eventor.id
@@ -118,8 +122,9 @@ class ResultListConverter {
             ).toInt() else null,
             nationality = if (personResult.person.nationality != null) personResult.person.nationality.country.alpha3.value else null,
             gender = personConverter.convertGender(personResult.person.sex),
-            bib = if (personResult.result?.bibNumber != null) personResult.result.bibNumber.content else null,
-            startTime = if (personResult.result?.startTime != null) TimeStampConverter.parseDate(
+            bib = if (raceResult.result?.bibNumber != null) raceResult.result.bibNumber.content else null,
+            punchingUnits = entryListConverter.convertPunchingUnits(raceResult.result?.cCardIdOrCCard?.filterIsInstance<org.iof.eventor.CCard>() ?: emptyList()),
+            startTime = if (raceResult.result?.startTime != null) TimeStampConverter.parseDate(
                 "${raceResult.result.startTime.date.content} ${raceResult.result.startTime.clock.content}",
                 eventor.id
             ) else null,

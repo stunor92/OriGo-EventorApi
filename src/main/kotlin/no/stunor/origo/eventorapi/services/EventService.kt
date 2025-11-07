@@ -195,6 +195,16 @@ open class EventService {
     open fun getEntryList(eventorId: String, eventId: String): List<Entry> {
         val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
         val resultEntries = fetchResultEntries(eventor, eventId)
+        
+        // Optimization: If result list exists and is non-empty, skip fetching start and entry lists
+        // Result list contains: start times, finish times, results, split times
+        // Result list may contain punching units (if available in Eventor response)
+        // This optimization eliminates 2 API calls and reduces processing overhead
+        if (resultEntries.isNotEmpty()) {
+            return resultEntries
+        }
+
+        // If no result list, fall back to merging start and entry lists
         val startEntries = fetchStartEntries(eventor, eventId)
         val entryEntries = fetchEntryEntries(eventor, eventId)
 
@@ -222,8 +232,7 @@ open class EventService {
                 }
             }
         }
-        // Order: results, then start, then entry (same as before)
-        addOrMerge(resultEntries)
+        // Order: start first, then entry
         addOrMerge(startEntries)
         addOrMerge(entryEntries)
 
