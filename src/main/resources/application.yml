@@ -14,9 +14,9 @@ springdoc:
     path: /documentation.html
 spring:
   datasource:
-    url: ${POSTGRES_DB:jdbc:postgresql://127.0.0.1:5432/postgres}
-    username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:postgres}
+    url: ${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driverClassName: org.postgresql.Driver
     hikari:
       data-source-properties:
@@ -55,4 +55,4 @@ config:
     start: 5
     end: 1
   jwt:
-    secret: ${JWT_SECRET:MY_SUPER_SECRET_KEY_WITH_MINIMUM_32_CHARACTERS}
+    secret: ${JWT_SECRET}

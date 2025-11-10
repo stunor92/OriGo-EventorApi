@@ -18,15 +18,7 @@ jobs:
     # Run for release snapshot PRs or Dependabot PRs
     if: "contains(github.event.pull_request.labels.*.name, 'autorelease: snapshot') || github.event.pull_request.user.login == 'dependabot[bot]'"
     steps:
-      - name: Approve Dependabot PR (if needed)
-        if: github.event.pull_request.user.login == 'dependabot[bot]'
-        run: gh pr review "$PR_NUMBER" --approve
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-      - name: Enable auto-merge for qualifying PRs
-        run: gh pr merge --auto --rebase "$PR_NUMBER"
+        run: gh pr merge --auto --squash "$PR_NUMBER"
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
