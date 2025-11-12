@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.2](https://github.com/stunor92/OriGo-EventorApi/compare/v9.1.1...v9.1.2) (2025-11-12)
+
+
+### Bug Fixes
+
+* refactor entrylist ([#231](https://github.com/stunor92/OriGo-EventorApi/issues/231)) ([1c13ae3](https://github.com/stunor92/OriGo-EventorApi/commit/1c13ae39ad6b7c4ab549757e6fcac1fee294d3bd))
+
 ## [9.1.1](https://github.com/stunor92/OriGo-EventorApi/compare/v9.1.0...v9.1.1) (2025-11-07)
 
 
