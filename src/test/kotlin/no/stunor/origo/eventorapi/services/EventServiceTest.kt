@@ -9,12 +9,17 @@ import no.stunor.origo.eventorapi.data.EventRepository
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.FeeRepository
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
+import no.stunor.origo.eventorapi.model.event.entry.EntryStatus
 import no.stunor.origo.eventorapi.model.event.entry.PersonEntry
-import no.stunor.origo.eventorapi.model.event.entry.TeamEntry
-import no.stunor.origo.eventorapi.services.converter.*
+import no.stunor.origo.eventorapi.services.converter.EntryListConverter
+import no.stunor.origo.eventorapi.services.converter.EventConverter
+import no.stunor.origo.eventorapi.services.converter.OrganisationConverter
+import no.stunor.origo.eventorapi.services.converter.ResultListConverter
+import no.stunor.origo.eventorapi.services.converter.StartListConverter
 import no.stunor.origo.eventorapi.testdata.EventorFactory
 import org.iof.eventor.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -160,9 +165,20 @@ class EventServiceTest {
         val eventId = "17535"
         val eventor = EventorFactory.createEventorNorway()
         val resultList = mockk<ResultList>()
-        val mockEntries = listOf(mockk<PersonEntry>(), mockk<PersonEntry>())
-        
+        val entryList = mockk<EntryList>()
+
+        // Create real PersonEntry objects with IDs
+        val mockEntries = listOf(
+            PersonEntry(personId = "person1", classId = "class1", raceId = "race1", status = EntryStatus.Finished),
+            PersonEntry(personId = "person2", classId = "class2", raceId = "race2", status = EntryStatus.Started)
+        )
+
         every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorService.getEventEntryList(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns entryList
+        every { entryList.entry } returns emptyList()
+        every { entryListConverter.convertEventEntryList(eventor, entryList) } returns emptyList()
+        every { eventorService.getEventStartList(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns null
+        every { startListConverter.convertEventStartList(any(), any()) } returns emptyList()
         every { eventorService.getEventResultList(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns resultList
         every { resultListConverter.convertEventResultList(eventor, resultList) } returns mockEntries
 
@@ -171,9 +187,8 @@ class EventServiceTest {
 
         // Then
         assertEquals(2, result.size)
+        verify { eventorService.getEventEntryList(eventor.baseUrl, eventor.eventorApiKey, eventId) }
         verify { eventorService.getEventResultList(eventor.baseUrl, eventor.eventorApiKey, eventId) }
-        verify(exactly = 0) { eventorService.getEventStartList(any(), any(), any()) }
-        verify(exactly = 0) { eventorService.getEventEntryList(any(), any(), any()) }
     }
 
     @Test
