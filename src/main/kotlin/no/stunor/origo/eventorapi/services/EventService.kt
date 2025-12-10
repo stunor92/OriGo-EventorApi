@@ -17,7 +17,6 @@ import no.stunor.origo.eventorapi.services.converter.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 open class EventService {
@@ -44,7 +43,7 @@ open class EventService {
 
     @Transactional
     open fun getEvent(eventorId: String, eventId: String): Event {
-        val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
+        val eventor = eventorRepository.findById(eventorId) ?: throw EventorNotFoundException()
         val eventorEvent = eventorService.getEvent(eventor.baseUrl, eventor.eventorApiKey, eventId) ?: throw EventNotFoundException()
         val eventClassList = eventorService.getEventClasses(eventor, eventId)
         val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.eventorApiKey, eventId)
@@ -472,7 +471,7 @@ open class EventService {
      * by identifying participants who registered but didn't participate.
      */
     open fun getEntryList(eventorId: String, eventId: String): List<Entry> {
-        val eventor = eventorRepository.findById(eventorId).getOrNull()
+        val eventor = eventorRepository.findById(eventorId)
             ?: throw EventorNotFoundException()
 
         // Fetch all available entry sources

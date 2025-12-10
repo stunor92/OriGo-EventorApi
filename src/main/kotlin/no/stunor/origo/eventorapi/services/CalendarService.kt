@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class CalendarService(
@@ -56,7 +55,7 @@ class CalendarService(
         val persons = personRepository.findAllByUsers(userId)
 
         for (person in persons) {
-            val eventor = eventorRepository.findById(person.eventorId).getOrNull() ?: continue
+            val eventor = eventorRepository.findById(person.eventorId) ?: continue
             val organisationIds = person.memberships.mapNotNull { it.organisation?.eventorRef }
             val entryList = eventorService.getGetOrganisationEntries(
                 eventor = eventor,
@@ -126,7 +125,7 @@ class CalendarService(
     }
 
     fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
-        val eventorList: MutableIterable<Eventor> = eventorRepository.findAll()
+        val eventorList: List<Eventor> = eventorRepository.findAll()
 
         val result: MutableList<CalendarRace> = mutableListOf()
 
@@ -139,7 +138,7 @@ class CalendarService(
     }
 
     fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
-        val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
+        val eventor = eventorRepository.findById(eventorId) ?: throw EventorNotFoundException()
         val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
         return getEventList(eventor = eventor, from = from, to = to, organisations = organisations, classifications = classifications, persons = persons )
     }
