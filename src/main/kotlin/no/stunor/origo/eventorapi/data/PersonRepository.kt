@@ -11,7 +11,7 @@ import java.time.Instant
 import java.util.*
 
 @Repository
-class PersonRepository(
+open class PersonRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val membershipRepository: MembershipRepository,
     private val userPersonRepository: UserPersonRepository
@@ -38,19 +38,19 @@ class PersonRepository(
         )
     }
     
-    fun findByEventorIdAndEventorRef(eventorId: String, eventorRef: String): Person? {
+    open fun findByEventorIdAndEventorRef(eventorId: String, eventorRef: String): Person? {
         return try {
             jdbcTemplate.queryForObject(
                 "SELECT * FROM person WHERE eventor_id = ? AND eventor_ref = ?",
                 rowMapper,
                 eventorId, eventorRef
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
     
-    fun findAllByUsers(userId: String): List<Person> {
+    open fun findAllByUsers(userId: String): List<Person> {
         return jdbcTemplate.query(
             """
             SELECT p.* FROM person p
@@ -62,7 +62,7 @@ class PersonRepository(
         )
     }
     
-    fun findAllByUsersAndEventorId(userId: String, eventorId: String): List<Person> {
+    open fun findAllByUsersAndEventorId(userId: String, eventorId: String): List<Person> {
         return jdbcTemplate.query(
             """
             SELECT p.* FROM person p
@@ -74,14 +74,14 @@ class PersonRepository(
         )
     }
     
-    fun save(person: Person): Person {
+    open fun save(person: Person): Person {
         if (person.id == null) {
             person.id = UUID.randomUUID()
             jdbcTemplate.update(
                 """
                 INSERT INTO person (id, eventor_id, eventor_ref, family_name, given_name, 
                     birth_year, nationality, gender, mobile_phone, email, last_updated)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?::gender, ?, ?, ?)
                 """,
                 person.id, person.eventorId, person.eventorRef, person.name.family, person.name.given,
                 person.birthYear, person.nationality, person.gender.name, person.mobilePhone, 
@@ -92,7 +92,7 @@ class PersonRepository(
                 """
                 INSERT INTO person (id, eventor_id, eventor_ref, family_name, given_name, 
                     birth_year, nationality, gender, mobile_phone, email, last_updated)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?::gender, ?, ?, ?)
                 ON CONFLICT (id) DO UPDATE SET
                     eventor_id = EXCLUDED.eventor_id,
                     eventor_ref = EXCLUDED.eventor_ref,

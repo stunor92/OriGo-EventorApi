@@ -7,25 +7,25 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
 @Repository
-class UserRepository(private val jdbcTemplate: JdbcTemplate) {
-    
+open class UserRepository(private val jdbcTemplate: JdbcTemplate) {
+
     private val rowMapper = RowMapper { rs: ResultSet, _: Int ->
         User(id = rs.getString("id"))
     }
     
-    fun findById(id: String): User? {
+    open fun findById(id: String): User? {
         return try {
             jdbcTemplate.queryForObject(
                 "SELECT * FROM auth.users WHERE id = ?",
                 rowMapper,
                 id
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
     
-    fun save(user: User): User {
+    open fun save(user: User): User {
         jdbcTemplate.update(
             "INSERT INTO auth.users (id) VALUES (?) ON CONFLICT (id) DO NOTHING",
             user.id
@@ -33,7 +33,7 @@ class UserRepository(private val jdbcTemplate: JdbcTemplate) {
         return user
     }
     
-    fun deleteById(id: String) {
+    open fun deleteById(id: String) {
         jdbcTemplate.update("DELETE FROM auth.users WHERE id = ?", id)
     }
 }

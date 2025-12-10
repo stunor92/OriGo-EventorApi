@@ -9,8 +9,8 @@ import java.sql.ResultSet
 import java.util.*
 
 @Repository
-class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
-    
+open class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
+
     private val rowMapper = RowMapper { rs: ResultSet, _: Int ->
         UserPerson(
             id = UserPersonKey(
@@ -21,7 +21,7 @@ class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
         )
     }
     
-    fun findAllByUserId(userId: String): List<UserPerson> {
+    open fun findAllByUserId(userId: String): List<UserPerson> {
         return jdbcTemplate.query(
             "SELECT * FROM user_person WHERE user_id = ?",
             rowMapper,
@@ -29,7 +29,7 @@ class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
         )
     }
     
-    fun save(userPerson: UserPerson): UserPerson {
+    open fun save(userPerson: UserPerson): UserPerson {
         jdbcTemplate.update(
             "INSERT INTO user_person (user_id, person_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
             userPerson.id.userId, userPerson.id.personId
@@ -37,7 +37,7 @@ class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
         return userPerson
     }
     
-    fun deleteByUserIdAndPersonId(userId: String, personId: UUID?) {
+    open fun deleteByUserIdAndPersonId(userId: String, personId: UUID?) {
         jdbcTemplate.update(
             "DELETE FROM user_person WHERE user_id = ? AND person_id = ?",
             userId, personId

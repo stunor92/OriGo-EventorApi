@@ -8,8 +8,8 @@ import java.sql.ResultSet
 import java.util.*
 
 @Repository
-class RegionRepository(private val jdbcTemplate: JdbcTemplate) {
-    
+open class RegionRepository(private val jdbcTemplate: JdbcTemplate) {
+
     private val rowMapper = RowMapper { rs: ResultSet, _: Int ->
         Region(
             id = rs.getObject("id", UUID::class.java),
@@ -19,31 +19,31 @@ class RegionRepository(private val jdbcTemplate: JdbcTemplate) {
         )
     }
     
-    fun findByEventorRefAndEventorId(eventorRef: String, eventorId: String): Region? {
+    open fun findByEventorRefAndEventorId(eventorRef: String, eventorId: String): Region? {
         return try {
             jdbcTemplate.queryForObject(
                 "SELECT * FROM region WHERE eventor_ref = ? AND eventor_id = ?",
                 rowMapper,
                 eventorRef, eventorId
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
     
-    fun findById(id: UUID): Region? {
+    open fun findById(id: UUID): Region? {
         return try {
             jdbcTemplate.queryForObject(
                 "SELECT * FROM region WHERE id = ?",
                 rowMapper,
                 id
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
     
-    fun save(region: Region): Region {
+    open fun save(region: Region): Region {
         if (region.id == null) {
             region.id = UUID.randomUUID()
             jdbcTemplate.update(

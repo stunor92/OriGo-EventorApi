@@ -10,7 +10,7 @@ import java.sql.ResultSet
 import java.util.UUID
 
 @Repository
-class MembershipRepository(
+open class MembershipRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val organisationRepository: OrganisationRepository
 ) {
@@ -28,7 +28,7 @@ class MembershipRepository(
         )
     }
     
-    fun findAllByPersonId(personId: UUID?): List<Membership> {
+    open fun findAllByPersonId(personId: UUID?): List<Membership> {
         if (personId == null) return emptyList()
         return jdbcTemplate.query(
             "SELECT * FROM membership WHERE person_id = ?",
@@ -37,11 +37,11 @@ class MembershipRepository(
         )
     }
     
-    fun save(membership: Membership): Membership {
+    open fun save(membership: Membership): Membership {
         jdbcTemplate.update(
             """
             INSERT INTO membership (person_id, organisation_id, type) 
-            VALUES (?, ?, ?)
+            VALUES (?, ?, ?::membership_type)
             ON CONFLICT (person_id, organisation_id) DO UPDATE SET 
                 type = EXCLUDED.type
             """,
@@ -49,13 +49,8 @@ class MembershipRepository(
         )
         return membership
     }
-    
-    fun saveAll(memberships: List<Membership>): List<Membership> {
-        memberships.forEach { save(it) }
-        return memberships
-    }
-    
-    fun deleteByPersonId(personId: UUID?) {
+
+    open fun deleteByPersonId(personId: UUID?) {
         if (personId != null) {
             jdbcTemplate.update("DELETE FROM membership WHERE person_id = ?", personId)
         }

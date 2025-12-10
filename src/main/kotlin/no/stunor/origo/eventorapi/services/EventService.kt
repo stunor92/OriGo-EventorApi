@@ -63,15 +63,32 @@ open class EventService {
         )
 
         val savedEvent = eventRepository.save(updatedOrNewEvent)
+
+        // Query the saved event from database to get classes with actual database IDs
+        val eventWithSavedClasses = eventRepository.findByEventorIdAndEventorRef(savedEvent.eventorId, savedEvent.eventorRef)
+            ?: savedEvent
+
+        // Create a map of saved classes by eventor_ref for quick lookup
+        val savedClassesByRef = eventWithSavedClasses.classes.associateBy { it.eventorRef }
+
         // Merge fees
         val entryFees = eventorService.getEventEntryFees(eventor, savedEvent.eventorRef)
         val convertedFees = FeeConverter.convertEntryFees(entryFees, savedEvent, eventClassList?.eventClass ?: listOf())
+
+        // Update fee.classes to reference the actual saved classes with correct IDs from database
+        convertedFees.forEach { fee ->
+            fee.classes = fee.classes.mapNotNull { feeClass ->
+                savedClassesByRef[feeClass.eventorRef]
+            }.toMutableList()
+        }
+
         val existingFees = feeRepository.findAllByEventId(savedEvent.id)
         val existingByRef = existingFees.associateBy { it.eventorRef }.toMutableMap()
         val mergedFees = mutableListOf<Fee>()
         for (fee in convertedFees) {
             val match = existingByRef[fee.eventorRef]
             if (match != null) {
+                // Update all fee properties
                 match.name = fee.name
                 match.currency = fee.currency
                 match.amount = fee.amount
@@ -82,6 +99,7 @@ open class EventService {
                 match.fromBirthYear = fee.fromBirthYear
                 match.toBirthYear = fee.toBirthYear
                 match.taxIncluded = fee.taxIncluded
+                // Replace classes entirely (don't append, replace with saved classes)
                 match.classes.clear()
                 match.classes.addAll(fee.classes)
                 mergedFees.add(match)

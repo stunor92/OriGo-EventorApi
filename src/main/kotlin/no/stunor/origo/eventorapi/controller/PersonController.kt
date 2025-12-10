@@ -3,6 +3,7 @@ package no.stunor.origo.eventorapi.controller
 import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.person.Person
 import no.stunor.origo.eventorapi.services.PersonService
+import no.stunor.origo.eventorapi.validation.InputValidator
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -17,18 +18,25 @@ internal class PersonController {
     @Autowired
     private lateinit var personService: PersonService
 
+    @Autowired
+    private lateinit var inputValidator: InputValidator
+
     @PostMapping("/{eventorId}")
     fun HttpServletRequest.authenticate(
-        @PathVariable(value = "eventorId") eventorId: String,
+        @PathVariable eventorId: String,
         @RequestHeader(value = "username") username: String,
         @RequestHeader(value = "password") password: String
     ): ResponseEntity<Person> {
         val uid = getAttribute("uid") as String
 
+        // Validate inputs to prevent SSRF attacks
+        val validatedEventorId = inputValidator.validateEventorId(eventorId)
+        val validatedUsername = inputValidator.validateUsername(username)
+
         return ResponseEntity(
             personService.authenticate(
-                eventorId = eventorId,
-                username = username,
+                eventorId = validatedEventorId,
+                username = validatedUsername,
                 password = password,
                 userId = uid
             ), HttpStatus.OK
@@ -37,15 +45,19 @@ internal class PersonController {
 
     @DeleteMapping("/{eventorId}/{personId}")
     fun HttpServletRequest.delete(
-        @PathVariable(value = "eventorId") eventorId: String,
-        @PathVariable(value = "personId") personId: String
+        @PathVariable eventorId: String,
+        @PathVariable personId: String
     ) {
         val uid = getAttribute("uid") as String
         log.info("Start deleting person.")
 
+        // Validate inputs to prevent SSRF attacks
+        val validatedEventorId = inputValidator.validateEventorId(eventorId)
+        val validatedPersonId = inputValidator.validatePersonId(personId)
+
         personService.delete(
-            eventorId = eventorId,
-            personId = personId,
+            eventorId = validatedEventorId,
+            personId = validatedPersonId,
             userId = uid
         )
     }

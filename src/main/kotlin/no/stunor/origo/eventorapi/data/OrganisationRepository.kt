@@ -1,6 +1,5 @@
 package no.stunor.origo.eventorapi.data
 
-import no.stunor.origo.eventorapi.model.Region
 import no.stunor.origo.eventorapi.model.organisation.Organisation
 import no.stunor.origo.eventorapi.model.organisation.OrganisationType
 import org.springframework.jdbc.core.JdbcTemplate
@@ -10,7 +9,7 @@ import java.sql.ResultSet
 import java.util.*
 
 @Repository
-class OrganisationRepository(
+open class OrganisationRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val regionRepository: RegionRepository
 ) {
@@ -30,35 +29,35 @@ class OrganisationRepository(
         )
     }
     
-    fun findByEventorRefAndEventorId(eventorRef: String, eventorId: String): Organisation? {
+    open fun findByEventorRefAndEventorId(eventorRef: String, eventorId: String): Organisation? {
         return try {
             jdbcTemplate.queryForObject(
                 "SELECT * FROM organisation WHERE eventor_ref = ? AND eventor_id = ?",
                 rowMapper,
                 eventorRef, eventorId
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
     
-    fun findById(id: UUID): Organisation? {
+    open fun findById(id: UUID): Organisation? {
         return try {
             jdbcTemplate.queryForObject(
                 "SELECT * FROM organisation WHERE id = ?",
                 rowMapper,
                 id
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
     
-    fun save(organisation: Organisation): Organisation {
+    open fun save(organisation: Organisation): Organisation {
         if (organisation.id == null) {
             organisation.id = UUID.randomUUID()
             jdbcTemplate.update(
-                "INSERT INTO organisation (id, eventor_id, eventor_ref, name, type, country, region_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO organisation (id, eventor_id, eventor_ref, name, type, country, region_id) VALUES (?, ?, ?, ?, ?::organisation_type, ?, ?)",
                 organisation.id, organisation.eventorId, organisation.eventorRef, organisation.name,
                 organisation.type.name, organisation.country, organisation.region?.id
             )
@@ -66,7 +65,7 @@ class OrganisationRepository(
             jdbcTemplate.update(
                 """
                 INSERT INTO organisation (id, eventor_id, eventor_ref, name, type, country, region_id) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?::organisation_type, ?, ?)
                 ON CONFLICT (id) DO UPDATE SET 
                     eventor_id = EXCLUDED.eventor_id,
                     eventor_ref = EXCLUDED.eventor_ref,

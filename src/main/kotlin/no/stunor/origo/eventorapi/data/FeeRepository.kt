@@ -1,18 +1,15 @@
 package no.stunor.origo.eventorapi.data
 
-import no.stunor.origo.eventorapi.model.event.ClassGender
-import no.stunor.origo.eventorapi.model.event.EventClass
-import no.stunor.origo.eventorapi.model.event.EventClassTypeEnum
 import no.stunor.origo.eventorapi.model.event.Fee
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
-import java.util.UUID
+import java.util.*
 
 @Repository
-class FeeRepository(private val jdbcTemplate: JdbcTemplate) {
-    
+open class FeeRepository(private val jdbcTemplate: JdbcTemplate) {
+
     private val rowMapper = RowMapper { rs: ResultSet, _: Int ->
         Fee(
             id = rs.getObject("id", UUID::class.java),
@@ -32,7 +29,7 @@ class FeeRepository(private val jdbcTemplate: JdbcTemplate) {
         )
     }
     
-    fun findAllByEventId(eventId: UUID?): List<Fee> {
+    open fun findAllByEventId(eventId: UUID?): List<Fee> {
         if (eventId == null) return emptyList()
         return jdbcTemplate.query(
             "SELECT * FROM fee WHERE event_id = ?",
@@ -41,7 +38,7 @@ class FeeRepository(private val jdbcTemplate: JdbcTemplate) {
         )
     }
     
-    fun save(fee: Fee): Fee {
+    open fun save(fee: Fee): Fee {
         if (fee.id == null) {
             fee.id = UUID.randomUUID()
             jdbcTemplate.update(
@@ -100,12 +97,12 @@ class FeeRepository(private val jdbcTemplate: JdbcTemplate) {
         return fee
     }
     
-    fun saveAll(fees: List<Fee>): List<Fee> {
+    open fun saveAll(fees: List<Fee>): List<Fee> {
         fees.forEach { save(it) }
         return fees
     }
     
-    fun deleteAll(fees: List<Fee>) {
+    open fun deleteAll(fees: List<Fee>) {
         fees.forEach { fee ->
             fee.id?.let { id ->
                 jdbcTemplate.update("DELETE FROM class_fee WHERE fee_id = ?", id)

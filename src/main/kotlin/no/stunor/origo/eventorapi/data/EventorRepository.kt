@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
 @Repository
-class EventorRepository(private val jdbcTemplate: JdbcTemplate) {
-    
+open class EventorRepository(private val jdbcTemplate: JdbcTemplate) {
+
     private val rowMapper = RowMapper { rs: ResultSet, _: Int ->
         Eventor(
             id = rs.getString("id"),
@@ -19,39 +19,20 @@ class EventorRepository(private val jdbcTemplate: JdbcTemplate) {
         )
     }
     
-    fun findById(id: String): Eventor? {
+    open fun findById(id: String): Eventor? {
         return try {
             jdbcTemplate.queryForObject(
                 "SELECT * FROM eventor WHERE id = ?",
                 rowMapper,
                 id
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
     
-    fun findAll(): List<Eventor> {
+    open fun findAll(): List<Eventor> {
         return jdbcTemplate.query("SELECT * FROM eventor", rowMapper)
     }
-    
-    fun save(eventor: Eventor): Eventor {
-        val count = jdbcTemplate.update(
-            """
-            INSERT INTO eventor (id, name, federation, base_url, eventor_api_key) 
-            VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT (id) DO UPDATE SET 
-                name = EXCLUDED.name,
-                federation = EXCLUDED.federation,
-                base_url = EXCLUDED.base_url,
-                eventor_api_key = EXCLUDED.eventor_api_key
-            """,
-            eventor.id, eventor.name, eventor.federation, eventor.baseUrl, eventor.eventorApiKey
-        )
-        return eventor
-    }
-    
-    fun deleteById(id: String) {
-        jdbcTemplate.update("DELETE FROM eventor WHERE id = ?", id)
-    }
+
 }

@@ -124,22 +124,32 @@ class CalendarService(
         }
     }
 
-    fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
+    fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String?): List<CalendarRace> {
         val eventorList: List<Eventor> = eventorRepository.findAll()
 
         val result: MutableList<CalendarRace> = mutableListOf()
 
         for (eventor in eventorList) {
-            val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
+            // If no userId, fetch events without personal entries
+            val persons: List<Person> = if (userId != null) {
+                personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
+            } else {
+                emptyList()
+            }
             result.addAll(getEventList(eventor = eventor, from = from, to = to, organisations = null, classifications = classifications, persons = persons))
 
         }
         return result
     }
 
-    fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
+    fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String?): List<CalendarRace> {
         val eventor = eventorRepository.findById(eventorId) ?: throw EventorNotFoundException()
-        val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
+        // If no userId, fetch events without personal entries
+        val persons: List<Person> = if (userId != null) {
+            personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
+        } else {
+            emptyList()
+        }
         return getEventList(eventor = eventor, from = from, to = to, organisations = organisations, classifications = classifications, persons = persons )
     }
 
