@@ -120,7 +120,7 @@ class EventServiceTest {
         val eventor = EventorFactory.createEventorNorway()
         val convertedEvent = mockk<no.stunor.origo.eventorapi.model.event.Event>()
         
-        every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorRepository.findById(eventorId) } returns eventor
         every { eventorService.getEvent(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns oneDayEvent
         every { eventorService.getEventClasses(eventor, eventId) } returns oneDayEventClasses
         every { eventorService.getEventDocuments(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns oneDayDocuments
@@ -132,7 +132,7 @@ class EventServiceTest {
         every { convertedEvent.id } returns UUID.randomUUID()
         every { eventorService.getEventEntryFees(eventor, eventId) } returns null
         every { feeRepository.findAllByEventId(any()) } returns emptyList()
-        every { feeRepository.saveAll(any<Iterable<no.stunor.origo.eventorapi.model.event.Fee>>()) } returns emptyList()
+        every { feeRepository.saveAll(any<List<no.stunor.origo.eventorapi.model.event.Fee>>()) } returns emptyList()
 
         // When
         val result = eventService.getEvent(eventorId, eventId)
@@ -150,7 +150,7 @@ class EventServiceTest {
         val eventorId = "INVALID"
         val eventId = "17535"
         
-        every { eventorRepository.findById(eventorId) } returns Optional.empty()
+        every { eventorRepository.findById(eventorId) } returns null
 
         // When & Then
         assertThrows<EventorNotFoundException> {
@@ -173,7 +173,7 @@ class EventServiceTest {
             PersonEntry(personId = "person2", classId = "class2", raceId = "race2", status = EntryStatus.Started)
         )
 
-        every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorRepository.findById(eventorId) } returns eventor
         every { eventorService.getEventEntryList(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns entryList
         every { entryList.entry } returns emptyList()
         every { entryListConverter.convertEventEntryList(eventor, entryList) } returns emptyList()
@@ -200,7 +200,7 @@ class EventServiceTest {
         val startList = mockk<StartList>()
         val entryList = mockk<EntryList>()
         
-        every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorRepository.findById(eventorId) } returns eventor
         every { eventorService.getEventResultList(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns null
         every { eventorService.getEventStartList(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns startList
         every { eventorService.getEventEntryList(eventor.baseUrl, eventor.eventorApiKey, eventId) } returns entryList
@@ -224,7 +224,7 @@ class EventServiceTest {
         val eventorId = "INVALID"
         val eventId = "17535"
         
-        every { eventorRepository.findById(eventorId) } returns Optional.empty()
+        every { eventorRepository.findById(eventorId) } returns null
 
         // When & Then
         assertThrows<EventorNotFoundException> {
