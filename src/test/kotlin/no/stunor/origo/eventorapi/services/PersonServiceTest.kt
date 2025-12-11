@@ -77,7 +77,7 @@ class PersonServiceTest {
         val eventorId = "NOR"
         val username = "testuser"
         val password = "testpass"
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         val eventor = EventorFactory.createEventorNorway()
         val eventorPerson = mockk<EventorPerson>()
         val convertedPerson = PersonFactory.createTestPerson()
@@ -104,7 +104,7 @@ class PersonServiceTest {
         val eventorId = "NOR"
         val username = "testuser"
         val password = "testpass"
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         val eventor = EventorFactory.createEventorNorway()
         val eventorPerson = mockk<EventorPerson>()
         val convertedPerson = PersonFactory.createTestPerson()
@@ -133,7 +133,7 @@ class PersonServiceTest {
         val eventorId = "INVALID"
         val username = "testuser"
         val password = "testpass"
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         
         every { eventorRepository.findById(eventorId) } returns null
 
@@ -149,7 +149,7 @@ class PersonServiceTest {
         val eventorId = "NOR"
         val username = "testuser"
         val password = "wrongpass"
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         val eventor = EventorFactory.createEventorNorway()
         
         every { eventorRepository.findById(eventorId) } returns eventor
@@ -167,7 +167,7 @@ class PersonServiceTest {
         val eventorId = "NOR"
         val username = "testuser"
         val password = "wrongpass"
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         val eventor = EventorFactory.createEventorNorway()
         val httpException = mockk<HttpClientErrorException>()
         
@@ -187,7 +187,7 @@ class PersonServiceTest {
         val eventorId = "NOR"
         val username = "testuser"
         val password = "testpass"
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         val eventor = EventorFactory.createEventorNorway()
         val httpException = mockk<HttpClientErrorException>()
         
@@ -206,7 +206,7 @@ class PersonServiceTest {
         // Given
         val eventorId = "NOR"
         val personId = "123"
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         val person = PersonFactory.createTestPerson()
         
         every { personRepository.findByEventorIdAndEventorRef(eventorId, personId) } returns person
@@ -224,7 +224,7 @@ class PersonServiceTest {
         // Given
         val eventorId = "NOR"
         val personId = "123"
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         
         every { personRepository.findByEventorIdAndEventorRef(eventorId, personId) } returns null
 

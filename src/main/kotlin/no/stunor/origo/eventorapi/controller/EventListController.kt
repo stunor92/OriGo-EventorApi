@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
+import java.util.UUID
 
 @RestController
 @RequestMapping("event-list")
@@ -44,7 +45,7 @@ internal class EventListController {
         ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from eventor-{}.", eventorId)
-        val uid = getAttribute("uid") as String?
+        val uid = getAttribute("uid") as UUID?
 
         // Validate input to prevent SSRF attacks
         val validatedEventorId = inputValidator.validateEventorId(eventorId)
@@ -73,7 +74,7 @@ internal class EventListController {
         ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from all eventors.")
-        val uid = getAttribute("uid") as String?
+        val uid = getAttribute("uid") as UUID?
         return ResponseEntity(
             calendarService.getEventList(
                 from = from,
@@ -87,7 +88,7 @@ internal class EventListController {
 
     @GetMapping("/me")
     fun HttpServletRequest.getUserEntries(): ResponseEntity<List<CalendarRace>> {
-        val uid = getAttribute("uid") as String?
+        val uid = getAttribute("uid") as UUID?
 
         // /me endpoint requires authentication
         if (uid == null) {

@@ -222,13 +222,6 @@ mvn test -X
 - Some old test files use deprecated Spring Boot test annotations
 - These are being gradually updated to `@SpringBootTest`
 
-**Issue**: Enum type mismatch in SQL
-- Ensure enum values in code match PostgreSQL enum definitions
-- Use `::enum_type` casting in SQL queries
-
-**Issue**: Array handling in PostgreSQL
-- Arrays are stored using custom Hibernate types
-- See `persistence.hibernate` package for implementations
 
 ## Build the project
 ```bash

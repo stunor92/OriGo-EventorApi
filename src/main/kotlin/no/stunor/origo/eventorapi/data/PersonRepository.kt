@@ -50,7 +50,7 @@ open class PersonRepository(
         }
     }
     
-    open fun findAllByUsers(userId: String): List<Person> {
+    open fun findAllByUsers(userId: UUID): List<Person> {
         return jdbcTemplate.query(
             """
             SELECT p.* FROM person p
@@ -58,11 +58,11 @@ open class PersonRepository(
             WHERE up.user_id = ?
             """,
             rowMapper,
-            UUID.fromString(userId)
+            userId
         )
     }
     
-    open fun findAllByUsersAndEventorId(userId: String, eventorId: String): List<Person> {
+    open fun findAllByUsersAndEventorId(userId: UUID, eventorId: String): List<Person> {
         return jdbcTemplate.query(
             """
             SELECT p.* FROM person p
@@ -70,7 +70,7 @@ open class PersonRepository(
             WHERE up.user_id = ? AND p.eventor_id = ?
             """,
             rowMapper,
-            UUID.fromString(userId), eventorId
+            userId, eventorId
         )
     }
     

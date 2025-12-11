@@ -14,7 +14,7 @@ open class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
     private val rowMapper = RowMapper { rs: ResultSet, _: Int ->
         UserPerson(
             id = UserPersonKey(
-                userId = rs.getString("user_id"),
+                userId = rs.getObject("user_id", UUID::class.java),
                 personId = rs.getObject("person_id", UUID::class.java)
             ),
             person = null // Avoid circular dependency
@@ -37,7 +37,7 @@ open class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
         return userPerson
     }
     
-    open fun deleteByUserIdAndPersonId(userId: String, personId: UUID?) {
+    open fun deleteByUserIdAndPersonId(userId: UUID, personId: UUID?) {
         jdbcTemplate.update(
             "DELETE FROM user_person WHERE user_id = ? AND person_id = ?",
             userId, personId

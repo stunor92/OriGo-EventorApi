@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.util.UUID
 
 @Service
 class CalendarService(
@@ -50,7 +51,7 @@ class CalendarService(
     @Value($$"${config.personalResults.end}")
     private val personalResultsEnd = 0L
 
-    fun getEventList(userId: String): List<CalendarRace> {
+    fun getEventList(userId: UUID): List<CalendarRace> {
         val raceList = mutableListOf<CalendarRace>()
         val persons = personRepository.findAllByUsers(userId)
 
@@ -124,7 +125,7 @@ class CalendarService(
         }
     }
 
-    fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String?): List<CalendarRace> {
+    fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: UUID?): List<CalendarRace> {
         val eventorList: List<Eventor> = eventorRepository.findAll()
 
         val result: MutableList<CalendarRace> = mutableListOf()
@@ -142,7 +143,7 @@ class CalendarService(
         return result
     }
 
-    fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String?): List<CalendarRace> {
+    fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: UUID?): List<CalendarRace> {
         val eventor = eventorRepository.findById(eventorId) ?: throw EventorNotFoundException()
         // If no userId, fetch events without personal entries
         val persons: List<Person> = if (userId != null) {
