@@ -1,5 +1,16 @@
 # Changelog
 
+## [10.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v9.1.2...v10.0.0) (2025-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate from JPA/Hibernate to Spring JDBC ([#239](https://github.com/stunor92/OriGo-EventorApi/issues/239))
+
+### Features
+
+* migrate from JPA/Hibernate to Spring JDBC ([#239](https://github.com/stunor92/OriGo-EventorApi/issues/239)) ([17bb95f](https://github.com/stunor92/OriGo-EventorApi/commit/17bb95f1766cca3be8735c266764259e645721fb))
+
 ## [9.1.2](https://github.com/stunor92/OriGo-EventorApi/compare/v9.1.1...v9.1.2) (2025-11-12)
 
 
