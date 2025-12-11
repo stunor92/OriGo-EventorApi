@@ -6,6 +6,7 @@ import io.mockk.verify
 import no.stunor.origo.eventorapi.data.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.UUID
 
 class UserServiceTest {
     private lateinit var userRepository: UserRepository
@@ -27,7 +28,7 @@ class UserServiceTest {
     @Test
     fun `delete should call repository deleteById with correct userId`() {
         // Given
-        val userId = "user123"
+        val userId = UUID.randomUUID()
         
         every { userRepository.deleteById(userId) } returns Unit
 

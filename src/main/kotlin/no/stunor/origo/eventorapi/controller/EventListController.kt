@@ -45,7 +45,8 @@ internal class EventListController {
         ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from eventor-{}.", eventorId)
-        val uid = getAttribute("uid") as UUID?
+        val uidString = getAttribute("uid") as String?
+        val uid = uidString?.let { UUID.fromString(it) }
 
         // Validate input to prevent SSRF attacks
         val validatedEventorId = inputValidator.validateEventorId(eventorId)
@@ -74,7 +75,8 @@ internal class EventListController {
         ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from all eventors.")
-        val uid = getAttribute("uid") as UUID?
+        val uidString = getAttribute("uid") as String?
+        val uid = uidString?.let { UUID.fromString(it) }
         return ResponseEntity(
             calendarService.getEventList(
                 from = from,
@@ -88,7 +90,7 @@ internal class EventListController {
 
     @GetMapping("/me")
     fun HttpServletRequest.getUserEntries(): ResponseEntity<List<CalendarRace>> {
-        val uid = getAttribute("uid") as UUID?
+        val uid = UUID.fromString(getAttribute("uid") as String?)
 
         // /me endpoint requires authentication
         if (uid == null) {

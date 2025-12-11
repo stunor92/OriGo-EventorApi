@@ -5,6 +5,7 @@ import no.stunor.origo.eventorapi.services.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("user")
@@ -16,7 +17,7 @@ internal class UserController {
 
     @DeleteMapping
     fun HttpServletRequest.delete() {
-        val uid = getAttribute("uid") as String
+        val uid = UUID.fromString(getAttribute("uid") as String)
         log.info("Start deleting user.")
 
         userService.delete(userId = uid)
