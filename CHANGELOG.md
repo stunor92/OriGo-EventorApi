@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.3](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.2...v10.0.3) (2025-12-11)
+
+
+### Bug Fixes
+
+* map userId from String to UUID ([#248](https://github.com/stunor92/OriGo-EventorApi/issues/248)) ([aeaf8b3](https://github.com/stunor92/OriGo-EventorApi/commit/aeaf8b3751d81145584e64cedd404ccaba481cb2))
+
 ## [10.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.1...v10.0.2) (2025-12-11)
 
 
