@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.4](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.3...v10.0.4) (2025-12-11)
+
+
+### Bug Fixes
+
+* fix user_person-mapping ([#251](https://github.com/stunor92/OriGo-EventorApi/issues/251)) ([bf8fdac](https://github.com/stunor92/OriGo-EventorApi/commit/bf8fdac4b91038a77b743ea88c27177af50a402c))
+
 ## [10.0.3](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.2...v10.0.3) (2025-12-11)
 
 
