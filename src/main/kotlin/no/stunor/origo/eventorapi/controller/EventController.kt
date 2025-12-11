@@ -3,6 +3,7 @@ package no.stunor.origo.eventorapi.controller
 import no.stunor.origo.eventorapi.model.event.Event
 import no.stunor.origo.eventorapi.model.event.entry.Entry
 import no.stunor.origo.eventorapi.services.EventService
+import no.stunor.origo.eventorapi.validation.InputValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,13 +18,20 @@ internal class EventController {
     @Autowired
     private lateinit var eventService: EventService
 
-    @GetMapping("/{eventorId}/{eventId}")
+    @Autowired
+    private lateinit var inputValidator: InputValidator
+
+    @GetMapping("/{eventorId}/{eventorRef}")
     fun getEvent(
-        @PathVariable("eventorId") eventorId: String,
-        @PathVariable("eventId") eventId: String
+        @PathVariable eventorId: String,
+        @PathVariable eventorRef: String
     ): ResponseEntity<Event> {
+        // Validate inputs to prevent SSRF attacks
+        val validatedEventorId = inputValidator.validateEventorId(eventorId)
+        val validatedEventId = inputValidator.validateEventId(eventorRef)
+
         return ResponseEntity(
-            eventService.getEvent(eventorId, eventId),
+            eventService.getEvent(validatedEventorId, validatedEventId),
             HttpStatus.OK
         )
     }
@@ -33,10 +41,14 @@ internal class EventController {
         @PathVariable("eventorId") eventorId: String,
         @PathVariable("eventId") eventId: String
     ): ResponseEntity<List<Entry>> {
+        // Validate inputs to prevent SSRF attacks
+        val validatedEventorId = inputValidator.validateEventorId(eventorId)
+        val validatedEventId = inputValidator.validateEventId(eventId)
+
         return ResponseEntity(
                 eventService.getEntryList(
-                        eventorId = eventorId,
-                        eventId = eventId
+                        eventorId = validatedEventorId,
+                        eventId = validatedEventId
                 ),
                 HttpStatus.OK
         )

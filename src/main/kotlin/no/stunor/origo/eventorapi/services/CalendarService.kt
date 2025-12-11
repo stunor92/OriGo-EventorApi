@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class CalendarService(
@@ -56,7 +55,7 @@ class CalendarService(
         val persons = personRepository.findAllByUsers(userId)
 
         for (person in persons) {
-            val eventor = eventorRepository.findById(person.eventorId).getOrNull() ?: continue
+            val eventor = eventorRepository.findById(person.eventorId) ?: continue
             val organisationIds = person.memberships.mapNotNull { it.organisation?.eventorRef }
             val entryList = eventorService.getGetOrganisationEntries(
                 eventor = eventor,
@@ -125,22 +124,32 @@ class CalendarService(
         }
     }
 
-    fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
-        val eventorList: MutableIterable<Eventor> = eventorRepository.findAll()
+    fun getEventList(from: LocalDate, to: LocalDate, classifications: List<EventClassificationEnum>?, userId: String?): List<CalendarRace> {
+        val eventorList: List<Eventor> = eventorRepository.findAll()
 
         val result: MutableList<CalendarRace> = mutableListOf()
 
         for (eventor in eventorList) {
-            val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
+            // If no userId, fetch events without personal entries
+            val persons: List<Person> = if (userId != null) {
+                personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
+            } else {
+                emptyList()
+            }
             result.addAll(getEventList(eventor = eventor, from = from, to = to, organisations = null, classifications = classifications, persons = persons))
 
         }
         return result
     }
 
-    fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String): List<CalendarRace> {
-        val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
-        val persons: List<Person> = personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
+    fun getEventList(eventorId: String, from: LocalDate, to: LocalDate, organisations: List<String>?, classifications: List<EventClassificationEnum>?, userId: String?): List<CalendarRace> {
+        val eventor = eventorRepository.findById(eventorId) ?: throw EventorNotFoundException()
+        // If no userId, fetch events without personal entries
+        val persons: List<Person> = if (userId != null) {
+            personRepository.findAllByUsersAndEventorId(userId = userId, eventorId = eventor.id)
+        } else {
+            emptyList()
+        }
         return getEventList(eventor = eventor, from = from, to = to, organisations = organisations, classifications = classifications, persons = persons )
     }
 

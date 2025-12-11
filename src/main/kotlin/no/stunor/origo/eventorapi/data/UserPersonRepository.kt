@@ -2,17 +2,45 @@ package no.stunor.origo.eventorapi.data
 
 import no.stunor.origo.eventorapi.model.person.UserPerson
 import no.stunor.origo.eventorapi.model.person.UserPersonKey
-import org.springframework.data.jpa.repository.Modifying
-import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.CrudRepository
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
-import org.springframework.transaction.annotation.Transactional
+import java.sql.ResultSet
 import java.util.*
 
 @Repository
-interface UserPersonRepository : CrudRepository<UserPerson, UserPersonKey> {
-    @Transactional
-    @Modifying
-    @Query("delete from UserPerson up where up.id.userId = :userId and up.id.personId = :personId")
-    fun deleteByUserIdAndPersonId(userId: String, personId: UUID?)
+open class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
+
+    private val rowMapper = RowMapper { rs: ResultSet, _: Int ->
+        UserPerson(
+            id = UserPersonKey(
+                userId = rs.getString("user_id"),
+                personId = rs.getObject("person_id", UUID::class.java)
+            ),
+            person = null // Avoid circular dependency
+        )
+    }
+    
+    open fun findAllByUserId(userId: String): List<UserPerson> {
+        return jdbcTemplate.query(
+            "SELECT * FROM user_person WHERE user_id = ?",
+            rowMapper,
+            userId
+        )
+    }
+    
+    open fun save(userPerson: UserPerson): UserPerson {
+        jdbcTemplate.update(
+            "INSERT INTO user_person (user_id, person_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+            userPerson.id.userId, userPerson.id.personId
+        )
+        return userPerson
+    }
+    
+    open fun deleteByUserIdAndPersonId(userId: String, personId: UUID?) {
+        jdbcTemplate.update(
+            "DELETE FROM user_person WHERE user_id = ? AND person_id = ?",
+            userId, personId
+        )
+    }
 }

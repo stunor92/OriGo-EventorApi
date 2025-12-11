@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest
 import no.stunor.origo.eventorapi.model.calendar.CalendarRace
 import no.stunor.origo.eventorapi.model.event.EventClassificationEnum
 import no.stunor.origo.eventorapi.services.CalendarService
+import no.stunor.origo.eventorapi.validation.InputValidator
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -19,13 +20,17 @@ import java.time.LocalDate
 @RequestMapping("event-list")
 internal class EventListController {
     private val log = LoggerFactory.getLogger(this.javaClass)
+
     @Autowired
     private lateinit var calendarService: CalendarService
+
+    @Autowired
+    private lateinit var inputValidator: InputValidator
 
 
     @GetMapping("/{eventorId}")
     fun HttpServletRequest.getEventList(
-        @PathVariable("eventorId") eventorId: String,
+        @PathVariable eventorId: String,
         @RequestParam("from") from: LocalDate,
         @RequestParam("to") to: LocalDate,
         @RequestParam(
@@ -39,10 +44,14 @@ internal class EventListController {
         ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from eventor-{}.", eventorId)
-        val uid = getAttribute("uid") as String
+        val uid = getAttribute("uid") as String?
+
+        // Validate input to prevent SSRF attacks
+        val validatedEventorId = inputValidator.validateEventorId(eventorId)
+
         return ResponseEntity(
                 calendarService.getEventList(
-                        eventorId = eventorId,
+                        eventorId = validatedEventorId,
                         from = from,
                         to = to,
                         organisations = organisations,
@@ -64,26 +73,33 @@ internal class EventListController {
         ) classifications: List<EventClassificationEnum>?
     ): ResponseEntity<List<CalendarRace>> {
         log.info("Start to get event-list from all eventors.")
-        val uid = getAttribute("uid") as String
+        val uid = getAttribute("uid") as String?
         return ResponseEntity(
-                calendarService.getEventList(
-                        from = from,
-                        to = to,
-                        classifications = classifications,
-                        userId = uid
-                ),
-                HttpStatus.OK
+            calendarService.getEventList(
+                from = from,
+                to = to,
+                classifications = classifications,
+                userId = uid
+            ),
+            HttpStatus.OK
         )
     }
 
     @GetMapping("/me")
     fun HttpServletRequest.getUserEntries(): ResponseEntity<List<CalendarRace>> {
-        val uid = getAttribute("uid") as String
+        val uid = getAttribute("uid") as String?
+
+        // /me endpoint requires authentication
+        if (uid == null) {
+            log.warn("Attempted to access /me endpoint without authentication")
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+
         return ResponseEntity(
-                calendarService.getEventList(
-                        userId = uid
-                ),
-                HttpStatus.OK
+            calendarService.getEventList(
+                userId = uid
+            ),
+            HttpStatus.OK
         )
     }
 }

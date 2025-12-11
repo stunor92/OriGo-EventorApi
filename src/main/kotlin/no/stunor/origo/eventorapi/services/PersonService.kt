@@ -15,7 +15,6 @@ import no.stunor.origo.eventorapi.services.converter.PersonConverter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class PersonService {
@@ -40,7 +39,7 @@ class PersonService {
 
     fun authenticate(eventorId: String, username: String, password: String, userId: String): Person {
         try {
-            val eventor = eventorRepository.findById(eventorId).getOrNull() ?: throw EventorNotFoundException()
+            val eventor = eventorRepository.findById(eventorId) ?: throw EventorNotFoundException()
 
             val eventorPerson = eventorService.authenticatePerson(eventor, username, password)?: throw EventorAuthException()
 

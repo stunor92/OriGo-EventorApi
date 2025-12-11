@@ -82,7 +82,7 @@ class PersonServiceTest {
         val eventorPerson = mockk<EventorPerson>()
         val convertedPerson = PersonFactory.createTestPerson()
         
-        every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorRepository.findById(eventorId) } returns eventor
         every { eventorService.authenticatePerson(eventor, username, password) } returns eventorPerson
         every { personConverter.convertPerson(eventorPerson, eventor) } returns convertedPerson
         every { personRepository.findByEventorIdAndEventorRef(eventorId, convertedPerson.eventorRef) } returns null
@@ -110,7 +110,7 @@ class PersonServiceTest {
         val convertedPerson = PersonFactory.createTestPerson()
         val existingPerson = PersonFactory.createTestPerson()
         
-        every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorRepository.findById(eventorId) } returns eventor
         every { eventorService.authenticatePerson(eventor, username, password) } returns eventorPerson
         every { personConverter.convertPerson(eventorPerson, eventor) } returns convertedPerson
         every { personRepository.findByEventorIdAndEventorRef(eventorId, convertedPerson.eventorRef) } returns existingPerson
@@ -135,7 +135,7 @@ class PersonServiceTest {
         val password = "testpass"
         val userId = "user123"
         
-        every { eventorRepository.findById(eventorId) } returns Optional.empty()
+        every { eventorRepository.findById(eventorId) } returns null
 
         // When & Then
         assertThrows<EventorNotFoundException> {
@@ -152,7 +152,7 @@ class PersonServiceTest {
         val userId = "user123"
         val eventor = EventorFactory.createEventorNorway()
         
-        every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorRepository.findById(eventorId) } returns eventor
         every { eventorService.authenticatePerson(eventor, username, password) } returns null
 
         // When & Then
@@ -171,7 +171,7 @@ class PersonServiceTest {
         val eventor = EventorFactory.createEventorNorway()
         val httpException = mockk<HttpClientErrorException>()
         
-        every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorRepository.findById(eventorId) } returns eventor
         every { httpException.statusCode } returns HttpStatus.UNAUTHORIZED
         every { eventorService.authenticatePerson(eventor, username, password) } throws httpException
 
@@ -191,7 +191,7 @@ class PersonServiceTest {
         val eventor = EventorFactory.createEventorNorway()
         val httpException = mockk<HttpClientErrorException>()
         
-        every { eventorRepository.findById(eventorId) } returns Optional.of(eventor)
+        every { eventorRepository.findById(eventorId) } returns eventor
         every { httpException.statusCode } returns HttpStatus.INTERNAL_SERVER_ERROR
         every { eventorService.authenticatePerson(eventor, username, password) } throws httpException
 

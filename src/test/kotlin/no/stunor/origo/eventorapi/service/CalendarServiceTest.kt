@@ -18,7 +18,6 @@ import org.iof.eventor.ResultListList
 import org.iof.eventor.StartListList
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.Optional
 
 class CalendarServiceTest {
     var eventorRepository = mockk<EventorRepository>()
@@ -42,7 +41,7 @@ class CalendarServiceTest {
     @Test
     fun testGetRacesForUser() {
         every { personRepository.findAllByUsers(any()) } returns listOf(PersonFactory.createTestPerson())
-        every { eventorRepository.findById(any()) } returns Optional.of(EventorFactory.createEventorNorway())
+        every { eventorRepository.findById(any()) } returns EventorFactory.createEventorNorway()
         every { eventorService.getGetOrganisationEntries(any(), any(), any(), any(), any()) } returns entryList
         every { eventorService.getEventClasses(any(), any()) } returns eventClass
         every { eventorService.getGetPersonalStarts(any(), any(), any(), any(), any()) } returns startList

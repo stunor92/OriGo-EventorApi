@@ -3,32 +3,23 @@ logging:
     root: INFO
 server:
   port: 8080
-  error:
-    include-message: always
   servlet:
     context-path: /rest
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui: 
-    path: /documentation.html
 spring:
   datasource:
-    url: ${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    url: ${POSTGRES_DB:jdbc:postgresql://127.0.0.1:54322/postgres}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
     driverClassName: org.postgresql.Driver
     hikari:
       data-source-properties:
-        stringtype: unspecified
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
+        string-type: unspecified
   mvc:
     format:
       date: yyyy-MM-dd
+  web:
+    error:
+      include-message: always
 management:
   endpoints:
     web:
@@ -55,4 +46,4 @@ config:
     start: 5
     end: 1
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:your-local-jwt-secret-min-32-chars}
