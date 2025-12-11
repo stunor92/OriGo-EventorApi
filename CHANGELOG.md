@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.0...v10.0.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* fix sql-query to fetch persons from userId ([#242](https://github.com/stunor92/OriGo-EventorApi/issues/242)) ([c0f7cb2](https://github.com/stunor92/OriGo-EventorApi/commit/c0f7cb27630e1f599238333a521329a425636b46))
+
 ## [10.0.0](https://github.com/stunor92/OriGo-EventorApi/compare/v9.1.2...v10.0.0) (2025-12-11)
 
 
