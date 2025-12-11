@@ -33,7 +33,7 @@ open class PersonRepository(
             mobilePhone = rs.getString("mobile_phone"),
             email = rs.getString("email"),
             memberships = membershipRepository.findAllByPersonId(id).toMutableList(),
-            users = userPersonRepository.findAllByUserId(rs.getString("eventor_id")).toMutableList(),
+            users = userPersonRepository.findAllByPersonId(id).toMutableList(),
             lastUpdated = rs.getTimestamp("last_updated")?.toInstant() ?: Instant.now()
         )
     }

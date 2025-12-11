@@ -20,15 +20,15 @@ open class UserPersonRepository(private val jdbcTemplate: JdbcTemplate) {
             person = null // Avoid circular dependency
         )
     }
-    
-    open fun findAllByUserId(userId: String): List<UserPerson> {
+
+    open fun findAllByPersonId(personId: UUID): List<UserPerson> {
         return jdbcTemplate.query(
-            "SELECT * FROM user_person WHERE user_id = ?",
+            "SELECT * FROM user_person WHERE person_id = ?",
             rowMapper,
-            userId
+            personId
         )
     }
-    
+
     open fun save(userPerson: UserPerson): UserPerson {
         jdbcTemplate.update(
             "INSERT INTO user_person (user_id, person_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
