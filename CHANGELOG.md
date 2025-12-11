@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.2](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.1...v10.0.2) (2025-12-11)
+
+
+### Bug Fixes
+
+* userId as UUID ([#245](https://github.com/stunor92/OriGo-EventorApi/issues/245)) ([d0cfcc2](https://github.com/stunor92/OriGo-EventorApi/commit/d0cfcc2b58643ae0728b51cd84826d7f5611c173))
+
 ## [10.0.1](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.0...v10.0.1) (2025-12-11)
 
 
