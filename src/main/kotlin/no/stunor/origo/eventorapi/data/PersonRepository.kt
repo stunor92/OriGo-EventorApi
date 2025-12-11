@@ -55,10 +55,10 @@ open class PersonRepository(
             """
             SELECT p.* FROM person p
             INNER JOIN user_person up ON p.id = up.person_id
-            WHERE up.user_id LIKE ?
+            WHERE up.user_id = ?
             """,
             rowMapper,
-            "%$userId%"
+            UUID.fromString(userId)
         )
     }
     
@@ -67,10 +67,10 @@ open class PersonRepository(
             """
             SELECT p.* FROM person p
             INNER JOIN user_person up ON p.id = up.person_id
-            WHERE up.user_id LIKE ? AND p.eventor_id = ?
+            WHERE up.user_id = ? AND p.eventor_id = ?
             """,
             rowMapper,
-            "%$userId%", eventorId
+            UUID.fromString(userId), eventorId
         )
     }
     
