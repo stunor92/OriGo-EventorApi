@@ -28,7 +28,7 @@ internal class PersonController {
         @RequestHeader(value = "username") username: String,
         @RequestHeader(value = "password") password: String
     ): ResponseEntity<Person> {
-        val uid = UUID.fromString(getAttribute("uid") as String?)
+        val uid = UUID.fromString(getAttribute("uid") as String)
 
         // Validate inputs to prevent SSRF attacks
         val validatedEventorId = inputValidator.validateEventorId(eventorId)
@@ -49,7 +49,7 @@ internal class PersonController {
         @PathVariable eventorId: String,
         @PathVariable personId: String
     ) {
-        val uid = UUID.fromString(getAttribute("uid") as String?)
+        val uid = UUID.fromString(getAttribute("uid") as String)
         log.info("Start deleting person.")
 
         // Validate inputs to prevent SSRF attacks

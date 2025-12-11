@@ -17,7 +17,7 @@ internal class UserController {
 
     @DeleteMapping
     fun HttpServletRequest.delete() {
-        val uid = UUID.fromString(getAttribute("uid") as String?)
+        val uid = UUID.fromString(getAttribute("uid") as String)
         log.info("Start deleting user.")
 
         userService.delete(userId = uid)
