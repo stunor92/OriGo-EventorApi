@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("person")
@@ -27,7 +28,7 @@ internal class PersonController {
         @RequestHeader(value = "username") username: String,
         @RequestHeader(value = "password") password: String
     ): ResponseEntity<Person> {
-        val uid = getAttribute("uid") as String
+        val uid = getAttribute("uid") as UUID
 
         // Validate inputs to prevent SSRF attacks
         val validatedEventorId = inputValidator.validateEventorId(eventorId)
@@ -48,7 +49,7 @@ internal class PersonController {
         @PathVariable eventorId: String,
         @PathVariable personId: String
     ) {
-        val uid = getAttribute("uid") as String
+        val uid = getAttribute("uid") as UUID
         log.info("Start deleting person.")
 
         // Validate inputs to prevent SSRF attacks

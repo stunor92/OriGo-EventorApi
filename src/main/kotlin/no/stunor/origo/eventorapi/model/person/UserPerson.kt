@@ -5,7 +5,7 @@ import java.io.Serializable
 import java.util.*
 
 data class UserPersonKey(
-    var userId: String = "",
+    var userId: UUID? = null,
     var personId: UUID? = null,
 ) : Serializable
 
@@ -13,7 +13,7 @@ data class UserPerson(
     var id: UserPersonKey = UserPersonKey(),
     @JsonIgnore var person: Person? = null,
 ) {
-    var userId: String
+    var userId: UUID?
         get() = id.userId
         set(value) { id.userId = value }
     var personId: UUID?

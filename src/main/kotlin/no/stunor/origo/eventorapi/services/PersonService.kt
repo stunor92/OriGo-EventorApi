@@ -15,6 +15,7 @@ import no.stunor.origo.eventorapi.services.converter.PersonConverter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
+import java.util.*
 
 @Service
 class PersonService {
@@ -37,7 +38,7 @@ class PersonService {
     @Autowired
     private lateinit var personConverter: PersonConverter
 
-    fun authenticate(eventorId: String, username: String, password: String, userId: String): Person {
+    fun authenticate(eventorId: String, username: String, password: String, userId: UUID): Person {
         try {
             val eventor = eventorRepository.findById(eventorId) ?: throw EventorNotFoundException()
 
@@ -62,7 +63,7 @@ class PersonService {
         }
     }
 
-    fun delete(eventorId: String, personId: String, userId: String) {
+    fun delete(eventorId: String, personId: String, userId: UUID) {
         val person = personRepository.findByEventorIdAndEventorRef(eventorId, personId) ?: return
         userPersonRepository.deleteByUserIdAndPersonId(userId = userId, personId =  person.id)
     }
