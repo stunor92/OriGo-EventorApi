@@ -21,14 +21,14 @@ internal class EventController {
     @Autowired
     private lateinit var inputValidator: InputValidator
 
-    @GetMapping("/{eventorId}/{eventId}")
+    @GetMapping("/{eventorId}/{eventorRef}")
     fun getEvent(
         @PathVariable eventorId: String,
-        @PathVariable eventId: String
+        @PathVariable eventorRef: String
     ): ResponseEntity<Event> {
         // Validate inputs to prevent SSRF attacks
         val validatedEventorId = inputValidator.validateEventorId(eventorId)
-        val validatedEventId = inputValidator.validateEventId(eventId)
+        val validatedEventId = inputValidator.validateEventId(eventorRef)
 
         return ResponseEntity(
             eventService.getEvent(validatedEventorId, validatedEventId),

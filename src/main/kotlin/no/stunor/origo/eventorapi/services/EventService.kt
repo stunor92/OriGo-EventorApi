@@ -1,6 +1,7 @@
 package no.stunor.origo.eventorapi.services
 
 import no.stunor.origo.eventorapi.api.EventorService
+import no.stunor.origo.eventorapi.data.EventClassRepository
 import no.stunor.origo.eventorapi.data.EventRepository
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.FeeRepository
@@ -30,6 +31,8 @@ open class EventService {
     @Autowired
     private lateinit var feeRepository: FeeRepository
     @Autowired
+    private lateinit var eventClassRepository: EventClassRepository
+    @Autowired
     private lateinit var eventorService: EventorService
     @Autowired
     private lateinit var organisationConverter: OrganisationConverter
@@ -42,11 +45,11 @@ open class EventService {
 
 
     @Transactional
-    open fun getEvent(eventorId: String, eventId: String): Event {
+    open fun getEvent(eventorId: String, eventorRef: String): Event {
         val eventor = eventorRepository.findById(eventorId) ?: throw EventorNotFoundException()
-        val eventorEvent = eventorService.getEvent(eventor.baseUrl, eventor.eventorApiKey, eventId) ?: throw EventNotFoundException()
-        val eventClassList = eventorService.getEventClasses(eventor, eventId)
-        val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.eventorApiKey, eventId)
+        val eventorEvent = eventorService.getEvent(eventor.baseUrl, eventor.eventorApiKey, eventorRef) ?: throw EventNotFoundException()
+        val eventClassList = eventorService.getEventClasses(eventor, eventorRef)
+        val documentList = eventorService.getEventDocuments(eventor.baseUrl, eventor.eventorApiKey, eventorRef)
         val existingEvent = eventRepository.findByEventorIdAndEventorRef(eventor.id, eventorEvent.eventId.content)
 
         val organisers = organisationConverter.convertOrganisations(
@@ -62,18 +65,17 @@ open class EventService {
             eventor = eventor
         )
 
-        val savedEvent = eventRepository.save(updatedOrNewEvent)
+        val event = eventRepository.save(updatedOrNewEvent)
 
         // Query the saved event from database to get classes with actual database IDs
-        val eventWithSavedClasses = eventRepository.findByEventorIdAndEventorRef(savedEvent.eventorId, savedEvent.eventorRef)
-            ?: savedEvent
+        val savedClasses = eventClassRepository.findByEventId(event.id)
 
         // Create a map of saved classes by eventor_ref for quick lookup
-        val savedClassesByRef = eventWithSavedClasses.classes.associateBy { it.eventorRef }
+        val savedClassesByRef = savedClasses.associateBy { it.eventorRef }
 
         // Merge fees
-        val entryFees = eventorService.getEventEntryFees(eventor, savedEvent.eventorRef)
-        val convertedFees = FeeConverter.convertEntryFees(entryFees, savedEvent, eventClassList?.eventClass ?: listOf())
+        val entryFees = eventorService.getEventEntryFees(eventor, eventorRef)
+        val convertedFees = FeeConverter.convertEntryFees(entryFees, event, eventClassList?.eventClass ?: listOf())
 
         // Update fee.classes to reference the actual saved classes with correct IDs from database
         convertedFees.forEach { fee ->
@@ -82,7 +84,7 @@ open class EventService {
             }.toMutableList()
         }
 
-        val existingFees = feeRepository.findAllByEventId(savedEvent.id)
+        val existingFees = feeRepository.findAllByEventId(event.id)
         val existingByRef = existingFees.associateBy { it.eventorRef }.toMutableMap()
         val mergedFees = mutableListOf<Fee>()
         for (fee in convertedFees) {
@@ -112,7 +114,7 @@ open class EventService {
         val obsolete = existingFees.filter { it.eventorRef !in incomingRefs }
         if (obsolete.isNotEmpty()) feeRepository.deleteAll(obsolete)
         feeRepository.saveAll(mergedFees)
-        return savedEvent
+        return event
     }
 
     // ========================================
