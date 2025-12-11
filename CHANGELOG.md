@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.5](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.4...v10.0.5) (2025-12-11)
+
+
+### Bug Fixes
+
+* add timestamp for saved person ([#254](https://github.com/stunor92/OriGo-EventorApi/issues/254)) ([dabd972](https://github.com/stunor92/OriGo-EventorApi/commit/dabd972926f5602ef974dfbca9d688d82ab4b150))
+
 ## [10.0.4](https://github.com/stunor92/OriGo-EventorApi/compare/v10.0.3...v10.0.4) (2025-12-11)
 
 
