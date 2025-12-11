@@ -5,17 +5,14 @@ import io.mockk.mockk
 import io.mockk.verify
 import jakarta.xml.bind.JAXBContext
 import no.stunor.origo.eventorapi.api.EventorService
+import no.stunor.origo.eventorapi.data.EventClassRepository
 import no.stunor.origo.eventorapi.data.EventRepository
 import no.stunor.origo.eventorapi.data.EventorRepository
 import no.stunor.origo.eventorapi.data.FeeRepository
 import no.stunor.origo.eventorapi.exception.EventorNotFoundException
 import no.stunor.origo.eventorapi.model.event.entry.EntryStatus
 import no.stunor.origo.eventorapi.model.event.entry.PersonEntry
-import no.stunor.origo.eventorapi.services.converter.EntryListConverter
-import no.stunor.origo.eventorapi.services.converter.EventConverter
-import no.stunor.origo.eventorapi.services.converter.OrganisationConverter
-import no.stunor.origo.eventorapi.services.converter.ResultListConverter
-import no.stunor.origo.eventorapi.services.converter.StartListConverter
+import no.stunor.origo.eventorapi.services.converter.*
 import no.stunor.origo.eventorapi.testdata.EventorFactory
 import org.iof.eventor.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -31,6 +28,7 @@ class EventServiceTest {
     private lateinit var eventRepository: EventRepository
     private lateinit var eventConverter: EventConverter
     private lateinit var feeRepository: FeeRepository
+    private lateinit var eventClassRepository: EventClassRepository
     private lateinit var eventorService: EventorService
     private lateinit var organisationConverter: OrganisationConverter
     private lateinit var entryListConverter: EntryListConverter
@@ -64,6 +62,7 @@ class EventServiceTest {
         eventorRepository = mockk()
         eventRepository = mockk()
         eventConverter = mockk()
+        eventClassRepository = mockk()
         feeRepository = mockk()
         eventorService = mockk()
         organisationConverter = mockk()
@@ -89,6 +88,10 @@ class EventServiceTest {
         EventService::class.java.getDeclaredField("feeRepository").apply {
             isAccessible = true
             set(eventService, feeRepository)
+        }
+        EventService::class.java.getDeclaredField("eventClassRepository").apply {
+            isAccessible = true
+            set(eventService, eventClassRepository)
         }
         EventService::class.java.getDeclaredField("eventorService").apply {
             isAccessible = true
@@ -133,7 +136,7 @@ class EventServiceTest {
         every { eventorService.getEventEntryFees(eventor, eventId) } returns null
         every { feeRepository.findAllByEventId(any()) } returns emptyList()
         every { feeRepository.saveAll(any<List<no.stunor.origo.eventorapi.model.event.Fee>>()) } returns emptyList()
-
+        every { eventClassRepository.findByEventId(any()) } returns emptyList()
         // When
         val result = eventService.getEvent(eventorId, eventId)
 
