@@ -18,6 +18,7 @@ import org.iof.eventor.ResultListList
 import org.iof.eventor.StartListList
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.util.UUID
 
 class CalendarServiceTest {
     var eventorRepository = mockk<EventorRepository>()
@@ -47,7 +48,7 @@ class CalendarServiceTest {
         every { eventorService.getGetPersonalStarts(any(), any(), any(), any(), any()) } returns startList
         every { eventorService.getGetPersonalResults(any(), any(), any(), any(), any()) } returns resultList
         every { organisationRepository.findByEventorRefAndEventorId(any(),any()) } returns OrganisationFactory.createTestOrganisation()
-        val result = calendarService.getEventList("123")
+        val result = calendarService.getEventList(UUID.randomUUID())
 
         assert(result.size == 27)
         val dm = result.first { it.eventId == "17544" }

@@ -7,7 +7,7 @@ meta {
 get {
   url: {{baseUrl}}event-list?classifications=Local&from=2024-03-31&to=2024-04-08
   body: none
-  auth: inherit
+  auth: none
 }
 
 params:query {
@@ -15,8 +15,4 @@ params:query {
   from: 2024-03-31
   to: 2024-04-08
   ~classifications: LOCAL
-}
-
-headers {
-  userId: xxxxxx
 }
