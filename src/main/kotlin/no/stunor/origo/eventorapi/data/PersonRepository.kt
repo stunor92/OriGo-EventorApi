@@ -85,7 +85,7 @@ open class PersonRepository(
                 """,
                 person.id, person.eventorId, person.eventorRef, person.name.family, person.name.given,
                 person.birthYear, person.nationality, person.gender.name, person.mobilePhone, 
-                person.email, person.lastUpdated
+                person.email, java.sql.Timestamp.from(person.lastUpdated)
             )
         } else {
             jdbcTemplate.update(
@@ -107,7 +107,7 @@ open class PersonRepository(
                 """,
                 person.id, person.eventorId, person.eventorRef, person.name.family, person.name.given,
                 person.birthYear, person.nationality, person.gender.name, person.mobilePhone, 
-                person.email, person.lastUpdated
+                person.email, java.sql.Timestamp.from(person.lastUpdated)
             )
         }
         
